@@ -1,0 +1,2241 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
+	<object class="wxPanel" name="m_pa_main">
+		<style>wxTAB_TRAVERSAL|wxWANTS_CHARS</style>
+		<size>677,452</size>
+		<object class="wxBoxSizer">
+			<orient>wxVERTICAL</orient>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxEXPAND</flag>
+				<border>5</border>
+				<object class="wxBoxSizer">
+					<orient>wxVERTICAL</orient>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxEXPAND</flag>
+						<border>5</border>
+						<object class="wxBoxSizer">
+							<orient>wxHORIZONTAL</orient>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxEXPAND</flag>
+								<border>5</border>
+								<object class="wxBoxSizer">
+									<orient>wxHORIZONTAL</orient>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT</flag>
+										<border>5</border>
+										<object class="wxStaticBitmap" name="m_bm_cover_small">
+											<size>75,75</size>
+											<bitmap />
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT</flag>
+										<border>5</border>
+										<object class="wxSlider" name="m_sl_volume">
+											<style>wxSL_BOTH|wxSL_INVERSE|wxSL_VERTICAL</style>
+											<size>20,78</size>
+											<tooltip>Volume</tooltip>
+											<value>50</value>
+											<min>0</min>
+											<max>100</max>
+										</object>
+									</object>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>1</option>
+								<flag>wxEXPAND</flag>
+								<border>5</border>
+								<object class="wxBoxSizer">
+									<orient>wxVERTICAL</orient>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxEXPAND</flag>
+										<border>5</border>
+										<object class="wxBoxSizer">
+											<orient>wxVERTICAL</orient>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxEXPAND</flag>
+												<border>5</border>
+												<object class="wxBoxSizer">
+													<orient>wxHORIZONTAL</orient>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALL</flag>
+														<border>5</border>
+														<object class="wxBitmapButton" name="m_bb_faves">
+															<style>wxBU_AUTODRAW</style>
+															<tooltip>Add Favorite</tooltip>
+															<bitmap>graphics/emblem-favorite.png</bitmap>
+															<default>0</default>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+														<border>5</border>
+														<object class="wxStaticText" name="m_st_status">
+															<size>54,-1</size>
+															<font>
+																<size>9</size>
+																<family>default</family>
+																<style>normal</style>
+																<weight>normal</weight>
+																<underlined>0</underlined>
+															</font>
+															<label></label>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
+														<border>5</border>
+														<object class="wxStaticText" name="m_st_time">
+															<size>70,-1</size>
+															<font>
+																<size>9</size>
+																<family>default</family>
+																<style>normal</style>
+																<weight>normal</weight>
+																<underlined>0</underlined>
+															</font>
+															<label></label>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>1</option>
+														<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+														<border>5</border>
+														<object class="wxStaticText" name="m_st_track_info">
+															<font>
+																<size>9</size>
+																<family>default</family>
+																<style>normal</style>
+																<weight>bold</weight>
+																<underlined>0</underlined>
+															</font>
+															<label></label>
+														</object>
+													</object>
+													<object class="spacer">
+														<option>0</option>
+														<flag>wxEXPAND</flag>
+														<border>5</border>
+														<size>4,0</size>
+													</object>
+												</object>
+											</object>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxEXPAND</flag>
+										<border>5</border>
+										<object class="wxBoxSizer">
+											<orient>wxHORIZONTAL</orient>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALL</flag>
+												<border>5</border>
+												<object class="wxBitmapButton" name="m_bb_load_playlist">
+													<style>wxBU_AUTODRAW</style>
+													<tooltip>Load Playlist</tooltip>
+													<bitmap>graphics/media-eject.png</bitmap>
+													<default>0</default>
+												</object>
+											</object>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxTOP|wxBOTTOM|wxLEFT</flag>
+												<border>5</border>
+												<object class="wxBitmapButton" name="m_bb_backward">
+													<style>wxBU_AUTODRAW</style>
+													<bitmap>graphics/media-skip-backward.png</bitmap>
+													<default>0</default>
+												</object>
+											</object>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxTOP|wxBOTTOM</flag>
+												<border>5</border>
+												<object class="wxBitmapButton" name="m_bb_play">
+													<style>wxBU_AUTODRAW</style>
+													<size>40,-1</size>
+													<bitmap>graphics/media-playback-start.png</bitmap>
+													<default>0</default>
+												</object>
+											</object>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxTOP|wxBOTTOM</flag>
+												<border>5</border>
+												<object class="wxBitmapButton" name="m_bb_stop">
+													<style>wxBU_AUTODRAW</style>
+													<bitmap>graphics/media-playback-stop.png</bitmap>
+													<default>0</default>
+												</object>
+											</object>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxTOP|wxBOTTOM|wxRIGHT</flag>
+												<border>5</border>
+												<object class="wxBitmapButton" name="m_bb_forward">
+													<style>wxBU_AUTODRAW</style>
+													<bitmap>graphics/media-skip-forward.png</bitmap>
+													<default>0</default>
+												</object>
+											</object>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+												<object class="wxBitmapButton" name="m_bb_record">
+													<style>wxBU_AUTODRAW</style>
+													<tooltip>Record</tooltip>
+													<bitmap>graphics/media-record.png</bitmap>
+													<default>0</default>
+												</object>
+											</object>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+												<border>5</border>
+												<object class="wxTextCtrl" name="m_tc_search">
+													<style>wxTE_PROCESS_ENTER</style>
+													<size>180,-1</size>
+													<value></value>
+													<maxlength>0</maxlength>
+												</object>
+											</object>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
+												<border>5</border>
+												<object class="wxBitmapButton" name="m_bb_search">
+													<style>wxBU_AUTODRAW</style>
+													<tooltip>Search</tooltip>
+													<bitmap>graphics/system-search.png</bitmap>
+													<default>0</default>
+												</object>
+											</object>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+												<border>5</border>
+												<object class="wxBitmapButton" name="m_bb_random">
+													<style>wxBU_AUTODRAW</style>
+													<tooltip>Shuffle</tooltip>
+													<bitmap>graphics/media-random.png</bitmap>
+													<default>0</default>
+												</object>
+											</object>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
+												<border>5</border>
+												<object class="wxBitmapButton" name="m_bb_repeat">
+													<style>wxBU_AUTODRAW</style>
+													<tooltip>Repeat</tooltip>
+													<bitmap>graphics/media-repeat.png</bitmap>
+													<default>0</default>
+												</object>
+											</object>
+										</object>
+									</object>
+								</object>
+							</object>
+						</object>
+					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>1</option>
+				<flag>wxEXPAND</flag>
+				<border>5</border>
+				<object class="wxBoxSizer">
+					<orient>wxVERTICAL</orient>
+					<object class="sizeritem">
+						<option>1</option>
+						<flag>wxEXPAND | wxALL</flag>
+						<border>5</border>
+						<object class="wxNotebook" name="m_nb_main">
+							<object class="notebookpage">
+								<label>Playlist</label>
+								<selected>1</selected>
+								<object class="wxScrolledWindow" name="m_scrolledWindow3">
+									<style>wxHSCROLL|wxVSCROLL</style>
+									<object class="wxBoxSizer">
+										<orient>wxVERTICAL</orient>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxBoxSizer">
+												<orient>wxHORIZONTAL</orient>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxEXPAND|wxTOP|wxRIGHT|wxLEFT</flag>
+													<border>5</border>
+													<object class="wxStaticText" name="m_staticText27">
+														<fg>#0080ff</fg>
+														<font>
+															<size>11</size>
+															<family>default</family>
+															<style>normal</style>
+															<weight>bold</weight>
+															<underlined>0</underlined>
+														</font>
+														<label>Playlist</label>
+													</object>
+												</object>
+												<object class="spacer">
+													<option>0</option>
+													<flag>wxEXPAND</flag>
+													<border>5</border>
+													<size>10,0</size>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALL</flag>
+													<border>2</border>
+													<object class="wxBitmapButton" name="m_bb_update">
+														<style>wxBU_AUTODRAW</style>
+														<tooltip>New update available.</tooltip>
+														<bitmap>graphics/software-update-available.png</bitmap>
+														<default>0</default>
+													</object>
+												</object>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>1</option>
+											<flag>wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxBoxSizer">
+												<orient>wxHORIZONTAL</orient>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxEXPAND</flag>
+													<border>5</border>
+													<object class="wxBoxSizer">
+														<orient>wxVERTICAL</orient>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL</flag>
+															<border>5</border>
+															<object class="wxBitmapButton" name="m_bb_save_playlist">
+																<style>wxBU_AUTODRAW</style>
+																<tooltip>Save Playlist</tooltip>
+																<bitmap>graphics/document-save.png</bitmap>
+																<default>0</default>
+															</object>
+														</object>
+														<object class="spacer">
+															<option>0</option>
+															<flag>wxEXPAND</flag>
+															<border>5</border>
+															<size>0,20</size>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL|wxALIGN_CENTER_HORIZONTAL</flag>
+															<border>5</border>
+															<object class="wxBitmapButton" name="m_bb_remove_playlist_item">
+																<style>wxBU_AUTODRAW</style>
+																<tooltip>Remove Selected</tooltip>
+																<bitmap>graphics/user-trash.png</bitmap>
+																<default>0</default>
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL|wxALIGN_CENTER_HORIZONTAL</flag>
+															<border>5</border>
+															<object class="wxBitmapButton" name="m_bb_clear_playlist">
+																<style>wxBU_AUTODRAW</style>
+																<tooltip>Clear Playlist</tooltip>
+																<bitmap>graphics/edit-clear.png</bitmap>
+																<default>0</default>
+															</object>
+														</object>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>1</option>
+													<flag>wxEXPAND</flag>
+													<border>5</border>
+													<object class="wxBoxSizer">
+														<orient>wxVERTICAL</orient>
+														<object class="sizeritem">
+															<option>4</option>
+															<flag>wxALL|wxEXPAND</flag>
+															<border>5</border>
+															<object class="wxListCtrl" name="m_lc_playlist" subclass="main_controls.drag_and_drop.DragList">
+																<style>wxLC_REPORT</style>
+															</object>
+														</object>
+													</object>
+												</object>
+											</object>
+										</object>
+									</object>
+								</object>
+							</object>
+							<object class="notebookpage">
+								<label>Last.fm</label>
+								<selected>0</selected>
+								<object class="wxScrolledWindow" name="m_scrolledWindow2">
+									<style>wxHSCROLL|wxVSCROLL</style>
+									<object class="wxBoxSizer">
+										<orient>wxVERTICAL</orient>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxEXPAND|wxTOP|wxRIGHT|wxLEFT</flag>
+											<border>5</border>
+											<object class="wxStaticText" name="m_staticText28">
+												<fg>#0080ff</fg>
+												<font>
+													<size>11</size>
+													<family>default</family>
+													<style>normal</style>
+													<weight>bold</weight>
+													<underlined>0</underlined>
+												</font>
+												<label>Last.fm</label>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>1</option>
+											<flag>wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxBoxSizer">
+												<orient>wxHORIZONTAL</orient>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxEXPAND</flag>
+													<border>5</border>
+													<object class="wxBoxSizer">
+														<orient>wxVERTICAL</orient>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxEXPAND | wxALL</flag>
+															<border>5</border>
+															<object class="wxStaticLine" name="m_staticline5">
+																<style>wxLI_HORIZONTAL</style>
+																<font>
+																	<family>default</family>
+																	<style>normal</style>
+																	<weight>normal</weight>
+																	<underlined>0</underlined>
+																</font>
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxEXPAND</flag>
+															<border>5</border>
+															<object class="wxStaticText" name="m_st_last_ts_similar">
+																<style>wxALIGN_CENTRE</style>
+																<font>
+																	<family>default</family>
+																	<style>normal</style>
+																	<weight>normal</weight>
+																	<underlined>1</underlined>
+																</font>
+																<label>Similar Songs</label>
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxEXPAND</flag>
+															<border>5</border>
+															<object class="wxStaticText" name="m_st_last_ts_artist">
+																<style>wxALIGN_CENTRE</style>
+																<font>
+																	<family>default</family>
+																	<style>normal</style>
+																	<weight>normal</weight>
+																	<underlined>1</underlined>
+																</font>
+																<label>Top Songs: Artist</label>
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxEXPAND</flag>
+															<border>5</border>
+															<object class="wxStaticText" name="m_st_last_ts_geo">
+																<style>wxALIGN_CENTRE</style>
+																<font>
+																	<family>default</family>
+																	<style>normal</style>
+																	<weight>normal</weight>
+																	<underlined>1</underlined>
+																</font>
+																<label>Top Songs: Geo</label>
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL</flag>
+															<border>5</border>
+															<object class="wxStaticText" name="m_st_last_ts_genre">
+																<style>wxALIGN_CENTRE</style>
+																<font>
+																	<family>default</family>
+																	<style>normal</style>
+																	<weight>normal</weight>
+																	<underlined>1</underlined>
+																</font>
+																<label>Top Songs: Tag</label>
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxEXPAND</flag>
+															<border>5</border>
+															<object class="wxStaticText" name="m_st_last_ts_album">
+																<style>wxALIGN_CENTRE</style>
+																<font>
+																	<family>default</family>
+																	<style>normal</style>
+																	<weight>normal</weight>
+																	<underlined>1</underlined>
+																</font>
+																<label>Top Songs: Album</label>
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxEXPAND</flag>
+															<border>5</border>
+															<object class="wxStaticText" name="m_st_last_art_similar">
+																<style>wxALIGN_CENTRE</style>
+																<font>
+																	<family>default</family>
+																	<style>normal</style>
+																	<weight>normal</weight>
+																	<underlined>1</underlined>
+																</font>
+																<label>Similar Artists</label>
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxEXPAND</flag>
+															<border>5</border>
+															<object class="wxStaticText" name="m_st_last_ta_artist">
+																<style>wxALIGN_CENTRE</style>
+																<font>
+																	<family>default</family>
+																	<style>normal</style>
+																	<weight>normal</weight>
+																	<underlined>1</underlined>
+																</font>
+																<label>Top Albums: Artist</label>
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxEXPAND</flag>
+															<border>5</border>
+															<object class="wxStaticText" name="m_st_last_tt_song">
+																<style>wxALIGN_CENTRE</style>
+																<font>
+																	<family>default</family>
+																	<style>normal</style>
+																	<weight>normal</weight>
+																	<underlined>1</underlined>
+																</font>
+																<label>Top Tags: Song</label>
+															</object>
+														</object>
+														<object class="spacer">
+															<option>1</option>
+															<flag>wxEXPAND</flag>
+															<border>5</border>
+															<size>0,0</size>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL|wxEXPAND</flag>
+															<border>5</border>
+															<object class="wxButton" name="m_bu_last_plize">
+																<label>Playlistize!</label>
+																<default>0</default>
+															</object>
+														</object>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>1</option>
+													<flag>wxEXPAND</flag>
+													<border>5</border>
+													<object class="wxBoxSizer">
+														<orient>wxVERTICAL</orient>
+														<object class="sizeritem">
+															<option>1</option>
+															<flag>wxEXPAND|wxALL</flag>
+															<border>5</border>
+															<object class="wxListCtrl" name="m_lc_lastfm">
+																<style>wxLC_REPORT</style>
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxEXPAND</flag>
+															<border>5</border>
+															<object class="wxBoxSizer">
+																<orient>wxVERTICAL</orient>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxEXPAND</flag>
+																	<border>5</border>
+																	<object class="wxBoxSizer">
+																		<orient>wxHORIZONTAL</orient>
+																		<object class="sizeritem">
+																			<option>0</option>
+																			<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																			<border>5</border>
+																			<object class="wxStaticText" name="m_staticText19">
+																				<style>wxALIGN_RIGHT</style>
+																				<size>40,-1</size>
+																				<label>Artist</label>
+																			</object>
+																		</object>
+																		<object class="sizeritem">
+																			<option>1</option>
+																			<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
+																			<border>5</border>
+																			<object class="wxTextCtrl" name="m_tc_last_search_artist">
+																				<style>wxTE_PROCESS_ENTER</style>
+																				<value></value>
+																				<maxlength>0</maxlength>
+																			</object>
+																		</object>
+																		<object class="sizeritem">
+																			<option>0</option>
+																			<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																			<border>5</border>
+																			<object class="wxStaticText" name="m_staticText20">
+																				<style>wxALIGN_RIGHT</style>
+																				<label>Song</label>
+																			</object>
+																		</object>
+																		<object class="sizeritem">
+																			<option>1</option>
+																			<flag>wxTOP|wxBOTTOM|wxRIGHT</flag>
+																			<border>5</border>
+																			<object class="wxTextCtrl" name="m_tc_last_search_song">
+																				<style>wxTE_PROCESS_ENTER</style>
+																				<value></value>
+																				<maxlength>0</maxlength>
+																			</object>
+																		</object>
+																	</object>
+																</object>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxEXPAND</flag>
+																	<border>5</border>
+																	<object class="wxBoxSizer">
+																		<orient>wxHORIZONTAL</orient>
+																		<object class="sizeritem">
+																			<option>0</option>
+																			<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																			<border>5</border>
+																			<object class="wxStaticText" name="m_staticText21">
+																				<style>wxALIGN_RIGHT</style>
+																				<size>40,-1</size>
+																				<label>Album</label>
+																			</object>
+																		</object>
+																		<object class="sizeritem">
+																			<option>1</option>
+																			<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
+																			<border>5</border>
+																			<object class="wxTextCtrl" name="m_tc_last_search_album">
+																				<style>wxTE_PROCESS_ENTER</style>
+																				<value></value>
+																				<maxlength>0</maxlength>
+																			</object>
+																		</object>
+																		<object class="sizeritem">
+																			<option>0</option>
+																			<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																			<border>5</border>
+																			<object class="wxStaticText" name="m_staticText371">
+																				<label>Tag</label>
+																			</object>
+																		</object>
+																		<object class="sizeritem">
+																			<option>0</option>
+																			<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
+																			<border>5</border>
+																			<object class="wxComboBox" name="m_co_last_tag">
+																				<value>alternative</value>
+																				<content>
+																					<item>alternative</item>
+																					<item>classical</item>
+																					<item>country</item>
+																					<item>electronic</item>
+																					<item>hip-hop</item>
+																					<item>indie</item>
+																					<item>jazz</item>
+																					<item>metal</item>
+																					<item>pop</item>
+																					<item>rock</item>
+																				</content>
+																			</object>
+																		</object>
+																		<object class="sizeritem">
+																			<option>0</option>
+																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																			<border>5</border>
+																			<object class="wxChoice" name="m_ch_last_country">
+																				<tooltip>Geographical Region</tooltip>
+																				<selection>0</selection>
+																				<content>
+																					<item>united states</item>
+																					<item>canada</item>
+																					<item>australia</item>
+																					<item>france</item>
+																					<item>germany</item>
+																					<item>japan</item>
+																					<item>italy</item>
+																					<item>spain</item>
+																					<item>sweden</item>
+																				</content>
+																			</object>
+																		</object>
+																		<object class="sizeritem">
+																			<option>0</option>
+																			<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
+																			<border>5</border>
+																			<object class="wxBitmapButton" name="m_bb_last_clear_search">
+																				<style>wxBU_AUTODRAW</style>
+																				<tooltip>Clear</tooltip>
+																				<bitmap>graphics/edit-clear.png</bitmap>
+																				<default>0</default>
+																			</object>
+																		</object>
+																	</object>
+																</object>
+															</object>
+														</object>
+													</object>
+												</object>
+											</object>
+										</object>
+									</object>
+								</object>
+							</object>
+							<object class="notebookpage">
+								<label>My Last.fm</label>
+								<selected>0</selected>
+								<object class="wxScrolledWindow" name="m_scrolledWindow7">
+									<style>wxHSCROLL|wxVSCROLL</style>
+									<object class="wxBoxSizer">
+										<orient>wxVERTICAL</orient>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxEXPAND|wxTOP|wxRIGHT|wxLEFT</flag>
+											<border>5</border>
+											<object class="wxStaticText" name="m_staticText29">
+												<fg>#0080ff</fg>
+												<font>
+													<size>11</size>
+													<family>default</family>
+													<style>normal</style>
+													<weight>bold</weight>
+													<underlined>0</underlined>
+												</font>
+												<label>My Last.fm</label>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>1</option>
+											<flag>wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxBoxSizer">
+												<orient>wxHORIZONTAL</orient>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxEXPAND</flag>
+													<border>5</border>
+													<object class="wxBoxSizer">
+														<orient>wxVERTICAL</orient>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxEXPAND | wxALL</flag>
+															<border>5</border>
+															<object class="wxStaticLine" name="m_staticline51">
+																<style>wxLI_HORIZONTAL</style>
+															</object>
+														</object>
+														<object class="spacer">
+															<option>0</option>
+															<flag>wxEXPAND</flag>
+															<border>5</border>
+															<size>0,15</size>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxEXPAND</flag>
+															<border>5</border>
+															<object class="wxStaticText" name="m_st_mylast_me">
+																<style>wxALIGN_CENTRE</style>
+																<font>
+																	<family>default</family>
+																	<style>normal</style>
+																	<weight>normal</weight>
+																	<underlined>1</underlined>
+																</font>
+																<label>Me</label>
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL|wxEXPAND|wxALIGN_CENTER_HORIZONTAL</flag>
+															<border>5</border>
+															<object class="wxStaticText" name="m_st_mylast_friends">
+																<style>wxALIGN_CENTRE</style>
+																<font>
+																	<family>default</family>
+																	<style>normal</style>
+																	<weight>normal</weight>
+																	<underlined>1</underlined>
+																</font>
+																<label>My Friends</label>
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxEXPAND</flag>
+															<border>5</border>
+															<object class="wxStaticText" name="m_st_mylast_neigh">
+																<style>wxALIGN_CENTRE</style>
+																<font>
+																	<family>default</family>
+																	<style>normal</style>
+																	<weight>normal</weight>
+																	<underlined>1</underlined>
+																</font>
+																<label>My Neighbours</label>
+															</object>
+														</object>
+														<object class="spacer">
+															<option>1</option>
+															<flag>wxEXPAND</flag>
+															<border>5</border>
+															<size>0,0</size>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL|wxEXPAND</flag>
+															<border>5</border>
+															<object class="wxButton" name="m_bu_mylast_plize">
+																<label>Playlistize!</label>
+																<default>0</default>
+															</object>
+														</object>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>1</option>
+													<flag>wxEXPAND</flag>
+													<border>5</border>
+													<object class="wxBoxSizer">
+														<orient>wxVERTICAL</orient>
+														<object class="sizeritem">
+															<option>1</option>
+															<flag>wxALL|wxEXPAND</flag>
+															<border>5</border>
+															<object class="wxListCtrl" name="m_lc_mylast">
+																<style>wxLC_REPORT</style>
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxEXPAND</flag>
+															<border>5</border>
+															<object class="wxBoxSizer">
+																<orient>wxHORIZONTAL</orient>
+																<object class="spacer">
+																	<option>1</option>
+																	<flag>wxEXPAND</flag>
+																	<border>5</border>
+																	<size>0,0</size>
+																</object>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxBOTTOM|wxRIGHT|wxLEFT</flag>
+																	<border>1</border>
+																	<object class="wxRadioBox" name="m_rx_mylast_period">
+																		<style>wxRA_SPECIFY_COLS</style>
+																		<label></label>
+																		<selection>4</selection>
+																		<content>
+																			<item>7 Days</item>
+																			<item>3 Months</item>
+																			<item>6 Months</item>
+																			<item>12 Months</item>
+																			<item>All-time</item>
+																		</content>
+																		<dimension>5</dimension>
+																	</object>
+																</object>
+																<object class="spacer">
+																	<option>1</option>
+																	<flag>wxEXPAND</flag>
+																	<border>5</border>
+																	<size>0,0</size>
+																</object>
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxEXPAND</flag>
+															<border>5</border>
+															<object class="wxBoxSizer">
+																<orient>wxHORIZONTAL</orient>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																	<border>5</border>
+																	<object class="wxStaticText" name="m_staticText212">
+																		<style>wxALIGN_RIGHT</style>
+																		<size>40,-1</size>
+																		<label>User</label>
+																	</object>
+																</object>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																	<border>5</border>
+																	<object class="wxTextCtrl" name="m_tc_mylast_search_user">
+																		<style>wxTE_PROCESS_ENTER</style>
+																		<size>140,-1</size>
+																		<value></value>
+																		<maxlength>0</maxlength>
+																	</object>
+																</object>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																	<border>5</border>
+																	<object class="wxBitmapButton" name="m_bb_mylast_search">
+																		<style>wxBU_AUTODRAW</style>
+																		<bitmap>graphics/system-search.png</bitmap>
+																		<default>0</default>
+																	</object>
+																</object>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxALL</flag>
+																	<border>5</border>
+																	<object class="wxBitmapButton" name="m_bb_mylast_goweb">
+																		<style>wxBU_AUTODRAW</style>
+																		<tooltip>Last.fm Webpage</tooltip>
+																		<bitmap>graphics/applications-internet.png</bitmap>
+																		<default>0</default>
+																	</object>
+																</object>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																	<border>5</border>
+																	<object class="wxBitmapButton" name="m_bb_mylast_clear">
+																		<style>wxBU_AUTODRAW</style>
+																		<tooltip>Clear</tooltip>
+																		<bitmap>graphics/edit-clear.png</bitmap>
+																		<default>0</default>
+																	</object>
+																</object>
+															</object>
+														</object>
+													</object>
+												</object>
+											</object>
+										</object>
+									</object>
+								</object>
+							</object>
+							<object class="notebookpage">
+								<label>Album</label>
+								<selected>0</selected>
+								<object class="wxScrolledWindow" name="m_scrolledWindow1">
+									<style>wxHSCROLL|wxVSCROLL</style>
+									<object class="wxBoxSizer">
+										<orient>wxVERTICAL</orient>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxEXPAND|wxTOP|wxRIGHT|wxLEFT</flag>
+											<border>5</border>
+											<object class="wxStaticText" name="m_staticText26">
+												<fg>#0080ff</fg>
+												<font>
+													<size>11</size>
+													<family>default</family>
+													<style>normal</style>
+													<weight>bold</weight>
+													<underlined>0</underlined>
+												</font>
+												<label>Album</label>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>1</option>
+											<flag>wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxBoxSizer">
+												<orient>wxHORIZONTAL</orient>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxEXPAND</flag>
+													<border>5</border>
+													<object class="wxBoxSizer">
+														<orient>wxVERTICAL</orient>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxEXPAND | wxALL</flag>
+															<border>5</border>
+															<object class="wxStaticLine" name="m_staticline7">
+																<style>wxLI_HORIZONTAL</style>
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL|wxALIGN_CENTER_HORIZONTAL</flag>
+															<border>5</border>
+															<object class="wxStaticBitmap" name="m_bm_cover_large">
+																<size>150,150</size>
+																<bitmap />
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL|wxALIGN_CENTER_HORIZONTAL</flag>
+															<border>5</border>
+															<object class="wxButton" name="m_bu_album_tracks">
+																<label>Get Tracks</label>
+																<default>0</default>
+															</object>
+														</object>
+														<object class="spacer">
+															<option>1</option>
+															<flag>wxEXPAND</flag>
+															<border>5</border>
+															<size>0,0</size>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL|wxEXPAND</flag>
+															<border>5</border>
+															<object class="wxButton" name="m_bu_album_plize">
+																<label>Playlistize!</label>
+																<default>0</default>
+															</object>
+														</object>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>1</option>
+													<flag>wxEXPAND</flag>
+													<border>5</border>
+													<object class="wxBoxSizer">
+														<orient>wxVERTICAL</orient>
+														<object class="sizeritem">
+															<option>1</option>
+															<flag>wxEXPAND|wxALL</flag>
+															<border>5</border>
+															<object class="wxListCtrl" name="m_lc_album">
+																<style>wxLC_REPORT</style>
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxEXPAND</flag>
+															<border>5</border>
+															<object class="wxBoxSizer">
+																<orient>wxVERTICAL</orient>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxEXPAND</flag>
+																	<border>5</border>
+																	<object class="wxBoxSizer">
+																		<orient>wxHORIZONTAL</orient>
+																		<object class="sizeritem">
+																			<option>0</option>
+																			<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																			<border>5</border>
+																			<object class="wxStaticText" name="m_staticText11">
+																				<style>wxALIGN_RIGHT</style>
+																				<size>40,-1</size>
+																				<label>Artist</label>
+																			</object>
+																		</object>
+																		<object class="sizeritem">
+																			<option>1</option>
+																			<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
+																			<border>5</border>
+																			<object class="wxTextCtrl" name="m_tc_album_search_artist">
+																				<style>wxTE_PROCESS_ENTER</style>
+																				<value></value>
+																				<maxlength>0</maxlength>
+																			</object>
+																		</object>
+																		<object class="sizeritem">
+																			<option>0</option>
+																			<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																			<border>5</border>
+																			<object class="wxStaticText" name="m_staticText14">
+																				<style>wxALIGN_RIGHT</style>
+																				<size>40,-1</size>
+																				<label>Song</label>
+																			</object>
+																		</object>
+																		<object class="sizeritem">
+																			<option>1</option>
+																			<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
+																			<border>5</border>
+																			<object class="wxTextCtrl" name="m_tc_album_search_song">
+																				<style>wxTE_PROCESS_ENTER</style>
+																				<value></value>
+																				<maxlength>0</maxlength>
+																			</object>
+																		</object>
+																	</object>
+																</object>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxEXPAND</flag>
+																	<border>5</border>
+																	<object class="wxBoxSizer">
+																		<orient>wxHORIZONTAL</orient>
+																		<object class="sizeritem">
+																			<option>0</option>
+																			<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																			<border>5</border>
+																			<object class="wxStaticText" name="m_staticText13">
+																				<style>wxALIGN_RIGHT</style>
+																				<size>40,-1</size>
+																				<label>Album</label>
+																			</object>
+																		</object>
+																		<object class="sizeritem">
+																			<option>1</option>
+																			<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
+																			<border>5</border>
+																			<object class="wxTextCtrl" name="m_tc_album_search_album">
+																				<value></value>
+																				<maxlength>0</maxlength>
+																			</object>
+																		</object>
+																		<object class="sizeritem">
+																			<option>0</option>
+																			<flag>wxTOP|wxBOTTOM|wxRIGHT</flag>
+																			<border>5</border>
+																			<object class="wxBitmapButton" name="m_bb_album_search">
+																				<style>wxBU_AUTODRAW</style>
+																				<tooltip>Search</tooltip>
+																				<bitmap>graphics/system-search.png</bitmap>
+																				<default>0</default>
+																			</object>
+																		</object>
+																		<object class="sizeritem">
+																			<option>0</option>
+																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																			<border>5</border>
+																			<object class="wxBitmapButton" name="m_bb_album_clear_search">
+																				<style>wxBU_AUTODRAW</style>
+																				<tooltip>Clear</tooltip>
+																				<bitmap>graphics/edit-clear.png</bitmap>
+																				<default>0</default>
+																			</object>
+																		</object>
+																	</object>
+																</object>
+															</object>
+														</object>
+													</object>
+												</object>
+											</object>
+										</object>
+									</object>
+								</object>
+							</object>
+							<object class="notebookpage">
+								<label>Biography</label>
+								<selected>0</selected>
+								<object class="wxScrolledWindow" name="m_scrolledWindow8">
+									<style>wxHSCROLL|wxVSCROLL</style>
+									<object class="wxBoxSizer">
+										<orient>wxVERTICAL</orient>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxEXPAND|wxTOP|wxRIGHT|wxLEFT</flag>
+											<border>5</border>
+											<object class="wxStaticText" name="m_staticText261">
+												<fg>#0080ff</fg>
+												<font>
+													<size>11</size>
+													<family>default</family>
+													<style>normal</style>
+													<weight>bold</weight>
+													<underlined>0</underlined>
+												</font>
+												<label>Biography</label>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxEXPAND | wxALL</flag>
+											<border>5</border>
+											<object class="wxStaticLine" name="m_staticline41">
+												<style>wxLI_HORIZONTAL</style>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>1</option>
+											<flag>wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxBoxSizer">
+												<orient>wxHORIZONTAL</orient>
+												<object class="sizeritem">
+													<option>1</option>
+													<flag>wxEXPAND|wxBOTTOM|wxRIGHT</flag>
+													<border>5</border>
+													<object class="wxHtmlWindow" name="m_hm_bio_text">
+														<style>wxHW_SCROLLBAR_AUTO</style>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxEXPAND</flag>
+													<border>5</border>
+													<object class="wxBoxSizer">
+														<orient>wxVERTICAL</orient>
+														<object class="spacer">
+															<option>0</option>
+															<flag>wxEXPAND</flag>
+															<border>5</border>
+															<size>0,10</size>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL</flag>
+															<border>5</border>
+															<object class="wxStaticBitmap" name="m_bm_bio_pic">
+																<size>250,-1</size>
+																<bitmap />
+															</object>
+														</object>
+													</object>
+												</object>
+											</object>
+										</object>
+									</object>
+								</object>
+							</object>
+							<object class="notebookpage">
+								<label>Collection</label>
+								<selected>0</selected>
+								<object class="wxScrolledWindow" name="m_scrolledWindow10">
+									<style>wxHSCROLL|wxVSCROLL</style>
+									<object class="wxBoxSizer">
+										<orient>wxVERTICAL</orient>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxEXPAND|wxTOP|wxRIGHT|wxLEFT</flag>
+											<border>5</border>
+											<object class="wxStaticText" name="m_staticText2611">
+												<fg>#0080ff</fg>
+												<font>
+													<size>11</size>
+													<family>default</family>
+													<style>normal</style>
+													<weight>bold</weight>
+													<underlined>0</underlined>
+												</font>
+												<label>Song Collection</label>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>1</option>
+											<flag>wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxBoxSizer">
+												<orient>wxHORIZONTAL</orient>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxEXPAND</flag>
+													<border>5</border>
+													<object class="wxBoxSizer">
+														<orient>wxVERTICAL</orient>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL</flag>
+															<border>5</border>
+															<object class="wxBitmapButton" name="m_bb_scol_add">
+																<style>wxBU_AUTODRAW</style>
+																<tooltip>Add Files to Collection</tooltip>
+																<bitmap>graphics/folder-saved-search.png</bitmap>
+																<default>0</default>
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL</flag>
+															<border>5</border>
+															<object class="wxBitmapButton" name="m_bb_scol_playlist">
+																<style>wxBU_AUTODRAW</style>
+																<size>-1,64</size>
+																<tooltip>Add to Playlist</tooltip>
+																<bitmap>graphics/list-add.png</bitmap>
+																<default>0</default>
+															</object>
+														</object>
+														<object class="spacer">
+															<option>0</option>
+															<flag>wxEXPAND</flag>
+															<border>5</border>
+															<size>0,20</size>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL</flag>
+															<border>5</border>
+															<object class="wxBitmapButton" name="m_bb_scol_delete">
+																<style>wxBU_AUTODRAW</style>
+																<tooltip>Remove</tooltip>
+																<bitmap>graphics/user-trash.png</bitmap>
+																<default>0</default>
+															</object>
+														</object>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>1</option>
+													<flag>wxEXPAND</flag>
+													<border>5</border>
+													<object class="wxBoxSizer">
+														<orient>wxVERTICAL</orient>
+														<object class="sizeritem">
+															<option>1</option>
+															<flag>wxALL|wxEXPAND</flag>
+															<border>5</border>
+															<object class="wxListCtrl" name="m_lc_scol_col" subclass="main_utils.local_songs.VirtualList">
+																<style>wxLC_REPORT|wxLC_VIRTUAL</style>
+															</object>
+														</object>
+													</object>
+												</object>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxBoxSizer">
+												<orient>wxHORIZONTAL</orient>
+												<object class="spacer">
+													<option>0</option>
+													<flag>wxEXPAND</flag>
+													<border>5</border>
+													<size>40,0</size>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+													<border>5</border>
+													<object class="wxStaticText" name="m_staticText37">
+														<label>Filter Songs</label>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+													<border>5</border>
+													<object class="wxTextCtrl" name="m_tc_scol_song">
+														<size>160,-1</size>
+														<value></value>
+														<maxlength>0</maxlength>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+													<border>5</border>
+													<object class="wxRadioButton" name="m_rb_scol_file">
+														<label>File</label>
+														<value>1</value>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+													<border>5</border>
+													<object class="wxRadioButton" name="m_rb_scol_folder">
+														<label>Folder</label>
+														<value>0</value>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+													<border>5</border>
+													<object class="wxBitmapButton" name="m_bb_scol_clear">
+														<style>wxBU_AUTODRAW</style>
+														<tooltip>Clear File Filter</tooltip>
+														<bitmap>graphics/edit-clear.png</bitmap>
+														<default>0</default>
+													</object>
+												</object>
+											</object>
+										</object>
+									</object>
+								</object>
+							</object>
+							<object class="notebookpage">
+								<label>Favorites</label>
+								<selected>0</selected>
+								<object class="wxScrolledWindow" name="m_sw_faves">
+									<style>wxHSCROLL|wxVSCROLL</style>
+									<fg>#0080ff</fg>
+									<object class="wxBoxSizer">
+										<orient>wxVERTICAL</orient>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxEXPAND|wxTOP|wxRIGHT|wxLEFT</flag>
+											<border>5</border>
+											<object class="wxStaticText" name="m_staticText24">
+												<font>
+													<size>11</size>
+													<family>default</family>
+													<style>normal</style>
+													<weight>bold</weight>
+													<underlined>0</underlined>
+												</font>
+												<label>Favorites</label>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>1</option>
+											<flag>wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxBoxSizer">
+												<orient>wxHORIZONTAL</orient>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxEXPAND</flag>
+													<border>5</border>
+													<object class="wxBoxSizer">
+														<orient>wxVERTICAL</orient>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL</flag>
+															<border>5</border>
+															<object class="wxBitmapButton" name="m_bb_faves_playlist">
+																<style>wxBU_AUTODRAW</style>
+																<size>-1,104</size>
+																<tooltip>Add to Playlist</tooltip>
+																<bitmap>graphics/list-add.png</bitmap>
+																<default>0</default>
+															</object>
+														</object>
+														<object class="spacer">
+															<option>0</option>
+															<flag>wxEXPAND</flag>
+															<border>5</border>
+															<size>0,20</size>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL</flag>
+															<border>5</border>
+															<object class="wxBitmapButton" name="m_bb_faves_remove">
+																<style>wxBU_AUTODRAW</style>
+																<tooltip>Remove Selected</tooltip>
+																<bitmap>graphics/user-trash.png</bitmap>
+																<default>0</default>
+															</object>
+														</object>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>1</option>
+													<flag>wxEXPAND</flag>
+													<border>5</border>
+													<object class="wxBoxSizer">
+														<orient>wxVERTICAL</orient>
+														<object class="sizeritem">
+															<option>1</option>
+															<flag>wxEXPAND|wxALL</flag>
+															<border>5</border>
+															<object class="wxListCtrl" name="m_lc_faves">
+																<style>wxLC_REPORT</style>
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxEXPAND</flag>
+															<border>5</border>
+															<object class="wxBoxSizer">
+																<orient>wxHORIZONTAL</orient>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+																	<border>5</border>
+																	<object class="wxButton" name="m_bu_faves_plize">
+																		<size>100,-1</size>
+																		<label>Playlistize!</label>
+																		<default>0</default>
+																	</object>
+																</object>
+																<object class="spacer">
+																	<option>1</option>
+																	<flag>wxEXPAND</flag>
+																	<border>5</border>
+																	<size>0,0</size>
+																</object>
+															</object>
+														</object>
+													</object>
+												</object>
+											</object>
+										</object>
+									</object>
+								</object>
+							</object>
+							<object class="notebookpage">
+								<label>List Sifter</label>
+								<selected>0</selected>
+								<object class="wxScrolledWindow" name="m_scrolledWindow6">
+									<style>wxHSCROLL|wxVSCROLL</style>
+									<object class="wxBoxSizer">
+										<orient>wxVERTICAL</orient>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxEXPAND|wxTOP|wxRIGHT|wxLEFT</flag>
+											<border>5</border>
+											<object class="wxStaticText" name="m_staticText25">
+												<fg>#0080ff</fg>
+												<font>
+													<size>11</size>
+													<family>default</family>
+													<style>normal</style>
+													<weight>bold</weight>
+													<underlined>0</underlined>
+												</font>
+												<label>List Sifter</label>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>1</option>
+											<flag>wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxBoxSizer">
+												<orient>wxHORIZONTAL</orient>
+												<object class="sizeritem">
+													<option>1</option>
+													<flag>wxALL|wxEXPAND</flag>
+													<border>5</border>
+													<object class="wxTextCtrl" name="m_tc_sift_rawlist">
+														<style>wxTE_DONTWRAP|wxTE_MULTILINE</style>
+														<value></value>
+														<maxlength>0</maxlength>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>1</option>
+													<flag>wxALL|wxEXPAND</flag>
+													<border>5</border>
+													<object class="wxListCtrl" name="m_lc_sift">
+														<style>wxLC_REPORT</style>
+													</object>
+												</object>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxBoxSizer">
+												<orient>wxHORIZONTAL</orient>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+													<border>5</border>
+													<object class="wxStaticText" name="m_staticText18">
+														<label>Pre-split:</label>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>1</option>
+													<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
+													<border>5</border>
+													<object class="wxTextCtrl" name="m_tc_sift_pre">
+														<size>50,-1</size>
+														<value></value>
+														<maxlength>0</maxlength>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+													<border>5</border>
+													<object class="wxChoice" name="m_ch_sift_choice">
+														<selection>0</selection>
+														<content>
+															<item>artist</item>
+															<item>song</item>
+														</content>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+													<border>5</border>
+													<object class="wxStaticText" name="m_staticText191">
+														<label>Separator:</label>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>1</option>
+													<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
+													<border>5</border>
+													<object class="wxTextCtrl" name="m_tc_sift_seperator">
+														<size>50,-1</size>
+														<value></value>
+														<maxlength>0</maxlength>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+													<border>5</border>
+													<object class="wxButton" name="m_bu_sift_sift">
+														<label>Sift!</label>
+														<default>0</default>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>1</option>
+													<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+													<border>5</border>
+													<object class="wxButton" name="m_bu_sift_plize">
+														<label>Playlistize!</label>
+														<default>0</default>
+													</object>
+												</object>
+											</object>
+										</object>
+									</object>
+								</object>
+							</object>
+							<object class="notebookpage">
+								<label>Options</label>
+								<selected>0</selected>
+								<object class="wxScrolledWindow" name="m_scrolledWindow4">
+									<style>wxHSCROLL|wxVSCROLL</style>
+									<object class="wxBoxSizer">
+										<orient>wxVERTICAL</orient>
+										<object class="sizeritem">
+											<option>1</option>
+											<flag>wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxBoxSizer">
+												<orient>wxVERTICAL</orient>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxEXPAND|wxTOP|wxRIGHT|wxLEFT</flag>
+													<border>5</border>
+													<object class="wxStaticText" name="m_staticText17">
+														<fg>#0080ff</fg>
+														<font>
+															<size>11</size>
+															<family>default</family>
+															<style>normal</style>
+															<weight>bold</weight>
+															<underlined>0</underlined>
+														</font>
+														<label>Options</label>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxEXPAND | wxALL</flag>
+													<border>5</border>
+													<object class="wxStaticLine" name="m_staticline4">
+														<style>wxLI_HORIZONTAL</style>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>1</option>
+													<flag>wxEXPAND</flag>
+													<border>5</border>
+													<object class="wxBoxSizer">
+														<orient>wxVERTICAL</orient>
+														<object class="sizeritem">
+															<option>1</option>
+															<flag>wxEXPAND | wxALL</flag>
+															<border>5</border>
+															<object class="wxNotebook" name="m_notebook3">
+																<style>wxNB_FIXEDWIDTH</style>
+																<object class="notebookpage">
+																	<label>Main</label>
+																	<selected>1</selected>
+																	<object class="wxScrolledWindow" name="m_scrolledWindow25">
+																		<style>wxHSCROLL|wxVSCROLL</style>
+																		<object class="wxBoxSizer">
+																			<orient>wxHORIZONTAL</orient>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxEXPAND</flag>
+																				<border>5</border>
+																				<object class="wxBoxSizer">
+																					<orient>wxVERTICAL</orient>
+																					<object class="spacer">
+																						<option>0</option>
+																						<flag>wxEXPAND</flag>
+																						<border>5</border>
+																						<size>0,10</size>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALL|wxEXPAND</flag>
+																						<border>5</border>
+																						<object class="wxRadioBox" name="m_rx_options_double_click">
+																							<style>wxRA_SPECIFY_ROWS</style>
+																							<label>Double-clicking...</label>
+																							<selection>1</selection>
+																							<content>
+																								<item>adds song to the playlist.</item>
+																								<item>searches for that song.</item>
+																							</content>
+																							<dimension>2</dimension>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALL</flag>
+																						<border>10</border>
+																						<object class="wxCheckBox" name="m_cb_options_list_clear">
+																							<label>Playlistize! clears playlist before adding.</label>
+																							<checked>1</checked>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALL</flag>
+																						<border>10</border>
+																						<object class="wxCheckBox" name="m_cb_options_alternate">
+																							<label>Use alternate GrooveShark source.</label>
+																							<checked>0</checked>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALL</flag>
+																						<border>10</border>
+																						<object class="wxCheckBox" name="m_cb_options_noid">
+																							<label>Drop id from search results.</label>
+																							<checked>0</checked>
+																						</object>
+																					</object>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>1</option>
+																				<flag>wxEXPAND</flag>
+																				<border>5</border>
+																				<object class="wxBoxSizer">
+																					<orient>wxVERTICAL</orient>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxEXPAND</flag>
+																						<border>5</border>
+																						<object class="wxBoxSizer">
+																							<orient>wxHORIZONTAL</orient>
+																							<object class="sizeritem">
+																								<option>0</option>
+																								<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																								<border>5</border>
+																								<object class="wxStaticText" name="m_staticText451">
+																									<label>Record at</label>
+																								</object>
+																							</object>
+																							<object class="sizeritem">
+																								<option>0</option>
+																								<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																								<border>10</border>
+																								<object class="wxChoice" name="m_ch_options_bitrate">
+																									<selection>1</selection>
+																									<content>
+																										<item>80</item>
+																										<item>128</item>
+																										<item>192</item>
+																										<item>256</item>
+																										<item>320</item>
+																									</content>
+																								</object>
+																							</object>
+																							<object class="sizeritem">
+																								<option>0</option>
+																								<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																								<border>5</border>
+																								<object class="wxStaticText" name="m_staticText462">
+																									<label>kbps.</label>
+																								</object>
+																							</object>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALL</flag>
+																						<border>5</border>
+																						<object class="wxStaticText" name="m_staticText49">
+																							<label>Record music to:</label>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALL|wxEXPAND</flag>
+																						<border>5</border>
+																						<object class="wxButton" name="m_bu_options_record_dir">
+																							<label></label>
+																							<default>0</default>
+																						</object>
+																					</object>
+																					<object class="spacer">
+																						<option>1</option>
+																						<flag>wxEXPAND</flag>
+																						<border>5</border>
+																						<size>0,0</size>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxEXPAND | wxALL</flag>
+																						<border>5</border>
+																						<object class="wxStaticLine" name="m_staticline71">
+																							<style>wxLI_VERTICAL</style>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALL</flag>
+																						<border>10</border>
+																						<object class="wxButton" name="m_bu_options_about">
+																							<label>About...</label>
+																							<default>0</default>
+																						</object>
+																					</object>
+																				</object>
+																			</object>
+																		</object>
+																	</object>
+																</object>
+																<object class="notebookpage">
+																	<label>Last.fm</label>
+																	<selected>0</selected>
+																	<object class="wxScrolledWindow" name="m_scrolledWindow20">
+																		<style>wxHSCROLL|wxVSCROLL</style>
+																		<object class="wxBoxSizer">
+																			<orient>wxHORIZONTAL</orient>
+																			<object class="sizeritem">
+																				<option>1</option>
+																				<flag>wxEXPAND</flag>
+																				<border>5</border>
+																				<object class="wxBoxSizer">
+																					<orient>wxVERTICAL</orient>
+																					<object class="spacer">
+																						<option>0</option>
+																						<flag>wxEXPAND</flag>
+																						<border>5</border>
+																						<size>0,10</size>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALL|wxEXPAND</flag>
+																						<border>5</border>
+																						<object class="wxStaticText" name="m_staticText23">
+																							<font>
+																								<family>default</family>
+																								<style>normal</style>
+																								<weight>normal</weight>
+																								<underlined>0</underlined>
+																							</font>
+																							<label>Last.fm Account</label>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxEXPAND</flag>
+																						<border>5</border>
+																						<object class="wxBoxSizer">
+																							<orient>wxHORIZONTAL</orient>
+																							<object class="sizeritem">
+																								<option>0</option>
+																								<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																								<border>5</border>
+																								<object class="wxStaticText" name="m_staticText211">
+																									<style>wxALIGN_RIGHT</style>
+																									<size>70,-1</size>
+																									<label>Username</label>
+																								</object>
+																							</object>
+																							<object class="sizeritem">
+																								<option>0</option>
+																								<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																								<border>5</border>
+																								<object class="wxTextCtrl" name="m_tc_options_username">
+																									<size>140,-1</size>
+																									<value></value>
+																									<maxlength>0</maxlength>
+																								</object>
+																							</object>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxEXPAND</flag>
+																						<border>5</border>
+																						<object class="wxBoxSizer">
+																							<orient>wxHORIZONTAL</orient>
+																							<object class="sizeritem">
+																								<option>0</option>
+																								<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																								<border>5</border>
+																								<object class="wxStaticText" name="m_staticText22">
+																									<style>wxALIGN_RIGHT</style>
+																									<size>70,-1</size>
+																									<label>Password</label>
+																								</object>
+																							</object>
+																							<object class="sizeritem">
+																								<option>0</option>
+																								<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																								<border>5</border>
+																								<object class="wxTextCtrl" name="m_tc_options_password">
+																									<style>wxTE_PASSWORD</style>
+																									<size>140,-1</size>
+																									<value></value>
+																									<maxlength>0</maxlength>
+																								</object>
+																							</object>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxEXPAND</flag>
+																						<border>5</border>
+																						<object class="wxBoxSizer">
+																							<orient>wxHORIZONTAL</orient>
+																							<object class="spacer">
+																								<option>0</option>
+																								<flag>wxEXPAND</flag>
+																								<border>5</border>
+																								<size>80,0</size>
+																							</object>
+																							<object class="sizeritem">
+																								<option>0</option>
+																								<flag>wxALL</flag>
+																								<border>5</border>
+																								<object class="wxButton" name="m_bu_options_save">
+																									<label>Save</label>
+																									<default>0</default>
+																								</object>
+																							</object>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxEXPAND</flag>
+																						<border>5</border>
+																						<object class="wxBoxSizer">
+																							<orient>wxVERTICAL</orient>
+																							<object class="sizeritem">
+																								<option>0</option>
+																								<flag>wxALL|wxEXPAND</flag>
+																								<border>10</border>
+																								<object class="wxStaticText" name="m_st_options_auth">
+																									<label>Status:</label>
+																								</object>
+																							</object>
+																							<object class="sizeritem">
+																								<option>0</option>
+																								<flag>wxEXPAND | wxALL</flag>
+																								<border>5</border>
+																								<object class="wxStaticLine" name="m_staticline8">
+																									<style>wxLI_HORIZONTAL</style>
+																								</object>
+																							</object>
+																							<object class="sizeritem">
+																								<option>0</option>
+																								<flag>wxALL</flag>
+																								<border>10</border>
+																								<object class="wxCheckBox" name="m_cb_options_scrobble">
+																									<label>Enable Scrobbling</label>
+																									<checked>1</checked>
+																								</object>
+																							</object>
+																						</object>
+																					</object>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>1</option>
+																				<flag>wxEXPAND</flag>
+																				<border>5</border>
+																				<object class="wxBoxSizer">
+																					<orient>wxVERTICAL</orient>
+																					<object class="spacer">
+																						<option>0</option>
+																						<flag>wxEXPAND</flag>
+																						<border>5</border>
+																						<size>0,10</size>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALL|wxEXPAND</flag>
+																						<border>5</border>
+																						<object class="wxRadioBox" name="m_rx_options_scrobble_port">
+																							<style>wxRA_SPECIFY_COLS</style>
+																							<label>Scrobble Port</label>
+																							<selection>1</selection>
+																							<content>
+																								<item>No Port</item>
+																								<item>Default Port</item>
+																							</content>
+																							<dimension>1</dimension>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxEXPAND</flag>
+																						<border>5</border>
+																						<object class="wxBoxSizer">
+																							<orient>wxHORIZONTAL</orient>
+																							<object class="sizeritem">
+																								<option>0</option>
+																								<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																								<border>10</border>
+																								<object class="wxCheckBox" name="m_cb_options_scrobble_album">
+																									<label>Scrobble Album</label>
+																									<checked>0</checked>
+																								</object>
+																							</object>
+																						</object>
+																					</object>
+																				</object>
+																			</object>
+																		</object>
+																	</object>
+																</object>
+																<object class="notebookpage">
+																	<label>Music Stream</label>
+																	<selected>0</selected>
+																	<object class="wxScrolledWindow" name="m_scrolledWindow21">
+																		<style>wxHSCROLL|wxVSCROLL</style>
+																		<object class="wxBoxSizer">
+																			<orient>wxVERTICAL</orient>
+																			<object class="spacer">
+																				<option>0</option>
+																				<flag>wxEXPAND</flag>
+																				<border>5</border>
+																				<size>0,10</size>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxEXPAND</flag>
+																				<border>5</border>
+																				<object class="wxBoxSizer">
+																					<orient>wxHORIZONTAL</orient>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																						<border>5</border>
+																						<object class="wxStaticText" name="m_staticText2111">
+																							<style>wxALIGN_LEFT</style>
+																							<label>Wait</label>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALL</flag>
+																						<border>5</border>
+																						<object class="wxSpinCtrl" name="m_sc_options_gs_wait">
+																							<style>wxSP_ARROW_KEYS</style>
+																							<size>60,-1</size>
+																							<value>8</value>
+																							<min>2</min>
+																							<max>20</max>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																						<border>5</border>
+																						<object class="wxStaticText" name="m_staticText45">
+																							<label>seconds before playing a streamed song (it takes time to load).</label>
+																						</object>
+																					</object>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxEXPAND</flag>
+																				<border>5</border>
+																				<object class="wxBoxSizer">
+																					<orient>wxHORIZONTAL</orient>
+																					<object class="sizeritem">
+																						<option>1</option>
+																						<flag>wxEXPAND | wxALL</flag>
+																						<border>5</border>
+																						<object class="wxStaticLine" name="m_staticline11">
+																							<style>wxLI_HORIZONTAL</style>
+																						</object>
+																					</object>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxEXPAND</flag>
+																				<border>5</border>
+																				<object class="wxBoxSizer">
+																					<orient>wxHORIZONTAL</orient>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																						<border>5</border>
+																						<object class="wxStaticText" name="m_staticText46">
+																							<label>Play songs for</label>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALL</flag>
+																						<border>5</border>
+																						<object class="wxSpinCtrl" name="m_sc_options_song_minutes">
+																							<style>wxSP_ARROW_KEYS</style>
+																							<size>50,-1</size>
+																							<value>4</value>
+																							<min>0</min>
+																							<max>10</max>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																						<border>5</border>
+																						<object class="wxStaticText" name="m_staticText47">
+																							<label>minutes</label>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALL</flag>
+																						<border>5</border>
+																						<object class="wxSpinCtrl" name="m_sc_options_song_seconds">
+																							<style>wxSP_ARROW_KEYS</style>
+																							<size>60,-1</size>
+																							<value>0</value>
+																							<min>0</min>
+																							<max>59</max>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																						<border>5</border>
+																						<object class="wxStaticText" name="m_staticText48">
+																							<label>seconds, if a time can&apos;t be found.</label>
+																						</object>
+																					</object>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>1</option>
+																				<flag>wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND</flag>
+																				<border>5</border>
+																				<object class="wxPanel" name="m_pa_player">
+																					<style>wxTAB_TRAVERSAL</style>
+																					<size>100,50</size>
+																				</object>
+																			</object>
+																		</object>
+																	</object>
+																</object>
+																<object class="notebookpage">
+																	<label>Plug-ins</label>
+																	<selected>0</selected>
+																	<object class="wxScrolledWindow" name="m_scrolledWindow13">
+																		<style>wxHSCROLL|wxVSCROLL</style>
+																		<object class="wxBoxSizer">
+																			<orient>wxVERTICAL</orient>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxTOP|wxRIGHT|wxLEFT</flag>
+																				<border>5</border>
+																				<object class="wxStaticText" name="m_staticText461">
+																					<fg>#008040</fg>
+																					<font>
+																						<size>9</size>
+																						<family>default</family>
+																						<style>normal</style>
+																						<weight>bold</weight>
+																						<underlined>0</underlined>
+																					</font>
+																					<label>Plug-ins</label>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxEXPAND | wxALL</flag>
+																				<border>5</border>
+																				<object class="wxStaticLine" name="m_staticline9">
+																					<style>wxLI_HORIZONTAL</style>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>1</option>
+																				<flag>wxEXPAND</flag>
+																				<border>5</border>
+																				<object class="wxBoxSizer">
+																					<orient>wxVERTICAL</orient>
+																					<object class="sizeritem">
+																						<option>1</option>
+																						<flag>wxEXPAND | wxALL</flag>
+																						<border>5</border>
+																						<object class="wxPanel" name="m_pa_options_plugins">
+																							<style>wxTAB_TRAVERSAL</style>
+																						</object>
+																					</object>
+																				</object>
+																			</object>
+																		</object>
+																	</object>
+																</object>
+															</object>
+														</object>
+													</object>
+												</object>
+											</object>
+										</object>
+									</object>
+								</object>
+							</object>
+						</object>
+					</object>
+				</object>
+			</object>
+		</object>
+	</object>
+</resource>
