@@ -1,0 +1,9 @@
+#Plug-in guide and list of plug-ins.
+
+= Introduction =
+Using plugin_loader.py, GrooveWalrus can load plug-ins stored in the /plugins directory.
+
+
+= How To Create A Plug-in =
+
+= Existing Plug-ins =
