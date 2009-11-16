@@ -1,0 +1,5 @@
+#summary GrooveWalrus is a standalone music player with GrooveShark and Last.fm support.
+
+= Introduction =
+GrooveWwalrus website:
+http://groove-walrus.turnip-town.net
