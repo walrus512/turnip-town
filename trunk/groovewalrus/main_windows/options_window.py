@@ -38,7 +38,8 @@ OPTIONS_ARR = [ 'last_password',
                 'scrobble_port',
                 'scrobble_album',
                 'bitrate', 
-                'record_dir'
+                'record_dir',
+                'tray'
                 ]
 
 # ===================================================================
@@ -71,6 +72,8 @@ class Options(object):
                 self.parent.rx_options_scrobble_port.SetSelection(int(options_dict['scrobble_port']))
             if options_dict.has_key('scrobble_album'):
                 self.parent.cb_options_scrobble_album.SetValue(int(options_dict['scrobble_album']))
+            if options_dict.has_key('tray'):
+                self.parent.cb_options_tray.SetValue(int(options_dict['tray']))
             if options_dict.has_key('record_dir'):
                 if options_dict['record_dir'] != None:                    
                     self.parent.bu_options_record_dir.SetLabel(options_dict['record_dir'])
@@ -101,6 +104,7 @@ class Options(object):
         window_dict['gs_wait'] = str(self.parent.sc_options_gs_wait.GetValue())
         window_dict['scrobble_port'] = str(int(self.parent.rx_options_scrobble_port.GetSelection()))
         window_dict['scrobble_album'] = str(int(self.parent.cb_options_scrobble_album.GetValue()))
+        window_dict['tray'] = str(int(self.parent.cb_options_tray.GetValue()))
         window_dict['bitrate'] = str(self.parent.ch_options_bitrate.GetStringSelection())
         window_dict['record_dir'] = str(self.parent.bu_options_record_dir.GetLabel())
         
