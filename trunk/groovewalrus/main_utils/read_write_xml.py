@@ -39,7 +39,7 @@ class xml_utils():
             print file_name
         except IOError:
             tree = ''
-            print 'error:read_xml_tree'
+            print 'error:read_xml_tree: ' + file_name
         return tree
     
     def get_tracks(self, file_name):
