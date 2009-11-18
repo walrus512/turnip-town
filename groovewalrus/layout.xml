@@ -1726,7 +1726,7 @@
 																					<object class="sizeritem">
 																						<option>0</option>
 																						<flag>wxALL</flag>
-																						<border>10</border>
+																						<border>7</border>
 																						<object class="wxCheckBox" name="m_cb_options_list_clear">
 																							<label>Playlistize! clears playlist before adding.</label>
 																							<checked>1</checked>
@@ -1735,7 +1735,7 @@
 																					<object class="sizeritem">
 																						<option>0</option>
 																						<flag>wxALL</flag>
-																						<border>10</border>
+																						<border>7</border>
 																						<object class="wxCheckBox" name="m_cb_options_alternate">
 																							<label>Use alternate GrooveShark source.</label>
 																							<checked>0</checked>
@@ -1744,9 +1744,18 @@
 																					<object class="sizeritem">
 																						<option>0</option>
 																						<flag>wxALL</flag>
-																						<border>10</border>
+																						<border>7</border>
 																						<object class="wxCheckBox" name="m_cb_options_noid">
 																							<label>Drop id from search results.</label>
+																							<checked>0</checked>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALL</flag>
+																						<border>7</border>
+																						<object class="wxCheckBox" name="m_cb_options_tray">
+																							<label>Minimize to tray.</label>
 																							<checked>0</checked>
 																						</object>
 																					</object>
