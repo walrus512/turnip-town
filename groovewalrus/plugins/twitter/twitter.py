@@ -128,7 +128,10 @@ class MainPanel(wx.Dialog):
             self.Move(nPos)
 
     def OnMouseLeftUp(self, evt):
-        self.ReleaseMouse()
+        try:
+            self.ReleaseMouse()
+        except wx._core.PyAssertionError:
+            pass
 
     def OnRightUp(self, evt):
         self.hide_me()

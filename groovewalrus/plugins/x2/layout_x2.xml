@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
+	<object class="wxPanel" name="m_pa_x2main">
+		<style>wxTAB_TRAVERSAL|wxWANTS_CHARS</style>
+		<size>906,555</size>
+		<object class="wxBoxSizer">
+			<orient>wxVERTICAL</orient>
+			<object class="sizeritem">
+				<option>1</option>
+				<flag>wxEXPAND</flag>
+				<border>5</border>
+				<object class="wxBoxSizer">
+					<orient>wxHORIZONTAL</orient>
+					<object class="sizeritem">
+						<option>1</option>
+						<flag>wxEXPAND</flag>
+						<border>5</border>
+						<object class="wxBoxSizer">
+							<orient>wxVERTICAL</orient>
+							<object class="sizeritem">
+								<option>1</option>
+								<flag>wxALL|wxEXPAND</flag>
+								<border>5</border>
+								<object class="wxCheckListBox" name="m_cl_x2_features">
+									<style>wxNO_BORDER</style>
+									<bg>#f0f0f0</bg>
+									<content />
+								</object>
+							</object>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>3</option>
+						<flag>wxEXPAND</flag>
+						<border>5</border>
+						<object class="wxBoxSizer">
+							<orient>wxVERTICAL</orient>
+							<object class="sizeritem">
+								<option>1</option>
+								<flag>wxEXPAND | wxALL</flag>
+								<border>5</border>
+								<object class="wxPanel" name="m_pa_x2_graph">
+									<style>wxTAB_TRAVERSAL</style>
+								</object>
+							</object>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>1</option>
+						<flag>wxEXPAND</flag>
+						<border>5</border>
+						<object class="wxBoxSizer">
+							<orient>wxVERTICAL</orient>
+							<object class="sizeritem">
+								<option>3</option>
+								<flag>wxEXPAND</flag>
+								<border>5</border>
+								<object class="wxBoxSizer">
+									<orient>wxHORIZONTAL</orient>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxEXPAND</flag>
+										<border>5</border>
+										<object class="wxBoxSizer">
+											<orient>wxVERTICAL</orient>
+											<object class="sizeritem">
+												<option>1</option>
+												<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxEXPAND</flag>
+												<border>0</border>
+												<object class="wxButton" name="m_bu_x2_plize">
+													<style>wxBU_EXACTFIT</style>
+													<label>P!</label>
+													<default>0</default>
+												</object>
+											</object>
+											<object class="spacer">
+												<option>1</option>
+												<flag>wxEXPAND</flag>
+												<border>5</border>
+												<size>0,0</size>
+											</object>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>1</option>
+										<flag>wxALL|wxEXPAND</flag>
+										<border>5</border>
+										<object class="wxListCtrl" name="m_lc_x2_plist">
+											<style>wxLC_NO_HEADER|wxLC_REPORT|wxNO_BORDER</style>
+											<bg>#f0f0f0</bg>
+										</object>
+									</object>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>1</option>
+								<flag>wxEXPAND</flag>
+								<border>5</border>
+								<object class="wxBoxSizer">
+									<orient>wxVERTICAL</orient>
+								</object>
+							</object>
+						</object>
+					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxEXPAND</flag>
+				<border>5</border>
+				<object class="wxBoxSizer">
+					<orient>wxHORIZONTAL</orient>
+					<object class="spacer">
+						<option>0</option>
+						<flag>wxEXPAND</flag>
+						<border>5</border>
+						<size>200,0</size>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<object class="wxButton" name="m_bu_x2_center">
+							<style>wxBU_EXACTFIT</style>
+							<label>Center</label>
+							<default>0</default>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+						<border>5</border>
+						<object class="wxStaticText" name="m_staticText2">
+							<label>Zoom</label>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
+						<border>5</border>
+						<object class="wxSpinButton" name="m_sb_x2_zoom">
+							<style>wxSP_HORIZONTAL</style>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<object class="wxStaticText" name="m_staticText3">
+							<label>Pan</label>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM</flag>
+						<border>5</border>
+						<object class="wxSpinButton" name="m_sb_x2_pany">
+							<style>wxSP_VERTICAL</style>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
+						<border>5</border>
+						<object class="wxSpinButton" name="m_sb_x2_panx">
+							<style>wxSP_HORIZONTAL</style>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<object class="wxCheckBox" name="m_cb_x2_xlog">
+							<label>x log</label>
+							<checked>0</checked>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<object class="wxCheckBox" name="m_cb_x2_ylog">
+							<label>y log</label>
+							<checked>0</checked>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+						<border>5</border>
+						<object class="wxStaticText" name="m_staticText1">
+							<label>PointSize</label>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
+						<border>5</border>
+						<object class="wxSlider" name="m_sl_x2_pointsize">
+							<style>wxSL_BOTH</style>
+							<size>80,-1</size>
+							<value>125</value>
+							<min>0</min>
+							<max>350</max>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<object class="wxCheckBox" name="m_c3_x2_pointtype">
+							<style>wxCHK_3STATE|wxCHK_ALLOW_3RD_STATE_FOR_USER</style>
+							<label>Pt Type</label>
+							<checked>0</checked>
+						</object>
+					</object>
+				</object>
+			</object>
+		</object>
+	</object>
+</resource>
