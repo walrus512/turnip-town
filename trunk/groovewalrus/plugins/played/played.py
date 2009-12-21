@@ -21,19 +21,21 @@ Place, Suite 330, Boston, MA 02111-1307 USA
 import wx
 import wx.xrc as xrc
 #from main_utils.read_write_xml import xml_utils
+from main_utils import system_files
 import sys, os
 import sqlite3
 
-SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0]))
-RESFILE = "\\.\\plugins\\played\\layout_played.xml"
-FILEDB = SYSLOC + '\\gravydb.sq3'
-MAIN_PLAYLIST =     SYSLOC + "\\playlist.xspf"
+SYSLOC = os.getcwd()
+RESFILE = os.path.join(os.getcwd(), 'plugins','played') + os.sep + "layout_played.xml"
 
 class MainPanel(wx.Dialog):
     def __init__(self, parent):
         wx.Dialog.__init__(self, parent, -1, "played", size=(475,450), style=wx.FRAME_SHAPED) #STAY_ON_TOP)        
         self.parent = parent
         
+        self.MAIN_PLAYLIST = system_files.GetDirectories(self).DataDirectory() + os.sep + "playlist.xspf"
+        self.FILEDB = system_files.GetDirectories(self).DataDirectory() + os.sep + 'gravydb.sq3'
+                
         # XML Resources can be loaded from a file like this:
         res = xrc.XmlResource(RESFILE)
 
@@ -84,7 +86,7 @@ class MainPanel(wx.Dialog):
         
     def GetLastPlayed(self):
         # get last songs played
-        conn = sqlite3.connect(FILEDB)
+        conn = sqlite3.connect(self.FILEDB)
         c = conn.cursor()
         t = "SELECT artist, song, last_play_date FROM m_playcount INNER JOIN m_tracks ON m_playcount.track_id=m_tracks.track_id ORDER BY last_play_date DESC LIMIT 50"
         c.execute(t)
@@ -101,7 +103,7 @@ class MainPanel(wx.Dialog):
 
     def GetMostPlayed(self):
         # get last songs played
-        conn = sqlite3.connect(FILEDB)
+        conn = sqlite3.connect(self.FILEDB)
         c = conn.cursor()
         t = "SELECT artist, song, local_playcount FROM m_playcount INNER JOIN m_tracks ON m_playcount.track_id=m_tracks.track_id ORDER BY local_playcount DESC LIMIT 50"
         c.execute(t)
@@ -165,7 +167,7 @@ class MainPanel(wx.Dialog):
                     self.parent.SetPlaylistItem(current_count + x, artist, song, '', '')
 
         #save the playlist
-        self.parent.SavePlaylist(MAIN_PLAYLIST)
+        self.parent.SavePlaylist(self.MAIN_PLAYLIST)
         # switch tabs
         #self.nb_main.SetSelection(NB_PLAYLIST)
                 

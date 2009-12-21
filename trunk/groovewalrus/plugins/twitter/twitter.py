@@ -26,11 +26,11 @@ import wx.xrc as xrc
 from main_utils.read_write_xml import xml_utils
 import sys, os
 
-SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0]))
+SYSLOC = os.getcwd()
 TWITTER_UPDATE = 'http://twitter.com/statuses/update.xml'
-TWITTER_SETTINGS = "\\.\\plugins\\twitter\\settings_twitter.xml"
-TWITTER = "\\.\\plugins\\twitter\\"
-RESFILE = "\\.\\plugins\\twitter\\layout_twitter.xml"
+TWITTER_SETTINGS = os.path.join(os.getcwd(), 'plugins','twitter') + os.sep + "settings_twitter.xml"
+TWITTER = os.path.join(os.getcwd(), 'plugins','twitter') + os.sep
+RESFILE = os.path.join(os.getcwd(), 'plugins','played') + os.sep + "layout_twiiter.xml"
 
 
 class MainPanel(wx.Dialog):
