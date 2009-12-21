@@ -30,7 +30,7 @@ SYSLOC = os.getcwd()
 TWITTER_UPDATE = 'http://twitter.com/statuses/update.xml'
 TWITTER_SETTINGS = os.path.join(os.getcwd(), 'plugins','twitter') + os.sep + "settings_twitter.xml"
 TWITTER = os.path.join(os.getcwd(), 'plugins','twitter') + os.sep
-RESFILE = os.path.join(os.getcwd(), 'plugins','played') + os.sep + "layout_twiiter.xml"
+RESFILE = os.path.join(os.getcwd(), 'plugins','twitter') + os.sep + "layout_twiiter.xml"
 
 
 class MainPanel(wx.Dialog):
