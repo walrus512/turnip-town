@@ -46,9 +46,9 @@ class AlbumViewer(wx.Frame):
         self.Show(False)
         self.MakeModal(False)
 
-    def SetImage(self, file_name):
+    def SetImage(self, file_name, dir_name):
         # set 
-        cover_bmp = wx.Bitmap(file_name, wx.BITMAP_TYPE_ANY) #wx.BITMAP_TYPE_JPEG)
+        cover_bmp = wx.Bitmap(dir_name + file_name, wx.BITMAP_TYPE_ANY) #wx.BITMAP_TYPE_JPEG)
         
         foo = wx.Bitmap.ConvertToImage(cover_bmp)        
         foo.Rescale(300, 300)
