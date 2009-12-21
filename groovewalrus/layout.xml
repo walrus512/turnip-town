@@ -25,7 +25,7 @@
 									<orient>wxHORIZONTAL</orient>
 									<object class="sizeritem">
 										<option>0</option>
-										<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT</flag>
+										<flag>wxALIGN_CENTER_HORIZONTAL|wxRIGHT|wxLEFT</flag>
 										<border>5</border>
 										<object class="wxStaticBitmap" name="m_bm_cover_small">
 											<size>75,75</size>
@@ -34,11 +34,11 @@
 									</object>
 									<object class="sizeritem">
 										<option>0</option>
-										<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT</flag>
-										<border>5</border>
+										<flag>wxALIGN_CENTER_HORIZONTAL|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL</flag>
+										<border>2</border>
 										<object class="wxSlider" name="m_sl_volume">
 											<style>wxSL_BOTH|wxSL_INVERSE|wxSL_VERTICAL</style>
-											<size>20,78</size>
+											<size>20,75</size>
 											<tooltip>Volume</tooltip>
 											<value>50</value>
 											<min>0</min>
@@ -197,8 +197,8 @@
 												<border>5</border>
 												<object class="wxBitmapButton" name="m_bb_record">
 													<style>wxBU_AUTODRAW</style>
-													<tooltip>Record</tooltip>
-													<bitmap>graphics/media-record.png</bitmap>
+													<tooltip>Save Song</tooltip>
+													<bitmap>graphics/drive-harddisk.png</bitmap>
 													<default>0</default>
 												</object>
 											</object>
@@ -1695,139 +1695,126 @@
 																	<object class="wxScrolledWindow" name="m_scrolledWindow25">
 																		<style>wxHSCROLL|wxVSCROLL</style>
 																		<object class="wxBoxSizer">
-																			<orient>wxHORIZONTAL</orient>
+																			<orient>wxVERTICAL</orient>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxEXPAND</flag>
+																				<border>5</border>
+																				<object class="wxBoxSizer">
+																					<orient>wxHORIZONTAL</orient>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxEXPAND</flag>
+																						<border>5</border>
+																						<object class="wxBoxSizer">
+																							<orient>wxVERTICAL</orient>
+																							<object class="spacer">
+																								<option>0</option>
+																								<flag>wxEXPAND</flag>
+																								<border>5</border>
+																								<size>0,10</size>
+																							</object>
+																							<object class="sizeritem">
+																								<option>0</option>
+																								<flag>wxALL|wxEXPAND</flag>
+																								<border>5</border>
+																								<object class="wxRadioBox" name="m_rx_options_double_click">
+																									<style>wxRA_SPECIFY_ROWS</style>
+																									<label>Double-clicking...</label>
+																									<selection>1</selection>
+																									<content>
+																										<item>adds song to the playlist.</item>
+																										<item>searches for that song.</item>
+																									</content>
+																									<dimension>2</dimension>
+																								</object>
+																							</object>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>1</option>
+																						<flag>wxEXPAND</flag>
+																						<border>5</border>
+																						<object class="wxBoxSizer">
+																							<orient>wxVERTICAL</orient>
+																							<object class="sizeritem">
+																								<option>0</option>
+																								<flag>wxALL</flag>
+																								<border>7</border>
+																								<object class="wxCheckBox" name="m_cb_options_list_clear">
+																									<label>Playlistize! clears playlist before adding.</label>
+																									<checked>1</checked>
+																								</object>
+																							</object>
+																							<object class="sizeritem">
+																								<option>0</option>
+																								<flag>wxALL</flag>
+																								<border>7</border>
+																								<object class="wxCheckBox" name="m_cb_options_alternate">
+																									<label>Use alternate GrooveShark source.</label>
+																									<checked>0</checked>
+																								</object>
+																							</object>
+																							<object class="sizeritem">
+																								<option>0</option>
+																								<flag>wxALL</flag>
+																								<border>7</border>
+																								<object class="wxCheckBox" name="m_cb_options_noid">
+																									<label>Drop id from search results.</label>
+																									<checked>0</checked>
+																								</object>
+																							</object>
+																							<object class="sizeritem">
+																								<option>0</option>
+																								<flag>wxALL</flag>
+																								<border>7</border>
+																								<object class="wxCheckBox" name="m_cb_options_tray">
+																									<label>Minimize to tray.</label>
+																									<checked>0</checked>
+																								</object>
+																							</object>
+																						</object>
+																					</object>
+																				</object>
+																			</object>
 																			<object class="sizeritem">
 																				<option>0</option>
 																				<flag>wxEXPAND</flag>
 																				<border>5</border>
 																				<object class="wxBoxSizer">
 																					<orient>wxVERTICAL</orient>
-																					<object class="spacer">
+																					<object class="sizeritem">
 																						<option>0</option>
-																						<flag>wxEXPAND</flag>
+																						<flag>wxEXPAND | wxALL</flag>
 																						<border>5</border>
-																						<size>0,10</size>
-																					</object>
-																					<object class="sizeritem">
-																						<option>0</option>
-																						<flag>wxALL|wxEXPAND</flag>
-																						<border>5</border>
-																						<object class="wxRadioBox" name="m_rx_options_double_click">
-																							<style>wxRA_SPECIFY_ROWS</style>
-																							<label>Double-clicking...</label>
-																							<selection>1</selection>
-																							<content>
-																								<item>adds song to the playlist.</item>
-																								<item>searches for that song.</item>
-																							</content>
-																							<dimension>2</dimension>
+																						<object class="wxStaticLine" name="m_staticline711">
+																							<style>wxLI_VERTICAL</style>
 																						</object>
 																					</object>
 																					<object class="sizeritem">
-																						<option>0</option>
-																						<flag>wxALL</flag>
-																						<border>7</border>
-																						<object class="wxCheckBox" name="m_cb_options_list_clear">
-																							<label>Playlistize! clears playlist before adding.</label>
-																							<checked>1</checked>
-																						</object>
-																					</object>
-																					<object class="sizeritem">
-																						<option>0</option>
-																						<flag>wxALL</flag>
-																						<border>7</border>
-																						<object class="wxCheckBox" name="m_cb_options_alternate">
-																							<label>Use alternate GrooveShark source.</label>
-																							<checked>0</checked>
-																						</object>
-																					</object>
-																					<object class="sizeritem">
-																						<option>0</option>
-																						<flag>wxALL</flag>
-																						<border>7</border>
-																						<object class="wxCheckBox" name="m_cb_options_noid">
-																							<label>Drop id from search results.</label>
-																							<checked>0</checked>
-																						</object>
-																					</object>
-																					<object class="sizeritem">
-																						<option>0</option>
-																						<flag>wxALL</flag>
-																						<border>7</border>
-																						<object class="wxCheckBox" name="m_cb_options_tray">
-																							<label>Minimize to tray.</label>
-																							<checked>0</checked>
-																						</object>
-																					</object>
-																				</object>
-																			</object>
-																			<object class="sizeritem">
-																				<option>1</option>
-																				<flag>wxEXPAND</flag>
-																				<border>5</border>
-																				<object class="wxBoxSizer">
-																					<orient>wxVERTICAL</orient>
-																					<object class="sizeritem">
-																						<option>0</option>
+																						<option>1</option>
 																						<flag>wxEXPAND</flag>
 																						<border>5</border>
 																						<object class="wxBoxSizer">
 																							<orient>wxHORIZONTAL</orient>
 																							<object class="sizeritem">
 																								<option>0</option>
-																								<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																								<border>5</border>
-																								<object class="wxStaticText" name="m_staticText451">
-																									<label>Record at</label>
-																								</object>
-																							</object>
-																							<object class="sizeritem">
-																								<option>0</option>
 																								<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
-																								<border>10</border>
-																								<object class="wxChoice" name="m_ch_options_bitrate">
-																									<selection>1</selection>
-																									<content>
-																										<item>80</item>
-																										<item>128</item>
-																										<item>192</item>
-																										<item>256</item>
-																										<item>320</item>
-																									</content>
+																								<border>5</border>
+																								<object class="wxStaticText" name="m_staticText49">
+																									<label>Save music to:</label>
 																								</object>
 																							</object>
 																							<object class="sizeritem">
-																								<option>0</option>
-																								<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																								<option>1</option>
+																								<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
 																								<border>5</border>
-																								<object class="wxStaticText" name="m_staticText462">
-																									<label>kbps.</label>
+																								<object class="wxButton" name="m_bu_options_record_dir">
+																									<label></label>
+																									<default>0</default>
 																								</object>
 																							</object>
 																						</object>
-																					</object>
-																					<object class="sizeritem">
-																						<option>0</option>
-																						<flag>wxALL</flag>
-																						<border>5</border>
-																						<object class="wxStaticText" name="m_staticText49">
-																							<label>Record music to:</label>
-																						</object>
-																					</object>
-																					<object class="sizeritem">
-																						<option>0</option>
-																						<flag>wxALL|wxEXPAND</flag>
-																						<border>5</border>
-																						<object class="wxButton" name="m_bu_options_record_dir">
-																							<label></label>
-																							<default>0</default>
-																						</object>
-																					</object>
-																					<object class="spacer">
-																						<option>1</option>
-																						<flag>wxEXPAND</flag>
-																						<border>5</border>
-																						<size>0,0</size>
 																					</object>
 																					<object class="sizeritem">
 																						<option>0</option>
@@ -1838,12 +1825,35 @@
 																						</object>
 																					</object>
 																					<object class="sizeritem">
-																						<option>0</option>
-																						<flag>wxALL</flag>
-																						<border>10</border>
-																						<object class="wxButton" name="m_bu_options_about">
-																							<label>About...</label>
-																							<default>0</default>
+																						<option>1</option>
+																						<flag>wxEXPAND</flag>
+																						<border>5</border>
+																						<object class="wxBoxSizer">
+																							<orient>wxHORIZONTAL</orient>
+																							<object class="sizeritem">
+																								<option>0</option>
+																								<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																								<border>5</border>
+																								<object class="wxStaticText" name="m_st_options_i18n_default">
+																									<size>250,-1</size>
+																									<label></label>
+																								</object>
+																							</object>
+																							<object class="spacer">
+																								<option>1</option>
+																								<flag>wxEXPAND</flag>
+																								<border>5</border>
+																								<size>0,0</size>
+																							</object>
+																							<object class="sizeritem">
+																								<option>0</option>
+																								<flag>wxALL</flag>
+																								<border>10</border>
+																								<object class="wxButton" name="m_bu_options_about">
+																									<label>About...</label>
+																									<default>0</default>
+																								</object>
+																							</object>
 																						</object>
 																					</object>
 																				</object>
