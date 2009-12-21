@@ -34,6 +34,8 @@ def extractIds(filename):
     tags = [
         '{http://www.wxwindows.org/wxxrc}label',
         #'label',
+        '{http://www.wxwindows.org/wxxrc}item',
+        '{http://www.wxwindows.org/wxxrc}tooltip',
         '{http://www.wxwindows.org/wxxrc}title'
     ]
     
