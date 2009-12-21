@@ -19,7 +19,7 @@ class Target:
     def __init__(self, **kw):
         self.__dict__.update(kw)
         # for the versioninfo resources
-        self.version = "0.19"
+        self.version = "0.20"
         self.company_name = "Turnip-Town.net"
         self.copyright = "lots of copyright"
         self.name = "GrooveWalrus"
@@ -75,7 +75,7 @@ test_wx = Target(
 
 #includes = ["_mysql","MySQLdb","_mysql_exceptions",]
 #includes = ["comtypes"]
-includes = []
+includes = ["email.iterators",]
 excludes = ['_tkinter', '_gtkagg', '_tkagg', '_agg2', '_cairo',
             'QtCore','QtGui','Tkinter','Tkconstants',
             '_cocoaagg', '_fltkagg', '_gtk', '_gtkcairo', ]

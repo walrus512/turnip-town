@@ -766,7 +766,7 @@
                                                     <property name="proportion">0</property>
                                                     <object class="wxBitmapButton" expanded="1">
                                                         <property name="bg"></property>
-                                                        <property name="bitmap">graphics/media-record.png; Load From File</property>
+                                                        <property name="bitmap">graphics/drive-harddisk.png; Load From File</property>
                                                         <property name="context_help"></property>
                                                         <property name="default">0</property>
                                                         <property name="disabled"></property>
@@ -787,7 +787,7 @@
                                                         <property name="size"></property>
                                                         <property name="style">wxBU_AUTODRAW</property>
                                                         <property name="subclass">; </property>
-                                                        <property name="tooltip">Record</property>
+                                                        <property name="tooltip">Save Song</property>
                                                         <property name="window_extra_style"></property>
                                                         <property name="window_name"></property>
                                                         <property name="window_style"></property>
