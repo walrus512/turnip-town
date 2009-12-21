@@ -23,9 +23,10 @@ import wx
 import sqlite3
 
 from main_utils.read_write_xml import xml_utils
+from main_utils import system_files
 
 import sys, os
-SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0]))
+
 OPTIONS_ARR = [ 'last_password',
                 'last_user',
                 'list_clear',
@@ -37,7 +38,7 @@ OPTIONS_ARR = [ 'last_password',
                 'song_time',
                 'scrobble_port',
                 'scrobble_album',
-                'bitrate', 
+                #'bitrate', 
                 'record_dir',
                 'tray'
                 ]
@@ -46,10 +47,11 @@ OPTIONS_ARR = [ 'last_password',
 class Options(object):
     def __init__(self, parent):
         self.parent = parent
+        self.save_location = system_files.GetDirectories(self.parent).DataDirectory()
        
     def LoadOptions(self):
         # load options from file, populate options tab
-        options_dict = xml_utils().get_generic_settings(SYSLOC + '\\settings.xml')
+        options_dict = xml_utils().get_generic_settings(self.save_location + os.sep + 'settings.xml')
         if len(options_dict) > 1:
             password = options_dict['last_password']
             if password == None:
@@ -64,8 +66,8 @@ class Options(object):
             self.parent.cb_options_alternate.SetValue(int(options_dict['alternate_source']))
             if options_dict.has_key('search_noid'):
                 self.parent.cb_options_noid.SetValue(int(options_dict['search_noid']))
-            if options_dict.has_key('bitrate'):
-                self.parent.ch_options_bitrate.SetStringSelection(options_dict['bitrate'])
+            #if options_dict.has_key('bitrate'):
+            #    self.parent.ch_options_bitrate.SetStringSelection(options_dict['bitrate'])
             if options_dict.has_key('gs_wait'):
                 self.parent.sc_options_gs_wait.SetValue(int(options_dict['gs_wait']))
             if options_dict.has_key('scrobble_port'):
@@ -78,7 +80,7 @@ class Options(object):
                 if options_dict['record_dir'] != None:                    
                     self.parent.bu_options_record_dir.SetLabel(options_dict['record_dir'])
             else:
-                self.parent.bu_options_record_dir.SetLabel(SYSLOC + '\\mp3s\\')
+                self.parent.bu_options_record_dir.SetLabel(self.save_location + '\\mp3s\\')
             if options_dict.has_key('song_time'):
                 fmt_time = ConvertTimeFormated(int(options_dict['song_time']))
                 minutes = fmt_time.split(':')[0]
@@ -105,7 +107,7 @@ class Options(object):
         window_dict['scrobble_port'] = str(int(self.parent.rx_options_scrobble_port.GetSelection()))
         window_dict['scrobble_album'] = str(int(self.parent.cb_options_scrobble_album.GetValue()))
         window_dict['tray'] = str(int(self.parent.cb_options_tray.GetValue()))
-        window_dict['bitrate'] = str(self.parent.ch_options_bitrate.GetStringSelection())
+        #window_dict['bitrate'] = str(self.parent.ch_options_bitrate.GetStringSelection())
         window_dict['record_dir'] = str(self.parent.bu_options_record_dir.GetLabel())
         
         minutes = self.parent.sc_options_song_minutes.GetValue()
@@ -118,7 +120,7 @@ class Options(object):
             dlg = wx.MessageDialog(self.parent, 'Warning!\r\nUsing the alternate GrooveShark source may cause HUGE problems when using the GrooveShark website (ie. it will not work for you anymore).\r\nSave anyway?', 'Alert', wx.CANCEL | wx.OK | wx.ICON_WARNING)
             if (dlg.ShowModal() == wx.ID_OK):
                 #save new settings        
-                xml_utils().save_generic_settings(SYSLOC + '\\settings.xml', 'settings.xml', window_dict)
+                xml_utils().save_generic_settings(self.save_location + os.sep + 'settings.xml', 'settings.xml', window_dict)
                 #print window_dict
             else:
                 self.parent.cb_options_alternate.SetValue(0)
@@ -126,7 +128,7 @@ class Options(object):
             
         else:
             #save new settings        
-            xml_utils().save_generic_settings(SYSLOC + '\\', 'settings.xml', window_dict)
+            xml_utils().save_generic_settings(self.save_location  + os.sep, 'settings.xml', window_dict)
             #print window_dict 
         
     def ShowAbout(self, program_name, program_version):

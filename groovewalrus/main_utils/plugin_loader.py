@@ -24,8 +24,8 @@ from main_utils.read_write_xml import xml_utils
 import  wx
 import sys, os
 
-SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0]))
-PLUGINS_LOCATION = SYSLOC + "\\.\\plugins\\"
+SYSLOC = os.getcwd()
+PLUGINS_LOCATION = SYSLOC + os.sep + "plugins" + os.sep
 
 class PluginLoader():
     #plug-in loader
@@ -41,7 +41,7 @@ class PluginLoader():
         #accerators
         acc_arr = []
         for root, dirs, files in os.walk(base_path):
-            dir_name = root.rsplit('\\', 1)[1]
+            dir_name = root.rsplit(os.sep, 1)[1]
             #print dir_name
             counter = 0
             #counter = counter + files.count("settings_" + dir_name + ".xml")
@@ -57,7 +57,7 @@ class PluginLoader():
                 btnsizer = wx.BoxSizer(wx.HORIZONTAL)
     
                 # plugin text
-                xml_dict = xml_utils().get_generic_settings(root + "\\info_" + dir_name + ".xml")
+                xml_dict = xml_utils().get_generic_settings(root + os.sep + "info_" + dir_name + ".xml")
                 hot_key = ''
                 if 'title' in xml_dict:
                     t = wx.StaticText(self.parent.pa_options_plugins, -1, xml_dict['title'], size=(120,15), style=wx.ALIGN_RIGHT)
@@ -68,7 +68,7 @@ class PluginLoader():
                     acc_arr.append((id_counter, xml_dict['title'][0].upper()))
                 
                 # plugin button
-                bmp = wx.Bitmap(root + "\\" + "icon_" + dir_name + ".png", wx.BITMAP_TYPE_ANY)
+                bmp = wx.Bitmap(root + os.sep + "icon_" + dir_name + ".png", wx.BITMAP_TYPE_ANY)
                 b = wx.BitmapButton(self.parent.pa_options_plugins, id_counter, bmp) #, (20, 20), (bmp.GetWidth()+10, bmp.GetHeight()+10))                
                 btnsizer.Add(b, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)
                 self.parent.Bind(wx.EVT_BUTTON, self.LoadPluginWindow, b)
