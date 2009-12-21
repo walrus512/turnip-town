@@ -25,11 +25,10 @@ import time
 from threading import Thread
 
 from main_thirdp import mp3tag
+from main_utils import system_files
 
 import sys
-SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0]))
-
-FILEDB = SYSLOC + '\\gravydb.sq3'
+SYSLOC = os.getcwd()
 
 #queries
 
@@ -37,272 +36,281 @@ FILEDB = SYSLOC + '\\gravydb.sq3'
 # use sqlite to store collection
 # index files based on directories
 # update based on folder numbers
-
-def create_tables():
-    conn = sqlite3.connect(FILEDB)
-    c = conn.cursor()
-    
-    tabledict = {"m_files": "CREATE TABLE IF NOT EXISTS m_files (music_id INTEGER PRIMARY KEY, folder_path TEXT, folder_name TEXT, file_name TEXT)",
-     "m_tracks": "CREATE TABLE IF NOT EXISTS m_tracks (track_id INTEGER PRIMARY KEY, grooveshark_id INTEGER, music_id INTEGER, track_time INTEGER, tag_id INTEGER, artist TEXT, song TEXT, album TEXT, album_art_file TEXT)",
-     "m_pop": "CREATE TABLE IF NOT EXISTS m_pop (pop_id INTEGER PRIMARY KEY, track_id INTEGER, listeners INTEGER, playcount INTEGER)",
-     "m_tag": "CREATE TABLE IF NOT EXISTS m_tag (tag_id INTEGER PRIMARY KEY, tag_label TEXT)",
-     "m_playcount": "CREATE TABLE IF NOT EXISTS m_playcount (playcount_id INTEGER PRIMARY KEY, track_id INTEGER, local_playcount INTEGER, last_play_date DATETIME)",
-     "m_rating": "CREATE TABLE IF NOT EXISTS m_rating (rating_id INTEGER PRIMARY KEY, track_id INTEGER, rating_type_id INTEGER)",
-     "m_settings": "CREATE TABLE IF NOT EXISTS m_settings (setting_id INTEGER PRIMARY KEY, setting_name TEXT, setting_value TEXT)"
-     }
-
-    # Create table
-    for x in tabledict:
-        c.execute(tabledict[x])
-    conn.commit()
-    c.close()    
-
-def GetCountAndLast():
-    # get row count
-    rcount = 0
-    filen = ''
-    conn = sqlite3.connect(FILEDB)
-    c = conn.cursor()
-    t = "SELECT music_id, folder_path, folder_name, COUNT(*) as rcount FROM m_files ORDER BY music_id DESC LIMIT 1"
-    c.execute(t)
-    h = c.fetchall()
-    for x in h:        
-        rcount = x[3]
-        if x[1] != None:
-            filen = x[1] + '/' + x[2]
-    c.close()
-    return (rcount, filen)
-    
-def GetRow(row_num, column):
-    # get row count
-    row_num = row_num + 1
-    ritem = ''    
-    conn = sqlite3.connect(FILEDB)
-    c = conn.cursor()
-    tq = "SELECT music_id, file_name, folder_name, folder_path FROM m_files WHERE music_id = " + str(row_num)
-    c.execute(tq)
-    h = c.fetchall()
-    for x in h:
-        ritem = x[column]
-    c.close()
-    return (ritem)
-    
-    
-def RemoveRow(music_id):
-    # get row count
-    if len(music_id) > 0:
-        conn = sqlite3.connect(FILEDB)
-        c = conn.cursor()
-        #t = "DELETE FROM m_files WHERE music_id = " + str(music_id) # + " LIMIT 1"   
-        #print t
-        c.execute('DELETE FROM m_files WHERE music_id=?', (int(music_id), ))
-        conn.commit()
-        c.close()
-        
-def MakeQuery(query, qlimit, folder_query=1):
-    q_rep = query.replace("'","").replace("!","").replace("&"," ").replace(",","").replace("-"," ")
-    q_split = q_rep.split(' ')
-    s = ''
-    the_and = ''
-    #check if we want to search files or folders
-    if folder_query > 1:
-        f_string = 'folder_name'
-    else:
-        f_string = 'file_name'
-        
-    if len(q_split) > 1:
-        for y in q_split:
-            s = s + the_and + " " + f_string + " LIKE '%" + y + "%'"
-            the_and = ' AND'
-        t = "SELECT music_id, file_name, folder_name, folder_path FROM m_files WHERE " + s + " LIMIT " + str(qlimit)
-    else:
-        t = "SELECT music_id, file_name, folder_name, folder_path FROM m_files WHERE " + f_string + " LIKE '%" + query + "%' LIMIT " + str(qlimit) #('%' + query + '%',)
-        
-    if folder_query > 2:
-        t = t.replace(' music_id, file_name, folder_name, folder_path ', ' DISTINCT folder_name ')
-        t = t.replace(' LIMIT ', ' ORDER BY folder_name LIMIT ')
-        #print t
-    return t
-    
-def GetResults(query, qlimit):
-    r_arr = []
-    conn = sqlite3.connect(FILEDB)
-    c = conn.cursor()
-    
-    t = MakeQuery(query, qlimit)
-    
-    c.execute(t)
-    h = c.fetchall()
-    for x in h:
-        #print x[0].replace('_', ' ').replace(' - ', '-')
-        r_arr.append(x[3] + '/' + x[2] + '/' + x[1])
-    c.close()
-    return r_arr
-    
-def GetResultsArray(query, qlimit, with_count=False, folder_query=1):
-    r_arr = []
-    conn = sqlite3.connect(FILEDB)
-    c = conn.cursor()
+class DbFuncs(object):
+    def __init__(self):
+        self.FILEDB = system_files.GetDirectories(None).DataDirectory() + os.sep + 'gravydb.sq3'
        
-    t = MakeQuery(query, qlimit, folder_query)#, with_count)
+    def create_tables(self):        
+        conn = sqlite3.connect(self.FILEDB)
+        c = conn.cursor()        
+        tabledict = {"m_files": "CREATE TABLE IF NOT EXISTS m_files (music_id INTEGER PRIMARY KEY, folder_path TEXT, folder_name TEXT, file_name TEXT)",
+         "m_tracks": "CREATE TABLE IF NOT EXISTS m_tracks (track_id INTEGER PRIMARY KEY, grooveshark_id INTEGER, music_id INTEGER, track_time INTEGER, tag_id INTEGER, artist TEXT, song TEXT, album TEXT, album_art_file TEXT)",
+         "m_pop": "CREATE TABLE IF NOT EXISTS m_pop (pop_id INTEGER PRIMARY KEY, track_id INTEGER, listeners INTEGER, playcount INTEGER)",
+         "m_tag": "CREATE TABLE IF NOT EXISTS m_tag (tag_id INTEGER PRIMARY KEY, tag_label TEXT)",
+         "m_playcount": "CREATE TABLE IF NOT EXISTS m_playcount (playcount_id INTEGER PRIMARY KEY, track_id INTEGER, local_playcount INTEGER, last_play_date DATETIME)",
+         "m_rating": "CREATE TABLE IF NOT EXISTS m_rating (rating_id INTEGER PRIMARY KEY, track_id INTEGER, rating_type_id INTEGER)",
+         "m_settings": "CREATE TABLE IF NOT EXISTS m_settings (setting_id INTEGER PRIMARY KEY, setting_name TEXT, setting_value TEXT)"
+         }
     
-    c.execute(t)
-    h = c.fetchall()
-    #print t
-    counter = 0
-    for x in h:
-        file_name = ''
-        if len(x) > 1:
-            file_name = x[3] + '/' + x[2] + '/' + x[1]
-        #print x[0].replace('_', ' ').replace(' - ', '-')
-        s_arr = []
-        if with_count == True:
-            if folder_query > 2:
-                s_arr.append('')
-                s_arr.append('')
-                s_arr.append(x[0])
-                s_arr.append('')
-            else:
-                s_arr.append(x[0])
-                s_arr.append(x[1])
-                s_arr.append(x[2])
-                s_arr.append(x[3])
-        else:
-            if os.path.isfile(file_name):
-                s_arr.append(GetMp3Artist(file_name))
-                s_arr.append(GetMp3Title(file_name))
-                s_arr.append(GetMp3Album(file_name))
-        s_arr.append(file_name)
-        r_arr.append(s_arr)
-        counter = counter + 1
-        
-    c.close()
-    return r_arr
-    
-def InsertTrackData(p_grooveshark_id, p_music_id, p_track_time, p_tag_id, p_artist, p_song, p_album, p_album_art_file):
-    #check for existing track
-    #update values
-    #add new record
-    #grooveshark_id, music_id, track_time, tag_id, artist, 
-    #song, album, album_art_file, rating_type_id
-    if p_tag_id == '':
-        p_tag_id = 0;    
-    
-    conn = sqlite3.connect(FILEDB)
-    c = conn.cursor()
-    
-    #if p_grooveshark_id >= 1:
-    #    qp = " grooveshark_id = " + str(p_grooveshark_id)
-    #else:
-    qp = " music_id = " + str(p_music_id)
-    #print qp
-    if p_music_id >= 1:
-        t = "SELECT track_id FROM m_tracks WHERE" + qp
-    #print t
-    ##if (p_grooveshark_id == 0) & (p_music_id == 0):
-    elif p_grooveshark_id >= 1:
-        qp = " grooveshark_id = " + str(p_grooveshark_id)
-        t = "SELECT track_id FROM m_tracks WHERE" + qp
-    else:
-        t = 'SELECT track_id FROM m_tracks WHERE artist="' + p_artist + '" AND song="' + p_song + '" AND track_time=' + str(p_track_time)
-    c.execute(t)
-    h = c.fetchall()
-    #print h
-    if len(h) >= 1:
-        g_track_id = h[0][0]        
-        c.execute('UPDATE m_tracks SET track_time= ' + str(p_track_time) + ', tag_id=' + str(p_tag_id) + ', artist="' + p_artist + '", song="' + p_song + '", album="' + p_album + '", album_art_file="' + p_album_art_file + '" WHERE track_id=' + str(g_track_id))
+        # Create table
+        for x in tabledict:
+            c.execute(tabledict[x])
         conn.commit()
-    else:
-        c.execute('INSERT INTO m_tracks values (null,?,?,?,?,?,?,?,?)', (p_grooveshark_id, p_music_id, p_track_time, p_tag_id, p_artist, p_song, p_album, p_album_art_file))
-        conn.commit()
-        t = 'SELECT track_id FROM m_tracks WHERE' + qp
+        c.close()    
+    
+    def GetCountAndLast(self):
+        # get row count
+        rcount = 0
+        filen = ''        
+        conn = sqlite3.connect(self.FILEDB)
+        c = conn.cursor()
+        t = "SELECT music_id, folder_path, folder_name, COUNT(*) as rcount FROM m_files ORDER BY music_id DESC LIMIT 1"
         c.execute(t)
-        g_track_id = c.fetchall()[0][0]
-    c.close()
-    return g_track_id
-    
-def InsertTagData(p_tag_label):
-    #check for existing tag
-    #if doesn't exit add a new one
-    #return tag id in either case
-    conn = sqlite3.connect(FILEDB)
-    c = conn.cursor()
-    
-    t = 'SELECT tag_id FROM m_tag WHERE tag_label="' + p_tag_label + '"'
-    c.execute(t)
-    h = c.fetchall()
-    #print h
-    if len(h) >= 1:
-        tag_id = h[0][0]
-    else:
-        c.execute('INSERT INTO m_tag (tag_label) VALUES ("' + p_tag_label + '")')
-        conn.commit()
+        h = c.fetchall()
+        for x in h:        
+            rcount = x[3]
+            if x[1] != None:
+                filen = x[1] + '/' + x[2]
+        c.close()
+        return (rcount, filen)
+        
+    def GetRow(self, row_num, column):
+        # get row count
+        row_num = row_num + 1
+        ritem = ''
+        
+        conn = sqlite3.connect(self.FILEDB)
+        c = conn.cursor()
+        tq = "SELECT music_id, file_name, folder_name, folder_path FROM m_files WHERE music_id = " + str(row_num)
+        c.execute(tq)
+        h = c.fetchall()
+        for x in h:
+            ritem = x[column]
+        c.close()
+        return (ritem)
+        
+        
+    def RemoveRow(self, music_id):
+        # get row count
+        
+        if len(music_id) > 0:
+            conn = sqlite3.connect(self.FILEDB)
+            c = conn.cursor()
+            #t = "DELETE FROM m_files WHERE music_id = " + str(music_id) # + " LIMIT 1"   
+            #print t
+            c.execute('DELETE FROM m_files WHERE music_id=?', (int(music_id), ))
+            conn.commit()
+            c.close()
+            
+    def MakeQuery(self, query, qlimit, folder_query=1):
+        q_rep = query.replace("'","").replace("!","").replace("&"," ").replace(",","").replace("-"," ")
+        q_split = q_rep.split(' ')
+        s = ''
+        the_and = ''
+        #check if we want to search files or folders
+        if folder_query > 1:
+            f_string = 'folder_name'
+        else:
+            f_string = 'file_name'
+            
+        if len(q_split) > 1:
+            for y in q_split:
+                s = s + the_and + " " + f_string + " LIKE '%" + y + "%'"
+                the_and = ' AND'
+            t = "SELECT music_id, file_name, folder_name, folder_path FROM m_files WHERE " + s + " LIMIT " + str(qlimit)
+        else:
+            t = "SELECT music_id, file_name, folder_name, folder_path FROM m_files WHERE " + f_string + " LIKE '%" + query + "%' LIMIT " + str(qlimit) #('%' + query + '%',)
+            
+        if folder_query > 2:
+            t = t.replace(' music_id, file_name, folder_name, folder_path ', ' DISTINCT folder_name ')
+            t = t.replace(' LIMIT ', ' ORDER BY folder_name LIMIT ')
+            #print t
+        return t
+        
+    def GetResults(self, query, qlimit):
+        r_arr = []
+        
+        conn = sqlite3.connect(self.FILEDB)
+        c = conn.cursor()
+        
+        t = self.MakeQuery(query, qlimit)
+        
+        c.execute(t)
+        h = c.fetchall()
+        for x in h:
+            #print x[0].replace('_', ' ').replace(' - ', '-')
+            r_arr.append(x[3] + '/' + x[2] + '/' + x[1])
+        c.close()
+        return r_arr
+        
+    def GetResultsArray(self, query, qlimit, with_count=False, folder_query=1):
+        r_arr = []
+        
+        conn = sqlite3.connect(self.FILEDB)
+        c = conn.cursor()
+           
+        t = self.MakeQuery(query, qlimit, folder_query)#, with_count)
+        
+        c.execute(t)
+        h = c.fetchall()
+        #print t
+        counter = 0
+        for x in h:
+            file_name = ''
+            if len(x) > 1:
+                file_name = x[3] + '/' + x[2] + '/' + x[1]
+            #print x[0].replace('_', ' ').replace(' - ', '-')
+            s_arr = []
+            if with_count == True:
+                if folder_query > 2:
+                    s_arr.append('')
+                    s_arr.append('')
+                    s_arr.append(x[0])
+                    s_arr.append('')
+                else:
+                    s_arr.append(x[0])
+                    s_arr.append(x[1])
+                    s_arr.append(x[2])
+                    s_arr.append(x[3])
+            else:
+                if os.path.isfile(file_name):
+                    s_arr.append(GetMp3Artist(file_name))
+                    s_arr.append(GetMp3Title(file_name))
+                    s_arr.append(GetMp3Album(file_name))
+            s_arr.append(file_name)
+            r_arr.append(s_arr)
+            counter = counter + 1
+            
+        c.close()
+        return r_arr
+        
+    def InsertTrackData(self, p_grooveshark_id, p_music_id, p_track_time, p_tag_id, p_artist, p_song, p_album, p_album_art_file):
+        #check for existing track
+        #update values
+        #add new record
+        #grooveshark_id, music_id, track_time, tag_id, artist, 
+        #song, album, album_art_file, rating_type_id
+        if p_tag_id == '':
+            p_tag_id = 0;    
+        
+        conn = sqlite3.connect(self.FILEDB)
+        c = conn.cursor()
+        
+        #if p_grooveshark_id >= 1:
+        #    qp = " grooveshark_id = " + str(p_grooveshark_id)
+        #else:
+        qp = " music_id = " + str(p_music_id)
+        #print qp
+        if p_music_id >= 1:
+            t = "SELECT track_id FROM m_tracks WHERE" + qp
+        #print t
+        ##if (p_grooveshark_id == 0) & (p_music_id == 0):
+        elif p_grooveshark_id >= 1:
+            qp = " grooveshark_id = " + str(p_grooveshark_id)
+            t = "SELECT track_id FROM m_tracks WHERE" + qp
+        else:
+            t = 'SELECT track_id FROM m_tracks WHERE artist="' + p_artist + '" AND song="' + p_song + '" AND track_time=' + str(p_track_time)
+        c.execute(t)
+        h = c.fetchall()
+        #print h
+        if len(h) >= 1:
+            g_track_id = h[0][0]        
+            c.execute('UPDATE m_tracks SET track_time= ' + str(p_track_time) + ', tag_id=' + str(p_tag_id) + ', artist="' + p_artist + '", song="' + p_song + '", album="' + p_album + '", album_art_file="' + p_album_art_file + '" WHERE track_id=' + str(g_track_id))
+            conn.commit()
+        else:
+            c.execute('INSERT INTO m_tracks values (null,?,?,?,?,?,?,?,?)', (p_grooveshark_id, p_music_id, p_track_time, p_tag_id, p_artist, p_song, p_album, p_album_art_file))
+            conn.commit()
+            t = 'SELECT track_id FROM m_tracks WHERE' + qp
+            c.execute(t)
+            g_track_id = c.fetchall()[0][0]
+        c.close()
+        return g_track_id
+        
+    def InsertTagData(self, p_tag_label):
+        #check for existing tag
+        #if doesn't exit add a new one
+        #return tag id in either case
+        
+        conn = sqlite3.connect(self.FILEDB)
+        c = conn.cursor()
+        
         t = 'SELECT tag_id FROM m_tag WHERE tag_label="' + p_tag_label + '"'
         c.execute(t)
-        tag_id = c.fetchall()[0][0]
-    c.close()
-    
-    return tag_id
-    
-def InsertPopData(p_track_id, p_listeners, p_playcount):
-    #track_id, listeners, playcount
-    #check for existing
-    #update record
-    #add new record
-    conn = sqlite3.connect(FILEDB)
-    c = conn.cursor()
-    
-    t = 'SELECT pop_id FROM m_pop WHERE track_id=' + str(p_track_id) + ''
-    c.execute(t)
-    h = c.fetchall()
-    #print h
-    if len(h) >= 1:
-        g_pop_id = h[0][0]
-        c.execute('UPDATE m_pop SET track_id= ' + str(p_track_id) + ', listeners=' + str(p_listeners) + ', playcount=' + str(p_playcount) + ' WHERE pop_id =' + str(g_pop_id))
-        conn.commit()
-    else:
-        c.execute('INSERT INTO m_pop (track_id, listeners, playcount) VALUES (' + str(p_track_id) + ', ' + str(p_listeners) + ', ' + str(p_playcount) + ')')
-        conn.commit()
-    c.close()
-    
-def InsertPlaycountData(p_track_id):
-    #track_id, local_playcount, last_play_date
-    #check for existing
-    #update record
-    #select datetime('now','localtime')
-    #check for pcount 
-    #if doesn't exist add a new one
-    conn = sqlite3.connect(FILEDB)
-    c = conn.cursor()
-    
-    t = 'SELECT playcount_id, local_playcount FROM m_playcount WHERE track_id=' + str(p_track_id) + ''
-    c.execute(t)
-    h = c.fetchall()
-    #print h
-    if len(h) >= 1:
-        g_playcount_id = h[0][0]
-        g_local_playcount = int(h[0][1]) + 1
-        c.execute('UPDATE m_playcount SET track_id= ' + str(p_track_id) + ', local_playcount=' + str(g_local_playcount) + ', last_play_date=datetime("now","localtime") WHERE playcount_id =' + str(g_playcount_id))
-        conn.commit()
-    else:
-        c.execute('INSERT INTO m_playcount (track_id, local_playcount, last_play_date) VALUES (' + str(p_track_id) + ', 1, datetime("now","localtime"))')
-        conn.commit()
-    c.close()
-    
-    #return tag_id
-                
-#if (os.path.isfile(FILEDB)):
+        h = c.fetchall()
+        #print h
+        if len(h) >= 1:
+            tag_id = h[0][0]
+        else:
+            c.execute('INSERT INTO m_tag (tag_label) VALUES ("' + p_tag_label + '")')
+            conn.commit()
+            t = 'SELECT tag_id FROM m_tag WHERE tag_label="' + p_tag_label + '"'
+            c.execute(t)
+            tag_id = c.fetchall()[0][0]
+        c.close()
+        
+        return tag_id
+        
+    def InsertPopData(self, p_track_id, p_listeners, p_playcount):
+        #track_id, listeners, playcount
+        #check for existing
+        #update record
+        #add new record
+        
+        conn = sqlite3.connect(self.FILEDB)
+        c = conn.cursor()
+        
+        t = 'SELECT pop_id FROM m_pop WHERE track_id=' + str(p_track_id) + ''
+        c.execute(t)
+        h = c.fetchall()
+        #print h
+        if len(h) >= 1:
+            g_pop_id = h[0][0]
+            c.execute('UPDATE m_pop SET track_id= ' + str(p_track_id) + ', listeners=' + str(p_listeners) + ', playcount=' + str(p_playcount) + ' WHERE pop_id =' + str(g_pop_id))
+            conn.commit()
+        else:
+            c.execute('INSERT INTO m_pop (track_id, listeners, playcount) VALUES (' + str(p_track_id) + ', ' + str(p_listeners) + ', ' + str(p_playcount) + ')')
+            conn.commit()
+        c.close()
+        
+    def InsertPlaycountData(self, p_track_id):
+        #track_id, local_playcount, last_play_date
+        #check for existing
+        #update record
+        #select datetime('now','localtime')
+        #check for pcount 
+        #if doesn't exist add a new one
+        
+        conn = sqlite3.connect(self.FILEDB)
+        c = conn.cursor()
+        
+        t = 'SELECT playcount_id, local_playcount FROM m_playcount WHERE track_id=' + str(p_track_id) + ''
+        c.execute(t)
+        h = c.fetchall()
+        #print h
+        if len(h) >= 1:
+            g_playcount_id = h[0][0]
+            g_local_playcount = int(h[0][1]) + 1
+            c.execute('UPDATE m_playcount SET track_id= ' + str(p_track_id) + ', local_playcount=' + str(g_local_playcount) + ', last_play_date=datetime("now","localtime") WHERE playcount_id =' + str(g_playcount_id))
+            conn.commit()
+        else:
+            c.execute('INSERT INTO m_playcount (track_id, local_playcount, last_play_date) VALUES (' + str(p_track_id) + ', 1, datetime("now","localtime"))')
+            conn.commit()
+        c.close()
+        
+        #return tag_id
+                    
+#if (os.path.isfile(self.FILEDB)):
 #    pass
 #else:
 # **********************************
-create_tables()
+#DbFuncs().create_tables()
 # **********************************
 #FillDb()
 
 import wx
 import wx.xrc as xrc
 
-SONGDB_RESFILE = SYSLOC + '\\layout_songdb.xml'
+SONGDB_RESFILE = SYSLOC + os.sep + 'layout_songdb.xml'
 
 class SongDBWindow(wx.Dialog):
     """Song DB Window for adding songs"""
@@ -355,7 +363,7 @@ class SongDBWindow(wx.Dialog):
         # show the window
         self.MoveMe()
         self.Show(True) # Shows it
-        totals = GetCountAndLast()
+        totals = DbFuncs().GetCountAndLast()
         self.st_songdb_total.SetLabel(str(totals[0]))
         self.st_songdb_last.SetLabel(totals[1])
         
@@ -432,10 +440,13 @@ class Player(object):
         
     def stop_play(self):
         self.local_play_status = False
+        if os.name != 'nt':
+            time.sleep(4)
 
     def play(self, name, card=0, rate=1, tt=-1):
     
-        dm= muxer.Demuxer( str.split( name, '.' )[ -1 ].lower() )
+        #dm= muxer.Demuxer( str.split( name, '.' )[ -1 ].lower() )
+        dm= muxer.Demuxer( 'mp3' )
         snds= sound.getODevices()
         if card not in range( len( snds ) ):
             raise 'Cannot play sound to non existent device %d out of %d' % ( card+ 1, len( snds ) )
@@ -486,7 +497,7 @@ class Player(object):
                 break
     
         while snd.isPlaying():
-            time.sleep( .05 )
+            time.sleep( 0.05 )
 
 #====================================================
 class VirtualList(wx.ListCtrl):
@@ -495,6 +506,7 @@ class VirtualList(wx.ListCtrl):
         p = wx.PreListCtrl()
         # the Create step is done by XRC.
         self.PostCreate(p)
+        self.FILEDB = system_files.GetDirectories(None).DataDirectory() + os.sep + 'gravydb.sq3'
     
     def OnGetItemText(self, item, col):
         ritem = self.GetRow(item, col)
@@ -507,8 +519,8 @@ class VirtualList(wx.ListCtrl):
         # get row count
         row_num = row_num + 1
         ritem = ''
-        if self.query_flag == True:
-            conn = sqlite3.connect(FILEDB)
+        if self.query_flag == True:            
+            conn = sqlite3.connect(self.FILEDB)
             c = conn.cursor()
             tq = "SELECT music_id, file_name, folder_name, folder_path FROM m_files WHERE music_id = " + str(row_num)            
             #tq = "SELECT music_id, file_name, folder_name, folder_path FROM m_files LIMIT 1 OFFSET " + str(row_num - 1)
@@ -559,6 +571,7 @@ class FileThread(Thread):
         self.grand_parent = grand_parent
         self.base_path = base_path
         self.maxlen = maxlen
+        self.FILEDB = system_files.GetDirectories(self.grand_parent).DataDirectory() + os.sep + 'gravydb.sq3'
                         
     def run(self):
         self.FillDb(self.base_path)
@@ -571,7 +584,7 @@ class FileThread(Thread):
         allfiles = []
         subfiles = []
         
-        conn = sqlite3.connect(FILEDB)
+        conn = sqlite3.connect(self.FILEDB)
         c = conn.cursor()
         counter = 1
         
@@ -579,9 +592,9 @@ class FileThread(Thread):
             for f in files:
                 if f.endswith('.mp3'):
                     #allfiles.append(os.path.join(root, f))
-                    #path = os.path.join(root, f).replace('\\', '/')
-                    path_n = root.rsplit('\\', 1)[0].replace('\\', '/')
-                    folder_n = root.rsplit('\\', 1)[1]
+                    #path = os.path.join(root, f).replace(os.sep, '/')
+                    path_n = root.rsplit(os.sep, 1)[0].replace(os.sep, '/')
+                    folder_n = root.rsplit(os.sep, 1)[1]
                     file_n = f
                     c.execute('INSERT INTO m_files values (null,?,?,?)', (path_n, folder_n, file_n))
                     #CREATE TABLE m_files (file_id INTEGER PRIMARY KEY, folder_path TEXT, file_name TEXT, artist_name TEXT, song_name TEXT)

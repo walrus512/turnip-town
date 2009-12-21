@@ -27,13 +27,12 @@ import shutil
 from main_utils import default_app_open
 import wx.xrc as xrc
 from threading import Thread
+from main_utils import system_files
 
-VERSION_URL = "http://groove-walrus.turnip-town.net/dru/version/version.xml"
-FILES_URL = "http://groove-walrus.turnip-town.net/dru/version/files.xml"
-SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0]))
-UPDATE_SAVE_LOCATION = SYSLOC + "\\updates\\"
+VERSION_URL = "http://groove-walrus.turnip-town.net/dru/version/version2.xml"
+FILES_URL = "http://groove-walrus.turnip-town.net/dru/version/files2.xml"
 LW = 'http://groove-walrus.turnip-town.net'
-UPDATE_RESFILE = SYSLOC + '\\layout_update.xml'
+
 
 class VersionCheck():
     def __init__(self, parent, current_version):
@@ -56,6 +55,8 @@ class VersionCheck():
         dlg = UpdateWindow(self.parent, self.current_version).show_me()
                                 
 
+UPDATE_RESFILE = os.getcwd() + os.sep + 'layout_update.xml'
+        
 class UpdateWindow(wx.Dialog):
     """Update Window for updating"""
     def __init__(self, parent, current_version):
@@ -63,6 +64,9 @@ class UpdateWindow(wx.Dialog):
         self.parent = parent
         self.current_version = current_version
         
+        self.data_directory = system_files.GetDirectories(self.parent).DataDirectory()
+        self.update_data_directory = self.data_directory + os.sep + "updates" + os.sep
+                        
         # XML Resources can be loaded from a file like this:
         res = xrc.XmlResource(UPDATE_RESFILE)
 
@@ -137,7 +141,7 @@ class UpdateWindow(wx.Dialog):
             if len(file_array) >= 1:
                 self.UpdateTC('update required for %s files' % str(len(file_array)))
                 #THREAD
-                self.update_thread = UpdateThread(self, self.current_version, file_array)
+                self.update_thread = UpdateThread(self, self.current_version, file_array, self.data_directory, self.update_data_directory)
                 #THREAD
                 self.update_thread.start()
 
@@ -145,8 +149,8 @@ class UpdateWindow(wx.Dialog):
         '''check if you have admin rights'''
         failed = False
         try:
-            shutil.copyfile(SYSLOC + '\\gw.exe', SYSLOC + '\\gw_test.exe')
-            os.remove(SYSLOC + '\\gw_test.exe')
+            shutil.copyfile(self.data_directory + os.sep + 'gw.exe', self.data_directory + os.sep + 'gw_test.exe')
+            os.remove(self.data_directory + os.sep + 'gw_test.exe')
         except IOError:
             dlg = wx.MessageDialog(self.parent, "Can't copy file!\r\nNeed administrator privileges to update!\r\n.", 'Alert', wx.OK | wx.ICON_WARNING)
             if (dlg.ShowModal() == wx.ID_OK):
@@ -166,7 +170,7 @@ class UpdateWindow(wx.Dialog):
     def GetUpdateFile(self, file_url, file_name, ver_dir):
     # get albumcover for artist/song from last.fm
     # check that file doesn't exist
-        urllib.urlretrieve(file_url, UPDATE_SAVE_LOCATION + ver_dir + file_name)
+        urllib.urlretrieve(file_url, self.update_data_directory + ver_dir + file_name)
         urllib.urlcleanup()
         #print 'getting new'
         
@@ -237,11 +241,13 @@ class UpdateWindow(wx.Dialog):
 # ####################################
 class UpdateThread(Thread): 
     # grab rss feeds, thread style  
-    def __init__(self, parent, current_version, file_array):
+    def __init__(self, parent, current_version, file_array, data_directory, update_data_directory):
         Thread.__init__(self)
         self.parent = parent
         self.current_version = current_version 
         self.file_array = file_array
+        self.data_directory = data_directory
+        self.update_data_directory = update_data_directory
          
     def run(self):        
         #create dirs
@@ -249,9 +255,9 @@ class UpdateThread(Thread):
         #create update dirs
         for x in self.file_array:
             #x.text, xdir, xver | file_name, directory, version
-            proceed = self.CreateDir(UPDATE_SAVE_LOCATION, x[2])
+            proceed = self.CreateDir(self.update_data_directory, x[2])
             if proceed == True:
-                base = UPDATE_SAVE_LOCATION + x[2] + '\\'
+                base = self.update_data_directory + x[2] + os.sep
                 directory = x[1]                
                 if (self.CreateDir(base, directory) != True):
                     proceed = False
@@ -261,7 +267,7 @@ class UpdateThread(Thread):
         #create update dirs
             for x in self.file_array:
                 #x.text, xdir, xver
-                base = SYSLOC + '\\'
+                base = self.data_directory + os.sep
                 directory = x[1]
                 if (self.CreateDir(base, directory) != True):
                     proceed = False
@@ -271,9 +277,9 @@ class UpdateThread(Thread):
             self.parent.UpdateTC('downloading files')
             for x in self.file_array:
                 file_name = x[0].rsplit("/", 1)[1]
-                version_dir = x[2] + '\\' + x[1]
+                version_dir = x[2] + os.sep + x[1]
                 if x[1] != '':
-                    version_dir = x[2] + '\\' + x[1] + '\\'
+                    version_dir = x[2] + os.sep + x[1] + os.sep
                 self.parent.GetUpdateFile(x[0], file_name, version_dir)
                 self.parent.UpdateTC('downloading: %s' % file_name)
         #copy files
@@ -284,9 +290,9 @@ class UpdateThread(Thread):
                 #x.text, xdir, xver                
                 directory = ''
                 if len(x[1]) >= 1:
-                    directory = x[1] + '\\'
-                from_dir = UPDATE_SAVE_LOCATION + x[2] + '\\' + directory
-                to_dir = SYSLOC + '\\' + directory
+                    directory = x[1] + os.sep
+                from_dir = self.update_data_directory + x[2] + os.sep + directory
+                to_dir = self.data_directory + os.sep + directory
                 file_name = x[0].rsplit("/", 1)[1]
                 self.parent.UpdateTC('copying: %s' % file_name)
                 if (self.CopyFile(file_name, from_dir, to_dir) != True):
@@ -331,7 +337,7 @@ class UpdateThread(Thread):
             if len(directory.split('/')) > 1:            
                 #assume 2 levels for now
                 first_dir = directory.split('/')[0]
-                directory = directory.replace('/', '\\')                
+                directory = directory.replace('/', os.sep)                
                 if os.path.isdir(base + first_dir) == False:
                     try:
                         os.mkdir(base + first_dir)
