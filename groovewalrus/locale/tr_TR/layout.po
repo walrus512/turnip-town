@@ -15,118 +15,118 @@ msgid "None"
 msgstr ""
 
 msgid "Playlist"
-msgstr ""
+msgstr "Sarki Listesi"
 
 msgid "Last.fm"
-msgstr ""
+msgstr "Last.Fm"
 
 msgid "Similar Songs"
-msgstr ""
+msgstr "Benzer Sarkilar"
 
 msgid "Top Songs: Artist"
-msgstr ""
+msgstr "Listebasi Sarkilar: Sanatci"
 
 msgid "Top Songs: Geo"
-msgstr ""
+msgstr "Listebasi Sarkilar: Geo"
 
 msgid "Top Songs: Tag"
-msgstr ""
+msgstr "Listebasi Sarkilar: Etiket"
 
 msgid "Top Songs: Album"
-msgstr ""
+msgstr "Listebasi Sarkilar: Album"
 
 msgid "Similar Artists"
-msgstr ""
+msgstr "Benzer Sanatcilar"
 
 msgid "Top Albums: Artist"
-msgstr ""
+msgstr "Listebasi Albumler: Sanatci"
 
 msgid "Top Tags: Song"
-msgstr ""
+msgstr "Listebasi Etiketler: Sarki"
 
 msgid "Playlistize!"
-msgstr ""
+msgstr "Listelesene!"
 
 msgid "Artist"
-msgstr ""
+msgstr "Sanatci"
 
 msgid "Song"
-msgstr ""
+msgstr "Sarki"
 
 msgid "Album"
-msgstr ""
+msgstr "Album"
 
 msgid "Tag"
-msgstr ""
+msgstr "Etiket"
 
 msgid "My Last.fm"
-msgstr ""
+msgstr "Last.fm Sayfam"
 
 msgid "Me"
-msgstr ""
+msgstr "Ben"
 
 msgid "My Friends"
-msgstr ""
+msgstr "Arkadaslarim"
 
 msgid "My Neighbours"
-msgstr ""
+msgstr "Komsularim"
 
 msgid "User"
-msgstr ""
+msgstr "Kullanici"
 
 msgid "Get Tracks"
-msgstr ""
+msgstr "Sarkiyi Al"
 
 msgid "Biography"
-msgstr ""
+msgstr "Biyografi"
 
 msgid "Collection"
-msgstr ""
+msgstr "Koleksiyon"
 
 msgid "Song Collection"
-msgstr ""
+msgstr "Sarki Koleksiyonu"
 
 msgid "Filter Songs"
-msgstr ""
+msgstr "Sarkilari Filtrele"
 
 msgid "File"
-msgstr ""
+msgstr "Dosya"
 
 msgid "Folder"
-msgstr ""
+msgstr "Klasor"
 
 msgid "Favorites"
-msgstr ""
+msgstr "En Sevilenler"
 
 msgid "List Sifter"
-msgstr ""
+msgstr "Liste Tarayicisi"
 
 msgid "Pre-split:"
 msgstr ""
 
 msgid "Separator:"
-msgstr ""
+msgstr "Ayirici:"
 
 msgid "Sift!"
-msgstr ""
+msgstr "Tara!"
 
 msgid "Options"
-msgstr ""
+msgstr "Ayarlar"
 
 msgid "Main"
-msgstr ""
+msgstr "Temel"
 
 msgid "Double-clicking..."
-msgstr ""
+msgstr "Cift tiklama..."
 
 msgid "Playlistize! clears playlist before adding."
-msgstr ""
+msgstr "Listelesene! yeni sarki eklemeden once sarki listesini temizlesin."
 
 msgid "Use alternate GrooveShark source."
-msgstr ""
+msgstr "Baska bir Grooveshark kaynagi kullan."
 
 msgid "Drop id from search results."
-msgstr ""
+msgstr "Arama sonuclarindan ID'yi cikar"
 
 msgid "Minimize to tray."
 msgstr ""
@@ -135,52 +135,52 @@ msgid "Save music to:"
 msgstr ""
 
 msgid "About..."
-msgstr ""
+msgstr "Hakkinda..."
 
 msgid "Last.fm Account"
-msgstr ""
+msgstr "Last.fm Hesabi"
 
 msgid "Username"
-msgstr ""
+msgstr "Kullanici Adi"
 
 msgid "Password"
-msgstr ""
+msgstr "Sifre"
 
 msgid "Save"
-msgstr ""
+msgstr "Kaydet"
 
 msgid "Status:"
-msgstr ""
+msgstr "Durum:"
 
 msgid "Enable Scrobbling"
-msgstr ""
+msgstr "Skroplamayi Ac"
 
 msgid "Scrobble Port"
-msgstr ""
+msgstr "Skroplama Portu"
 
 msgid "Scrobble Album"
-msgstr ""
+msgstr "Albumu Skropla"
 
 msgid "Music Stream"
-msgstr ""
+msgstr "Muzik Akisi"
 
 msgid "Wait"
-msgstr ""
+msgstr "Sarki baslamadan once"
 
 msgid "seconds before playing a streamed song (it takes time to load)."
-msgstr ""
+msgstr "saniye bekleyin (sarkilarin yuklenmesi biraz zaman alir)"
 
 msgid "Play songs for"
-msgstr ""
+msgstr "Eger zaman etiketi yoksa, sarkilari"
 
 msgid "minutes"
-msgstr ""
+msgstr "dakika ve"
 
 msgid "seconds, if a time can't be found."
-msgstr ""
+msgstr "saniye boyunca cal."
 
 msgid "Plug-ins"
-msgstr ""
+msgstr "Eklentileri"
 
 msgid "alternative"
 msgstr ""
