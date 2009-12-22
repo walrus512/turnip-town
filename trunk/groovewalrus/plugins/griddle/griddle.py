@@ -25,11 +25,12 @@ import wx.grid as gridlib
 import sys, os
 import sqlite3
 from main_utils import local_songs
+from main_utils import system_files
 
-SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0]))
-RESFILE = "\\.\\plugins\\griddle\\layout_griddle.xml"
-FILEDB = SYSLOC + '\\gravydb.sq3'
-MAIN_PLAYLIST =     SYSLOC + "\\playlist.xspf"
+SYSLOC = os.getcwd()
+RESFILE = os.path.join(os.getcwd(), 'plugins','griddle') + os.sep + "layout_griddle.xml"
+FILEDB = system_files.GetDirectories(None).DataDirectory() + os.sep + 'gravydb.sq3'
+MAIN_PLAYLIST = system_files.GetDirectories(None).DataDirectory() + os.sep + "playlist.xspf"
 
 class MainPanel(wx.Dialog):
     def __init__(self, parent):
