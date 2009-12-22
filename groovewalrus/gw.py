@@ -1373,25 +1373,29 @@ class MainPanel(wx.Panel):
         self.nb_main.SetPageText(NB_PLAYLIST, 'Playlist (0)')
                 
     def OnLoadPlaylistClick(self, evt):
-        wildcard = "Playlist (*.xspf)|*.xspf|"     \
-            "Winamp Playlist (*.m3u)|*.m3u" #|"     \
-            #"All files (*.*)|*.*"
+        wildcard = "Music Files (*.xspf;*.m3u;*.mp3)|*.xspf;*.m3u;*.mp3|"   \
+            "Playlist (*.xspf)|*.xspf|"     \
+            "Winamp Playlist (*.m3u)|*.m3u|"     \
+            "MP3 (*.mp3)|*.mp3"
         dlg = wx.FileDialog(
             self, message="Choose a file",
             defaultDir=self.playlist_save_location, 
             defaultFile="",
             wildcard=wildcard,
-            style=wx.OPEN | wx.CHANGE_DIR
+            style=wx.OPEN | wx.MULTIPLE | wx.CHANGE_DIR
             )# wx.MULTIPLE | 
 
         if dlg.ShowModal() == wx.ID_OK:
             paths = dlg.GetPaths()
-            for path in paths:
-                self.lc_playlist.DeleteAllItems()
+            print paths
+            self.lc_playlist.DeleteAllItems()
+            for path in paths:                
                 if path.endswith('.xspf'):
                     self.ReadPlaylist(path)
                 elif path.endswith('.m3u'):
                    self.ReadWinampPlaylist(path)
+                elif path.endswith('.mp3'):
+                   self.ScolFileAdd(path)
                 else:
                     pass
         dlg.Destroy()
