@@ -100,6 +100,7 @@ WN_SEARCH = 99
 API_KEY = "13eceb51a4c2e0f825c492f04bf693c8"
 SECRET = ""
 LASTFM_CLIENT_ID = 'gws'
+BUFFER_SIZE = 164000
 
 class MainFrame(wx.Frame): 
     def __init__(self): 
@@ -613,6 +614,12 @@ class MainPanel(wx.Panel):
         else:
             self.SetVolume(self.GetVolume())
         #SoundMixer.GetPeakLevel()
+        
+        #temp download files --------------
+        self.temp_counter = 0
+        d_file = system_files.GetDirectories(self).BuildTempFile('temp0.mp3')
+        if os.path.isfile(d_file):
+            os.remove(d_file)
         
         # hotkeys
         backID = 701
@@ -1266,17 +1273,29 @@ class MainPanel(wx.Panel):
             #     self.flash = FlashWindow(self.pa_player, style=wx.NO_BORDER)# , size=(20, 20))
             #     self.flash.LoadMovie(0, url)
             #self.LoadFlashSong(url, artist, track)
-            #print song_id
+            
+            #create temp file            
+            #print os.path.getsize("temp.mp3")
+            file_name_text = {0:"temp0.mp3", 1:"temp1.mp3", 2:"temp2.mp3"}
+            file_name = system_files.GetDirectories(self).BuildTempFile(file_name_text[self.temp_counter])
+            if self.temp_counter == 2:
+                self.temp_counter = 0                
+            else:
+                self.temp_counter = self.temp_counter + 1
+            # delete 'next' temp file
+            next_file = system_files.GetDirectories(self).BuildTempFile(file_name_text[self.temp_counter])
+            if os.path.isfile(next_file):
+                os.remove(next_file)            
+            
             x,y = self.groove_session.songKeyfromID(song_id)
             #download file
             #THREAD
-            current = FileThread(self, self.groove_session, x, y)
+            current = FileThread(self, self.groove_session, x, y, file_name)
             #THREAD
             current.start()
             time.sleep(2)
-            #print os.path.getsize("temp.mp3")
-            file_name = system_files.GetDirectories(self).BuildTempFile('temp.mp3')
-            while os.path.getsize(file_name) < 64000:
+
+            while os.path.getsize(file_name) < BUFFER_SIZE:
                 time.sleep(2)
                 print os.path.getsize(file_name)
                 
@@ -1400,12 +1419,12 @@ class MainPanel(wx.Panel):
                     pass
         dlg.Destroy()
         
-    def list_dir(self, directory):
+    #def list_dir(self, directory):
         # grab file list
-        pathlist = os.listdir(directory)
+        #pathlist = os.listdir(directory)
         # Now filter out all but py and pyw
-        filterlist = [x for x in pathlist if x.endswith('.xspf')]
-        return filterlist
+        #filterlist = [x for x in pathlist if x.endswith('.xspf')]
+        #return filterlist
         
     def OnSavePlaylistClick(self, event):
         wildcard = "Playlist (*.xspf)|*.xspf|"
@@ -2746,7 +2765,7 @@ class WebFetchThread(Thread):
             
         if self.webfetchtype == 'PLAYLOCAL':
             #local mp3 playback
-            #print 'local ' + self.song
+            print 'local: ' + self.song
             self.lsp.play(self.song)
             
         if self.webfetchtype == 'VERSION':
@@ -2817,18 +2836,20 @@ class WebFetchThread(Thread):
 # ####################################
 class FileThread(Thread): 
     # grab file
-    def __init__(self, parent, g, x, y):
+    def __init__(self, parent, g, x, y, temp_file):
         Thread.__init__(self)
         self.g = g
         self.x = x
         self.y = y
         self.parent = parent
+        self.temp_file = temp_file
                         
     def run(self):
-        self.g.download(self.x, self.y)
+        self.g.download(self.x, self.y, self.temp_file)
         print 'download complete'
-        temp_file_name = system_files.GetDirectories(self.parent).BuildTempFile('temp.mp3')
-        track_time = local_songs.GetMp3Length(temp_file_name)
+        #temp_file_name = system_files.GetDirectories(self.parent).BuildTempFile(self.temp_file)        
+        
+        track_time = local_songs.GetMp3Length(self.temp_file)
         self.parent.current_play_time = track_time
         if self.parent.record_toggle == True:
             #copy and rname the file to teh record dir

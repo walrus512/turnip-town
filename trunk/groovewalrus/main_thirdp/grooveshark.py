@@ -118,7 +118,7 @@ class Grooveshark(object):
         self.songKey = self.reply['result']['streamKey']
         return (self.songKey, streamServer)
         
-    def download(self, songKey, streamServer):
+    def download(self, songKey, streamServer, file_name):
         http = httplib2.Http()
         #use self. so that any outer program can access it (not local)
         self.mp3URL = 'http://'+streamServer+'/stream.php'
@@ -140,7 +140,8 @@ class Grooveshark(object):
         #prog = urlgrabber.progress.text_progress_meter()        
         #response = urlgrabber.urlopen(self.mp3URL, data=urllib.urlencode(data), http_headers=headers) #, progress_obj=prog)
         #response = urlgrabber.urlread(self.mp3URL, data=urllib.urlencode(data), http_headers=headers) #, progress_obj=prog)
-        file_name = system_files.GetDirectories(self.parent).BuildTempFile('temp.mp3')        
+        #file_name = system_files.GetDirectories(self.parent).BuildTempFile('temp.mp3')        
+        print file_name
         response = urlgrabber.urlgrab(self.mp3URL, filename=file_name, data=urllib.urlencode(data), http_headers=headers)
         
         #if self.response['status'] == '302':
