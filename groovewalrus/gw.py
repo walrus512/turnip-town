@@ -166,7 +166,10 @@ class MainPanel(wx.Panel):
         # custom widget handler
         #res.InsertHandler(custom_slider.MyCustomSliderXmlHandler(self))
         # Now create a panel from the resource data
-        panel = res.LoadPanel(self, "m_pa_main")        
+        panel = res.LoadPanel(self, "m_pa_main")
+        
+        xrc.XRCCTRL(self, 'm_pa_options_plugins').SetVirtualSize((1000, 1000))
+        xrc.XRCCTRL(self, 'm_pa_options_plugins').SetScrollRate(20,20)
                
         # control references --------------------
         self.pa_player = xrc.XRCCTRL(self, 'm_pa_player')        
@@ -366,6 +369,7 @@ class MainPanel(wx.Panel):
         # add custom controls ----------------------------
         ##self.flash = FlashWindow(self.pa_player, style=wx.NO_BORDER, size=wx.Size(500,140))#, size=(400, 120))        
         ##self.flash.Show(True)
+        self.flash = None
         
         ##flash_sizer = wx.BoxSizer(wx.VERTICAL)
         ##flash_sizer.Add(self.flash, 1, wx.EXPAND|wx.ALL, 5)
@@ -393,12 +397,8 @@ class MainPanel(wx.Panel):
         #self.parent.SetSize((-1, 130))
         #self.last_track_played = ''
         #self.last_artist_played = ''
-        #self.last_album_played = '' 
-
-        # grooveshark streaming init ---------------------------
-        self.groove_session = grooveshark.Grooveshark(self)
-        self.groove_session.sessionData()
-        
+        #self.last_album_played = ''
+              
         #----------------------------------------------------------------------
         
         # bindings ----------------
@@ -559,6 +559,7 @@ class MainPanel(wx.Panel):
         #temp for web types
         self.web_music_type = 'GrooveShark'
         self.web_music_url = ''
+        self.use_web_music = False
         
         #self.recorder = mp3_rec()
         #self.recording_status = False
@@ -577,7 +578,9 @@ class MainPanel(wx.Panel):
         version_check.start()
         #version_check.VersionCheck(self, PROGRAM_VERSION).CheckVersion()
         
-            
+        # grooveshark streaming init ---
+        self.groove_session = None
+           
         # timer ----------------
         self.timer = wx.Timer(self)
         self.timer.Start(1000)
@@ -621,7 +624,7 @@ class MainPanel(wx.Panel):
         if os.path.isfile(d_file):
             os.remove(d_file)
         
-        # hotkeys
+        # hotkeys ------------------
         backID = 701
         playID = 702
         stopID = 703
@@ -681,6 +684,7 @@ class MainPanel(wx.Panel):
         
         #print system_files.GetDirectories(self).TempDirectory()
         #print system_files.GetDirectories(self).DataDirectory()
+
 # ---------------------------------------------------------
 #-----------------------------------------------------------
     def initI18n(self):
@@ -1060,8 +1064,9 @@ class MainPanel(wx.Panel):
 
     def StopFlashSong(self):
         #
-        #self.flash.movie = 'temp.swf'
-        pass
+        if self.use_web_music == True:
+            self.flash.movie = 'temp.swf'
+        #pass
             
     def OnForwardClick(self, event):
         # skip to the next rack on the playlist
@@ -1093,7 +1098,8 @@ class MainPanel(wx.Panel):
         # play passed song, clicked = True if user clicked to play
         if self.current_local != None:
             self.current_local.stop()
-        #self.StopFlashSong()
+        if self.use_web_music == True:
+            self.StopFlashSong()
         
         self.gobbled_track = 0
 
@@ -1263,10 +1269,39 @@ class MainPanel(wx.Panel):
         
         self.current_track = playlist_number
         #print track_time
-        if (len(song_id) >= 1) & (len(song_id.split('/')) < 2):
+        if (self.use_web_music == True) & ((len(song_id) >= 1) & (len(song_id.split('/')) < 2)):
+            print 'webmusic'
+            self.time_count = self.sc_options_gs_wait.GetValue() * -1
+            
+            #try:
+            #    self.flash.LoadMovie(0, url)
+            #except wx._core.PyDeadObjectError:
+            #     self.flash = FlashWindow(self.pa_player, style=wx.NO_BORDER)# , size=(20, 20))
+            #     self.flash.LoadMovie(0, url)
+            self.LoadFlashSong(url, artist, track)
+            
+            self.lc_playlist.Select(playlist_number)
+            self.st_track_info.SetLabel(artist + ' - ' + track)
+            self.st_status.SetLabel('playing')
+            self.parent.SetTitle(artist + '-' + track + ' - ' + PROGRAM_NAME + ' ' + PROGRAM_VERSION)
+            self.GetSongArt(artist, album)
+            self.GetArtistBio(artist)
+            self.ptrack = track
+            self.partist = artist
+            self.palbum = album
+            self.scrobbed_track = 0
+            self.pgroove_id = song_id
+            self.pmusic_id = 0
+            
+        elif (len(song_id) >= 1) & (len(song_id.split('/')) < 2):
+        #grooveshark song
             #self.time_count = -8
             #self.time_count = self.sc_options_gs_wait.GetValue() * -1
             self.time_count = -1
+            # grooveshark streaming init ---------------------------
+            if self.groove_session == None:
+                self.groove_session = grooveshark.Grooveshark(self)
+                self.groove_session.sessionData()
             #try:
             #    self.flash.LoadMovie(0, url)
             #except wx._core.PyDeadObjectError:
@@ -1319,7 +1354,8 @@ class MainPanel(wx.Panel):
             self.scrobbed_track = 0
             self.pgroove_id = song_id
             self.pmusic_id = 0
-        elif len(song_id) > 2 & (len(song_id.split('/')) > 1):
+        elif os.path.isfile(song_id): #len(song_id) > 2 & (len(song_id.split('/')) > 1):
+        # local file
             self.time_count = -2            
             #THREAD
             #print song_id
@@ -2866,6 +2902,7 @@ class FileThread(Thread):
 if __name__ == '__main__':
 
     app = wx.PySimpleApp()
+    #app = wx.App()
     frame = MainFrame()
     #popup = TestPopup(frame, wx.SIMPLE_BORDER)    
     panel = MainPanel(frame)    
