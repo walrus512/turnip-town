@@ -2195,7 +2195,7 @@
 																<object class="notebookpage">
 																	<label>Plug-ins</label>
 																	<selected>0</selected>
-																	<object class="wxScrolledWindow" name="m_scrolledWindow13">
+																	<object class="wxScrolledWindow" name="m_sw_plugins">
 																		<style>wxHSCROLL|wxVSCROLL</style>
 																		<object class="wxBoxSizer">
 																			<orient>wxVERTICAL</orient>
@@ -2233,8 +2233,8 @@
 																						<option>1</option>
 																						<flag>wxEXPAND | wxALL</flag>
 																						<border>5</border>
-																						<object class="wxPanel" name="m_pa_options_plugins">
-																							<style>wxTAB_TRAVERSAL</style>
+																						<object class="wxScrolledWindow" name="m_pa_options_plugins">
+																							<style>wxHSCROLL|wxVSCROLL</style>
 																						</object>
 																					</object>
 																				</object>
