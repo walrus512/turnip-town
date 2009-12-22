@@ -1,5 +1,5 @@
 """
-GrooveWalrus: Played Dizzler
+GrooveWalrus: Flash Player
 Copyright (C) 2009
 11y3y3y3y43@gmail.com
 http://groove-walrus.turnip-town.net
@@ -27,16 +27,16 @@ from main_utils.read_write_xml import xml_utils
 import sys, os
 from wx.lib.flashwin import FlashWindow
 
-#SYSLOC = os.getcwd()
+#SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0]))
 DIZZLER_URL = 'http://www.dizzler.com/player/podmini.swf?m='
-DIZZLER_SETTINGS = os.path.join(os.getcwd(), 'plugins','dizzler') + os.sep + "settings_dizzler.xml"
-DIZZLER = os.path.join(os.getcwd(), 'plugins','dizzler') + os.sep
-RESFILE = os.path.join(os.getcwd(), 'plugins','dizzler') + os.sep + "layout_dizzler.xml"
+DIZZLER_SETTINGS = os.path.join(os.getcwd(), 'plugins','flash') + os.sep + "settings_flash.xml"
+DIZZLER = os.path.join(os.getcwd(), 'plugins','flash') + os.sep
+RESFILE = os.path.join(os.getcwd(), 'plugins','flash') + os.sep + "layout_flash.xml"
 #http://www.dizzler.com/player/podmini.swf?m=chairlift-bruises
 
 class MainPanel(wx.Dialog):
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, -1, "Dizzler", size=(475,310), style=wx.FRAME_SHAPED) #STAY_ON_TOP)        
+        wx.Dialog.__init__(self, parent, -1, "Flash", size=(475,310), style=wx.FRAME_SHAPED) #STAY_ON_TOP)        
         self.parent = parent
         
         # XML Resources can be loaded from a file like this:
