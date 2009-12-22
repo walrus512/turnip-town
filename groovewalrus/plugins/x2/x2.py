@@ -35,10 +35,13 @@ import sqlite3
 
 import wx
 import wx.xrc as xrc
+import sys
+import os
+from main_utils import system_files
 
 from plugins.x2 import pca_module
 
-RESFILE = "\\.\\plugins\\x2\\layout_x2.xml"
+RESFILE = os.path.join(os.getcwd(), 'plugins','x2') + os.sep + "layout_x2.xml"
 
 FEATURES_ARRAY = ['track_time','playcount','listeners','local_playcount'
 #,'eq1',
@@ -412,12 +415,11 @@ class MainPanel(wx.Dialog):
         self.parent.nb_main.SetSelection(self.nb_playlist)
         
 # ####################################
-import sys
-import os
-SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0]))
 
-FILEDB = SYSLOC + '\\gravydb.sq3'
-   
+#SYSLOC = os.getcwd()
+
+#FILEDB = SYSLOC + '\\gravydb.sq3'
+FILEDB = system_files.GetDirectories(None).DataDirectory() + os.sep + 'gravydb.sq3'
      
 #2track id
 #3tag id

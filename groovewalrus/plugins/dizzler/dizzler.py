@@ -29,9 +29,9 @@ from wx.lib.flashwin import FlashWindow
 
 SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0]))
 DIZZLER_URL = 'http://www.dizzler.com/player/podmini.swf?m='
-DIZZLER_SETTINGS = "\\.\\plugins\\dizzler\\settings_dizzler.xml"
-DIZZLER = "\\.\\plugins\\dizzler\\"
-RESFILE = "\\.\\plugins\\dizzler\\layout_dizzler.xml"
+DIZZLER_SETTINGS = os.path.join(os.getcwd(), 'plugins','dizzler') + os.sep + "settings_dizzler.xml"
+DIZZLER = os.path.join(os.getcwd(), 'plugins','dizzler') + os.sep
+RESFILE = os.path.join(os.getcwd(), 'plugins','dizzler') + os.sep + "layout_dizzler.xml"
 #http://www.dizzler.com/player/podmini.swf?m=chairlift-bruises
 
 class MainPanel(wx.Dialog):
@@ -78,12 +78,12 @@ class MainPanel(wx.Dialog):
         #self.LoadSetings()
         
         #flash windows
-        ##self.dizzler_flash = FlashWindow(self.pa_dizzler_player, style=wx.NO_BORDER, size=wx.Size(500,140))#, size=(400, 120))        
+        self.dizzler_flash = FlashWindow(self.pa_dizzler_player, style=wx.NO_BORDER, size=wx.Size(500,140))#, size=(400, 120))        
         #self.flash.Show(True)
         
-        ##flash_sizer = wx.BoxSizer(wx.VERTICAL)
-        ##flash_sizer.Add(self.dizzler_flash, 1, wx.EXPAND|wx.ALL, 5)
-        ##self.pa_dizzler_player.SetSizer(flash_sizer)
+        flash_sizer = wx.BoxSizer(wx.VERTICAL)
+        flash_sizer.Add(self.dizzler_flash, 1, wx.EXPAND|wx.ALL, 5)
+        self.pa_dizzler_player.SetSizer(flash_sizer)
         
         ##self.parent.flash = self.dizzler_flash
         ##self.parent.web_music_url = DIZZLER_URL
