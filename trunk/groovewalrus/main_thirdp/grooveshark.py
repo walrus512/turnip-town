@@ -141,7 +141,6 @@ class Grooveshark(object):
         #response = urlgrabber.urlopen(self.mp3URL, data=urllib.urlencode(data), http_headers=headers) #, progress_obj=prog)
         #response = urlgrabber.urlread(self.mp3URL, data=urllib.urlencode(data), http_headers=headers) #, progress_obj=prog)
         #file_name = system_files.GetDirectories(self.parent).BuildTempFile('temp.mp3')        
-        print file_name
         response = urlgrabber.urlgrab(self.mp3URL, filename=file_name, data=urllib.urlencode(data), http_headers=headers)
         
         #if self.response['status'] == '302':
