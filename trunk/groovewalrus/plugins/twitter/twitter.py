@@ -26,7 +26,7 @@ import wx.xrc as xrc
 from main_utils.read_write_xml import xml_utils
 import sys, os
 
-SYSLOC = os.getcwd()
+#SYSLOC = os.getcwd()
 TWITTER_UPDATE = 'http://twitter.com/statuses/update.xml'
 TWITTER_SETTINGS = os.path.join(os.getcwd(), 'plugins','twitter') + os.sep + "settings_twitter.xml"
 TWITTER = os.path.join(os.getcwd(), 'plugins','twitter') + os.sep
@@ -84,7 +84,7 @@ class MainPanel(wx.Dialog):
         
     def LoadSetings(self):
         #load the setting from settings_twitter.xml if it exists
-        settings_dict = xml_utils().get_generic_settings(SYSLOC + TWITTER_SETTINGS)
+        settings_dict = xml_utils().get_generic_settings(TWITTER_SETTINGS)
         #print settings_dict
         if len(settings_dict) > 1:
             username=''
@@ -108,7 +108,7 @@ class MainPanel(wx.Dialog):
         window_dict['username'] = self.tc_twitter_username.GetValue()
         window_dict['default_text'] = self.tc_twitter_default.GetValue()
         
-        xml_utils().save_generic_settings(SYSLOC  + TWITTER, "settings_twitter.xml", window_dict)
+        xml_utils().save_generic_settings(TWITTER, "settings_twitter.xml", window_dict)
 
             
 # --------------------------------------------------------- 
