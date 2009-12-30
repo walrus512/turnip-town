@@ -2256,9 +2256,9 @@ class MainPanel(wx.Panel):
         bio_bmp = wx.Bitmap(self.image_save_location + file_name, wx.BITMAP_TYPE_ANY) #wx.BITMAP_TYPE_JPEG)
         #self.bm_bio_pic.SetSize(bio_bmp.GetSize())
         #self.bm_bio_pic.SetBitmap(bio_bmp)
-        bb = bio_bmp.GetSize()
-        hr = bb[0] / 250
-        hs = bb[1] / hr
+        bb = bio_bmp.GetSize()        
+        hr = float(bb[0]) / 250
+        hs = float(bb[1]) / hr
         # rescale it so it's x= 250 y =? to keep aspect
         hoo = wx.Bitmap.ConvertToImage(bio_bmp)
         hoo.Rescale(250, hs) #, wx.IMAGE_QUALITY_HIGH)
