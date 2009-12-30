@@ -229,8 +229,8 @@ class Scrobb(object):
             #for x in names:             
             #    name_list.append(x.text)
             # playcount
-            name_list.append(artists[0].text)
             name_list.append(names[0].text)
+            name_list.append(artists[0].text)            
             if len(match) > 0:
                 name_list.append(match[0].text)
             else:
