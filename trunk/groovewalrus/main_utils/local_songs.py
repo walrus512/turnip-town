@@ -547,13 +547,13 @@ class VirtualList(wx.ListCtrl):
         self.DeleteAllItems()
         if song == '':
             self.query_flag = True
-            self.SetItemCount(GetCountAndLast()[0])
+            self.SetItemCount(DbFuncs().GetCountAndLast()[0])
         else:
             if qtype == 'file':
-                self.res_arr = GetResultsArray(song, 100, True)
+                self.res_arr = DbFuncs().GetResultsArray(song, 100, True)
                 self.SetItemCount(len(self.res_arr))
             else:
-                self.res_arr = GetResultsArray(song, 100, True, 3)
+                self.res_arr = DbFuncs().GetResultsArray(song, 100, True, 3)
                 self.SetItemCount(len(self.res_arr))
             #print self.res_arr
             
