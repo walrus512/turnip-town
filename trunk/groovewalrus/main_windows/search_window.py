@@ -155,7 +155,7 @@ class SearchWindow(wx.Dialog):
         # search field, then search
         if len(query_string) > 0:
             if self.cb_search_local.GetValue() == True:
-                query_results = local_songs.GetResultsArray(query_string, 40)
+                query_results = local_songs.DbFuncs().GetResultsArray(query_string, 40)
                 self.FillSearchListLocal(query_results);
             else:
                 query_results = tinysong.Tsong().get_search_results(query_string)
