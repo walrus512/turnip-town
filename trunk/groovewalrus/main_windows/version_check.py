@@ -30,6 +30,7 @@ from threading import Thread
 from main_utils import system_files
 
 VERSION_URL = "http://groove-walrus.turnip-town.net/dru/version/version2.xml"
+NEWS_URL = "http://groove-walrus.turnip-town.net/dru/version/news2.xml"
 FILES_URL = "http://groove-walrus.turnip-town.net/dru/version/files2.xml"
 LW = 'http://groove-walrus.turnip-town.net'
 
@@ -40,8 +41,13 @@ class VersionCheck():
         self.current_version = current_version
     
     def CheckVersion(self):
-        url_blob = urllib.urlopen(VERSION_URL)
-        tree = read_write_xml.xml_utils().read_xml_tree(url_blob)
+        tree =''
+    	try:
+        	url_blob = urllib.urlopen(VERSION_URL)
+        	tree = read_write_xml.xml_utils().read_xml_tree(url_blob)
+       	except Exception, inst:
+       	     print 'Exception: version check: ' + str(inst)
+        
         if tree != '':
             root = tree.getroot()            
             # check if remote version number is greater than local version, yes than update icon
@@ -101,9 +107,22 @@ class UpdateWindow(wx.Dialog):
         sizer.Add(panel, 1, wx.EXPAND|wx.ALL, 5)
         self.SetSizer(sizer)
         self.SetAutoLayout(True)
-        
+        self.GetNews()
         
 #----------------------------------------------------------------------       
+    def GetNews(self):
+        #read news.xml, print
+        tree =''
+    	try:
+        	url_blob = urllib.urlopen(NEWS_URL)
+        	tree = read_write_xml.xml_utils().read_xml_tree(url_blob)
+       	except Exception, inst:
+       	     print 'Exception: get news: ' + str(inst)
+        
+        if tree != '':
+            root = tree.getroot()            
+            self.UpdateTC(root.text)
+
 
     def OnUpdateClick(self, event):        
         # check for admin priviliges
