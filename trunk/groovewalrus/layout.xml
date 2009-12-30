@@ -880,15 +880,16 @@
 																	<object class="wxRadioBox" name="m_rx_mylast_period">
 																		<style>wxRA_SPECIFY_COLS</style>
 																		<label></label>
-																		<selection>4</selection>
+																		<selection>5</selection>
 																		<content>
+																			<item>Recent</item>
 																			<item>7 Days</item>
 																			<item>3 Months</item>
 																			<item>6 Months</item>
 																			<item>12 Months</item>
 																			<item>All-time</item>
 																		</content>
-																		<dimension>5</dimension>
+																		<dimension>6</dimension>
 																	</object>
 																</object>
 																<object class="spacer">
@@ -1691,7 +1692,7 @@
 																<style>wxNB_FIXEDWIDTH</style>
 																<object class="notebookpage">
 																	<label>Main</label>
-																	<selected>1</selected>
+																	<selected>0</selected>
 																	<object class="wxScrolledWindow" name="m_scrolledWindow25">
 																		<style>wxHSCROLL|wxVSCROLL</style>
 																		<object class="wxBoxSizer">

@@ -59,9 +59,10 @@ GENRE_TOP_SONGS =   "http://ws.audioscrobbler.com/2.0/?method=tag.gettoptracks" 
 USER_TOP_SONGS =    "http://ws.audioscrobbler.com/2.0/?method=user.gettoptracks" + API_KEY
 USER_FRIENDS =      "http://ws.audioscrobbler.com/2.0/?method=user.getfriends" + API_KEY
 USER_NEIGHBOURS =   "http://ws.audioscrobbler.com/2.0/?method=user.getneighbours" + API_KEY
+USER_RECENT_SONGS = "http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&limit=50" + API_KEY #&user=rj&api_key=b25b959554ed76058ac220b7b2e0a026"
 SONG_TOP_TAGS =     "http://ws.audioscrobbler.com/2.0/?method=track.gettoptags" + API_KEY #&artist=cher&track=believe&api_key=b25b959554ed76058ac220b7b2e0a026
 
-PER_TIMES = ['7day', '3month', '6month', '12month', 'overall']
+PER_TIMES = ['recent', '7day', '3month', '6month', '12month', 'overall']
 
 
 class AudioScrobblerError(Exception):
@@ -135,10 +136,13 @@ class Scrobb(object):
             
     def make_user_top_songs(self, user, tperiod=1):
         # gets recent played songs for user
-        #overall | 3month | 6month | 12month | 7day
-
-        data_url = USER_TOP_SONGS + "&user=" + user + "&period=" + PER_TIMES[tperiod]
-        return self.genenric_song_list(data_url, 'name', 'playcount')
+        #recent| overall | 3month | 6month | 12month | 7day
+        if PER_TIMES[tperiod] == 'recent':
+            data_url = USER_RECENT_SONGS + "&user=" + user
+            return self.genenric_song_list_two(data_url, 'artist', 'name', 'date')            
+        else:
+            data_url = USER_TOP_SONGS + "&user=" + user + "&period=" + PER_TIMES[tperiod]
+            return self.genenric_song_list(data_url, 'name', 'playcount')
         
     def get_friends(self, user):
         # return a list of friends for user
@@ -184,6 +188,53 @@ class Scrobb(object):
                 name_list.append(x.text)
             # playcount
             name_list.append(match[0].text)
+            #for y in cover_image:
+            #   name_list.append(y.text)
+            #print ET.tostring(x)
+            song_list.append(name_list)
+            counter = counter + 1
+            
+        self.last_similar_file_name = data_url
+        
+        return song_list
+        
+    def genenric_song_list_two(self, data_url, iterator_one, iterator_two, iterator_three):
+        # returns the songs list        
+        #print data_url.replace(' ', '%20')
+        if (data_url != self.last_similar_file_name):        
+            tree = self.read_xml_tree(data_url.replace(' ', '%20'))
+            self.new_similar_tree = tree
+        else:
+            tree = self.new_similar_tree
+        # make a blob of settings info
+        root = tree.getroot() # <lfm>
+        sub_root = root.getchildren() # <toptracks>
+        tracks = sub_root[0].getchildren() # <track>
+        song_list = []
+        #print root
+        #print sub_root
+        #print file_name
+        counter = 0
+
+        for track in tracks:
+            # makes a dictionary with xml tag / value pairs
+            artists = track.getiterator(iterator_one)
+            names = track.getiterator(iterator_two)
+            match = track.getiterator(iterator_three)
+            #cover_image = track.getiterator("image")
+            #print(cover_image)
+
+            name_list = []
+            #song and artist
+            #for x in names:             
+            #    name_list.append(x.text)
+            # playcount
+            name_list.append(artists[0].text)
+            name_list.append(names[0].text)
+            if len(match) > 0:
+                name_list.append(match[0].text)
+            else:
+                name_list.append('Now playing')
             #for y in cover_image:
             #   name_list.append(y.text)
             #print ET.tostring(x)
