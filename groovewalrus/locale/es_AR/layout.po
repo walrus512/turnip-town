@@ -15,187 +15,187 @@ msgid "None"
 msgstr ""
 
 msgid "Playlist"
-msgstr ""
+msgstr "Lista"
 
 msgid "Last.fm"
 msgstr ""
 
 msgid "Similar Songs"
-msgstr ""
+msgstr "Canciones Similares"
 
 msgid "Top Songs: Artist"
-msgstr ""
+msgstr "Canciones Top: Artista"
 
 msgid "Top Songs: Geo"
-msgstr ""
+msgstr "Canciones Top: Geo"
 
 msgid "Top Songs: Tag"
-msgstr ""
+msgstr "Canciones Top: Tag"
 
 msgid "Top Songs: Album"
-msgstr ""
+msgstr "Canciones Top: Álbum"
 
 msgid "Similar Artists"
-msgstr ""
+msgstr "Artistas Similares"
 
 msgid "Top Albums: Artist"
-msgstr ""
+msgstr "Álbumes Top: Artista"
 
 msgid "Top Tags: Song"
-msgstr ""
+msgstr "Tags Top: Canción"
 
 msgid "Playlistize!"
-msgstr ""
+msgstr "Listar!"
 
 msgid "Artist"
-msgstr ""
+msgstr "Artista"
 
 msgid "Song"
-msgstr ""
+msgstr "Canción"
 
 msgid "Album"
-msgstr ""
+msgstr "Álbum"
 
 msgid "Tag"
-msgstr ""
+msgstr "Tag"
 
 msgid "My Last.fm"
-msgstr ""
+msgstr "Mi Last.fm"
 
 msgid "Me"
-msgstr ""
+msgstr "Yo"
 
 msgid "My Friends"
-msgstr ""
+msgstr "Mis Amigos"
 
 msgid "My Neighbours"
-msgstr ""
+msgstr "Mis Vecinos"
 
 msgid "User"
-msgstr ""
+msgstr "Usuario"
 
 msgid "Get Tracks"
-msgstr ""
+msgstr "Obtener Pistas"
 
 msgid "Biography"
-msgstr ""
+msgstr "Biografía"
 
 msgid "Collection"
-msgstr ""
+msgstr "Colección"
 
 msgid "Song Collection"
-msgstr ""
+msgstr "Colección de Canciones"
 
 msgid "Filter Songs"
-msgstr ""
+msgstr "Filtrar Canciones"
 
 msgid "File"
-msgstr ""
+msgstr "Archivo"
 
 msgid "Folder"
-msgstr ""
+msgstr "Carpeta"
 
 msgid "Favorites"
-msgstr ""
+msgstr "Favoritos"
 
 msgid "List Sifter"
-msgstr ""
+msgstr "Organizador de Lista"
 
 msgid "Pre-split:"
 msgstr ""
 
 msgid "Separator:"
-msgstr ""
+msgstr "Separador:"
 
 msgid "Sift!"
-msgstr ""
+msgstr "Ordenar!"
 
 msgid "Options"
-msgstr ""
+msgstr "Opciones"
 
 msgid "Main"
-msgstr ""
+msgstr "Principal"
 
 msgid "Double-clicking..."
-msgstr ""
+msgstr "Doble click.."
 
 msgid "Playlistize! clears playlist before adding."
-msgstr ""
+msgstr "Listar! limpia la lista antes de agregar."
 
 msgid "Use alternate GrooveShark source."
-msgstr ""
+msgstr "Usar fuente GrooveShark alternativa."
 
 msgid "Drop id from search results."
-msgstr ""
+msgstr "Remover id de los resultados de búsquedas."
 
 msgid "Minimize to tray."
-msgstr ""
+msgstr "Minimizar al tray."
 
 msgid "Save music to:"
-msgstr ""
+msgstr "Guardar música en:"
 
 msgid "About..."
-msgstr ""
+msgstr "Acerca de.."
 
 msgid "Last.fm Account"
-msgstr ""
+msgstr "Cuenta Last.fm"
 
 msgid "Username"
-msgstr ""
+msgstr "Usuario"
 
 msgid "Password"
-msgstr ""
+msgstr "Contraseña"
 
 msgid "Save"
-msgstr ""
+msgstr "Guardar"
 
 msgid "Status:"
-msgstr ""
+msgstr "Estado:"
 
 msgid "Enable Scrobbling"
-msgstr ""
+msgstr "Habilitar Scrobbling"
 
 msgid "Scrobble Port"
-msgstr ""
+msgstr "Puerto de Scrobbling"
 
 msgid "Scrobble Album"
-msgstr ""
+msgstr "Scrobblear Álbum"
 
 msgid "Music Stream"
-msgstr ""
+msgstr "Stream de Música"
 
 msgid "Wait"
-msgstr ""
+msgstr "Esperar"
 
 msgid "seconds before playing a streamed song (it takes time to load)."
-msgstr ""
+msgstr "segundos antes de reproducir una canción (ya que tarda un tiempo en cargarse)."
 
 msgid "Play songs for"
-msgstr ""
+msgstr "Reproducir canciones durante"
 
 msgid "minutes"
-msgstr ""
+msgstr "minutos"
 
 msgid "seconds, if a time can't be found."
-msgstr ""
+msgstr "segundos, si no se define o encuentra un tiempo."
 
 msgid "Plug-ins"
-msgstr ""
+msgstr "Plugins"
 
 msgid "alternative"
-msgstr ""
+msgstr "alternativo"
 
 msgid "classical"
-msgstr ""
+msgstr "clásico"
 
 msgid "country"
 msgstr ""
 
 msgid "electronic"
-msgstr ""
+msgstr "electrónico"
 
 msgid "hip-hop"
-msgstr ""
+msgstr "hip-hop"
 
 msgid "indie"
 msgstr ""
@@ -243,89 +243,89 @@ msgid "Recent"
 msgstr ""
 
 msgid "7 Days"
-msgstr ""
+msgstr "7 Días"
 
 msgid "3 Months"
-msgstr ""
+msgstr "3 Meses"
 
 msgid "6 Months"
-msgstr ""
+msgstr "6 Meses"
 
 msgid "12 Months"
-msgstr ""
+msgstr "12 Meses"
 
 msgid "All-time"
-msgstr ""
+msgstr "Todo"
 
 msgid "artist"
-msgstr ""
+msgstr "artista"
 
 msgid "song"
-msgstr ""
+msgstr "canción"
 
 msgid "adds song to the playlist."
-msgstr ""
+msgstr "añade canción a la lista."
 
 msgid "searches for that song."
-msgstr ""
+msgstr "busca esa canción."
 
 msgid "No Port"
-msgstr ""
+msgstr "Ningún Puerto"
 
 msgid "Default Port"
-msgstr ""
+msgstr "Puerto Predeterminado"
 
 msgid "Volume"
-msgstr ""
+msgstr "Volumen"
 
 msgid "Add Favorite"
-msgstr ""
+msgstr "Añadir Favorito"
 
 msgid "Load Playlist"
-msgstr ""
+msgstr "Cargar Lista"
 
 msgid "Save Song"
-msgstr ""
+msgstr "Guardar Canción"
 
 msgid "Search"
-msgstr ""
+msgstr "Búsqueda"
 
 msgid "Shuffle"
-msgstr ""
+msgstr "Reproducción Aleatoria"
 
 msgid "Repeat"
-msgstr ""
+msgstr "Repetir"
 
 msgid "New update available."
-msgstr ""
+msgstr "Nueva actualización disponible."
 
 msgid "Save Playlist"
-msgstr ""
+msgstr "Guardar Lista"
 
 msgid "Remove Selected"
-msgstr ""
+msgstr "Remover Seleccionado"
 
 msgid "Clear Playlist"
-msgstr ""
+msgstr "Limpiar Lista"
 
 msgid "Geographical Region"
-msgstr ""
+msgstr "Región Geográfica"
 
 msgid "Clear"
-msgstr ""
+msgstr "Limpiar"
 
 msgid "Last.fm Webpage"
-msgstr ""
+msgstr "Sitio de Last.fm"
 
 msgid "Add Files to Collection"
-msgstr ""
+msgstr "Añadir Archivos a la Colección"
 
 msgid "Add to Playlist"
-msgstr ""
+msgstr "Añadir a la Lista"
 
 msgid "Remove"
-msgstr ""
+msgstr "Remover"
 
 msgid "Clear File Filter"
-msgstr ""
+msgstr "Resetear el filtro de Archivos"
 

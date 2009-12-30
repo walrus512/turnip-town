@@ -239,6 +239,9 @@ msgstr ""
 msgid "sweden"
 msgstr ""
 
+msgid "Recent"
+msgstr ""
+
 msgid "7 Days"
 msgstr ""
 
