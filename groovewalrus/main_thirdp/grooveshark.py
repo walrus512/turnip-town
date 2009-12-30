@@ -16,13 +16,13 @@ import urllib
 #import subprocess
 #from mutagen.mp3 import MP3
 
-import urlgrabber
+from main_thirdp import urlgrabber
 from main_utils import system_files
 #import urlgrabber.progress
 
 
 #Third Pary Libaries
-import httplib2 #Need version 5 or higher for python 2.6 compatability  - No version info in httplib2 so I can not check this :(
+from main_thirdp import httplib2 #Need version 5 or higher for python 2.6 compatability  - No version info in httplib2 so I can not check this :(
 
 #try:
 #    import json
