@@ -63,7 +63,7 @@ from main_thirdp import grooveshark
 
 #from plugins.x2 import x2
 #from plugins.twitter import twitter
-#from plugins.dizzler import dizzler
+#from plugins.flash import flash
 #from plugins.played import played
 #from plugins.griddle import griddle
 
@@ -167,6 +167,7 @@ class MainPanel(wx.Panel):
         #res.InsertHandler(custom_slider.MyCustomSliderXmlHandler(self))
         # Now create a panel from the resource data
         panel = res.LoadPanel(self, "m_pa_main")
+        self.panel = panel
         
         xrc.XRCCTRL(self, 'm_pa_options_plugins').SetVirtualSize((1000, 1000))
         xrc.XRCCTRL(self, 'm_pa_options_plugins').SetScrollRate(20,20)
@@ -639,6 +640,7 @@ class MainPanel(wx.Panel):
         tbdnID = 7011
         ctrldID = 801
         ctrlrID = 802
+        ctrlbID = 803
         
         self.aTable_values = [
                                    (wx.ACCEL_NORMAL, wx.WXK_F1, backID),
@@ -654,7 +656,8 @@ class MainPanel(wx.Panel):
                                    (wx.ACCEL_NORMAL, wx.WXK_F11, tbdnID),
                                    (wx.ACCEL_NORMAL, wx.WXK_F12, tbupID),
                                    (wx.ACCEL_CTRL, ord('D'), ctrldID),
-                                   (wx.ACCEL_CTRL, ord('R'), ctrlrID)
+                                   (wx.ACCEL_CTRL, ord('R'), ctrlrID),
+                                   (wx.ACCEL_CTRL, ord('B'), ctrlbID)
                                            ]
         aTable = wx.AcceleratorTable(self.aTable_values)
         self.SetAcceleratorTable(aTable)
@@ -677,6 +680,7 @@ class MainPanel(wx.Panel):
         
         wx.EVT_MENU(self, ctrldID, self.OnClearPlaylistClick)
         wx.EVT_MENU(self, ctrlrID, self.ResetPosition)
+        wx.EVT_MENU(self, ctrlbID, self.RandomBackgroundColour)
         
         #-------------
         #plugins
@@ -684,6 +688,15 @@ class MainPanel(wx.Panel):
         
         #print system_files.GetDirectories(self).TempDirectory()
         #print system_files.GetDirectories(self).DataDirectory()
+                
+        # background image --------------------
+#        background = system_files.GetDirectories(self).DataDirectory() + os.sep + 'background.png'
+#        self.panel = panel
+#        if os.path.isfile(background): 
+#            img = wx.Image(background, wx.BITMAP_TYPE_ANY)
+#            self.pbuffer = wx.BitmapFromImage(img)
+#            dc = wx.BufferedDC(wx.ClientDC(self.panel), self.pbuffer)           
+#            self.panel.Bind(wx.EVT_PAINT, self.OnPaint)
 
 # ---------------------------------------------------------
 #-----------------------------------------------------------
@@ -702,6 +715,20 @@ class MainPanel(wx.Panel):
         #    u'pl' : (wx.LANGUAGE_POLISH, u'pl_PL.UTF-8'),
         #wx.LANGUAGE_DEFAULT
         #wx.LANGUAGE_TURKISH
+        
+#    def OnPaint(self, evt):
+#        dc = wx.BufferedPaintDC(self.panel, self.pbuffer)
+    def RandomBackgroundColour(self, event):        
+        colour_array = ('#ced1ff', '#f7b3f5', '#ff95ae', '#ffd074', '#e6ff3a', '#aaff99', '#e4e4e4')
+        rand_col = random.randint(0, (len(colour_array) - 1))
+        self.panel.SetBackgroundColour(colour_array[rand_col])
+        self.parent.SetBackgroundColour(colour_array[rand_col])
+        self.sl_volume.SetBackgroundColour(colour_array[rand_col])
+        # for updating slider background to:
+        event = wx.SysColourChangedEvent()
+        self.ProcessEvent(event)
+        #refresh it
+        self.parent.Refresh()
         
     def SetScrobb(self):
         # set up scrobbing

@@ -25,7 +25,7 @@
 									<orient>wxHORIZONTAL</orient>
 									<object class="sizeritem">
 										<option>0</option>
-										<flag>wxALIGN_CENTER_HORIZONTAL|wxRIGHT|wxLEFT</flag>
+										<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL</flag>
 										<border>5</border>
 										<object class="wxStaticBitmap" name="m_bm_cover_small">
 											<size>75,75</size>
@@ -34,11 +34,11 @@
 									</object>
 									<object class="sizeritem">
 										<option>0</option>
-										<flag>wxALIGN_CENTER_HORIZONTAL|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL</flag>
+										<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL</flag>
 										<border>2</border>
 										<object class="wxSlider" name="m_sl_volume">
 											<style>wxSL_BOTH|wxSL_INVERSE|wxSL_VERTICAL</style>
-											<size>20,75</size>
+											<size>20,80</size>
 											<tooltip>Volume</tooltip>
 											<value>50</value>
 											<min>0</min>
@@ -77,57 +77,63 @@
 														</object>
 													</object>
 													<object class="sizeritem">
-														<option>0</option>
-														<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-														<border>5</border>
-														<object class="wxStaticText" name="m_st_status">
-															<size>54,-1</size>
-															<font>
-																<size>9</size>
-																<family>default</family>
-																<style>normal</style>
-																<weight>normal</weight>
-																<underlined>0</underlined>
-															</font>
-															<label></label>
-														</object>
-													</object>
-													<object class="sizeritem">
-														<option>0</option>
-														<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
-														<border>5</border>
-														<object class="wxStaticText" name="m_st_time">
-															<size>70,-1</size>
-															<font>
-																<size>9</size>
-																<family>default</family>
-																<style>normal</style>
-																<weight>normal</weight>
-																<underlined>0</underlined>
-															</font>
-															<label></label>
-														</object>
-													</object>
-													<object class="sizeritem">
 														<option>1</option>
-														<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+														<flag>wxEXPAND | wxALL</flag>
 														<border>5</border>
-														<object class="wxStaticText" name="m_st_track_info">
-															<font>
-																<size>9</size>
-																<family>default</family>
-																<style>normal</style>
-																<weight>bold</weight>
-																<underlined>0</underlined>
-															</font>
-															<label></label>
+														<object class="wxPanel" name="m_panel2">
+															<style>wxSTATIC_BORDER|wxTAB_TRAVERSAL</style>
+															<bg>#f5f5f5</bg>
+															<object class="wxBoxSizer">
+																<orient>wxHORIZONTAL</orient>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																	<border>5</border>
+																	<object class="wxStaticText" name="m_st_status">
+																		<size>54,-1</size>
+																		<font>
+																			<size>9</size>
+																			<family>default</family>
+																			<style>normal</style>
+																			<weight>normal</weight>
+																			<underlined>0</underlined>
+																		</font>
+																		<label></label>
+																	</object>
+																</object>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
+																	<border>5</border>
+																	<object class="wxStaticText" name="m_st_time">
+																		<size>70,-1</size>
+																		<font>
+																			<size>9</size>
+																			<family>default</family>
+																			<style>normal</style>
+																			<weight>normal</weight>
+																			<underlined>0</underlined>
+																		</font>
+																		<label></label>
+																	</object>
+																</object>
+																<object class="sizeritem">
+																	<option>1</option>
+																	<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																	<border>5</border>
+																	<object class="wxStaticText" name="m_st_track_info">
+																		<font>
+																			<size>9</size>
+																			<family>default</family>
+																			<style>normal</style>
+																			<weight>bold</weight>
+																			<underlined>0</underlined>
+																		</font>
+																		<label></label>
+																	</object>
+																</object>
+															</object>
 														</object>
-													</object>
-													<object class="spacer">
-														<option>0</option>
-														<flag>wxEXPAND</flag>
-														<border>5</border>
-														<size>4,0</size>
 													</object>
 												</object>
 											</object>
