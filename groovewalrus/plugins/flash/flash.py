@@ -51,12 +51,14 @@ class MainPanel(wx.Dialog):
         self.st_dizzler_header = xrc.XRCCTRL(self, 'm_st_dizzler_header')
         self.st_dizzler_using = xrc.XRCCTRL(self, 'm_st_dizzler_using')
         self.bm_dizzler_close = xrc.XRCCTRL(self, 'm_bm_dizzler_close')
+        self.bm_dizzler_tab = xrc.XRCCTRL(self, 'm_bm_dizzler_tab')
 
         # bindings ----------------
         self.Bind(wx.EVT_BUTTON, self.SetDizzler, id=xrc.XRCID('m_bu_dizzler_use_dizzler'))
         self.Bind(wx.EVT_BUTTON, self.SetGrooveShark, id=xrc.XRCID('m_bu_dizzler_use_grooveshark'))
         #self.Bind(wx.EVT_TEXT, self.OnChars, self.tc_dizzler_text)
         self.bm_dizzler_close.Bind(wx.EVT_LEFT_UP, self.CloseMe)
+        self.bm_dizzler_tab.Bind(wx.EVT_LEFT_UP, self.OnMakeTabClick)
         
         self.Bind(wx.EVT_LEFT_DOWN, self.OnMouseLeftDown)
         self.Bind(wx.EVT_MOTION, self.OnMouseMotion)
@@ -94,6 +96,23 @@ class MainPanel(wx.Dialog):
     def CloseMe(self, event=None):
         self.parent.use_web_music = False
         self.parent.OnStopClick(None)
+        self.Destroy()
+        
+    def OnMakeTabClick(self, event=None):
+        # transfer plug-in to tab in main player
+        # make a new page                
+        page1 = PageOne(self.parent.nb_main)
+        # add the pages to the notebook
+        self.parent.nb_main.AddPage(page1, "Flash")
+        
+        #flash windows
+        dizzler_flash = FlashWindow(page1, style=wx.NO_BORDER, size=wx.Size(500,140))#, size=(400, 120))        
+        #self.flash.Show(True)        
+        flash_sizer = wx.BoxSizer(wx.VERTICAL)
+        flash_sizer.Add(dizzler_flash, 1, wx.EXPAND|wx.ALL, 5)
+        page1.SetSizer(flash_sizer)        
+        self.parent.use_web_music = True
+        self.parent.flash = dizzler_flash
         self.Destroy()
                
     def LoadFlashSong(self, artist, song):
@@ -171,7 +190,11 @@ class MainPanel(wx.Dialog):
         self.hide_me()
         #self..Destroy()
           
-            
+      
+class PageOne(wx.Panel):
+    def __init__(self, parent):
+        wx.Panel.__init__(self, parent)        
+              
 # ===================================================================            
 
               

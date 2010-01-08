@@ -31,6 +31,15 @@
 						<option>0</option>
 						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
 						<border>5</border>
+						<object class="wxStaticBitmap" name="m_bm_dizzler_tab">
+							<size>22,22</size>
+							<bitmap>tab-new.png</bitmap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
 						<object class="wxStaticBitmap" name="m_bm_dizzler_close">
 							<size>22,22</size>
 							<bitmap>emblem-unreadable.png</bitmap>
