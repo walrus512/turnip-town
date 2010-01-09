@@ -61,7 +61,11 @@ class Brainz(object):
         
     def read_xml_tree(self, file_name):
         # reads in an xml file and returns a blob for you to work with
-        tree = ET.parse(urllib.urlopen(file_name))
+        tree = ''
+    	try:
+        	tree = ET.parse(urllib.urlopen(file_name))
+       	except Exception, inst:
+       	     print 'Exception: musicbrainz: ' + str(inst)        
         #ET.dump(tree)
         return tree        
         
@@ -77,32 +81,34 @@ class Brainz(object):
         tree = self.read_xml_tree(data_url.replace(' ', '%20'))
         # 
         #print data_url
-        root = tree.getroot() # 
-        sub_root = root.getchildren() #<metadata>
-        #print sub_root[0]
-        try:
-            ele_tracklist = sub_root[0].getchildren() #<tracklist>        
-            #ele_track = ele_tracklist[0].getchildren() #<track>
-            #print ele_tracklist
-            #print ele_track
-            #print len(ele_tracklist) 
-            for track in ele_tracklist:
-                #print track
-                durs = track.find('{http://musicbrainz.org/ns/mmd-1.0#}duration')                
-                try:
-                   song_seconds = int(durs.text) / 1000
-                   print durs.text
-                   break
-                except AttributeError:
-                    pass
-
-            #for x in ele_track:
-            #    if (x.tag[-8:] == 'duration'):
-            #        #print x.text
-            #        song_seconds = int(x.text) / 1000
-                                    
-        except IndexError:
-            pass
+        if tree !='':
+            root = tree.getroot() # 
+            sub_root = root.getchildren() #<metadata>
+            
+            #print sub_root[0]
+            try:
+                ele_tracklist = sub_root[0].getchildren() #<tracklist>        
+                #ele_track = ele_tracklist[0].getchildren() #<track>
+                #print ele_tracklist
+                #print ele_track
+                #print len(ele_tracklist) 
+                for track in ele_tracklist:
+                    #print track
+                    durs = track.find('{http://musicbrainz.org/ns/mmd-1.0#}duration')                
+                    try:
+                       song_seconds = int(durs.text) / 1000
+                       print durs.text
+                       break
+                    except AttributeError:
+                        pass
+    
+                #for x in ele_track:
+                #    if (x.tag[-8:] == 'duration'):
+                #        #print x.text
+                #        song_seconds = int(x.text) / 1000
+                                        
+            except IndexError:
+                pass
         
         return song_seconds
         
@@ -119,29 +125,30 @@ class Brainz(object):
         tree = self.read_xml_tree(data_url.replace(' ', '+'))
         # 
         #print data_url
-        root = tree.getroot() # 
-        sub_root = root.getchildren() #<metadata>
-        try:
-            ele_tracklist = sub_root[0].getchildren() #<tracklist>        
-            ele_track = ele_tracklist[0].getchildren() #<track>
-            #print ele_tracklist
-
-            for x in ele_track:
-                if (x.tag[-12:] == 'release-list'):
-                    ele_relaselist = x.getchildren() #<release-list
-                    ele_release = ele_relaselist[0].getchildren() #<release
-                    release_attrib = ele_relaselist[0].attrib
-                    # get the id attribute of the release tag
-                    release_id = release_attrib['id']
-                    #print release_id
-                    for y in ele_release:
-                        if (y.tag[-5:] == 'title'):
-                            album_name = y.text
-                            # print album_name
-                                    
-        except IndexError:
-            pass
-        
+        if tree !='':
+            root = tree.getroot() # 
+            sub_root = root.getchildren() #<metadata>
+            try:
+                ele_tracklist = sub_root[0].getchildren() #<tracklist>        
+                ele_track = ele_tracklist[0].getchildren() #<track>
+                #print ele_tracklist
+    
+                for x in ele_track:
+                    if (x.tag[-12:] == 'release-list'):
+                        ele_relaselist = x.getchildren() #<release-list
+                        ele_release = ele_relaselist[0].getchildren() #<release
+                        release_attrib = ele_relaselist[0].attrib
+                        # get the id attribute of the release tag
+                        release_id = release_attrib['id']
+                        #print release_id
+                        for y in ele_release:
+                            if (y.tag[-5:] == 'title'):
+                                album_name = y.text
+                                # print album_name
+                                        
+            except IndexError:
+                pass
+            
         return [release_id, album_name]
 
     def get_album_info(self, artist, album):
@@ -154,29 +161,30 @@ class Brainz(object):
         tree = self.read_xml_tree(data_url.replace(' ', '+'))
         # 
         #print data_url
-        root = tree.getroot() #
-        sub_root = root.getchildren() #<metadata>
-        #print sub_root
-        try:
-            #ele_tracklist = sub_root[0].getchildren() #<tracklist>        
-            #ele_track = ele_tracklist[0].getchildren() #<track>
-            #print ele_tracklist
-
-            for x in sub_root:
-                if (x.tag[-12:] == 'release-list'):
-                    ele_relaselist = x.getchildren() #<release-list
-                    ele_release = ele_relaselist[0].getchildren() #<release
-                    release_attrib = ele_relaselist[0].attrib
-                    # get the id attribute of the release tag
-                    release_id = release_attrib['id']
-                    #print release_id
-                    for y in ele_release:
-                        if (y.tag[-5:] == 'title'):
-                            album_name = y.text
-                            # print album_name
-                                    
-        except IndexError:
-            pass
+        if tree !='':
+            root = tree.getroot() #
+            sub_root = root.getchildren() #<metadata>
+            #print sub_root
+            try:
+                #ele_tracklist = sub_root[0].getchildren() #<tracklist>        
+                #ele_track = ele_tracklist[0].getchildren() #<track>
+                #print ele_tracklist
+    
+                for x in sub_root:
+                    if (x.tag[-12:] == 'release-list'):
+                        ele_relaselist = x.getchildren() #<release-list
+                        ele_release = ele_relaselist[0].getchildren() #<release
+                        release_attrib = ele_relaselist[0].attrib
+                        # get the id attribute of the release tag
+                        release_id = release_attrib['id']
+                        #print release_id
+                        for y in ele_release:
+                            if (y.tag[-5:] == 'title'):
+                                album_name = y.text
+                                # print album_name
+                                        
+            except IndexError:
+                pass
         
         return [release_id, album_name]
         
@@ -190,24 +198,25 @@ class Brainz(object):
         tree = self.read_xml_tree(data_url.replace(' ', '+'))
         # 
         #print data_url
-        root = tree.getroot() # 
-        sub_root = root.getchildren() #<metadata>
-        #ele_release = sub_root[0].getchildren() #<release>
-        try:
-            ele_track_list = sub_root[0].find('{http://musicbrainz.org/ns/mmd-1.0#}track-list')
-            #print ele_track_list
-            ele_track = ele_track_list.getchildren()
-            counter = 1
-
-            for x in ele_track:
-                #print x.tag
-                if (x.tag[-5:] == 'track'):
-                    y = x.find('{http://musicbrainz.org/ns/mmd-1.0#}title')
-                    album_list.append(y.text)
-                    counter = counter + 1
-        except IndexError:
-            pass
-            
+        if tree !='':
+            root = tree.getroot() # 
+            sub_root = root.getchildren() #<metadata>
+            #ele_release = sub_root[0].getchildren() #<release>
+            try:
+                ele_track_list = sub_root[0].find('{http://musicbrainz.org/ns/mmd-1.0#}track-list')
+                #print ele_track_list
+                ele_track = ele_track_list.getchildren()
+                counter = 1
+    
+                for x in ele_track:
+                    #print x.tag
+                    if (x.tag[-5:] == 'track'):
+                        y = x.find('{http://musicbrainz.org/ns/mmd-1.0#}title')
+                        album_list.append(y.text)
+                        counter = counter + 1
+            except IndexError:
+                pass
+                
         return album_list
 
   

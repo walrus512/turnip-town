@@ -77,7 +77,11 @@ class Scrobb(object):
         
     def read_xml_tree(self, file_name):
         # reads in an xml file and returns a blob for you to work with
-        tree = ET.parse(urllib.urlopen(file_name))
+        tree = ''
+    	try:
+        	tree = ET.parse(urllib.urlopen(file_name))
+       	except Exception, inst:
+       	     print 'Exception: audioscrobber_lite: ' + str(inst)
         #ET.dump(tree)
         #print tree
         return tree    
@@ -338,22 +342,23 @@ class Scrobb(object):
         image_url = ''
         data_url = ARTIST_GETINFO + "&artist=" + artist
         tree = self.read_xml_tree(data_url.replace(' ', '+'))
-        # 
-        root = tree.getroot() # <lfm>
-        sub_root = root.getchildren() # various <tags>
-        try:
-            artist_elements = sub_root[0].getchildren()
-            #print album_elements
-            for x in artist_elements:
-                #print x
-                if (x.tag == 'image'):
-                    image_url = x.text
-                if (x.tag == 'bio'):
-                    y = x.find('summary')
-                    summary_text = y.text
-                #print summary_text
-        except AttributeError:
-            pass
+        #
+        if tree !='':
+            root = tree.getroot() # <lfm>
+            sub_root = root.getchildren() # various <tags>
+            try:
+                artist_elements = sub_root[0].getchildren()
+                #print album_elements
+                for x in artist_elements:
+                    #print x
+                    if (x.tag == 'image'):
+                        image_url = x.text
+                    if (x.tag == 'bio'):
+                        y = x.find('summary')
+                        summary_text = y.text
+                    #print summary_text
+            except AttributeError:
+                pass
 
         return (image_url, summary_text)
 
@@ -367,18 +372,19 @@ class Scrobb(object):
         data_url = TRACK_GETINFO + "&artist=" + artist + "&track=" + track
         #print data_url
         tree = self.read_xml_tree(data_url.replace(' ', '+'))
-        # 
-        root = tree.getroot() # <lfm>
-        sub_root = root.getchildren() # various <tags>
-        try:
-            album_elements = sub_root[0].find('album').getchildren()
-            #print album_elements
-            for x in album_elements:
-                #print x
-                if (x.tag == 'image'):
-                    image_url = x.text
-        except AttributeError:
-            pass
+        #
+        if tree !='':
+            root = tree.getroot() # <lfm>
+            sub_root = root.getchildren() # various <tags>
+            try:
+                album_elements = sub_root[0].find('album').getchildren()
+                #print album_elements
+                for x in album_elements:
+                    #print x
+                    if (x.tag == 'image'):
+                        image_url = x.text
+            except AttributeError:
+                pass
 
         return image_url
         
@@ -392,20 +398,21 @@ class Scrobb(object):
         data_url = ALBUM_GETINFO + "&artist=" + artist + "&album=" + album
         #print data_url
         tree = self.read_xml_tree(data_url.replace(' ', '+'))
-        # 
-        root = tree.getroot() # <lfm>
-        sub_root = root.getchildren() # various <tags>
-
-        #print sub_root
-        try:
-            album_elements = sub_root[0].getchildren()
-            #print album_elements
-            for x in album_elements:
-                #print x.tag
-                if (x.tag == 'image'):
-                    image_url = x.text
-        except AttributeError:
-            pass
+        #
+        if tree !='':
+            root = tree.getroot() # <lfm>
+            sub_root = root.getchildren() # various <tags>
+    
+            #print sub_root
+            try:
+                album_elements = sub_root[0].getchildren()
+                #print album_elements
+                for x in album_elements:
+                    #print x.tag
+                    if (x.tag == 'image'):
+                        image_url = x.text
+            except AttributeError:
+                pass
 
         return image_url
         
@@ -421,24 +428,25 @@ class Scrobb(object):
         data_url = TRACK_GETINFO + "&artist=" + artist + "&track=" + track
         #print data_url
         tree = self.read_xml_tree(data_url.replace(' ', '+'))
-        # 
-        root = tree.getroot() # <lfm>
-        sub_root = root.getchildren() # various <tags>
-        try:
-            playcount_ele = sub_root[0].find('playcount')
-            playcount = playcount_ele.text
-            listeners_ele = sub_root[0].find('listeners')
-            listeners = listeners_ele.text
-            
-            if len(sub_root[0].find('toptags').getchildren()) >= 1:
-                toptags_ele = sub_root[0].find('toptags').getchildren()[0].find('name')    
-                top_tag = toptags_ele.text
-        except AttributeError:
-            pass
-        #print toptags_ele
-        #print playcount
-        #print listeners
-        #print data_url
+        #
+        if tree !='': 
+            root = tree.getroot() # <lfm>
+            sub_root = root.getchildren() # various <tags>
+            try:
+                playcount_ele = sub_root[0].find('playcount')
+                playcount = playcount_ele.text
+                listeners_ele = sub_root[0].find('listeners')
+                listeners = listeners_ele.text
+                
+                if len(sub_root[0].find('toptags').getchildren()) >= 1:
+                    toptags_ele = sub_root[0].find('toptags').getchildren()[0].find('name')    
+                    top_tag = toptags_ele.text
+            except AttributeError:
+                pass
+            #print toptags_ele
+            #print playcount
+            #print listeners
+            #print data_url
         return (playcount, listeners, top_tag)
         
 # ===================================================================            
