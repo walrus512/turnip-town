@@ -49,7 +49,8 @@ class DbFuncs(object):
          "m_tag": "CREATE TABLE IF NOT EXISTS m_tag (tag_id INTEGER PRIMARY KEY, tag_label TEXT)",
          "m_playcount": "CREATE TABLE IF NOT EXISTS m_playcount (playcount_id INTEGER PRIMARY KEY, track_id INTEGER, local_playcount INTEGER, last_play_date DATETIME)",
          "m_rating": "CREATE TABLE IF NOT EXISTS m_rating (rating_id INTEGER PRIMARY KEY, track_id INTEGER, rating_type_id INTEGER)",
-         "m_settings": "CREATE TABLE IF NOT EXISTS m_settings (setting_id INTEGER PRIMARY KEY, setting_name TEXT, setting_value TEXT)"
+         "m_settings": "CREATE TABLE IF NOT EXISTS m_settings (setting_id INTEGER PRIMARY KEY, setting_name TEXT, setting_value TEXT)",
+         "m_folders": "CREATE TABLE IF NOT EXISTS m_folders (folder_id INTEGER PRIMARY KEY, folder_name TEXT, last_update DATE_TIME, primary_folder CHAR)"
          }
     
         # Create table
@@ -298,6 +299,28 @@ class DbFuncs(object):
         c.close()
         
         #return tag_id
+        
+    def InsertRatingData(self, p_track_id, p_rating_id):
+        # add rating for track
+        #rating_id INTEGER PRIMARY KEY, track_id INTEGER, rating_type_id INTEGER
+        #check for existing
+        #update record or creat new
+        
+        conn = sqlite3.connect(self.FILEDB)
+        c = conn.cursor()
+        
+        t = 'SELECT rating_id, rating_type_id FROM m_rating WHERE track_id=' + str(p_track_id) + ''
+        c.execute(t)
+        h = c.fetchall()
+        #print h
+        if len(h) >= 1:                        
+            c.execute('UPDATE m_rating SET rating_type_id= ' + str(p_rating_id) + ' WHERE track_id =' + str(p_track_id))
+            conn.commit()
+        else:
+            c.execute('INSERT INTO m_rating (track_id, rating_type_id) VALUES (' + str(p_track_id) + ', ' + str(p_rating_id) +')')
+            conn.commit()
+        c.close()
+        
                     
 #if (os.path.isfile(self.FILEDB)):
 #    pass
@@ -307,6 +330,8 @@ class DbFuncs(object):
 # **********************************
 #FillDb()
 
+#After adding directories which contain your mp3 files to your song collection (may take some time depending on number of files), the directories will be monitored and updated as new mp3's are added.
+
 import wx
 import wx.xrc as xrc
 
@@ -315,7 +340,7 @@ SONGDB_RESFILE = SYSLOC + os.sep + 'layout_songdb.xml'
 class SongDBWindow(wx.Dialog):
     """Song DB Window for adding songs"""
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, -1, "Song DB", style=wx.FRAME_SHAPED) #STAY_ON_TOP)#wx.FRAME_SHAPED)
+        wx.Dialog.__init__(self, parent, -1, "Song Collection Locations", size=(600, 400), pos=(10,10))#, style=wx.FRAME_SHAPED) #STAY_ON_TOP)#wx.FRAME_SHAPED)
         self.parent = parent
         
         # XML Resources can be loaded from a file like this:
@@ -325,11 +350,11 @@ class SongDBWindow(wx.Dialog):
         panel = res.LoadPanel(self, "m_pa_song_db")
 
         # control references --------------------
-        self.st_songdb_total = xrc.XRCCTRL(self, 'm_st_songdb_total')
-        self.st_songdb_last = xrc.XRCCTRL(self, 'm_st_songdb_last')
+        #self.st_songdb_total = xrc.XRCCTRL(self, 'm_st_songdb_total')
+        #self.st_songdb_last = xrc.XRCCTRL(self, 'm_st_songdb_last')
         self.st_songdb_header = xrc.XRCCTRL(self, 'm_st_songdb_header')
         #self.bm_search_close = xrc.XRCCTRL(self, 'm_bm_search_close')
-        self.dp_songdb_dir = xrc.XRCCTRL(self, 'm_dp_songdb_dir')
+        #self.dp_songdb_dir = xrc.XRCCTRL(self, 'm_dp_songdb_dir')
         
         
         # bindings ----------------
@@ -363,9 +388,9 @@ class SongDBWindow(wx.Dialog):
         # show the window
         self.MoveMe()
         self.Show(True) # Shows it
-        totals = DbFuncs().GetCountAndLast()
-        self.st_songdb_total.SetLabel(str(totals[0]))
-        self.st_songdb_last.SetLabel(totals[1])
+        #totals = DbFuncs().GetCountAndLast()
+        #self.st_songdb_total.SetLabel(str(totals[0]))
+        #self.st_songdb_last.SetLabel(totals[1])
         
     def MoveMe(self, event=None):
         # show the window        
