@@ -133,10 +133,10 @@
                                 <property name="bg"></property>
                                 <property name="bitmap">tab-new.png; Load From File</property>
                                 <property name="context_help"></property>
-                                <property name="enabled">1</property>
+                                <property name="enabled">0</property>
                                 <property name="fg"></property>
                                 <property name="font"></property>
-                                <property name="hidden">0</property>
+                                <property name="hidden">1</property>
                                 <property name="id">wxID_ANY</property>
                                 <property name="maximum_size"></property>
                                 <property name="minimum_size"></property>
@@ -294,13 +294,13 @@
                                 <property name="permission">none</property>
                                 <object class="sizeritem" expanded="1">
                                     <property name="border">5</property>
-                                    <property name="flag">wxTOP|wxBOTTOM|wxLEFT</property>
+                                    <property name="flag">wxALL</property>
                                     <property name="proportion">0</property>
                                     <object class="wxBitmapButton" expanded="1">
                                         <property name="bg"></property>
-                                        <property name="bitmap">weather-storm.png; Load From File</property>
+                                        <property name="bitmap">weather-clear-night.png; Load From File</property>
                                         <property name="context_help"></property>
-                                        <property name="default">0</property>
+                                        <property name="default">1</property>
                                         <property name="disabled"></property>
                                         <property name="enabled">1</property>
                                         <property name="fg"></property>
@@ -309,7 +309,7 @@
                                         <property name="hidden">0</property>
                                         <property name="hover"></property>
                                         <property name="id">wxID_ANY</property>
-                                        <property name="label">Poor</property>
+                                        <property name="label">Unrated</property>
                                         <property name="maximum_size"></property>
                                         <property name="minimum_size"></property>
                                         <property name="name">m_bb_ratings0</property>
@@ -319,7 +319,7 @@
                                         <property name="size"></property>
                                         <property name="style">wxBU_AUTODRAW</property>
                                         <property name="subclass"></property>
-                                        <property name="tooltip">Poor</property>
+                                        <property name="tooltip">Unrated</property>
                                         <property name="window_extra_style"></property>
                                         <property name="window_name"></property>
                                         <property name="window_style"></property>
@@ -351,13 +351,13 @@
                                 </object>
                                 <object class="sizeritem" expanded="1">
                                     <property name="border">5</property>
-                                    <property name="flag">wxTOP|wxBOTTOM</property>
+                                    <property name="flag">wxTOP|wxBOTTOM|wxLEFT</property>
                                     <property name="proportion">0</property>
                                     <object class="wxBitmapButton" expanded="1">
                                         <property name="bg"></property>
-                                        <property name="bitmap">weather-clear-night.png; Load From File</property>
+                                        <property name="bitmap">weather-storm.png; Load From File</property>
                                         <property name="context_help"></property>
-                                        <property name="default">1</property>
+                                        <property name="default">0</property>
                                         <property name="disabled"></property>
                                         <property name="enabled">1</property>
                                         <property name="fg"></property>
@@ -366,7 +366,7 @@
                                         <property name="hidden">0</property>
                                         <property name="hover"></property>
                                         <property name="id">wxID_ANY</property>
-                                        <property name="label">Unrated</property>
+                                        <property name="label">Poor</property>
                                         <property name="maximum_size"></property>
                                         <property name="minimum_size"></property>
                                         <property name="name">m_bb_ratings1</property>
@@ -376,7 +376,7 @@
                                         <property name="size"></property>
                                         <property name="style">wxBU_AUTODRAW</property>
                                         <property name="subclass"></property>
-                                        <property name="tooltip">Unrated</property>
+                                        <property name="tooltip">Poor</property>
                                         <property name="window_extra_style"></property>
                                         <property name="window_name"></property>
                                         <property name="window_style"></property>
