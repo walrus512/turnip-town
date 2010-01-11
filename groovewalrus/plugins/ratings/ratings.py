@@ -24,6 +24,7 @@ import urllib2
 import wx
 import wx.xrc as xrc
 import sys, os
+from main_utils import local_songs
 
 RESFILE = os.path.join(os.getcwd(), 'plugins','ratings') + os.sep + "layout_ratings.xml"
 
@@ -47,7 +48,11 @@ class MainPanel(wx.Dialog):
         self.bm_ratings_tab = xrc.XRCCTRL(self, 'm_bm_ratings_tab')
 
         # bindings ----------------
-        self.Bind(wx.EVT_BUTTON, self.DisplayTrackInfo, id=xrc.XRCID('m_bb_ratings1'))
+        self.Bind(wx.EVT_BUTTON, self.Rate0, id=xrc.XRCID('m_bb_ratings0'))
+        self.Bind(wx.EVT_BUTTON, self.Rate1, id=xrc.XRCID('m_bb_ratings1'))
+        self.Bind(wx.EVT_BUTTON, self.Rate2, id=xrc.XRCID('m_bb_ratings2'))
+        self.Bind(wx.EVT_BUTTON, self.Rate3, id=xrc.XRCID('m_bb_ratings3'))
+        self.Bind(wx.EVT_BUTTON, self.Rate4, id=xrc.XRCID('m_bb_ratings4'))
         #self.Bind(wx.EVT_BUTTON, self.SetGrooveShark, id=xrc.XRCID('m_bu_ratings_use_grooveshark'))
         #self.Bind(wx.EVT_TEXT, self.OnChars, self.tc_ratings_text)
         self.bm_ratings_close.Bind(wx.EVT_LEFT_UP, self.CloseMe)
@@ -71,7 +76,8 @@ class MainPanel(wx.Dialog):
         self.SetSizer(sizer)
         self.SetAutoLayout(True)
         #self.LoadSetings()
-
+        
+        
     def CloseMe(self, event=None):
         self.Destroy()
         
@@ -92,9 +98,43 @@ class MainPanel(wx.Dialog):
         #self.parent.flash = dizzler_flash
         #self.Destroy()
         
-    def DisplayTrackInfo(self, event=None):
-        self.st_ratings_song.SetLabel(str(self.parent.pmusic_id) + self.parent.partist + self.parent.ptrack)
-            
+    def Rate0(self, event):
+        track_id = self.GetTrackId()
+        self.AddRating(track_id, 0)
+        
+    def Rate1(self, event):
+        track_id = self.GetTrackId()
+        self.AddRating(track_id, 1)
+        
+    def Rate2(self, event):
+        track_id = self.GetTrackId()
+        self.AddRating(track_id, 2)
+        
+    def Rate3(self, event):
+        track_id = self.GetTrackId()
+        self.AddRating(track_id, 3)
+        
+    def Rate4(self, event):
+        track_id = self.GetTrackId()
+        self.AddRating(track_id, 4) 
+        
+    def DisplayTrackInfo(self, event=None):        
+        self.st_ratings_song.SetLabel(self.parent.partist + ' - ' + self.parent.ptrack)
+        
+    def GetTrackId(self):
+        music_id = self.parent.pmusic_id
+        grooveshark_id = self.parent.pgroove_id
+        artist = self.parent.partist
+        song = self.parent.ptrack
+        #track_id = local_songs.DbFuncs().InsertTrackData(grooveshark_id, music_id, track_time, tag_id, self.artist, self.song, self.album, album_art_file)
+        track_id = local_songs.DbFuncs().InsertTrackData(grooveshark_id, music_id, 0, 0, artist, song, '', '')
+        return track_id
+        
+    def AddRating(self, track_id, rating_type_id):
+        #rating_id #track_id #rating_type_id
+        # 0:no rating, 1:bad, 2:average, 3:good, 4:great
+        self.DisplayTrackInfo()
+        local_songs.DbFuncs().InsertRatingData(track_id, rating_type_id)
 # --------------------------------------------------------- 
 # titlebar-like move and drag
     
