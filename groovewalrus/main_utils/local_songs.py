@@ -59,21 +59,40 @@ class DbFuncs(object):
         conn.commit()
         c.close()    
     
-    def GetCountAndLast(self):
+    def GetCountAndLast(self, query='default'):
         # get row count
         rcount = 0
         filen = ''        
         conn = sqlite3.connect(self.FILEDB)
         c = conn.cursor()
-        t = "SELECT music_id, folder_path, folder_name, COUNT(*) as rcount FROM m_files ORDER BY music_id DESC LIMIT 1"
+        if query == 'default':
+            t = "SELECT music_id, folder_path, folder_name, COUNT(*) as rcount FROM m_files ORDER BY music_id DESC LIMIT 1"
+        else:
+           t = query 
         c.execute(t)
         h = c.fetchall()
         for x in h:        
             rcount = x[3]
             if x[1] != None:
-                filen = x[1] + '/' + x[2]
+                filen = str(x[1]) + '/' + str(x[2])
         c.close()
         return (rcount, filen)
+        
+    def GetLast(self, query='default'):
+        # get row count
+        rcount = 0    
+        conn = sqlite3.connect(self.FILEDB)
+        c = conn.cursor()
+        if query == 'default':
+            t = "SELECT COUNT(*) as rcount FROM m_files ORDER BY music_id DESC LIMIT 1"
+        else:
+           t = query 
+        c.execute(t)
+        h = c.fetchall()
+        for x in h:        
+            rcount = x[0]
+        c.close()
+        return rcount
         
     def GetRow(self, row_num, column):
         # get row count

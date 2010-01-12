@@ -2,7 +2,7 @@
 <resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
 	<object class="wxPanel" name="m_pa_plugin_ratings">
 		<style>wxTAB_TRAVERSAL</style>
-		<size>484,118</size>
+		<size>484,424</size>
 		<object class="wxBoxSizer">
 			<orient>wxVERTICAL</orient>
 			<object class="sizeritem">
@@ -140,6 +140,22 @@
 									<label></label>
 								</object>
 							</object>
+						</object>
+					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>1</option>
+				<flag>wxEXPAND</flag>
+				<border>5</border>
+				<object class="wxBoxSizer">
+					<orient>wxVERTICAL</orient>
+					<object class="sizeritem">
+						<option>1</option>
+						<flag>wxALL|wxEXPAND</flag>
+						<border>5</border>
+						<object class="wxListCtrl" name="m_lc_ratings_list" subclass="plugins.ratings.ratings.VirtualList">
+							<style>wxLC_REPORT|wxLC_VIRTUAL</style>
 						</object>
 					</object>
 				</object>
