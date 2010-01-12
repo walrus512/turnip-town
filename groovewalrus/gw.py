@@ -53,6 +53,7 @@ from main_windows import album_viewer
 from main_windows import search_window
 from main_windows import options_window
 from main_windows import details_window
+#from main_windows import song_collection
 
 from main_thirdp import pylast
 if os.name == 'nt':
@@ -67,7 +68,7 @@ from main_thirdp import grooveshark
 #from plugins.played import played
 #from plugins.griddle import griddle
 
-PROGRAM_VERSION = "0.201"
+PROGRAM_VERSION = "0.202"
 PROGRAM_NAME = "GrooveWalrus"
 PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
 PLAY_SONG_ALTERNATE_URL ="http://listen.grooveshark.com/main.swf?hostname=cowbell.grooveshark.com&p=1&songID="
@@ -490,8 +491,7 @@ class MainPanel(wx.Panel):
         wx.EVT_CLOSE(self.parent, self.OnExit)
            
         self.search_window = search_window.SearchWindow(self)
-        self.parent.Bind(wx.EVT_MOVE, self.search_window.MoveMe)
-        self.song_db_window = local_songs.SongDBWindow(self)        
+        self.parent.Bind(wx.EVT_MOVE, self.search_window.MoveMe)                
         # --------------------------------------------------------- 
         
         #try:
@@ -2551,8 +2551,10 @@ class MainPanel(wx.Panel):
 # --------------------------------------------------------- 
 # song collection -----------------------------------------  
     def OnSColAddClick(self, event):
-        # show song db window        
-        self.song_db_window.show_me()
+        # show song db window
+        song_db_window = local_songs.SongDBWindow(self)
+        #song_db_window = song_collection.SongDBWindow(self)
+        song_db_window.show_me()
         
     def OnSColDeleteClick(self, event):
         # show song db window        
