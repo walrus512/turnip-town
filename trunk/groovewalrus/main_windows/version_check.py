@@ -168,10 +168,10 @@ class UpdateWindow(wx.Dialog):
         '''check if you have admin rights'''
         failed = False
         try:
-            shutil.copyfile(self.data_directory + os.sep + 'gw.exe', self.data_directory + os.sep + 'gw_test.exe')
-            os.remove(self.data_directory + os.sep + 'gw_test.exe')
+            shutil.copyfile(os.getcwd() + os.sep + 'gw.exe', os.getcwd() + os.sep + 'gw_test.exe')
+            os.remove(os.getcwd() + os.sep + 'gw_test.exe')
         except IOError:
-            dlg = wx.MessageDialog(self.parent, "Can't copy file!\r\nNeed administrator privileges to update!\r\n.", 'Alert', wx.OK | wx.ICON_WARNING)
+            dlg = wx.MessageDialog(self.parent, "Can't copy file!\r\nNeed administrator privileges to update!", 'Alert', wx.OK | wx.ICON_WARNING)
             if (dlg.ShowModal() == wx.ID_OK):
                 dlg.Destroy()
             failed = True
