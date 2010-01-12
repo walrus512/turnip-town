@@ -25,13 +25,15 @@ import wx
 import wx.xrc as xrc
 import sys, os
 from main_utils import local_songs
+from main_utils import system_files
+import sqlite3
 
 RESFILE = os.path.join(os.getcwd(), 'plugins','ratings') + os.sep + "layout_ratings.xml"
 
 
 class MainPanel(wx.Dialog):
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, -1, "Ratings", size=(475,100), style=wx.FRAME_SHAPED) #STAY_ON_TOP)        
+        wx.Dialog.__init__(self, parent, -1, "Ratings", size=(475,300), style=wx.FRAME_SHAPED) #STAY_ON_TOP)        
         self.parent = parent
         
         # XML Resources can be loaded from a file like this:
@@ -46,6 +48,7 @@ class MainPanel(wx.Dialog):
         self.st_ratings_song = xrc.XRCCTRL(self, 'm_st_ratings_song')
         self.bm_ratings_close = xrc.XRCCTRL(self, 'm_bm_ratings_close')
         self.bm_ratings_tab = xrc.XRCCTRL(self, 'm_bm_ratings_tab')
+        self.lc_ratings_list = xrc.XRCCTRL(self, 'm_lc_ratings_list')
 
         # bindings ----------------
         self.Bind(wx.EVT_BUTTON, self.Rate0, id=xrc.XRCID('m_bb_ratings0'))
@@ -57,6 +60,16 @@ class MainPanel(wx.Dialog):
         #self.Bind(wx.EVT_TEXT, self.OnChars, self.tc_ratings_text)
         self.bm_ratings_close.Bind(wx.EVT_LEFT_UP, self.CloseMe)
         self.bm_ratings_tab.Bind(wx.EVT_LEFT_UP, self.OnMakeTabClick)
+        
+        #listcrtl is subclassed in xrc, get the count for the virtuallist
+        self.UpdateRowCount()
+        
+        self.lc_ratings_list.InsertColumn(0,"Artist")
+        self.lc_ratings_list.InsertColumn(1,"Song")
+        self.lc_ratings_list.InsertColumn(2,"Rating")
+        self.lc_ratings_list.SetColumnWidth(0, 180)
+        self.lc_ratings_list.SetColumnWidth(1, 180)
+        self.lc_ratings_list.SetColumnWidth(2, 50)
         
         self.Bind(wx.EVT_LEFT_DOWN, self.OnMouseLeftDown)
         self.Bind(wx.EVT_MOTION, self.OnMouseMotion)
@@ -135,6 +148,13 @@ class MainPanel(wx.Dialog):
         # 0:no rating, 1:bad, 2:average, 3:good, 4:great
         self.DisplayTrackInfo()
         local_songs.DbFuncs().InsertRatingData(track_id, rating_type_id)
+        self.UpdateRowCount()
+
+    def UpdateRowCount(self):
+        query = "SELECT COUNT(*) as rcount FROM m_rating ORDER BY rating_id DESC LIMIT 1"
+        self.lc_ratings_list.SetItemCount(local_songs.DbFuncs().GetLast(query))
+
+        
 # --------------------------------------------------------- 
 # titlebar-like move and drag
     
@@ -165,8 +185,53 @@ class MainPanel(wx.Dialog):
 class PageOne(wx.Panel):
     def __init__(self, parent):
         wx.Panel.__init__(self, parent)        
-              
+  
+        
+#====================================================
+class VirtualList(wx.ListCtrl):
+    def __init__(self):
+        self.query_flag = True        
+        p = wx.PreListCtrl()
+        # the Create step is done by XRC.
+        self.PostCreate(p)
+        self.FILEDB = system_files.GetDirectories(None).DataDirectory() + os.sep + 'gravydb.sq3'
+    
+    def OnGetItemText(self, item, col):
+        ritem = self.GetRow(item, col)
+        while ritem == '':
+            item = item + 1
+            ritem = self.GetRow(item, col)
+        return ritem
+        
+    def GetRow(self, row_num, column):
+        # get row count
+        row_num = row_num + 1
+        ritem = ''
+        if self.query_flag == True:            
+            conn = sqlite3.connect(self.FILEDB)
+            c = conn.cursor()
+            tq = "SELECT artist, song, rating_type_id FROM m_rating INNER JOIN m_tracks ON m_rating.track_id = m_tracks.track_id WHERE rating_id = " + str(row_num)
+            
+            c.execute(tq)
+            h = c.fetchall()
+            for x in h:
+                ritem = x[column]
+            c.close()
+        else:            
+            ritem = '1'
+            #print row_num - 1
+            #print len(self.res_arr)            
+            if (row_num - 1) >= len(self.res_arr):
+                #empty results on the ctrl will cause problems with us skipping holes in the id range
+                #so make them spaces
+                ritem = ' '
+            else:
+                ritem = self.res_arr[row_num - 1][column]
+        return ritem
+                    
 # ===================================================================            
+
+
 
               
 charset = 'utf-8'
