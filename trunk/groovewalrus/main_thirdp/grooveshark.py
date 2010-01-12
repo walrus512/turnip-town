@@ -57,11 +57,15 @@ g.Download(songKey)
 g.Popular()
 
 '''
+CLIENTREVISION = "20091209.18"
+
+
 class Grooveshark(object):
     def __init__(self, parent):
         self.search_url = 'http://cowbell.grooveshark.com/more.php?getSearchResults'
         self.count = 0
         self.parent = parent
+        self.clientRevision = CLIENTREVISION
         
     def save(self, content, path):
         file_ = open(path, 'wb')
@@ -77,8 +81,8 @@ class Grooveshark(object):
         http = httplib2.Http()
         url = 'https://cowbell.grooveshark.com/service.php'
         self.secretKey = hashlib.md5(self.session).hexdigest()
-        tokenPOSTdata = ('''{"header":{"session":"%s","uuid":"%s","client":"gslite","clientRevision":"20091209.02"},'''
-        '''"parameters":{"secretKey":"%s"},"method":"getCommunicationToken"}''' % (self.session, self.uuid, self.secretKey))
+        tokenPOSTdata = ('''{"header":{"session":"%s","uuid":"%s","client":"gslite","clientRevision":"%s"},'''
+        '''"parameters":{"secretKey":"%s"},"method":"getCommunicationToken"}''' % (self.session, self.uuid, self.clientRevision, self.secretKey))
         request, reply = http.request(url, 'POST', headers = HEADER, body = tokenPOSTdata)
         return json.loads(reply)['result']
         
@@ -98,8 +102,8 @@ class Grooveshark(object):
 
     def search(self, search_string):
         http = httplib2.Http()
-        data = ('''{"header":{"session":"%s","uuid":"%s","client":"gslite","clientRevision":"20091209.02","token":"%s"},'''
-        '''"parameters":{"type":"Songs","query":"%s"},"method":"getSearchResults"}''' % (self.session, self.uuid, self.token, search_string.lower()))
+        data = ('''{"header":{"session":"%s","uuid":"%s","client":"gslite","clientRevision":"%s","token":"%s"},'''
+        '''"parameters":{"type":"Songs","query":"%s"},"method":"getSearchResults"}''' % (self.session, self.uuid, self.clientRevision, self.token, search_string.lower()))
         self.response, self.result = http.request(self.search_url, 'POST', headers = header, body = data)
         self.result = self.result
         self.searchResults = json.loads(self.result)['result']['Return']
@@ -109,8 +113,8 @@ class Grooveshark(object):
         http = httplib2.Http()
         self.songID = id
         songKeyURL = '  http://cowbell.grooveshark.com/more.php?getStreamKeyFromSongID'
-        songKeyPOSTdata = ('''{"header":{"token":"%s","session":"%s","uuid":"%s","client":"gslite","clientRevision":"20091209.02"},'''
-        '''"parameters":{"songID":%s,"prefetch":false},"method":"getStreamKeyFromSongID"}''') % (self.token, self.session, self.uuid, self.songID)
+        songKeyPOSTdata = ('''{"header":{"token":"%s","session":"%s","uuid":"%s","client":"gslite","clientRevision":"%s"},'''
+        '''"parameters":{"songID":%s,"prefetch":false},"method":"getStreamKeyFromSongID"}''') % (self.token, self.session, self.uuid, self.clientRevision, self.songID)
         request, reply = http.request(songKeyURL, 'POST', headers = HEADER, body = songKeyPOSTdata)
         self.reply = json.loads(reply)['result']
         print reply
@@ -169,22 +173,22 @@ class Grooveshark(object):
     def popular(self):
         http = httplib2.Http()
         url = 'http://cowbell.grooveshark.com/more.php?popularGetSongs'
-        popularPOSTdata = ('''{"header":{"token":"%s","session":"%s","uuid":"%s","client":"gslite","clientRevision":"20091209.02"},'''
-        '''"parameters":{},"method":"popularGetSongs"}''' % (self.token, self.session, self.uuid))
+        popularPOSTdata = ('''{"header":{"token":"%s","session":"%s","uuid":"%s","client":"gslite","clientRevision":"%s"},'''
+        '''"parameters":{},"method":"popularGetSongs"}''' % (self.token, self.session, self.uuid, self.clientRevision))
         request, reply = http.request(url, 'POST', headers = HEADER, body = popularPOSTdata)
         return json.loads(reply)['result']['Songs']
 
     # def favorites(self):
         # http = httplib2.Http()
         # url = 'http://cowbell.grooveshark.com/more.php?getFavorites'
-        # songKeyPOSTdata = ('''{"header":{"token":"%s","session":"%s","uuid":"%s","client":"gslite","clientRevision":"20091209.02"},'''
+        # songKeyPOSTdata = ('''{"header":{"token":"%s","session":"%s","uuid":"%s","client":"gslite","clientRevision":"20091209.18"},'''
         # '''"parameters":{"prefetch":false},"method":"getFavorites"}''' % (self.token, self.session, self.uuid))
         # request, reply = http.request(url, 'POST', headers = header, body = songKeyPOSTdata)
         # print request
     # def playlist(self):
         # http = httplib2.Http()
         # url = 'http://cowbell.grooveshark.com/more.php?playlistGetSongs'
-        # songKeyPOSTdata = ('''{"header":{"token":"%s","session":"%s","uuid":"%s","client":"gslite","clientRevision":"20091209.02"},'''
+        # songKeyPOSTdata = ('''{"header":{"token":"%s","session":"%s","uuid":"%s","client":"gslite","clientRevision":"20091209.18"},'''
         # '''"parameters":{"prefetch":false},"method":"getPaylist"}''' % (self.token, self.session, self.uuid))
         # request, reply = http.request(url, 'POST', headers = header, body = songKeyPOSTdata)
         # print request
