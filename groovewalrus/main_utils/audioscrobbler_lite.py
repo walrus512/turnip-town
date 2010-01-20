@@ -116,7 +116,7 @@ class Scrobb(object):
         #print(file_name.replace(' ', '%20'))
         artist = url_quote(artist)
         data_url = ARTIST_TOP_SONGS + "&artist=" + artist
-        return self.genenric_song_list(data_url, 'name', 'playcount')
+        return self.genenric_song_list(data_url, 'name', 'listeners')
         
     def make_artist_top_album_list(self, artist):
         # gets top albums per artist
@@ -129,7 +129,7 @@ class Scrobb(object):
         #scrobb_url = "http://ws.audioscrobbler.com/2.0/?method=geo.gettoptracks&country=united+states&api_key=b25b959554ed76058ac220b7b2e0a026
         country = url_quote(country)
         data_url = GEO_TOP_SONGS + "&country=" + country
-        return self.genenric_song_list(data_url, 'name', 'playcount')
+        return self.genenric_song_list(data_url, 'name', 'listeners')
         
     def make_genre_top_song_list(self, genre):
         # gets top songs per country
@@ -163,7 +163,7 @@ class Scrobb(object):
 # ===================================================================         
     def genenric_song_list(self, data_url, iterator_one, iterator_two):
         # returns the songs list        
-        #print data_url.replace(' ', '%20')
+        print data_url
         if (data_url != self.last_similar_file_name):        
             tree = self.read_xml_tree(data_url.replace(' ', '%20'))
             self.new_similar_tree = tree
@@ -191,7 +191,10 @@ class Scrobb(object):
             for x in names:             
                 name_list.append(x.text)
             # playcount
-            name_list.append(match[0].text)
+            if match[0].text == None:
+                name_list.append('')
+            else:
+                name_list.append(match[0].text)
             #for y in cover_image:
             #   name_list.append(y.text)
             #print ET.tostring(x)
