@@ -68,7 +68,7 @@ from main_thirdp import grooveshark
 #from plugins.played import played
 #from plugins.griddle import griddle
 
-PROGRAM_VERSION = "0.202"
+PROGRAM_VERSION = "0.200"
 PROGRAM_NAME = "GrooveWalrus"
 PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
 PLAY_SONG_ALTERNATE_URL ="http://listen.grooveshark.com/main.swf?hostname=cowbell.grooveshark.com&p=1&songID="
@@ -108,6 +108,11 @@ class MainFrame(wx.Frame):
         wx.Frame.__init__(self, None, -1, PROGRAM_NAME + ' ' + PROGRAM_VERSION, size=(690, 500), pos=(200,200), style=wx.DEFAULT_FRAME_STYLE|wx.WANTS_CHARS) #^(wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX)) #, style=wx.STAY_ON_TOP) 
         #panel = wx.Panel(self, -1, size=(400, 100)) 
         #self.SetTransparent(180)
+        
+        # load menubar from xrc xml file
+        res = xrc.XmlResource(RESFILE)
+        self.menubar = res.LoadMenuBarOnFrame(self, "m_mb_main")
+                
         # program icon
         ib = wx.IconBundle()
         ib.AddIconFromFile(P_ICON, wx.BITMAP_TYPE_ANY)
@@ -155,7 +160,9 @@ class MainPanel(wx.Panel):
         self.image_save_location = system_files.GetDirectories(self).MakeDataDirectory('images') + os.sep
         self.playlist_save_location = system_files.GetDirectories(self).MakeDataDirectory('playlists') + os.sep
         self.main_playlist_location = system_files.GetDirectories(self).DataDirectory() + os.sep + "playlist.xspf"
+        self.main_playlist_location_bak = system_files.GetDirectories(self).DataDirectory() + os.sep + "playlist.bak"
         self.faves_playlist_location = system_files.GetDirectories(self).DataDirectory() + os.sep + "faves.xspf"
+        self.faves_playlist_location_bak = system_files.GetDirectories(self).DataDirectory() + os.sep + "faves.bak"
         
         local_songs.DbFuncs().create_tables()
         
@@ -326,6 +333,8 @@ class MainPanel(wx.Panel):
         self.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.OnPlaylistRightClick, self.lc_playlist)
         # wxGTK
         self.lc_playlist.Bind(wx.EVT_RIGHT_UP, self.OnPlaylistRightClick)
+        #self.lc_playlist.Bind(wx.EVT_CHAR, self.OnPlaylistKeyPress)
+
         
         #dynamic listctrl resize
         #wx.EVT_SIZE(self.parent, self.ResizePlaylist)
@@ -644,7 +653,7 @@ class MainPanel(wx.Panel):
         
         self.aTable_values = [
                                    (wx.ACCEL_NORMAL, wx.WXK_F1, backID),
-                                   (wx.ACCEL_NORMAL, wx.WXK_F2, playID),
+                                   #(wx.ACCEL_NORMAL, wx.WXK_F2, playID),
                                    (wx.ACCEL_NORMAL, wx.WXK_F3, stopID),
                                    (wx.ACCEL_NORMAL, wx.WXK_F4, forwID),
                                    (wx.ACCEL_NORMAL, wx.WXK_F5, saveID),
@@ -663,10 +672,10 @@ class MainPanel(wx.Panel):
         self.SetAcceleratorTable(aTable)
         self.album_viewer.SetAcceleratorTable(aTable)
          
-        wx.EVT_MENU(self, backID, self.OnBackwardClick)
-        wx.EVT_MENU(self, playID, self.OnPlayClick)
-        wx.EVT_MENU(self, stopID, self.OnStopClick)
-        wx.EVT_MENU(self, forwID, self.OnForwardClick)
+        #wx.EVT_MENU(self, backID, self.OnBackwardClick)
+        #wx.EVT_MENU(self, playID, self.OnPlayClick)
+        #wx.EVT_MENU(self, stopID, self.OnStopClick)
+        #wx.EVT_MENU(self, forwID, self.OnForwardClick) 
         
         wx.EVT_MENU(self, saveID, self.OnSavePlaylistClick)
         wx.EVT_MENU(self, loadID, self.OnLoadPlaylistClick)
@@ -682,9 +691,41 @@ class MainPanel(wx.Panel):
         wx.EVT_MENU(self, ctrlrID, self.ResetPosition)
         wx.EVT_MENU(self, ctrlbID, self.RandomBackgroundColour)
         
+        # menu items -----------
+        # file menu
+        self.parent.Bind(wx.EVT_MENU, self.OnLoadPlaylistClick, id=xrc.XRCID("m_mi_open"))
+        self.parent.Bind(wx.EVT_MENU, self.OnSavePlaylistClick, id=xrc.XRCID("m_mi_save_playlist_as"))
+        self.parent.Bind(wx.EVT_MENU, self.OnExit, id=xrc.XRCID("m_mi_exit"))
+        
+        # edit menu
+        self.parent.Bind(wx.EVT_MENU, self.OnDeleteClick, id=xrc.XRCID("m_mi_delete"))
+        self.parent.Bind(wx.EVT_MENU, self.OnCopyClick, id=xrc.XRCID("m_mi_copy"))
+        self.parent.Bind(wx.EVT_MENU, self.OnPasteClick, id=xrc.XRCID("m_mi_paste"))
+        self.parent.Bind(wx.EVT_MENU, self.OnCutClick, id=xrc.XRCID("m_mi_cut"))
+        self.parent.Bind(wx.EVT_MENU, self.OnUndoClick, id=xrc.XRCID("m_mi_undo"))
+        self.undo_toggle = 0
+        self.undo_toggle_faves = 0
+        self.copy_array = []
+        
+        # view menu
+        self.parent.Bind(wx.EVT_MENU, self.OnAlbumCoverClick, id=xrc.XRCID("m_mi_album_cover"))
+        
+        # playback menu
+        self.parent.Bind(wx.EVT_MENU, self.OnPlayClick, id=xrc.XRCID("m_mi_play"))
+        self.parent.Bind(wx.EVT_MENU, self.OnStopClick, id=xrc.XRCID("m_mi_stop"))
+        self.parent.Bind(wx.EVT_MENU, self.OnBackwardClick, id=xrc.XRCID("m_mi_previous"))
+        self.parent.Bind(wx.EVT_MENU, self.OnForwardClick, id=xrc.XRCID("m_mi_next"))
+        
+        # tools menu        
+        self.parent.Bind(wx.EVT_MENU, self.OnUpdateClick, id=xrc.XRCID("m_mi_version_update"))
+        
+        # help menu
+        self.parent.Bind(wx.EVT_MENU, self.OnAboutClick, id=xrc.XRCID("m_mi_about"))        
+        
+        
         #-------------
         #plugins
-        a = plugin_loader.PluginLoader(self)
+        a = plugin_loader.PluginLoader(self)       
         
         #print system_files.GetDirectories(self).TempDirectory()
         #print system_files.GetDirectories(self).DataDirectory()
@@ -973,6 +1014,7 @@ class MainPanel(wx.Panel):
 
     def CheckClear(self):
         # determine if we should clear the playlist before adding
+        self.BackupList()
         if self.cb_options_list_clear.GetValue():
             self.lc_playlist.DeleteAllItems()
             self.current_track = -1
@@ -1034,7 +1076,13 @@ class MainPanel(wx.Panel):
         self.parent.SetPosition((20,20))
         
     def OnAlbumCoverClick(self, event):
-        self.album_viewer.ToggleShow()
+        is_shown = self.album_viewer.ToggleShow()
+        # set check mark on main menu item
+        #if is_shown:
+        #    check_bmp = wx.Bitmap(GRAPHICS_LOCATION + 'checkmark.png', wx.BITMAP_TYPE_ANY)
+        #    self.parent.mi_album_cover.SetBitmap(check_bmp)
+        #else:
+        #    xrc.XRCCTRL(self.parent, 'm_mi_album_cover').SetBitmap(None)
 
     def OnUpdateClick(self, event):
         # open website
@@ -1451,6 +1499,7 @@ class MainPanel(wx.Panel):
         
     def OnClearPlaylistClick(self, event):
         # clear playlist
+        self.BackupList()
         self.lc_playlist.DeleteAllItems()
         self.nb_main.SetPageText(NB_PLAYLIST, 'Playlist (0)')
                 
@@ -1470,14 +1519,15 @@ class MainPanel(wx.Panel):
         if dlg.ShowModal() == wx.ID_OK:
             paths = dlg.GetPaths()
             print paths
+            self.BackupList()
             self.lc_playlist.DeleteAllItems()
             for path in paths:                
                 if path.endswith('.xspf'):
                     self.ReadPlaylist(path)
                 elif path.endswith('.m3u'):
-                   self.ReadWinampPlaylist(path)
-                elif path.endswith('.mp3'):
-                   self.ScolFileAdd(path)
+                    self.ReadWinampPlaylist(path)
+                elif path.endswith('.mp3'):                  
+                    self.ScolFileAdd(path)
                 else:
                     pass
         dlg.Destroy()
@@ -1523,6 +1573,7 @@ class MainPanel(wx.Panel):
                     counter = counter + 1
         finally:
             f.close()
+        self.SavePlaylist(self.main_playlist_location)
         self.ResizePlaylist()
         
     def ReadPlaylist(self, filename):
@@ -1561,7 +1612,6 @@ class MainPanel(wx.Panel):
             except TypeError:
                 print 'error:ReadPlaylist'
                 #pass
-            
         self.ResizePlaylist()
         
     def OnPlaylistRightClick(self, event):        
@@ -1598,7 +1648,8 @@ class MainPanel(wx.Panel):
         self.PopupMenu(menu)
         menu.Destroy()
         
-    def RemovePlaylistItem(self, event):        
+    def RemovePlaylistItem(self, event=None):
+        self.BackupList()
         # remove slected list item
         val = self.lc_playlist.GetFirstSelected()
         # iterate over all selected items and delete
@@ -1671,7 +1722,86 @@ class MainPanel(wx.Panel):
         song_link = SONG_SENDER_URL + artist + song
         wx.TheClipboard.Open()
         wx.TheClipboard.SetData(wx.TextDataObject(song_link))
-        wx.TheClipboard.Close() 
+        wx.TheClipboard.Close()
+        
+# --------------------------------------------------------- 
+# edit menu  ----------------------------------------------
+
+    def GetSelectedList(self):
+        #figure out which list is selected, playslist or favourites
+        if self.lc_playlist.IsShownOnScreen():
+            return self.lc_playlist
+        if self.lc_faves.IsShownOnScreen():
+            return self.lc_faves
+
+    def OnDeleteClick(self, event=None):
+        #check which listctrl is visable
+        #save list for undo
+        #delete items(s)        
+        if self.lc_playlist.IsShownOnScreen():
+            self.RemovePlaylistItem()
+        if self.lc_faves.IsShownOnScreen():
+            self.RemoveFavesItem()
+            
+    def OnCopyClick(self, event=None):
+        # copy list items
+        sel_list = self.GetSelectedList()
+        if sel_list != None:
+            val = sel_list.GetFirstSelected()
+            next_val = val
+            # iterate over all selected items and copy
+            self.copy_array = []
+            for x in range(val, val + sel_list.GetSelectedItemCount()):
+                list_arr = []
+                for y in range(0, sel_list.GetColumnCount()):
+                    list_arr.append(sel_list.GetItem(next_val, y).GetText())
+                next_val = sel_list.GetNextSelected(next_val)
+                self.copy_array.append(list_arr)
+            #print self.copy_array
+        
+    def OnCutClick(self, event):
+        self.OnCopyClick()
+        self.OnDeleteClick()        
+
+    def OnPasteClick(self, event):
+        #get the list to paste to
+        self.BackupList()
+        sel_list = self.GetSelectedList()
+        if sel_list != None:
+            #cycle through copied items and paste
+            for x in range(0, len(self.copy_array)):
+                cur_item = sel_list.GetItemCount()
+                index = sel_list.InsertStringItem(cur_item, self.copy_array[x][0])
+                for y in range(1, len(self.copy_array[0])):                
+                    sel_list.SetStringItem(cur_item, y, self.copy_array[x][y])
+
+    def OnUndoClick(self, event):
+        #toggle between loading default playlist and backup playlist
+        #load playlist backup file        
+        if self.lc_playlist.IsShownOnScreen():
+            self.lc_playlist.DeleteAllItems()
+            if self.undo_toggle == 0:
+                self.ReadPlaylist(self.main_playlist_location_bak)
+                self.undo_toggle = 1
+            else:
+                self.ReadPlaylist(self.main_playlist_location)
+                self.undo_toggle = 0
+        if self.lc_faves.IsShownOnScreen():
+            self.lc_faves.DeleteAllItems()
+            if self.undo_toggle_faves == 0:
+                self.ReadFaves(self.faves_playlist_location_bak)
+                self.undo_toggle_faves = 1
+            else:
+                self.ReadFaves(self.faves_playlist_location)
+                self.undo_toggle_faves = 0        
+        
+    def BackupList(self):
+        if self.lc_faves.IsShownOnScreen():
+            self.SaveFaves(self.faves_playlist_location_bak)
+            self.undo_toggle_faves = 0
+        else: # self.lc_playlist.IsShownOnScreen():
+            self.SavePlaylist(self.main_playlist_location_bak)
+            self.undo_toggle = 0
         
 # --------------------------------------------------------- 
 # My last.fm ----------------------------------------------
@@ -1816,6 +1946,7 @@ class MainPanel(wx.Panel):
                 menu.Destroy()
   
     def MyLastAddPlaylist(self, event):
+        self.BackupList()
         val = self.lc_mylast.GetFirstSelected()
         total = self.lc_mylast.GetSelectedItemCount()
         current_count = self.lc_playlist.GetItemCount()
@@ -2089,6 +2220,7 @@ class MainPanel(wx.Panel):
                 menu.Destroy()
   
     def LastfmAddPlaylist(self, event):
+        self.BackupList()
         val = self.lc_lastfm.GetFirstSelected()
         total = self.lc_lastfm.GetSelectedItemCount()
         current_count = self.lc_playlist.GetItemCount()
@@ -2245,6 +2377,7 @@ class MainPanel(wx.Panel):
                 menu.Destroy()
   
     def AlbumAddPlaylist(self, event):
+        self.BackupList()
         val = self.lc_album.GetFirstSelected()
         total = self.lc_album.GetSelectedItemCount()
         current_count = self.lc_playlist.GetItemCount()
@@ -2474,7 +2607,7 @@ class MainPanel(wx.Panel):
         # save playlist file
         self.SavePlaylist(self.main_playlist_location)
         
-    def RemoveFavesItem(self, event):        
+    def RemoveFavesItem(self, event=None):        
         # remove slected list item
         val = self.lc_faves.GetFirstSelected()
         # iterate over all selected items and delete
@@ -2527,6 +2660,7 @@ class MainPanel(wx.Panel):
                 menu.Destroy()
   
     def FavesAddPlaylist(self, event):
+        self.BackupList()
         val = self.lc_faves.GetFirstSelected()
         total = self.lc_faves.GetSelectedItemCount()
         current_count = self.lc_playlist.GetItemCount()
@@ -2597,6 +2731,7 @@ class MainPanel(wx.Panel):
         menu.Destroy()
         
     def ScolAddPlaylist(self, event):
+        self.BackupList()
         # cycle through selected
         val = self.lc_scol_col.GetFirstSelected()
         # iterate over all selected items and delete
@@ -2754,6 +2889,7 @@ class MainPanel(wx.Panel):
                 menu.Destroy()
   
     def SiftAddPlaylist(self, event):
+        self.BackupList()
         val = self.lc_sift.GetFirstSelected()
         total = self.lc_sift.GetSelectedItemCount()
         current_count = self.lc_playlist.GetItemCount()
@@ -2929,6 +3065,11 @@ class FileThread(Thread):
 
         
 if __name__ == '__main__':
+
+    ###app = MyApp(0)
+    ###app.MainLoop()
+
+
 
     app = wx.PySimpleApp()
     #app = wx.App()
