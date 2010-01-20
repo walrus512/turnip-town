@@ -60,6 +60,7 @@ class AlbumViewer(wx.Frame):
             self.Show(False)
         else:
             self.Show(True)
+        return self.IsShown()
             
     def ToggleOnTop(self, event):
         if self.GetWindowStyle() == 2:
