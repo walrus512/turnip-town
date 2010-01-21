@@ -68,7 +68,7 @@ from main_thirdp import grooveshark
 #from plugins.played import played
 #from plugins.griddle import griddle
 
-PROGRAM_VERSION = "0.200"
+PROGRAM_VERSION = "0.203"
 PROGRAM_NAME = "GrooveWalrus"
 PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
 PLAY_SONG_ALTERNATE_URL ="http://listen.grooveshark.com/main.swf?hostname=cowbell.grooveshark.com&p=1&songID="
@@ -105,7 +105,7 @@ BUFFER_SIZE = 164000
 
 class MainFrame(wx.Frame): 
     def __init__(self): 
-        wx.Frame.__init__(self, None, -1, PROGRAM_NAME + ' ' + PROGRAM_VERSION, size=(690, 500), pos=(200,200), style=wx.DEFAULT_FRAME_STYLE|wx.WANTS_CHARS) #^(wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX)) #, style=wx.STAY_ON_TOP) 
+        wx.Frame.__init__(self, None, -1, PROGRAM_NAME + ' ' + PROGRAM_VERSION, size=(690, 530), pos=(200,200), style=wx.DEFAULT_FRAME_STYLE|wx.WANTS_CHARS) #^(wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX)) #, style=wx.STAY_ON_TOP) 
         #panel = wx.Panel(self, -1, size=(400, 100)) 
         #self.SetTransparent(180)
         
@@ -3026,7 +3026,6 @@ class WebFetchThread(Thread):
             track_time = self.panel.current_play_time
             #tag_id = ''            
             album_art_file = self.panel.palbum_art_file
-            
             track_id = local_songs.DbFuncs().InsertTrackData(grooveshark_id, music_id, track_time, tag_id, self.artist, self.song, self.album, album_art_file)#p_grooveshark_id, p_music_id, p_track_time, p_tag_id, p_artist, p_song, p_album, p_album_art_file)
             local_songs.DbFuncs().InsertPlaycountData(track_id)#p_track_id)
             if (res[1] != '') & (res[0] !=''):
