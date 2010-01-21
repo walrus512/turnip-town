@@ -229,10 +229,10 @@ class DbFuncs(object):
             qp = " grooveshark_id = " + str(p_grooveshark_id)
             t = "SELECT track_id FROM m_tracks WHERE" + qp
         else:
-            t = 'SELECT track_id FROM m_tracks WHERE artist="' + p_artist + '" AND song="' + p_song + '" AND track_time=' + str(p_track_time)
+            t = 'SELECT track_id FROM m_tracks WHERE artist="' + p_artist + '" AND song="' + p_song + '"' # AND track_time=' + str(p_track_time)
         c.execute(t)
         h = c.fetchall()
-        #print h
+        #print t
         if len(h) >= 1:
             g_track_id = h[0][0]        
             c.execute('UPDATE m_tracks SET track_time= ' + str(p_track_time) + ', tag_id=' + str(p_tag_id) + ', artist="' + p_artist + '", song="' + p_song + '", album="' + p_album + '", album_art_file="' + p_album_art_file + '" WHERE track_id=' + str(g_track_id))
@@ -240,8 +240,9 @@ class DbFuncs(object):
         else:
             c.execute('INSERT INTO m_tracks values (null,?,?,?,?,?,?,?,?)', (p_grooveshark_id, p_music_id, p_track_time, p_tag_id, p_artist, p_song, p_album, p_album_art_file))
             conn.commit()
-            t = 'SELECT track_id FROM m_tracks WHERE' + qp
+            t = 'SELECT track_id FROM m_tracks ORDER BY track_id DESC LIMIT 1'
             c.execute(t)
+            #print t
             g_track_id = c.fetchall()[0][0]
         c.close()
         return g_track_id
@@ -675,10 +676,7 @@ def GetMp3Album(file_name):
     return c.tag.getAlbum()
     
  #---------------------------------------------------------------------------   
-    
-    
-    
-    
+
     
     
 '''   
