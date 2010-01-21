@@ -152,6 +152,8 @@ py2exe - http://www.py2exe.org
 pyMedia - http://pymedia.org
 Kaa Metadata - http://doc.freevo.org/2.0/Kaa
 EventGhost - http://sourceforge.net/projects/eventghost/
+GrooveShark.py - Zimmmer: http://hak5.org
+PyLast.py - http://code.google.com/p/pylast/
 ---
 Tango Icons - http://tango.freedesktop.org
 "Walrus" Photo - http://picasaweb.google.com/dschmitz
