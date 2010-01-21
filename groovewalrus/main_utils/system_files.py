@@ -38,17 +38,20 @@ class GetDirectories(object):
         self.parent = parent
         
     def DataDirectory(self):
-        if os.path.isdir(self.sp.GetUserDataDir()) == False:
+        u_dir = string_wrap(self.sp.GetUserDataDir())
+        if os.path.isdir(u_dir) == False:
             try:
-                os.mkdir(self.sp.GetUserDataDir())
+                os.mkdir(u_dir)
             except:
-                dlg = wx.MessageDialog(self.parent, "Can't create directory\r\n %s" % (self.sp.GetUserDataDir()), 'Alert', wx.OK | wx.ICON_WARNING)
+                dlg = wx.MessageDialog(self.parent, "Can't create directory\r\n %s" % (u_dir), 'Alert', wx.OK | wx.ICON_WARNING)
                 if (dlg.ShowModal() == wx.ID_OK):
                     dlg.Destroy()
-        return self.sp.GetUserDataDir()
+        
+        return u_dir
+        #return self.sp.GetUserDataDir()
         
     def Mp3DataDirectory(self):
-        p_name = self.sp.GetUserDataDir() + self.Seperator() + 'mp3s'
+        p_name = string_wrap(self.sp.GetUserDataDir() + self.Seperator() + 'mp3s')
         if os.path.isdir(p_name) == False:
             try:
                 os.mkdir(p_name)
@@ -59,7 +62,7 @@ class GetDirectories(object):
         return p_name
         
     def MakeDataDirectory(self, dir_name):
-        p_name = self.sp.GetUserDataDir() + self.Seperator() + dir_name
+        p_name = string_wrap(self.sp.GetUserDataDir() + self.Seperator() + dir_name)
         if os.path.isdir(p_name) == False:
             try:
                 os.mkdir(p_name)
@@ -70,14 +73,15 @@ class GetDirectories(object):
         return p_name
         
     def TempDirectory(self):
-        if os.path.isdir(self.sp.GetUserLocalDataDir()) == False:
+        p_name = string_wrap(self.sp.GetUserLocalDataDir())
+        if os.path.isdir(p_name) == False:
             try:
-                os.mkdir(self.sp.GetUserLocalDataDir())
+                os.mkdir(p_name)
             except:
-                dlg = wx.MessageDialog(self.parent, "Can't create directory\r\n %s" % (self.sp.GetUserLocalDataDir()), 'Alert', wx.OK | wx.ICON_WARNING)
+                dlg = wx.MessageDialog(self.parent, "Can't create directory\r\n %s" % (p_name), 'Alert', wx.OK | wx.ICON_WARNING)
                 if (dlg.ShowModal() == wx.ID_OK):
                     dlg.Destroy()
-        return self.sp.GetUserLocalDataDir()
+        return p_name
         
     def Seperator(self):
         return os.sep
@@ -91,7 +95,7 @@ class GetDirectories(object):
         #print file_from
         #print file_to
         try:
-            shutil.copyfile(file_from, file_to)
+            shutil.copyfile(string_wrap(file_from), string_wrap(file_to))
         except:
             dlg = wx.MessageDialog(self.parent, "Can't copy file\r\n %s" % file_name, 'Alert', wx.OK | wx.ICON_WARNING)
             if (dlg.ShowModal() == wx.ID_OK):
@@ -103,3 +107,20 @@ def replace_all(text):
     for i, j in dic.iteritems():
         text = text.replace(i, j)
     return text
+    
+# ===================================================================            
+charset = 'utf-8'
+        
+def string_wrap(s, want_unicode=True):
+    """
+    
+    """
+    if isinstance(s, unicode):
+        s = s.encode(charset)
+    elif not isinstance(s, str):
+        s = str(s)
+    #s = urllib.quote(s, safe)
+    if want_unicode:
+        s = s.decode(charset) # ascii would also work
+    return s
+# ===================================================================   
