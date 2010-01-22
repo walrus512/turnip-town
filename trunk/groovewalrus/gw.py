@@ -67,6 +67,7 @@ from main_thirdp import grooveshark
 #from plugins.flash import flash
 #from plugins.played import played
 #from plugins.griddle import griddle
+#from plugins.ratings import ratings
 
 PROGRAM_VERSION = "0.203"
 PROGRAM_NAME = "GrooveWalrus"
@@ -109,6 +110,9 @@ class MainFrame(wx.Frame):
         #panel = wx.Panel(self, -1, size=(400, 100)) 
         #self.SetTransparent(180)
         
+        # -- initialize i18n
+        self.initI18n()
+        
         # load menubar from xrc xml file
         res = xrc.XmlResource(RESFILE)
         self.menubar = res.LoadMenuBarOnFrame(self, "m_mb_main")
@@ -146,6 +150,22 @@ class MainFrame(wx.Frame):
     def OnMinimize(self, event):
         if self.tray_icon: #.IsIconInstalled():
             self.Show(False)
+            
+    def initI18n(self):
+        #localization
+        #http://wiki.wxpython.org/Internationalization
+        #http://wiki.wxpython.org/XRCAndI18N
+        wx.Locale.AddCatalogLookupPathPrefix(os.path.join(os.getcwd(), 'locale'))
+        self.l18n = wx.Locale(wx.LANGUAGE_DEFAULT)
+        self.l18n.AddCatalog('layout')        
+        #    u'en' : (wx.LANGUAGE_ENGLISH, u'en_US.UTF-8'),
+        #    u'es' : (wx.LANGUAGE_SPANISH, u'es_ES.UTF-8'),
+        #    u'fr' : (wx.LANGUAGE_FRENCH, u'fr_FR.UTF-8'),
+        #    u'it' : (wx.LANGUAGE_ITALIAN, u'it_IT.UTF-8'),
+        #    u'nl' : (wx.LANGUAGE_DUTCH, u'nl_NL.UTF-8'),
+        #    u'pl' : (wx.LANGUAGE_POLISH, u'pl_PL.UTF-8'),
+        #wx.LANGUAGE_DEFAULT
+        #wx.LANGUAGE_TURKISH
         
 #$$$class MainPanel(wx.Dialog):
 class MainPanel(wx.Panel):
@@ -165,10 +185,7 @@ class MainPanel(wx.Panel):
         self.faves_playlist_location_bak = system_files.GetDirectories(self).DataDirectory() + os.sep + "faves.bak"
         
         local_songs.DbFuncs().create_tables()
-        
-        # -- initialize i18n
-        self.initI18n()
-              
+                      
         # XML Resources can be loaded from a file like this:
         res = xrc.XmlResource(RESFILE)
         # custom widget handler
@@ -741,21 +758,7 @@ class MainPanel(wx.Panel):
 
 # ---------------------------------------------------------
 #-----------------------------------------------------------
-    def initI18n(self):
-        #localization
-        #http://wiki.wxpython.org/Internationalization
-        #http://wiki.wxpython.org/XRCAndI18N
-        wx.Locale.AddCatalogLookupPathPrefix(os.path.join(os.getcwd(), 'locale'))
-        self.l18n = wx.Locale(wx.LANGUAGE_DEFAULT)
-        self.l18n.AddCatalog('layout')        
-        #    u'en' : (wx.LANGUAGE_ENGLISH, u'en_US.UTF-8'),
-        #    u'es' : (wx.LANGUAGE_SPANISH, u'es_ES.UTF-8'),
-        #    u'fr' : (wx.LANGUAGE_FRENCH, u'fr_FR.UTF-8'),
-        #    u'it' : (wx.LANGUAGE_ITALIAN, u'it_IT.UTF-8'),
-        #    u'nl' : (wx.LANGUAGE_DUTCH, u'nl_NL.UTF-8'),
-        #    u'pl' : (wx.LANGUAGE_POLISH, u'pl_PL.UTF-8'),
-        #wx.LANGUAGE_DEFAULT
-        #wx.LANGUAGE_TURKISH
+
         
 #    def OnPaint(self, evt):
 #        dc = wx.BufferedPaintDC(self.panel, self.pbuffer)
