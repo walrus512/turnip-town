@@ -1,0 +1,394 @@
+
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: Fri Feb 18 16:51:55 2005\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: xrc_i18n.py\n"
+
+msgid "None"
+msgstr ""
+
+msgid "Playlist"
+msgstr "Playlista"
+
+msgid "Last.fm"
+msgstr "Last.fm"
+
+msgid "Similar Songs"
+msgstr "Podobne utwory"
+
+msgid "Top Songs: Artist"
+msgstr "Top utwory: wykonawca"
+
+msgid "Top Songs: Geo"
+msgstr "Top utwory: geograficznie"
+
+msgid "Top Songs: Tag"
+msgstr "Top utwory: tag"
+
+msgid "Top Songs: Album"
+msgstr "Top utwory: album"
+
+msgid "Similar Artists"
+msgstr "Podobni wykonawcy"
+
+msgid "Top Albums: Artist"
+msgstr "Top albumy: wykonawca"
+
+msgid "Top Tags: Song"
+msgstr "Top tagi: utwór"
+
+msgid "Playlistize!"
+msgstr "Playlistize!"
+
+msgid "Artist"
+msgstr "Wykonawca"
+
+msgid "Song"
+msgstr "Tytuł"
+
+msgid "Album"
+msgstr "Album"
+
+msgid "Tag"
+msgstr "Tag"
+
+msgid "My Last.fm"
+msgstr "Mój Last.fm"
+
+msgid "Me"
+msgstr "Ja"
+
+msgid "My Friends"
+msgstr "Moi znajomi"
+
+msgid "My Neighbours"
+msgstr "Moi sąsiedzi"
+
+msgid "User"
+msgstr "Użytkownik"
+
+msgid "Get Tracks"
+msgstr "Pobierz utwory"
+
+msgid "Biography"
+msgstr "Biografia"
+
+msgid "Collection"
+msgstr "Kolekcja"
+
+msgid "Song Collection"
+msgstr "Kolekcja utworów"
+
+msgid "Filter Songs"
+msgstr "Filtruj utwory"
+
+msgid "File"
+msgstr "Plik"
+
+msgid "Folder"
+msgstr "Folder"
+
+msgid "Favorites"
+msgstr "Ulubione"
+
+msgid "List Sifter"
+msgstr "Segregator listy"
+
+msgid "Pre-split:"
+msgstr "Podział:"
+
+msgid "Separator:"
+msgstr "Separator:"
+
+msgid "Sift!"
+msgstr "Segreguj!"
+
+msgid "Options"
+msgstr "Opcje"
+
+msgid "Main"
+msgstr "Główne"
+
+msgid "Double-clicking..."
+msgstr "Podwójne kliknięcie"
+
+msgid "Playlistize! clears playlist before adding."
+msgstr "Playlistize! czyści playlistę przed dodaniem utworów."
+
+msgid "Use alternate GrooveShark source."
+msgstr "Użyj alternatywnego źródła GrooveShark."
+
+msgid "Drop id from search results."
+msgstr "Pomiń ID przy wyszukiwaniu."
+
+msgid "Minimize to tray."
+msgstr "Minimalizuj do traya."
+
+msgid "Save music to:"
+msgstr "Zapisz muzykę do:"
+
+msgid "About..."
+msgstr "O programie..."
+
+msgid "Last.fm Account"
+msgstr "Konto Last.fm"
+
+msgid "Username"
+msgstr "Login"
+
+msgid "Password"
+msgstr "Hasło"
+
+msgid "Save"
+msgstr "Zapisz"
+
+msgid "Status:"
+msgstr "Status:"
+
+msgid "Enable Scrobbling"
+msgstr "Włącz scrobbling"
+
+msgid "Scrobble Port"
+msgstr "Port scrobblingu"
+
+msgid "Scrobble Album"
+msgstr "Scrobbluj album"
+
+msgid "Music Stream"
+msgstr "Streaming muzyki"
+
+msgid "Wait"
+msgstr "Czekaj"
+
+msgid "seconds before playing a streamed song (it takes time to load)."
+msgstr "sekund przed odtwarzaniem utworu (czas na buforowanie)."
+
+msgid "Play songs for"
+msgstr "Graj utwór przez"
+
+msgid "minutes"
+msgstr "minut"
+
+msgid "seconds, if a time can't be found."
+msgstr "sekund, jeśli czas trwania jest nieznany."
+
+msgid "Plug-ins"
+msgstr "Wtyczki"
+
+msgid "MyMenuBar"
+msgstr "MyMenuBar"
+
+msgid "_File"
+msgstr "_Plik"
+
+msgid "Open..."
+msgstr "Otwórz..."
+
+msgid "Save Playlist As..."
+msgstr "Zapisz playlistę jako..."
+
+msgid "Exit"
+msgstr "Wyjdź"
+
+msgid "_Edit"
+msgstr "_Edytuj"
+
+msgid "Undo\tCtrl-Z"
+msgstr "Cofnij\tCtrl-Z"
+
+msgid "Cut\tCtrl-X"
+msgstr "Wytnij\tCtrl-X"
+
+msgid "Copy\tCtrl-C"
+msgstr "Kopiuj\tCtrl-C"
+
+msgid "Paste\tCtrl-V"
+msgstr "Wklej\tCtrl-V"
+
+msgid "Delete\tDel"
+msgstr "Usuń\tDel"
+
+msgid "_View"
+msgstr "_Widok"
+
+msgid "Album Cover"
+msgstr "Okładka albumu"
+
+msgid "_Playback"
+msgstr "_Odtwarzanie"
+
+msgid "Previous\tF1"
+msgstr "Poprzedni\tF1"
+
+msgid "Play\tF2"
+msgstr "Odtwarzaj\tF2"
+
+msgid "Stop\tF3"
+msgstr "Stop\tF3"
+
+msgid "Next\tF4"
+msgstr "Następny\tF4"
+
+msgid "_Tools"
+msgstr "_Narzędzia"
+
+msgid "Version Update"
+msgstr "Aktualizacja"
+
+msgid "_Help"
+msgstr "Pomo_c"
+
+msgid "alternative"
+msgstr "alternative"
+
+msgid "classical"
+msgstr "klasyczna"
+
+msgid "country"
+msgstr "country"
+
+msgid "electronic"
+msgstr "elektroniczna"
+
+msgid "hip-hop"
+msgstr "hip-hop"
+
+msgid "indie"
+msgstr "indie"
+
+msgid "jazz"
+msgstr "jazz"
+
+msgid "metal"
+msgstr "metal"
+
+msgid "pop"
+msgstr "pop"
+
+msgid "rock"
+msgstr "rock"
+
+msgid "united states"
+msgstr "Stany Zjednoczone"
+
+msgid "canada"
+msgstr "Kanada"
+
+msgid "australia"
+msgstr "Australia"
+
+msgid "france"
+msgstr "Francja"
+
+msgid "germany"
+msgstr "Niemcy"
+
+msgid "japan"
+msgstr "Japonia"
+
+msgid "italy"
+msgstr "Włochy"
+
+msgid "spain"
+msgstr "Hiszpania"
+
+msgid "sweden"
+msgstr "Szwecja"
+
+msgid "Recent"
+msgstr "Ostatnie"
+
+msgid "7 Days"
+msgstr "7 dni"
+
+msgid "3 Months"
+msgstr "3 miesiące"
+
+msgid "6 Months"
+msgstr "6 miesięcy"
+
+msgid "12 Months"
+msgstr "12 miesięcy"
+
+msgid "All-time"
+msgstr "Cały czas"
+
+msgid "artist"
+msgstr "wykonawca"
+
+msgid "song"
+msgstr "tytuł"
+
+msgid "adds song to the playlist."
+msgstr "dodaje utwór do playlisty."
+
+msgid "searches for that song."
+msgstr "wyszukuje utwór."
+
+msgid "No Port"
+msgstr "Brak portu"
+
+msgid "Default Port"
+msgstr "Domyślny port"
+
+msgid "Volume"
+msgstr "Głośność"
+
+msgid "Add Favorite"
+msgstr "Dodaj ulubiony"
+
+msgid "Load Playlist"
+msgstr "Wczytaj playlistę"
+
+msgid "Save Song"
+msgstr "Zapisz utwór"
+
+msgid "Search"
+msgstr "Szukaj"
+
+msgid "Shuffle"
+msgstr "Mieszaj"
+
+msgid "Repeat"
+msgstr "Powtarzaj"
+
+msgid "New update available."
+msgstr "Dostępna nowa aktualizacja."
+
+msgid "Save Playlist"
+msgstr "Zapisz playlistę"
+
+msgid "Remove Selected"
+msgstr "Usuń zaznaczone"
+
+msgid "Clear Playlist"
+msgstr "Wyczyść playlistę"
+
+msgid "Geographical Region"
+msgstr "Region geograficzny"
+
+msgid "Clear"
+msgstr "Czyść"
+
+msgid "Last.fm Webpage"
+msgstr "Strona Last.fm"
+
+msgid "Add Files to Collection"
+msgstr "Dodaj pliki do kolekcji"
+
+msgid "Add to Playlist"
+msgstr "Dodaj do playlisty"
+
+msgid "Remove"
+msgstr "Usuń"
+
+msgid "Clear File Filter"
+msgstr "Wyczyść filtr plików"
+
