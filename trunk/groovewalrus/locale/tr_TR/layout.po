@@ -182,6 +182,69 @@ msgstr "saniye boyunca cal."
 msgid "Plug-ins"
 msgstr "Eklentileri"
 
+msgid "MyMenuBar"
+msgstr ""
+
+msgid "_File"
+msgstr ""
+
+msgid "Open..."
+msgstr ""
+
+msgid "Save Playlist As..."
+msgstr ""
+
+msgid "Exit"
+msgstr ""
+
+msgid "_Edit"
+msgstr ""
+
+msgid "Undo\tCtrl-Z"
+msgstr ""
+
+msgid "Cut\tCtrl-X"
+msgstr ""
+
+msgid "Copy\tCtrl-C"
+msgstr ""
+
+msgid "Paste\tCtrl-V"
+msgstr ""
+
+msgid "Delete\tDel"
+msgstr ""
+
+msgid "_View"
+msgstr ""
+
+msgid "Album Cover"
+msgstr ""
+
+msgid "_Playback"
+msgstr ""
+
+msgid "Previous\tF1"
+msgstr ""
+
+msgid "Play\tF2"
+msgstr ""
+
+msgid "Stop\tF3"
+msgstr ""
+
+msgid "Next\tF4"
+msgstr ""
+
+msgid "_Tools"
+msgstr ""
+
+msgid "Version Update"
+msgstr ""
+
+msgid "_Help"
+msgstr ""
+
 msgid "alternative"
 msgstr ""
 
