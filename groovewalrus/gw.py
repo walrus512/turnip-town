@@ -69,7 +69,7 @@ from main_thirdp import grooveshark
 #from plugins.griddle import griddle
 #from plugins.ratings import ratings
 
-PROGRAM_VERSION = "0.203"
+PROGRAM_VERSION = "0.204"
 PROGRAM_NAME = "GrooveWalrus"
 PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
 PLAY_SONG_ALTERNATE_URL ="http://listen.grooveshark.com/main.swf?hostname=cowbell.grooveshark.com&p=1&songID="
@@ -663,14 +663,16 @@ class MainPanel(wx.Panel):
         vlupID = 709
         vldnID = 7010
         tbupID = 7012
-        tbdnID = 7011
+        muteID = 7011
+        #tbdnID = 7011
         ctrldID = 801
         ctrlrID = 802
         ctrlbID = 803
         
+        
         self.aTable_values = [
                                    (wx.ACCEL_NORMAL, wx.WXK_F1, backID),
-                                   #(wx.ACCEL_NORMAL, wx.WXK_F2, playID),
+                                   (wx.ACCEL_NORMAL, wx.WXK_F2, playID),
                                    (wx.ACCEL_NORMAL, wx.WXK_F3, stopID),
                                    (wx.ACCEL_NORMAL, wx.WXK_F4, forwID),
                                    (wx.ACCEL_NORMAL, wx.WXK_F5, saveID),
@@ -679,7 +681,7 @@ class MainPanel(wx.Panel):
                                    (wx.ACCEL_NORMAL, wx.WXK_F8, reapID),
                                    (wx.ACCEL_NORMAL, wx.WXK_F9, vldnID),
                                    (wx.ACCEL_NORMAL, wx.WXK_F10, vlupID),
-                                   (wx.ACCEL_NORMAL, wx.WXK_F11, tbdnID),
+                                   (wx.ACCEL_NORMAL, wx.WXK_F11, muteID),
                                    (wx.ACCEL_NORMAL, wx.WXK_F12, tbupID),
                                    (wx.ACCEL_CTRL, ord('D'), ctrldID),
                                    (wx.ACCEL_CTRL, ord('R'), ctrlrID),
@@ -689,10 +691,10 @@ class MainPanel(wx.Panel):
         self.SetAcceleratorTable(aTable)
         self.album_viewer.SetAcceleratorTable(aTable)
          
-        #wx.EVT_MENU(self, backID, self.OnBackwardClick)
-        #wx.EVT_MENU(self, playID, self.OnPlayClick)
-        #wx.EVT_MENU(self, stopID, self.OnStopClick)
-        #wx.EVT_MENU(self, forwID, self.OnForwardClick) 
+        wx.EVT_MENU(self, backID, self.OnBackwardClick)
+        wx.EVT_MENU(self, playID, self.OnPlayClick)
+        wx.EVT_MENU(self, stopID, self.OnStopClick)
+        wx.EVT_MENU(self, forwID, self.OnForwardClick) 
         
         wx.EVT_MENU(self, saveID, self.OnSavePlaylistClick)
         wx.EVT_MENU(self, loadID, self.OnLoadPlaylistClick)
@@ -701,12 +703,14 @@ class MainPanel(wx.Panel):
         
         wx.EVT_MENU(self, vldnID, self.OnVolumeDown)
         wx.EVT_MENU(self, vlupID, self.OnVolumeUp)
-        wx.EVT_MENU(self, tbdnID, self.OnPreviousTab)
+        wx.EVT_MENU(self, muteID, self.OnMuteClick)
         wx.EVT_MENU(self, tbupID, self.OnNextTab)
         
         wx.EVT_MENU(self, ctrldID, self.OnClearPlaylistClick)
         wx.EVT_MENU(self, ctrlrID, self.ResetPosition)
         wx.EVT_MENU(self, ctrlbID, self.RandomBackgroundColour)
+        
+        
         
         # menu items -----------
         # file menu
@@ -732,6 +736,11 @@ class MainPanel(wx.Panel):
         self.parent.Bind(wx.EVT_MENU, self.OnStopClick, id=xrc.XRCID("m_mi_stop"))
         self.parent.Bind(wx.EVT_MENU, self.OnBackwardClick, id=xrc.XRCID("m_mi_previous"))
         self.parent.Bind(wx.EVT_MENU, self.OnForwardClick, id=xrc.XRCID("m_mi_next"))
+        self.parent.Bind(wx.EVT_MENU, self.OnRandomClick, id=xrc.XRCID("m_mi_shuffle"))
+        self.parent.Bind(wx.EVT_MENU, self.OnRepeatClick, id=xrc.XRCID("m_mi_repeat"))
+        self.parent.Bind(wx.EVT_MENU, self.OnMuteClick, id=xrc.XRCID("m_mi_volume_mute"))
+        self.parent.Bind(wx.EVT_MENU, self.OnVolumeUp, id=xrc.XRCID("m_mi_volume_up"))
+        self.parent.Bind(wx.EVT_MENU, self.OnVolumeDown, id=xrc.XRCID("m_mi_volume_down"))
         
         # tools menu        
         self.parent.Bind(wx.EVT_MENU, self.OnUpdateClick, id=xrc.XRCID("m_mi_version_update"))
@@ -1057,6 +1066,10 @@ class MainPanel(wx.Panel):
         else:
             volume = 100
         self.SetVolume(volume)
+        
+    def OnMuteClick(self, event):
+        #just mute for now 
+        self.SetVolume(0)
         
     def OnPreviousTab(self, event):
         cur_tab = self.nb_main.GetSelection()
@@ -3049,8 +3062,7 @@ class FileThread(Thread):
                         
     def run(self):
         self.g.download(self.x, self.y, self.temp_file)
-        print 'download complete'
-        #temp_file_name = system_files.GetDirectories(self.parent).BuildTempFile(self.temp_file)        
+        print 'download complete'        
         
         track_time = local_songs.GetMp3Length(self.temp_file)
         self.parent.current_play_time = track_time
@@ -3060,8 +3072,8 @@ class FileThread(Thread):
             if (record_dir == None) | (record_dir == ''):
                 record_dir = system_files.GetDirectories(self.parent).Mp3DataDirectory()
                 self.parent.bu_options_record_dir.SetLabel(record_dir)            
-            system_files.GetDirectories(self.parent).CopyFile(temp_file_name, record_dir, self.parent.partist + '-' + self.parent.ptrack + '.mp3')
-        
+            system_files.GetDirectories(self.parent).CopyFile(self.temp_file, record_dir, self.parent.partist + '-' + self.parent.ptrack + '.mp3')
+
 #---------------------------------------------------------------------------
 #---------------------------------------------------------------------------
 
