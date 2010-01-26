@@ -918,7 +918,7 @@
 																	<border>5</border>
 																	<object class="wxStaticText" name="m_staticText212">
 																		<style>wxALIGN_RIGHT</style>
-																		<size>40,-1</size>
+																		<size>120,-1</size>
 																		<label>User</label>
 																	</object>
 																</object>
@@ -1084,7 +1084,7 @@
 																			<border>5</border>
 																			<object class="wxStaticText" name="m_staticText11">
 																				<style>wxALIGN_RIGHT</style>
-																				<size>40,-1</size>
+																				<size>60,-1</size>
 																				<label>Artist</label>
 																			</object>
 																		</object>
@@ -1104,7 +1104,7 @@
 																			<border>5</border>
 																			<object class="wxStaticText" name="m_staticText14">
 																				<style>wxALIGN_RIGHT</style>
-																				<size>40,-1</size>
+																				<size>60,-1</size>
 																				<label>Song</label>
 																			</object>
 																		</object>
@@ -1132,7 +1132,7 @@
 																			<border>5</border>
 																			<object class="wxStaticText" name="m_staticText13">
 																				<style>wxALIGN_RIGHT</style>
-																				<size>40,-1</size>
+																				<size>60,-1</size>
 																				<label>Album</label>
 																			</object>
 																		</object>
@@ -2270,11 +2270,11 @@
 			<object class="wxMenu" name="m_menu1">
 				<label>_File</label>
 				<object class="wxMenuItem" name="m_mi_open">
-					<label>Open...</label>
+					<label>Open...\tF6</label>
 					<help></help>
 				</object>
 				<object class="wxMenuItem" name="m_mi_save_playlist_as">
-					<label>Save Playlist As...</label>
+					<label>Save Playlist As...\tF5</label>
 					<help></help>
 				</object>
 				<object class="separator" />
@@ -2332,6 +2332,31 @@
 					<label>Next\tF4</label>
 					<help></help>
 				</object>
+				<object class="separator" />
+				<object class="wxMenuItem" name="m_mi_shuffle">
+					<label>Shuffle\tF7</label>
+					<help></help>
+				</object>
+				<object class="wxMenuItem" name="m_mi_repeat">
+					<label>Repeat\tF8</label>
+					<help></help>
+				</object>
+				<object class="separator" />
+				<object class="wxMenu" name="m_menu11">
+					<label>Volume</label>
+					<object class="wxMenuItem" name="m_mi_volume_down">
+						<label>Volume Down\tF9</label>
+						<help></help>
+					</object>
+					<object class="wxMenuItem" name="m_mi_volume_up">
+						<label>Volume Up\tF10</label>
+						<help></help>
+					</object>
+					<object class="wxMenuItem" name="m_mi_volume_mute">
+						<label>Mute Volume\tF11</label>
+						<help></help>
+					</object>
+				</object>
 			</object>
 			<object class="wxMenu" name="m_menu4">
 				<label>_Tools</label>
@@ -2339,6 +2364,13 @@
 					<label>Version Update</label>
 					<help></help>
 				</object>
+				<object class="wxMenuItem" name="m_mi_song_collection">
+					<label>Song Collection Locations</label>
+					<help></help>
+				</object>
+			</object>
+			<object class="wxMenu" name="m_menu7">
+				<label>Plug-_ins</label>
 			</object>
 			<object class="wxMenu" name="m_menu5">
 				<label>_Help</label>
