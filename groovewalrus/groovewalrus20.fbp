@@ -3502,7 +3502,7 @@
                                                                             <property name="name">m_staticText212</property>
                                                                             <property name="permission">protected</property>
                                                                             <property name="pos"></property>
-                                                                            <property name="size">40,-1</property>
+                                                                            <property name="size">120,-1</property>
                                                                             <property name="style">wxALIGN_RIGHT</property>
                                                                             <property name="subclass"></property>
                                                                             <property name="tooltip"></property>
@@ -4220,7 +4220,7 @@
                                                                                     <property name="name">m_staticText11</property>
                                                                                     <property name="permission">protected</property>
                                                                                     <property name="pos"></property>
-                                                                                    <property name="size">40,-1</property>
+                                                                                    <property name="size">60,-1</property>
                                                                                     <property name="style">wxALIGN_RIGHT</property>
                                                                                     <property name="subclass"></property>
                                                                                     <property name="tooltip"></property>
@@ -4326,7 +4326,7 @@
                                                                                     <property name="name">m_staticText14</property>
                                                                                     <property name="permission">protected</property>
                                                                                     <property name="pos"></property>
-                                                                                    <property name="size">40,-1</property>
+                                                                                    <property name="size">60,-1</property>
                                                                                     <property name="style">wxALIGN_RIGHT</property>
                                                                                     <property name="subclass"></property>
                                                                                     <property name="tooltip"></property>
@@ -4443,7 +4443,7 @@
                                                                                     <property name="name">m_staticText13</property>
                                                                                     <property name="permission">protected</property>
                                                                                     <property name="pos"></property>
-                                                                                    <property name="size">40,-1</property>
+                                                                                    <property name="size">60,-1</property>
                                                                                     <property name="style">wxALIGN_RIGHT</property>
                                                                                     <property name="subclass"></property>
                                                                                     <property name="tooltip"></property>
@@ -9272,7 +9272,7 @@
                         <property name="label">Open...</property>
                         <property name="name">m_mi_open</property>
                         <property name="permission">none</property>
-                        <property name="shortcut"></property>
+                        <property name="shortcut">F6</property>
                         <property name="unchecked_bitmap"></property>
                         <event name="OnMenuSelection"></event>
                         <event name="OnUpdateUI"></event>
@@ -9287,7 +9287,7 @@
                         <property name="label">Save Playlist As...</property>
                         <property name="name">m_mi_save_playlist_as</property>
                         <property name="permission">none</property>
-                        <property name="shortcut"></property>
+                        <property name="shortcut">F5</property>
                         <property name="unchecked_bitmap"></property>
                         <event name="OnMenuSelection"></event>
                         <event name="OnUpdateUI"></event>
@@ -9478,6 +9478,92 @@
                         <event name="OnMenuSelection"></event>
                         <event name="OnUpdateUI"></event>
                     </object>
+                    <object class="separator" expanded="1">
+                        <property name="permission">none</property>
+                    </object>
+                    <object class="wxMenuItem" expanded="1">
+                        <property name="bitmap"></property>
+                        <property name="checked">0</property>
+                        <property name="enabled">1</property>
+                        <property name="help"></property>
+                        <property name="id">wxID_ANY</property>
+                        <property name="kind">wxITEM_NORMAL</property>
+                        <property name="label">Shuffle</property>
+                        <property name="name">m_mi_shuffle</property>
+                        <property name="permission">none</property>
+                        <property name="shortcut">F7</property>
+                        <property name="unchecked_bitmap"></property>
+                        <event name="OnMenuSelection"></event>
+                        <event name="OnUpdateUI"></event>
+                    </object>
+                    <object class="wxMenuItem" expanded="1">
+                        <property name="bitmap"></property>
+                        <property name="checked">0</property>
+                        <property name="enabled">1</property>
+                        <property name="help"></property>
+                        <property name="id">wxID_ANY</property>
+                        <property name="kind">wxITEM_NORMAL</property>
+                        <property name="label">Repeat</property>
+                        <property name="name">m_mi_repeat</property>
+                        <property name="permission">none</property>
+                        <property name="shortcut">F8</property>
+                        <property name="unchecked_bitmap"></property>
+                        <event name="OnMenuSelection"></event>
+                        <event name="OnUpdateUI"></event>
+                    </object>
+                    <object class="separator" expanded="1">
+                        <property name="permission">none</property>
+                    </object>
+                    <object class="submenu" expanded="1">
+                        <property name="label">Volume</property>
+                        <property name="name">m_menu11</property>
+                        <property name="permission">protected</property>
+                        <object class="wxMenuItem" expanded="1">
+                            <property name="bitmap"></property>
+                            <property name="checked">0</property>
+                            <property name="enabled">1</property>
+                            <property name="help"></property>
+                            <property name="id">wxID_ANY</property>
+                            <property name="kind">wxITEM_NORMAL</property>
+                            <property name="label">Volume Down</property>
+                            <property name="name">m_mi_volume_down</property>
+                            <property name="permission">none</property>
+                            <property name="shortcut">F9</property>
+                            <property name="unchecked_bitmap"></property>
+                            <event name="OnMenuSelection"></event>
+                            <event name="OnUpdateUI"></event>
+                        </object>
+                        <object class="wxMenuItem" expanded="1">
+                            <property name="bitmap"></property>
+                            <property name="checked">0</property>
+                            <property name="enabled">1</property>
+                            <property name="help"></property>
+                            <property name="id">wxID_ANY</property>
+                            <property name="kind">wxITEM_NORMAL</property>
+                            <property name="label">Volume Up</property>
+                            <property name="name">m_mi_volume_up</property>
+                            <property name="permission">none</property>
+                            <property name="shortcut">F10</property>
+                            <property name="unchecked_bitmap"></property>
+                            <event name="OnMenuSelection"></event>
+                            <event name="OnUpdateUI"></event>
+                        </object>
+                        <object class="wxMenuItem" expanded="1">
+                            <property name="bitmap"></property>
+                            <property name="checked">0</property>
+                            <property name="enabled">1</property>
+                            <property name="help"></property>
+                            <property name="id">wxID_ANY</property>
+                            <property name="kind">wxITEM_NORMAL</property>
+                            <property name="label">Mute Volume</property>
+                            <property name="name">m_mi_volume_mute</property>
+                            <property name="permission">none</property>
+                            <property name="shortcut">F11</property>
+                            <property name="unchecked_bitmap"></property>
+                            <event name="OnMenuSelection"></event>
+                            <event name="OnUpdateUI"></event>
+                        </object>
+                    </object>
                 </object>
                 <object class="wxMenu" expanded="1">
                     <property name="label">&amp;Tools</property>
@@ -9498,6 +9584,26 @@
                         <event name="OnMenuSelection"></event>
                         <event name="OnUpdateUI"></event>
                     </object>
+                    <object class="wxMenuItem" expanded="1">
+                        <property name="bitmap"></property>
+                        <property name="checked">0</property>
+                        <property name="enabled">1</property>
+                        <property name="help"></property>
+                        <property name="id">wxID_ANY</property>
+                        <property name="kind">wxITEM_NORMAL</property>
+                        <property name="label">Song Collection Locations</property>
+                        <property name="name">m_mi_song_collection</property>
+                        <property name="permission">none</property>
+                        <property name="shortcut"></property>
+                        <property name="unchecked_bitmap"></property>
+                        <event name="OnMenuSelection"></event>
+                        <event name="OnUpdateUI"></event>
+                    </object>
+                </object>
+                <object class="wxMenu" expanded="1">
+                    <property name="label">Plug-&amp;ins</property>
+                    <property name="name">m_menu7</property>
+                    <property name="permission">protected</property>
                 </object>
                 <object class="wxMenu" expanded="1">
                     <property name="label">&amp;Help</property>
