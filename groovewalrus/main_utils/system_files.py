@@ -97,7 +97,7 @@ class GetDirectories(object):
         try:
             shutil.copyfile(string_wrap(file_from), string_wrap(file_to))
         except:
-            dlg = wx.MessageDialog(self.parent, "Can't copy file\r\n %s" % file_name, 'Alert', wx.OK | wx.ICON_WARNING)
+            dlg = wx.MessageDialog(self.parent, "Can't copy file\r\n %s" % file_from, 'Alert', wx.OK | wx.ICON_WARNING)
             if (dlg.ShowModal() == wx.ID_OK):
                 dlg.Destroy()
 
