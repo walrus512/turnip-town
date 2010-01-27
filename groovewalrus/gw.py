@@ -53,7 +53,7 @@ from main_windows import album_viewer
 from main_windows import search_window
 from main_windows import options_window
 from main_windows import details_window
-#from main_windows import song_collection
+from main_windows import song_collection
 
 from main_thirdp import pylast
 if os.name == 'nt':
@@ -744,6 +744,7 @@ class MainPanel(wx.Panel):
         
         # tools menu        
         self.parent.Bind(wx.EVT_MENU, self.OnUpdateClick, id=xrc.XRCID("m_mi_version_update"))
+        self.parent.Bind(wx.EVT_MENU, self.OnSColAddClick, id=xrc.XRCID("m_mi_song_collection"))
         
         # help menu
         self.parent.Bind(wx.EVT_MENU, self.OnAboutClick, id=xrc.XRCID("m_mi_about"))        
@@ -2702,8 +2703,8 @@ class MainPanel(wx.Panel):
 # song collection -----------------------------------------  
     def OnSColAddClick(self, event):
         # show song db window
-        song_db_window = local_songs.SongDBWindow(self)
-        #song_db_window = song_collection.SongDBWindow(self)
+        #song_db_window = local_songs.SongDBWindow(self)
+        song_db_window = song_collection.SongDBWindow(self)
         song_db_window.show_me()
         
     def OnSColDeleteClick(self, event):
