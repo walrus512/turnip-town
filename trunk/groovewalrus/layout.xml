@@ -2303,7 +2303,7 @@
 					<help></help>
 				</object>
 				<object class="wxMenuItem" name="m_mi_delete">
-					<label>Delete\tDel</label>
+					<label>Delete</label>
 					<help></help>
 				</object>
 			</object>
