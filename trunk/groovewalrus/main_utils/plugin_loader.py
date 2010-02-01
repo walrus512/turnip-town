@@ -19,7 +19,7 @@ this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place, Suite 330, Boston, MA 02111-1307 USA
 """
 
-import sqlite3
+#import sqlite3
 from main_utils.read_write_xml import xml_utils
 import  wx
 import sys, os
@@ -65,6 +65,7 @@ class PluginLoader():
                     t.SetFont(font)
                     btnsizer.Add(t, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)
                     hot_key = ' [Alt-' + xml_dict['title'][0] + ']'
+                    hot_key_menu = '\t Alt-' + xml_dict['title'][0]
                     acc_arr.append((id_counter, xml_dict['title'][0].upper()))
                 
                 # plugin button
@@ -80,7 +81,11 @@ class PluginLoader():
                 # sizer
                 self.main_sizer.Add(btnsizer, 0, wx.EXPAND|wx.ALL, 0)       
                                 
-                                 
+                #add to plug-ins menu
+                plugins_menu = self.parent.parent.menu_plugins
+                plugins_menu.Append(id_counter, xml_dict['title'])# + hot_key_menu)
+                self.parent.parent.Bind(wx.EVT_MENU, self.LoadPluginWindow, id=id_counter)
+                
                 id_counter = id_counter + 1
                 
             counter = 0
