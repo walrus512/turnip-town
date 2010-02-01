@@ -66,14 +66,14 @@ class SongDBWindow(wx.Dialog):
         #self.Bind(wx.EVT_TEXT_ENTER, self.OnSearchClick, self.tc_search_text)
         #self.bm_search_close.Bind(wx.EVT_LEFT_UP, self.hide_me)
         
-        self.Bind(wx.EVT_LEFT_DOWN, self.OnMouseLeftDown)
-        self.Bind(wx.EVT_MOTION, self.OnMouseMotion)
-        self.Bind(wx.EVT_LEFT_UP, self.OnMouseLeftUp)
-        self.Bind(wx.EVT_RIGHT_UP, self.OnRightUp)
-        self.st_songdb_header.Bind(wx.EVT_LEFT_DOWN, self.OnMouseLeftDown)
-        self.st_songdb_header.Bind(wx.EVT_MOTION, self.OnMouseMotion)
-        self.st_songdb_header.Bind(wx.EVT_LEFT_UP, self.OnMouseLeftUp)
-        self.st_songdb_header.Bind(wx.EVT_RIGHT_UP, self.OnRightUp)
+        ##self.Bind(wx.EVT_LEFT_DOWN, self.OnMouseLeftDown)
+        ##self.Bind(wx.EVT_MOTION, self.OnMouseMotion)
+        ##self.Bind(wx.EVT_LEFT_UP, self.OnMouseLeftUp)
+        ##self.Bind(wx.EVT_RIGHT_UP, self.OnRightUp)
+        ##self.st_songdb_header.Bind(wx.EVT_LEFT_DOWN, self.OnMouseLeftDown)
+        ##self.st_songdb_header.Bind(wx.EVT_MOTION, self.OnMouseMotion)
+        ##self.st_songdb_header.Bind(wx.EVT_LEFT_UP, self.OnMouseLeftUp)
+        ##self.st_songdb_header.Bind(wx.EVT_RIGHT_UP, self.OnRightUp)
                 
         # set layout --------------
         sizer = wx.BoxSizer(wx.VERTICAL)
@@ -162,14 +162,15 @@ class SongDBWindow(wx.Dialog):
     def OnRemoveClick(self, event):
         # check for selected folder and remove
         list_item = self.lb_songdb_directories.GetSelection()
-        folder_name = self.lb_songdb_directories.GetString(list_item)
-        if len(folder_name) > 1:
-            conn = sqlite3.connect(self.FILEDB)        
-            c = conn.cursor()
-            c.execute('DELETE FROM m_folders WHERE folder_name = "' + folder_name + '"')# LIMIT 1')
-            conn.commit()
-            c.close()
-            self.GetLocations()
+        if list_item >= 0:
+            folder_name = self.lb_songdb_directories.GetString(list_item)
+            if len(folder_name) > 1:
+                conn = sqlite3.connect(self.FILEDB)        
+                c = conn.cursor()
+                c.execute('DELETE FROM m_folders WHERE folder_name = "' + folder_name + '"')# LIMIT 1')
+                conn.commit()
+                c.close()
+                self.GetLocations()
         
     def AddData(self, folder_path):
 
@@ -186,9 +187,10 @@ class SongDBWindow(wx.Dialog):
     def OnUpdateClick(self, event):
         #add any new files to db for existing folder
         list_item = self.lb_songdb_directories.GetSelection()
-        folder_name = self.lb_songdb_directories.GetString(list_item)
-        if len(folder_name) > 1:
-            self.AddData(folder_name)
+        if list_item >= 0:
+            folder_name = self.lb_songdb_directories.GetString(list_item)
+            if len(folder_name) > 1:
+                self.AddData(folder_name)
 
 # --------------------------------------------------------- 
 # titlebar-like move and drag
@@ -279,5 +281,17 @@ class FileThread(Thread):
             self.parent.ga_songdb_index.SetValue(counter)            
         c.close()
         self.parent.st_songdb_status.SetLabel("Finished")
-        
-        
+        self.parent.parent.lc_scol_col.SetItemCount(self.GetCount())
+    
+    def GetCount(self):
+        # get row count
+        rcount = 0    
+        conn = sqlite3.connect(self.FILEDB)
+        c = conn.cursor()
+        t = "SELECT COUNT(*) as rcount FROM m_files ORDER BY music_id DESC LIMIT 1"
+        c.execute(t)
+        h = c.fetchall()
+        for x in h:        
+            rcount = x[0]
+        c.close()
+        return rcount   
