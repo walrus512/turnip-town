@@ -180,6 +180,8 @@ class MainPanel(wx.Panel):
         # set directories
         system_files.GetDirectories(self).DataDirectory()
         self.image_save_location = system_files.GetDirectories(self).MakeDataDirectory('images') + os.sep
+        system_files.GetDirectories(self).MakeDataDirectory('updates') + os.sep
+        system_files.GetDirectories(self).MakeDataDirectory('plugins') + os.sep
         self.playlist_save_location = system_files.GetDirectories(self).MakeDataDirectory('playlists') + os.sep
         self.main_playlist_location = system_files.GetDirectories(self).DataDirectory() + os.sep + "playlist.xspf"
         self.main_playlist_location_bak = system_files.GetDirectories(self).DataDirectory() + os.sep + "playlist.bak"
