@@ -60,7 +60,8 @@ if os.name == 'nt':
     from main_thirdp import soundmixer 
 else:
     from main_thirdp import soundmixer_linux as soundmixer
-from main_thirdp import grooveshark
+from main_thirdp.grooveshark.jsonrpc import *
+from main_thirdp import grooveshark_old
 
 #from plugins.x2 import x2
 #from plugins.twitter import twitter
@@ -102,7 +103,7 @@ WN_SEARCH = 99
 API_KEY = "13eceb51a4c2e0f825c492f04bf693c8"
 SECRET = ""
 LASTFM_CLIENT_ID = 'gws'
-BUFFER_SIZE = 164000
+BUFFER_SIZE = 184000
 
 class MainFrame(wx.Frame): 
     def __init__(self): 
@@ -116,6 +117,8 @@ class MainFrame(wx.Frame):
         # load menubar from xrc xml file
         res = xrc.XmlResource(RESFILE)
         self.menubar = res.LoadMenuBarOnFrame(self, "m_mb_main")
+        self.menu_plugins = self.menubar.GetMenu(5)
+        self.menu_tools = self.menubar.GetMenu(4)
                 
         # program icon
         ib = wx.IconBundle()
@@ -131,7 +134,6 @@ class MainFrame(wx.Frame):
         self.tray_icon.SetIcon(icon, 'GrooveWalrus')
         wx.EVT_TASKBAR_LEFT_UP(self.tray_icon, self.OnTrayLeftClick)
         self.Bind(wx.EVT_ICONIZE, self.OnMinimize)
-
         
     def OnTrayLeftClick(self, event):
         # toggle showing main form
@@ -205,7 +207,7 @@ class MainPanel(wx.Panel):
         self.bb_random = xrc.XRCCTRL(self, 'm_bb_random')
         self.bb_repeat = xrc.XRCCTRL(self, 'm_bb_repeat')
         self.bb_record = xrc.XRCCTRL(self, 'm_bb_record')
-        self.tc_search = xrc.XRCCTRL(self, 'm_tc_search')
+        self.tc_search = xrc.XRCCTRL(self, 'm_tc_search')        
         self.sl_volume = xrc.XRCCTRL(self, 'm_sl_volume')
         #self.sl_volume = res.LoadObject(self, "m_cc_volume_slider", "CustomSlider")
         #self.sl_volume2 = xrc.XRCCTRL(self, 'm_cc_volume_slider')
@@ -257,8 +259,7 @@ class MainPanel(wx.Panel):
         
         # bio
         self.bm_bio_pic = xrc.XRCCTRL(self, 'm_bm_bio_pic')
-        self.hm_bio_text = xrc.XRCCTRL(self, 'm_hm_bio_text')
-        
+        self.hm_bio_text = xrc.XRCCTRL(self, 'm_hm_bio_text')        
 
         # song collection
         self.tc_scol_song = xrc.XRCCTRL(self, 'm_tc_scol_song')
@@ -351,7 +352,7 @@ class MainPanel(wx.Panel):
         # wxGTK
         self.lc_playlist.Bind(wx.EVT_RIGHT_UP, self.OnPlaylistRightClick)
         #self.lc_playlist.Bind(wx.EVT_CHAR, self.OnPlaylistKeyPress)
-
+        self.lc_playlist.Bind(wx.EVT_KEY_UP, self.OnDeleteClick)
         
         #dynamic listctrl resize
         #wx.EVT_SIZE(self.parent, self.ResizePlaylist)
@@ -379,7 +380,8 @@ class MainPanel(wx.Panel):
         # wxMSW
         self.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.OnFavesRightClick, self.lc_faves)
         # wxGTK
-        self.lc_faves.Bind(wx.EVT_RIGHT_UP, self.OnFavesRightClick)        
+        self.lc_faves.Bind(wx.EVT_RIGHT_UP, self.OnFavesRightClick)
+        self.lc_faves.Bind(wx.EVT_KEY_UP, self.OnDeleteClick)        
                 
         self.lc_sift = xrc.XRCCTRL(self, 'm_lc_sift')
         self.lc_sift.InsertColumn(0,"Artist")
@@ -745,6 +747,10 @@ class MainPanel(wx.Panel):
         # tools menu        
         self.parent.Bind(wx.EVT_MENU, self.OnUpdateClick, id=xrc.XRCID("m_mi_version_update"))
         self.parent.Bind(wx.EVT_MENU, self.OnSColAddClick, id=xrc.XRCID("m_mi_song_collection"))
+        #
+        self.lastfm_toggle = self.parent.menu_tools.Append(7666, "Last.fm Scrobbling", kind=wx.ITEM_CHECK)
+        self.parent.Bind(wx.EVT_MENU, self.OnToggleScrobble, id=7666)
+        self.lastfm_toggle.Check(True)
         
         # help menu
         self.parent.Bind(wx.EVT_MENU, self.OnAboutClick, id=xrc.XRCID("m_mi_about"))        
@@ -804,7 +810,14 @@ class MainPanel(wx.Panel):
                 self.st_options_auth.SetLabel('Status: something failed. User/password?')
                 self.st_options_auth.SetBackgroundColour('Yellow')
                 self.nb_main.SetSelection(NB_OPTIONS)
-            
+         
+    def OnToggleScrobble(self, event):        
+        if self.cb_options_scrobble.IsChecked():
+            self.lastfm_toggle.Check(False)
+            self.cb_options_scrobble.SetValue(False)
+        else:
+            self.lastfm_toggle.Check(True)
+            self.cb_options_scrobble.SetValue(True)
         
     def OnTimer(self, event):
         # the heartbeat of the evil machine
@@ -1204,6 +1217,7 @@ class MainPanel(wx.Panel):
         # verfiy that playlist number is valid:
         if playlist_number > (self.lc_playlist.GetItemCount() -1):
             playlist_number = 0
+        self.lc_playlist.Focus(playlist_number)
         
         # lets check to see if there's a song id
         # if not, search, and then play -> play on demand
@@ -1391,9 +1405,9 @@ class MainPanel(wx.Panel):
             #self.time_count = self.sc_options_gs_wait.GetValue() * -1
             self.time_count = -1
             # grooveshark streaming init ---------------------------
-            if self.groove_session == None:
-                self.groove_session = grooveshark.Grooveshark(self)
-                self.groove_session.sessionData()
+            ###if self.groove_session == None:
+            ###    self.groove_session = grooveshark.Grooveshark(self)
+            ###    self.groove_session.sessionData()
             #try:
             #    self.flash.LoadMovie(0, url)
             #except wx._core.PyDeadObjectError:
@@ -1413,18 +1427,29 @@ class MainPanel(wx.Panel):
             next_file = system_files.GetDirectories(self).BuildTempFile(file_name_text[self.temp_counter])
             if os.path.isfile(next_file):
                 os.remove(next_file)            
+                
+            #streamkey/stream server
+            ###x,y = self.groove_session.songKeyfromID(song_id)
+            g_session = jsonrpcSession()
+            g_session.startSession()
+
+            g_data = {'SongID': song_id, 'Name': track, 'ArtistName': artist, 'AlbumName': album, 'AlbumID': '', 'ArtistID': ''}
+            g_song = song.songFromData(g_session, g_data)
+            #getStreamDetails(song_id)
+            g_song.getStreamDetails()
+            #print g_song._lastStreamServer            
             
-            x,y = self.groove_session.songKeyfromID(song_id)
             #download file
             #THREAD
-            current = FileThread(self, self.groove_session, x, y, file_name)
+            current = FileThread(self, g_song._lastStreamKey, g_song._lastStreamServer, file_name)
             #THREAD
-            current.start()
-            time.sleep(2)
-
+            current.start()            
+            
+            while os.path.isfile(file_name) != True:
+                time.sleep(1)
             while os.path.getsize(file_name) < BUFFER_SIZE:
                 time.sleep(2)
-                print os.path.getsize(file_name)
+                #print os.path.getsize(file_name)
                 
             #play song
             #THREAD
@@ -1754,11 +1779,14 @@ class MainPanel(wx.Panel):
     def OnDeleteClick(self, event=None):
         #check which listctrl is visable
         #save list for undo
-        #delete items(s)        
+        #delete items(s)
         if self.lc_playlist.IsShownOnScreen():
             self.RemovePlaylistItem()
         if self.lc_faves.IsShownOnScreen():
             self.RemoveFavesItem()
+            
+    def OnKeyUp(self, event):
+        print 'key'
             
     def OnCopyClick(self, event=None):
         # copy list items
@@ -3053,16 +3081,16 @@ class WebFetchThread(Thread):
 # ####################################
 class FileThread(Thread): 
     # grab file
-    def __init__(self, parent, g, x, y, temp_file):
+    def __init__(self, parent, x, y, temp_file):
         Thread.__init__(self)
-        self.g = g
+        #self.g = g
         self.x = x
         self.y = y
         self.parent = parent
         self.temp_file = temp_file
                         
     def run(self):
-        self.g.download(self.x, self.y, self.temp_file)
+        grooveshark_old.Grooveshark(self.parent).download(self.x, self.y, self.temp_file)
         print 'download complete'        
         
         track_time = local_songs.GetMp3Length(self.temp_file)
