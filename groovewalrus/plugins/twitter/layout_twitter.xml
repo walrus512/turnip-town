@@ -189,7 +189,7 @@
 											<object class="wxTextCtrl" name="m_tc_twitter_default">
 												<style>wxTE_MULTILINE</style>
 												<size>-1,70</size>
-												<value>Oh snap girlfriend!  [song] by [artist] is the spicy taco salad in my buffet of satisfaction.</value>
+												<value>I rather enjoy [song] by [artist].  Really. It&apos;s great.</value>
 												<maxlength>0</maxlength>
 											</object>
 										</object>

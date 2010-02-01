@@ -878,7 +878,7 @@
                                                     <property name="style">wxTE_MULTILINE</property>
                                                     <property name="subclass"></property>
                                                     <property name="tooltip"></property>
-                                                    <property name="value">Oh snap girlfriend!  [song] by [artist] is the spicy taco salad in my buffet of satisfaction.</property>
+                                                    <property name="value">I rather enjoy [song] by [artist].  Really. It&apos;s great.</property>
                                                     <property name="window_extra_style"></property>
                                                     <property name="window_name"></property>
                                                     <property name="window_style"></property>
