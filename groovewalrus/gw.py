@@ -44,6 +44,7 @@ from main_utils import local_songs
 #from main_utils import mp3_rec
 from main_utils import plugin_loader
 from main_utils import system_files
+from main_utils import file_cache
 
 from main_controls import drag_and_drop
 #from main_controls import custom_slider
@@ -650,10 +651,10 @@ class MainPanel(wx.Panel):
         #SoundMixer.GetPeakLevel()
         
         #temp download files --------------
-        self.temp_counter = 0
-        d_file = system_files.GetDirectories(self).BuildTempFile('temp0.mp3')
-        if os.path.isfile(d_file):
-            os.remove(d_file)
+        #self.temp_counter = 0
+        #d_file = system_files.GetDirectories(self).BuildTempFile('temp0.mp3')
+        #if os.path.isfile(d_file):
+        #    os.remove(d_file)
         
         # hotkeys ------------------
         backID = 701
@@ -1403,60 +1404,45 @@ class MainPanel(wx.Panel):
             
         elif (len(song_id) >= 1) & (len(song_id.split('/')) < 2):
         #grooveshark song
-            #self.time_count = -8
-            #self.time_count = self.sc_options_gs_wait.GetValue() * -1
             self.time_count = -1
-            # grooveshark streaming init ---------------------------
-            ###if self.groove_session == None:
-            ###    self.groove_session = grooveshark.Grooveshark(self)
-            ###    self.groove_session.sessionData()
-            #try:
-            #    self.flash.LoadMovie(0, url)
-            #except wx._core.PyDeadObjectError:
-            #     self.flash = FlashWindow(self.pa_player, style=wx.NO_BORDER)# , size=(20, 20))
-            #     self.flash.LoadMovie(0, url)
-            #self.LoadFlashSong(url, artist, track)
             
-            #create temp file            
-            #print os.path.getsize("temp.mp3")
-            file_name_text = {0:"temp0.mp3", 1:"temp1.mp3", 2:"temp2.mp3"}
-            file_name = system_files.GetDirectories(self).BuildTempFile(file_name_text[self.temp_counter])
-            if self.temp_counter == 2:
-                self.temp_counter = 0                
-            else:
-                self.temp_counter = self.temp_counter + 1
-            # delete 'next' temp file
-            next_file = system_files.GetDirectories(self).BuildTempFile(file_name_text[self.temp_counter])
-            if os.path.isfile(next_file):
-                os.remove(next_file)            
+            temp_dir = system_files.GetDirectories(self).TempDirectory()
+            file_name_plain = artist + '-' + track + '.mp3'
+            # clean cache dir
+            file_cache.CheckCache(temp_dir)
+            # check if file previously cached
+            cached_file = file_cache.CreateCachedFilename(temp_dir, file_name_plain)
+            cached_file_name = cached_file[0]
+            if cached_file[1] == False:
+                # download it
                 
-            #streamkey/stream server
-            ###x,y = self.groove_session.songKeyfromID(song_id)
-            g_session = jsonrpcSession()
-            g_session.startSession()
-
-            g_data = {'SongID': song_id, 'Name': track, 'ArtistName': artist, 'AlbumName': album, 'AlbumID': '', 'ArtistID': ''}
-            g_song = song.songFromData(g_session, g_data)
-            #getStreamDetails(song_id)
-            g_song.getStreamDetails()
-            #print g_song._lastStreamServer            
+                #streamkey/stream server
+                ###x,y = self.groove_session.songKeyfromID(song_id)
+                g_session = jsonrpcSession()
+                g_session.startSession()
+    
+                g_data = {'SongID': song_id, 'Name': track, 'ArtistName': artist, 'AlbumName': album, 'AlbumID': '', 'ArtistID': ''}
+                g_song = song.songFromData(g_session, g_data)
+                #getStreamDetails(song_id)
+                g_song.getStreamDetails()
+                #print g_song._lastStreamServer            
+                
+                #download file
+                #THREAD
+                current = FileThread(self, g_song._lastStreamKey, g_song._lastStreamServer, cached_file_name)
+                #THREAD
+                current.start()
             
-            #download file
-            #THREAD
-            current = FileThread(self, g_song._lastStreamKey, g_song._lastStreamServer, file_name)
-            #THREAD
-            current.start()            
-            
-            while os.path.isfile(file_name) != True:
-                time.sleep(1)
-            while os.path.getsize(file_name) < BUFFER_SIZE:
-                time.sleep(2)
+            #while os.path.isfile(cached_file_name) != True:
+                #time.sleep(1)
+            #while os.path.getsize(cached_file_name) < BUFFER_SIZE:
+                #time.sleep(2)
                 #print os.path.getsize(file_name)
                 
             #play song
             #THREAD
             #print song_id
-            self.current_local = WebFetchThread(self, '', file_name, '', 'PLAYLOCAL')
+            self.current_local = WebFetchThread(self, '', cached_file_name, '', 'PLAYLOCAL')
             #THREAD
             self.current_local.start()
             
@@ -3012,8 +2998,13 @@ class WebFetchThread(Thread):
             self.panel.SetBioText(bio_url[1], self.artist)
             
         if self.webfetchtype == 'PLAYLOCAL':
-            #local mp3 playback
+            #local mp3 playback 
             print 'local: ' + self.song
+            while os.path.isfile(self.song) != True:
+                time.sleep(1)
+            while os.path.getsize(self.song) < BUFFER_SIZE:
+                time.sleep(2)
+                #print os.path.getsize(file_name)
             self.lsp.play(self.song)
             
         if self.webfetchtype == 'VERSION':
@@ -3085,15 +3076,15 @@ class FileThread(Thread):
     # grab file
     def __init__(self, parent, x, y, temp_file):
         Thread.__init__(self)
-        #self.g = g
+        #stream key
         self.x = x
+        #stream server
         self.y = y
         self.parent = parent
         self.temp_file = temp_file
                         
-    def run(self):
+    def run(self):        
         grooveshark_old.Grooveshark(self.parent).download(self.x, self.y, self.temp_file)
-        print 'download complete'        
         
         track_time = local_songs.GetMp3Length(self.temp_file)
         self.parent.current_play_time = track_time
@@ -3113,8 +3104,6 @@ if __name__ == '__main__':
 
     ###app = MyApp(0)
     ###app.MainLoop()
-
-
 
     app = wx.PySimpleApp()
     #app = wx.App()
