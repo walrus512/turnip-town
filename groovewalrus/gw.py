@@ -71,7 +71,7 @@ from main_thirdp import grooveshark_old
 #from plugins.griddle import griddle
 #from plugins.ratings import ratings
 
-PROGRAM_VERSION = "0.204"
+PROGRAM_VERSION = "0.205"
 PROGRAM_NAME = "GrooveWalrus"
 PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
 PLAY_SONG_ALTERNATE_URL ="http://listen.grooveshark.com/main.swf?hostname=cowbell.grooveshark.com&p=1&songID="
@@ -1668,7 +1668,7 @@ class MainPanel(wx.Panel):
         
         menu = wx.Menu()
         menu.Append(ID_FAVES, "Add to Favorites")
-        menu.Append(ID_SHARE, "Clipboard Share Link")
+        ##menu.Append(ID_SHARE, "Clipboard Share Link")
         menu.AppendSeparator()
         menu.Append(ID_SEARCH, "Find Better Version")        
         menu.Append(ID_FIX, "Song Details")
@@ -1683,7 +1683,7 @@ class MainPanel(wx.Panel):
         wx.EVT_MENU(self, ID_FIX, self.FixPlaylistItem)
         wx.EVT_MENU(self, ID_FIX_ALBUM, self.FixAlbumName)
         wx.EVT_MENU(self, ID_CLEAR, self.ClearId)
-        wx.EVT_MENU(self, ID_SHARE, self.MakeShareLink)
+        ##wx.EVT_MENU(self, ID_SHARE, self.MakeShareLink)
         
         # Popup the menu.  If an item is selected then its handler
         # will be called before PopupMenu returns.
