@@ -212,6 +212,8 @@ class MainPanel(wx.Panel):
         self.bb_record = xrc.XRCCTRL(self, 'm_bb_record')
         self.tc_search = xrc.XRCCTRL(self, 'm_tc_search')        
         self.sl_volume = xrc.XRCCTRL(self, 'm_sl_volume')
+        self.ga_download = xrc.XRCCTRL(self, 'm_ga_download')
+        self.ga_download.SetBackgroundColour(wx.Color(0,128,255))
         #self.sl_volume = res.LoadObject(self, "m_cc_volume_slider", "CustomSlider")
         #self.sl_volume2 = xrc.XRCCTRL(self, 'm_cc_volume_slider')
         #self.sl_volume = self.cslid        
@@ -1210,6 +1212,7 @@ class MainPanel(wx.Panel):
             self.StopFlashSong()
         
         self.gobbled_track = 0
+        self.ga_download.SetValue(0)
 
                                  
         # check for random
@@ -1404,7 +1407,7 @@ class MainPanel(wx.Panel):
             
         elif (len(song_id) >= 1) & (len(song_id.split('/')) < 2):
         #grooveshark song
-            self.time_count = -1
+            self.time_count = -1            
             
             temp_dir = system_files.GetDirectories(self).TempDirectory()
             file_name_plain = artist + '-' + track + '.mp3'
@@ -1416,12 +1419,21 @@ class MainPanel(wx.Panel):
             if cached_file[1] == False:
                 # download it
                 
+                
+                # file size
+                g_session = jsonrpcSession()
+                g_session.startSession()
+                g_data = {'SongID': song_id, 'Name': track, 'ArtistName': artist, 'AlbumName': album, 'AlbumID': '', 'ArtistID': ''}
+                g_song = song.songFromData(g_session, g_data)
+                g_song.getStreamDetails()                
+                file_size = grooveshark_old.Grooveshark(self).GetFileSize(g_song._lastStreamKey, g_song._lastStreamServer)
+                
+                
                 #streamkey/stream server
                 ###x,y = self.groove_session.songKeyfromID(song_id)
                 g_session = jsonrpcSession()
-                g_session.startSession()
-    
-                g_data = {'SongID': song_id, 'Name': track, 'ArtistName': artist, 'AlbumName': album, 'AlbumID': '', 'ArtistID': ''}
+                g_session.startSession()    
+                #g_data = {'SongID': song_id, 'Name': track, 'ArtistName': artist, 'AlbumName': album, 'AlbumID': '', 'ArtistID': ''}
                 g_song = song.songFromData(g_session, g_data)
                 #getStreamDetails(song_id)
                 g_song.getStreamDetails()
@@ -1429,7 +1441,7 @@ class MainPanel(wx.Panel):
                 
                 #download file
                 #THREAD
-                current = FileThread(self, g_song._lastStreamKey, g_song._lastStreamServer, cached_file_name)
+                current = FileThread(self, g_song._lastStreamKey, g_song._lastStreamServer, cached_file_name, file_size)
                 #THREAD
                 current.start()
             
@@ -3074,7 +3086,7 @@ class WebFetchThread(Thread):
 # ####################################
 class FileThread(Thread): 
     # grab file
-    def __init__(self, parent, x, y, temp_file):
+    def __init__(self, parent, x, y, temp_file, file_size):
         Thread.__init__(self)
         #stream key
         self.x = x
@@ -3082,8 +3094,16 @@ class FileThread(Thread):
         self.y = y
         self.parent = parent
         self.temp_file = temp_file
+        self.file_size = file_size
                         
-    def run(self):        
+    def run(self):
+    
+        #progress thread
+        #THREAD
+        current = ProgressThread(self.parent, self.temp_file, self.file_size)
+        #THREAD
+        current.start()
+        
         grooveshark_old.Grooveshark(self.parent).download(self.x, self.y, self.temp_file)
         
         track_time = local_songs.GetMp3Length(self.temp_file)
@@ -3095,7 +3115,25 @@ class FileThread(Thread):
                 record_dir = system_files.GetDirectories(self.parent).Mp3DataDirectory()
                 self.parent.bu_options_record_dir.SetLabel(record_dir)            
             system_files.GetDirectories(self.parent).CopyFile(self.temp_file, record_dir, self.parent.partist + '-' + self.parent.ptrack + '.mp3')
-
+            
+# ####################################
+class ProgressThread(Thread): 
+    # another thread to update download progress
+    def __init__(self, parent, temp_file, file_size):
+        Thread.__init__(self)
+        self.temp_file = temp_file
+        self.file_size = file_size
+        self.parent = parent
+                        
+    def run(self):        
+        while os.path.isfile(self.temp_file) != True:
+            time.sleep(1)
+        while self.file_size > os.path.getsize(self.temp_file):
+            per_val = int(((os.path.getsize(self.temp_file) / float(self.file_size)) * 100))            
+            self.parent.ga_download.SetValue(per_val)
+            if per_val == 100:
+                break
+            time.sleep(1)
 #---------------------------------------------------------------------------
 #---------------------------------------------------------------------------
 
