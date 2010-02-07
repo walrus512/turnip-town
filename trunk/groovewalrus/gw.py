@@ -675,6 +675,7 @@ class MainPanel(wx.Panel):
         ctrldID = 801
         ctrlrID = 802
         ctrlbID = 803
+        ctrl9ID = 910
         
         
         self.aTable_values = [
@@ -692,7 +693,8 @@ class MainPanel(wx.Panel):
                                    (wx.ACCEL_NORMAL, wx.WXK_F12, tbupID),
                                    (wx.ACCEL_CTRL, ord('D'), ctrldID),
                                    (wx.ACCEL_CTRL, ord('R'), ctrlrID),
-                                   (wx.ACCEL_CTRL, ord('B'), ctrlbID)
+                                   (wx.ACCEL_CTRL, ord('B'), ctrlbID),
+                                   (wx.ACCEL_CTRL, ord('9'), ctrl9ID)
                                            ]
         aTable = wx.AcceleratorTable(self.aTable_values)
         self.SetAcceleratorTable(aTable)
@@ -717,6 +719,7 @@ class MainPanel(wx.Panel):
         wx.EVT_MENU(self, ctrlrID, self.ResetPosition)
         wx.EVT_MENU(self, ctrlbID, self.RandomBackgroundColour)
         
+        wx.EVT_MENU(self, ctrl9ID, self.ClearAlbumValues)
         
         
         # menu items -----------
@@ -1766,6 +1769,11 @@ class MainPanel(wx.Panel):
         wx.TheClipboard.SetData(wx.TextDataObject(song_link))
         wx.TheClipboard.Close()
         
+    def ClearAlbumValues(self, event):
+        # clear all the album values on the playlist
+        for x in range(0, self.lc_playlist.GetItemCount()):
+            self.lc_playlist.SetStringItem(x, 2, '')
+        
 # --------------------------------------------------------- 
 # edit menu  ----------------------------------------------
 
@@ -1780,10 +1788,12 @@ class MainPanel(wx.Panel):
         #check which listctrl is visable
         #save list for undo
         #delete items(s)
-        if self.lc_playlist.IsShownOnScreen():
-            self.RemovePlaylistItem()
-        if self.lc_faves.IsShownOnScreen():
-            self.RemoveFavesItem()
+        #check if it's the delete key
+        if event.GetKeyCode() == wx.WXK_DELETE:
+            if self.lc_playlist.IsShownOnScreen():
+                self.RemovePlaylistItem()
+            if self.lc_faves.IsShownOnScreen():
+                self.RemoveFavesItem()
             
     def OnKeyUp(self, event):
         print 'key'
