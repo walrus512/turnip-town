@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "GrooveWalrus"
-#define MyAppVerName "GrooveWalrus 0.203"
+#define MyAppVerName "GrooveWalrus 0.204"
 #define MyAppPublisher "Turnip-town.net"
 #define MyAppURL "http://groove-walrus.turnip-town.net/"
 #define MyAppExeName "gw.exe"
@@ -466,6 +466,14 @@ Source: C:\Users\Honkz\Desktop\instu2\main_thirdp\eyeD3\mp3.pyo; DestDir: {app}\
 Source: C:\Users\Honkz\Desktop\instu2\main_thirdp\eyeD3\tag.pyo; DestDir: {app}\main_thirdp\eyeD3
 Source: C:\Users\Honkz\Desktop\instu2\main_thirdp\eyeD3\utils.pyo; DestDir: {app}\main_thirdp\eyeD3
 Source: C:\Users\Honkz\Desktop\instu2\main_thirdp\eyeD3\__init__.pyo; DestDir: {app}\main_thirdp\eyeD3
+Source: C:\Users\Honkz\Desktop\instu2\main_thirdp\grooveshark\__init__.pyo; DestDir: {app}\main_thirdp\grooveshark
+Source: C:\Users\Honkz\Desktop\instu2\main_thirdp\grooveshark\jsonrpc\__init__.pyo; DestDir: {app}\main_thirdp\grooveshark\jsonrpc
+Source: C:\Users\Honkz\Desktop\instu2\main_thirdp\grooveshark\jsonrpc\album.pyo; DestDir: {app}\main_thirdp\grooveshark\jsonrpc
+Source: C:\Users\Honkz\Desktop\instu2\main_thirdp\grooveshark\jsonrpc\artist.pyo; DestDir: {app}\main_thirdp\grooveshark\jsonrpc
+Source: C:\Users\Honkz\Desktop\instu2\main_thirdp\grooveshark\jsonrpc\playlist.pyo; DestDir: {app}\main_thirdp\grooveshark\jsonrpc
+Source: C:\Users\Honkz\Desktop\instu2\main_thirdp\grooveshark\jsonrpc\popular.pyo; DestDir: {app}\main_thirdp\grooveshark\jsonrpc
+Source: C:\Users\Honkz\Desktop\instu2\main_thirdp\grooveshark\jsonrpc\search.pyo; DestDir: {app}\main_thirdp\grooveshark\jsonrpc
+Source: C:\Users\Honkz\Desktop\instu2\main_thirdp\grooveshark\jsonrpc\song.pyo; DestDir: {app}\main_thirdp\grooveshark\jsonrpc
 Source: C:\Users\Honkz\Desktop\instu2\main_thirdp\httplib2\iri2uri.pyo; DestDir: {app}\main_thirdp\httplib2
 Source: C:\Users\Honkz\Desktop\instu2\main_thirdp\httplib2\__init__.pyo; DestDir: {app}\main_thirdp\httplib2
 Source: C:\Users\Honkz\Desktop\instu2\main_thirdp\simplejson\decoder.pyo; DestDir: {app}\main_thirdp\simplejson
@@ -478,7 +486,7 @@ Source: C:\Users\Honkz\Desktop\instu2\main_thirdp\urlgrabber\keepalive.pyo; Dest
 Source: C:\Users\Honkz\Desktop\instu2\main_thirdp\urlgrabber\progress.pyo; DestDir: {app}\main_thirdp\urlgrabber
 Source: C:\Users\Honkz\Desktop\instu2\main_thirdp\urlgrabber\sslfactory.pyo; DestDir: {app}\main_thirdp\urlgrabber
 Source: C:\Users\Honkz\Desktop\instu2\main_thirdp\urlgrabber\__init__.pyo; DestDir: {app}\main_thirdp\urlgrabber
-Source: C:\Users\Honkz\Desktop\instu2\main_thirdp\grooveshark.pyo; DestDir: {app}\main_thirdp\
+Source: C:\Users\Honkz\Desktop\instu2\main_thirdp\grooveshark_old.pyo; DestDir: {app}\main_thirdp\
 Source: C:\Users\Honkz\Desktop\instu2\main_thirdp\pylast.pyo; DestDir: {app}\main_thirdp\
 Source: C:\Users\Honkz\Desktop\instu2\main_thirdp\soundmixer.pyo; DestDir: {app}\main_thirdp\
 Source: C:\Users\Honkz\Desktop\instu2\main_thirdp\soundmixer_linux.pyo; DestDir: {app}\main_thirdp\
@@ -493,10 +501,12 @@ Source: C:\Users\Honkz\Desktop\instu2\main_utils\read_write_xml.pyo; DestDir: {a
 Source: C:\Users\Honkz\Desktop\instu2\main_utils\system_files.pyo; DestDir: {app}\main_utils\
 Source: C:\Users\Honkz\Desktop\instu2\main_utils\tinysong.pyo; DestDir: {app}\main_utils\
 Source: C:\Users\Honkz\Desktop\instu2\main_utils\__init__.pyo; DestDir: {app}\main_utils\
+Source: C:\Users\Honkz\Desktop\instu2\main_utils\file_cache.pyo; DestDir: {app}\main_utils\
 Source: C:\Users\Honkz\Desktop\instu2\main_windows\album_viewer.pyo; DestDir: {app}\main_windows\
 Source: C:\Users\Honkz\Desktop\instu2\main_windows\details_window.pyo; DestDir: {app}\main_windows\
 Source: C:\Users\Honkz\Desktop\instu2\main_windows\options_window.pyo; DestDir: {app}\main_windows\
 Source: C:\Users\Honkz\Desktop\instu2\main_windows\search_window.pyo; DestDir: {app}\main_windows\
+Source: C:\Users\Honkz\Desktop\instu2\main_windows\song_collection.pyo; DestDir: {app}\main_windows\
 Source: C:\Users\Honkz\Desktop\instu2\main_windows\version_check.pyo; DestDir: {app}\main_windows\
 Source: C:\Users\Honkz\Desktop\instu2\main_windows\__init__.pyo; DestDir: {app}\main_windows\
 Source: C:\Users\Honkz\Desktop\instu2\matplotlib\backends\backend_agg.pyo; DestDir: {app}\matplotlib\backends
@@ -851,7 +861,7 @@ Name: {group}\{#MyAppName}; Filename: {app}\{#MyAppExeName}; WorkingDir: {app}
 Name: {group}\{cm:ProgramOnTheWeb,{#MyAppName}}; Filename: {#MyAppURL}
 Name: {group}\{cm:UninstallProgram,{#MyAppName}}; Filename: {uninstallexe}
 Name: {commondesktop}\{#MyAppName}; Filename: {app}\{#MyAppExeName}; Tasks: desktopicon; WorkingDir: {app}
-Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}; Filename: {app}\{#MyAppExeName}; Tasks: quicklaunchicon
+Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}; Filename: {app}\{#MyAppExeName}; Tasks: quicklaunchicon; WorkingDir: {app}
 Name: {group}\Error Log; Filename: {app}\gw.exe.log; WorkingDir: {app}
 
 [Run]
@@ -883,6 +893,8 @@ Name: {app}\main_thirdp\eyeD3
 Name: {app}\main_thirdp\httplib2
 Name: {app}\main_thirdp\simplejson
 Name: {app}\main_thirdp\urlgrabber
+Name: {app}\main_thirdp\grooveshark
+Name: {app}\main_thirdp\grooveshark\jsonrpc
 Name: {app}\main_utils
 Name: {app}\main_windows
 Name: {app}\matplotlib
