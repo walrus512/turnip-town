@@ -47,6 +47,7 @@ from main_utils import system_files
 from main_utils import file_cache
 
 from main_controls import drag_and_drop
+from main_controls import playback_panel
 #from main_controls import custom_slider
 
 from main_windows import version_check
@@ -104,7 +105,7 @@ WN_SEARCH = 99
 API_KEY = "13eceb51a4c2e0f825c492f04bf693c8"
 SECRET = ""
 LASTFM_CLIENT_ID = 'gws'
-BUFFER_SIZE = 184000
+BUFFER_SIZE = 224000
 
 class MainFrame(wx.Frame): 
     def __init__(self): 
@@ -204,16 +205,17 @@ class MainPanel(wx.Panel):
                
         # control references --------------------
         self.pa_player = xrc.XRCCTRL(self, 'm_pa_player')        
-        self.st_track_info = xrc.XRCCTRL(self, 'm_st_track_info')
-        self.st_status = xrc.XRCCTRL(self, 'm_st_status')
-        self.st_time = xrc.XRCCTRL(self, 'm_st_time')        
+        #self.st_track_info = xrc.XRCCTRL(self, 'm_st_track_info')
+        #self.st_status = xrc.XRCCTRL(self, 'm_st_status')
+        #self.st_time = xrc.XRCCTRL(self, 'm_st_time')        
         self.bb_random = xrc.XRCCTRL(self, 'm_bb_random')
         self.bb_repeat = xrc.XRCCTRL(self, 'm_bb_repeat')
         self.bb_record = xrc.XRCCTRL(self, 'm_bb_record')
         self.tc_search = xrc.XRCCTRL(self, 'm_tc_search')        
         self.sl_volume = xrc.XRCCTRL(self, 'm_sl_volume')
-        self.ga_download = xrc.XRCCTRL(self, 'm_ga_download')
-        self.ga_download.SetBackgroundColour(wx.Color(0,128,255))
+        self.pa_playback = xrc.XRCCTRL(self, 'm_pa_playback')
+        #self.ga_download = xrc.XRCCTRL(self, 'm_ga_download')
+
         #self.sl_volume = res.LoadObject(self, "m_cc_volume_slider", "CustomSlider")
         #self.sl_volume2 = xrc.XRCCTRL(self, 'm_cc_volume_slider')
         #self.sl_volume = self.cslid        
@@ -414,7 +416,7 @@ class MainPanel(wx.Panel):
         #sizer_play.Add(self.flash, proportion=1, flag=wx.EXPAND)
         #self.SetSizer(sizer_play)
         
-        self.st_status.SetLabel('stopped')        
+        #self.st_status.SetLabel('stopped')                
         
         #sizer_pl = wx.BoxSizer(wx.VERTICAL)
         #sizer_pl.Add(self.lc_playlist, 1, wx.EXPAND|wx.ALL, 5)
@@ -589,6 +591,8 @@ class MainPanel(wx.Panel):
         self.palbum_art_file =''
         self.pmusic_id = 0
         self.pgroove_id = 0
+        self.download_percent = 0
+        self.pstatus = 'stopped'
         
         #temp for web types
         self.web_music_type = 'GrooveShark'
@@ -832,14 +836,15 @@ class MainPanel(wx.Panel):
         #if (self.current_track >= 0) & (self.lc_playlist.GetItemCount() > 0) & (self.time_count < 2):            
         #    self.ptrack = self.lc_playlist.GetItem(self.current_track, 1).GetText()
         #    self.partist = self.lc_playlist.GetItem(self.current_track, 0).GetText()            
-         
-       
+        
+        self.pa_playback.Refresh()
+        
         self.time_count = self.time_count + 1
         # set time labels
-        if (self.st_status.GetLabelText() == 'playing'):
-            self.st_time.SetLabel(self.ConvertTimeFormated(self.current_play_time) + ' ' + self.ConvertTimeFormated(self.time_count))
-        else:
-            self.st_time.SetLabel(self.ConvertTimeFormated(self.current_play_time))
+        #if (self.st_status.GetLabelText() == 'playing'):
+        #    self.st_time.SetLabel(self.ConvertTimeFormated(self.current_play_time) + ' ' + self.ConvertTimeFormated(self.time_count))
+        #else:
+        #    self.st_time.SetLabel(self.ConvertTimeFormated(self.current_play_time))
             
         if self.time_count >= 12000:
             self.time_count = 0
@@ -856,7 +861,7 @@ class MainPanel(wx.Panel):
                 self.auth_attempts = 1
                 self.SetScrobb()
                 
-            if (float(self.time_count) / float(self.current_play_time) > .7) & (self.gobbled_track != 1) & (self.st_status.GetLabelText() != "stopped"):
+            if (float(self.time_count) / float(self.current_play_time) > .7) & (self.gobbled_track != 1) & (self.pstatus != "stopped"):
                 #save stats for local db
                 self.gobbled_track = 1
                 #THREAD
@@ -865,7 +870,7 @@ class MainPanel(wx.Panel):
                 #THREAD
                 ti.start()
         
-            if (float(self.time_count) / float(self.current_play_time) > .6) & (self.scrobbed_track != 1) & (self.scrobbed_active == 1) & (self.st_status.GetLabelText() != "stopped"):
+            if (float(self.time_count) / float(self.current_play_time) > .6) & (self.scrobbed_track != 1) & (self.scrobbed_active == 1) & (self.pstatus != "stopped"):
                 time_started = str(int(time.time()))
                 self.scrobbed_track = 1
                 port = self.rx_options_scrobble_port.GetSelection()
@@ -884,7 +889,7 @@ class MainPanel(wx.Panel):
                         #pylast.BadSession:
             
         # check if we should go to the next track   
-        if (self.current_play_time > 0) & (self.time_count > self.current_play_time) & (self.st_status.GetLabelText() != "stopped"):
+        if (self.current_play_time > 0) & (self.time_count > self.current_play_time) & (self.pstatus != "stopped"):
             #print 'next-track'
             if self.current_local != None:
                 self.current_local.stop()
@@ -904,7 +909,7 @@ class MainPanel(wx.Panel):
                     self.PlaySong(0)
                 else:
                 #we've reached teh end, the end my friend
-                    self.st_status.SetLabel('stopped')
+                    self.pstatus = 'stopped'                    
         # check if we should start recording
         #print self.st_status.GetLabelText()
         #print self.cb_record.GetValue()
@@ -1157,7 +1162,9 @@ class MainPanel(wx.Panel):
         #    pass        
         #self.flash = FlashWindow(self.pa_player, style=wx.NO_BORDER)#, size=(20, 20))
         
-        self.st_status.SetLabel('stopped')
+        self.pstatus = 'stopped'
+        self.download_percent = 0
+        
         
         #try:
         #    self.recorder.stop()
@@ -1215,7 +1222,8 @@ class MainPanel(wx.Panel):
             self.StopFlashSong()
         
         self.gobbled_track = 0
-        self.ga_download.SetValue(0)
+        #self.ga_download.SetValue(0)
+        self.download_percent = 0
 
                                  
         # check for random
@@ -1338,7 +1346,8 @@ class MainPanel(wx.Panel):
                     # we fucked
                     #print "no search results -- fucked"
                     self.lc_playlist.SetItemBackgroundColour(playlist_number, medlight)
-                    self.st_status.SetLabel('stopped')
+                    self.pstatus = 'stopped'
+                    
                     # *** skip to next track
                     
                 # set negative so it has time to load
@@ -1396,8 +1405,8 @@ class MainPanel(wx.Panel):
             self.LoadFlashSong(url, artist, track)
             
             self.lc_playlist.Select(playlist_number)
-            self.st_track_info.SetLabel(artist + ' - ' + track)
-            self.st_status.SetLabel('playing')
+            #self.st_track_info.SetLabel(artist + ' - ' + track)
+            self.pstatus = 'playing'
             self.parent.SetTitle(artist + '-' + track + ' - ' + PROGRAM_NAME + ' ' + PROGRAM_VERSION)
             self.GetSongArt(artist, album)
             self.GetArtistBio(artist)
@@ -1420,8 +1429,7 @@ class MainPanel(wx.Panel):
             cached_file = file_cache.CreateCachedFilename(temp_dir, file_name_plain)
             cached_file_name = cached_file[0]
             if cached_file[1] == False:
-                # download it
-                
+                # download it                
                 
                 # file size
                 g_session = jsonrpcSession()
@@ -1447,7 +1455,9 @@ class MainPanel(wx.Panel):
                 current = FileThread(self, g_song._lastStreamKey, g_song._lastStreamServer, cached_file_name, file_size)
                 #THREAD
                 current.start()
-            
+            else:
+                self.current_play_time = local_songs.GetMp3Length(cached_file_name)
+                
             #while os.path.isfile(cached_file_name) != True:
                 #time.sleep(1)
             #while os.path.getsize(cached_file_name) < BUFFER_SIZE:
@@ -1462,8 +1472,8 @@ class MainPanel(wx.Panel):
             self.current_local.start()
             
             self.lc_playlist.Select(playlist_number)
-            self.st_track_info.SetLabel(artist + ' - ' + track)
-            self.st_status.SetLabel('playing')
+            #self.st_track_info.SetLabel(artist + ' - ' + track)
+            self.pstatus ='playing'
             self.parent.SetTitle(artist + '-' + track + ' - ' + PROGRAM_NAME + ' ' + PROGRAM_VERSION)
             if os.name == 'nt':
                 self.GetSongArt(artist, album)
@@ -1484,8 +1494,8 @@ class MainPanel(wx.Panel):
             self.current_local.start()
             #print self.current_local
             self.lc_playlist.Select(playlist_number)
-            self.st_track_info.SetLabel(artist + ' - ' + track)
-            self.st_status.SetLabel('playing')
+            #self.st_track_info.SetLabel(artist + ' - ' + track)
+            self.pstatus = 'playing'
             self.parent.SetTitle(artist + '-' + track + ' - ' + PROGRAM_NAME + ' ' + PROGRAM_VERSION)
             if os.name == 'nt':
                 self.GetSongArt(artist, album)
@@ -1496,7 +1506,7 @@ class MainPanel(wx.Panel):
             self.scrobbed_track = 0
         else:
              self.scrobbed_track = 1
-             self.st_status.SetLabel('stopped')
+             self.pstatus = 'stopped'
              
 
         
@@ -2030,12 +2040,12 @@ class MainPanel(wx.Panel):
         # figure out where we should get the artist/song/ablum info to search on
         artist = self.tc_last_search_artist.GetValue()        
         if len(artist) == 0:
-            artist = self.st_track_info.GetLabel().split(' - ', 1)[0]
+            artist = self.partist #st_track_info.GetLabel().split(' - ', 1)[0]
+            
         song = self.tc_last_search_song.GetValue()        
         if len(song) == 0:
-            spliter = self.st_track_info.GetLabel().split(' - ', 1)
-            if len(spliter) == 2:
-                song = spliter[1]
+            song = self.ptrack #st_track_info.GetLabel().split(' - ', 1)
+                
         album = self.tc_last_search_album.GetValue()
         return artist, song, album
 
@@ -3107,7 +3117,8 @@ class FileThread(Thread):
         self.file_size = file_size
                         
     def run(self):
-    
+        
+        #self.parent.pstatus ='buffering'
         #progress thread
         #THREAD
         current = ProgressThread(self.parent, self.temp_file, self.file_size)
@@ -3140,7 +3151,8 @@ class ProgressThread(Thread):
             time.sleep(1)
         while self.file_size > os.path.getsize(self.temp_file):
             per_val = int(((os.path.getsize(self.temp_file) / float(self.file_size)) * 100))            
-            self.parent.ga_download.SetValue(per_val)
+            #self.parent.ga_download.SetValue(per_val)
+            self.parent.download_percent = per_val
             if per_val == 100:
                 break
             time.sleep(1)

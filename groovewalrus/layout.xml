@@ -78,93 +78,12 @@
 													</object>
 													<object class="sizeritem">
 														<option>1</option>
-														<flag>wxEXPAND | wxALL</flag>
+														<flag>wxALL|wxEXPAND</flag>
 														<border>5</border>
-														<object class="wxPanel" name="m_panel2">
+														<object class="wxPanel" name="m_pa_playback" subclass="main_controls.playback_panel.PlaybackPanel">
 															<style>wxSTATIC_BORDER|wxTAB_TRAVERSAL</style>
 															<bg>#f5f5f5</bg>
-															<object class="wxBoxSizer">
-																<orient>wxHORIZONTAL</orient>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																	<border>5</border>
-																	<object class="wxStaticText" name="m_st_status">
-																		<size>54,-1</size>
-																		<font>
-																			<size>9</size>
-																			<family>default</family>
-																			<style>normal</style>
-																			<weight>normal</weight>
-																			<underlined>0</underlined>
-																		</font>
-																		<label></label>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
-																	<border>5</border>
-																	<object class="wxStaticText" name="m_st_time">
-																		<size>70,-1</size>
-																		<font>
-																			<size>9</size>
-																			<family>default</family>
-																			<style>normal</style>
-																			<weight>normal</weight>
-																			<underlined>0</underlined>
-																		</font>
-																		<label></label>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>1</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																	<border>5</border>
-																	<object class="wxStaticText" name="m_st_track_info">
-																		<font>
-																			<size>9</size>
-																			<family>default</family>
-																			<style>normal</style>
-																			<weight>bold</weight>
-																			<underlined>0</underlined>
-																		</font>
-																		<label></label>
-																	</object>
-																</object>
-															</object>
 														</object>
-													</object>
-												</object>
-											</object>
-											<object class="sizeritem">
-												<option>0</option>
-												<flag>wxEXPAND</flag>
-												<border>5</border>
-												<object class="wxBoxSizer">
-													<orient>wxHORIZONTAL</orient>
-													<object class="spacer">
-														<option>0</option>
-														<flag>wxEXPAND</flag>
-														<border>0</border>
-														<size>45,0</size>
-													</object>
-													<object class="sizeritem">
-														<option>1</option>
-														<flag>wxALL</flag>
-														<border>0</border>
-														<object class="wxGauge" name="m_ga_download">
-															<style>wxGA_HORIZONTAL</style>
-															<size>-1,5</size>
-															<range>100</range>
-															<value>0</value>
-														</object>
-													</object>
-													<object class="spacer">
-														<option>0</option>
-														<flag>wxEXPAND</flag>
-														<border>0</border>
-														<size>5,0</size>
 													</object>
 												</object>
 											</object>
