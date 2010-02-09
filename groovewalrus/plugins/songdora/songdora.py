@@ -31,6 +31,8 @@ import urllib2
 RESFILE = os.path.join(os.getcwd(), 'plugins','songdora') + os.sep + "layout_songdora.xml"
 MAIN_PLAYLIST = system_files.GetDirectories(None).DataDirectory() + os.sep + "playlist.xspf"
 #FILEDB = system_files.GetDirectories(None).DataDirectory() + os.sep + 'gravydb.sq3'
+PANDORA_SONG_URL = "http://www.pandora.com/music/song/"
+
 
 class MainPanel(wx.Dialog):
     def __init__(self, parent):
@@ -46,16 +48,19 @@ class MainPanel(wx.Dialog):
         # control references --------------------        
         #header for dragging and moving
         self.st_songdora_header = xrc.XRCCTRL(self, 'm_st_songdora_header')
-        self.lc_songdora_list = xrc.XRCCTRL(self, 'm_lc_songdora_list')
+        self.lc_songdora_results = xrc.XRCCTRL(self, 'm_lc_songdora_results')
         self.bm_songdora_close = xrc.XRCCTRL(self, 'm_bm_songdora_close')
+        self.st_songdora_song = xrc.XRCCTRL(self, 'm_st_songdora_song')
         #self.rx_songdora_radio = xrc.XRCCTRL(self, 'm_rx_songdora_radio')
         
-        self.lc_songdora_list.InsertColumn(0,"Artist")
-        self.lc_songdora_list.InsertColumn(1,"Song")
-        self.lc_songdora_list.InsertColumn(2,"Album")
-        self.lc_songdora_list.SetColumnWidth(0, 180)
-        self.lc_songdora_list.SetColumnWidth(1, 260)
-        self.lc_songdora_list.SetColumnWidth(2, 60)
+        self.lc_songdora_results.InsertColumn(0,"Artist")
+        self.lc_songdora_results.InsertColumn(1,"Song")
+        self.lc_songdora_results.InsertColumn(2,"Album")
+        self.lc_songdora_results.InsertColumn(3,"Link")
+        self.lc_songdora_results.SetColumnWidth(0, 180)
+        self.lc_songdora_results.SetColumnWidth(1, 260)
+        self.lc_songdora_results.SetColumnWidth(2, 200)
+        self.lc_songdora_results.SetColumnWidth(3, 200)
 
         # bindings ----------------
         self.bm_songdora_close.Bind(wx.EVT_LEFT_UP, self.CloseMe)
@@ -69,9 +74,15 @@ class MainPanel(wx.Dialog):
         self.st_songdora_header.Bind(wx.EVT_LEFT_UP, self.OnMouseLeftUp)
         self.st_songdora_header.Bind(wx.EVT_RIGHT_UP, self.OnRightUp)
         
-        self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.OnDoubleClick, self.lc_songdora_list)
+        self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.OnDoubleClick, self.lc_songdora_results)
         #self.Bind(wx.EVT_RADIOBOX, self.OnRadioClick, self.rx_songdora_radio)
-        self.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.OnRightClick, self.lc_songdora_list)
+        # wxMSW
+        self.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.OnRightClick, self.lc_songdora_results)
+        # wxGTK
+        self.lc_songdora_results.Bind(wx.EVT_RIGHT_UP, self.OnRightClick)
+        self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnListClick, self.lc_songdora_results)
+        
+        self.Bind(wx.EVT_BUTTON, self.Get6Songs, id=xrc.XRCID('m_bu_songdora_search'))
         
         # set layout --------------        
         sizer = wx.BoxSizer(wx.VERTICAL)
@@ -79,44 +90,68 @@ class MainPanel(wx.Dialog):
         self.SetSizer(sizer)
         self.SetAutoLayout(True)
         #self.LoadSetings()
-        self.GetLastPlayed()
 
     def CloseMe(self, event=None):
         self.Destroy()
         
-    def Get6Songs(self, search):
+    def OnListClick(self, event):
+        # get slected
+        val = self.lc_songdora_results.GetFirstSelected()
+        if val >=0:
+            artist = self.lc_songdora_results.GetItem(val, 0).GetText()
+            song = self.lc_songdora_results.GetItem(val, 1).GetText()
+            self.st_songdora_song.SetLabel(artist + ' - ' + song)
+            
+    def Get6Songs(self, event):
+        #get current song and try and see what happens
+        #http://www.pandora.com/music/song/interpol/obstacle+1
+            
+        val = self.lc_songdora_results.GetFirstSelected()
+        if val >=0:
+            pandora_url = self.lc_songdora_results.GetItem(val, 3).GetText()
+        else:    
+            partist = self.parent.partist.replace(' ', '+')
+            ptrack = self.parent.ptrack.replace(' ', '+')
+            pandora_url = PANDORA_SONG_URL + partist + '/' + ptrack
+            self.st_songdora_song.SetLabel(self.parent.partist + ' - ' + self.parent.ptrack)
         
-        page = urllib2.urlopen("http://www.pandora.com/music/song/eaa9c7fe3b3b0fd3")
+        page = urllib2.urlopen(pandora_url)
+        
+        print pandora_url
 
         soup = BeautifulSoup(page)
+        counter = 0
         for songs in soup('span', id="similar_song"): #span id="similar_song"
-            track = songs.contents[1]
-           
+            t = songs.contents[1]
+            track = str(t).split('"')[3]
+            link = PANDORA_SONG_URL + str(t).split('"')[1]
             a = songs.contents[6]           
             soupa = BeautifulSoup(str(a))
             artist = soupa.a.string
             
-            b = songs.contents[11]           
+            b = songs.contents[11]
             soupb = BeautifulSoup(str(b))
-            album = soupb.a.string
+            album = soupb.a.string            
             
-            print str(track).split('"')[3]
-            print artist
-            print album
-        
+            self.lc_songdora_results.InsertStringItem(counter, artist)
+            self.lc_songdora_results.SetStringItem(counter, 1, track)
+            self.lc_songdora_results.SetStringItem(counter, 2, album)
+            self.lc_songdora_results.SetStringItem(counter, 3, link)
+            counter = counter + 1
         
     def OnDoubleClick(self, event):
         # pass the artist + track to the playlist
-        val = self.lc_songdora_list.GetFirstSelected()
-        artist = self.lc_songdora_list.GetItem(val, 0).GetText()
-        song = self.lc_songdora_list.GetItem(val, 1).GetText()
+        val = self.lc_songdora_results.GetFirstSelected()
+        artist = self.lc_songdora_results.GetItem(val, 0).GetText()
+        song = self.lc_songdora_results.GetItem(val, 1).GetText()
+        album = self.lc_songdora_results.GetItem(val, 2).GetText()
         #search for selected song
-        self.parent.SearchOrPlaylist(artist, song)
+        self.parent.SearchOrPlaylist(artist, song, album=album)
         
     def OnRightClick(self, event):
-        val = self.lc_songdora_list.GetFirstSelected()
+        val = self.lc_songdora_results.GetFirstSelected()
         if val != -1:
-            if (self.lc_songdora_list.GetItem(val, 0).GetText() != '') & (self.lc_songdora_list.GetItem(val, 1).GetText() != ''):    
+            if (self.lc_songdora_results.GetItem(val, 0).GetText() != '') & (self.lc_songdora_results.GetItem(val, 1).GetText() != ''):    
                 # make a menu
                 ID_PLAYLIST = 1
                 ID_CLEAR = 2
@@ -130,21 +165,23 @@ class MainPanel(wx.Dialog):
                 menu.Destroy()
            
     def AddToPlaylist(self, event):
-        val = self.lc_songdora_list.GetFirstSelected()
-        total = self.lc_songdora_list.GetSelectedItemCount()
+        val = self.lc_songdora_results.GetFirstSelected()
+        total = self.lc_songdora_results.GetSelectedItemCount()
         current_count = self.parent.lc_playlist.GetItemCount()
         #print val
         if (val >= 0):            
-            artist =    self.lc_songdora_list.GetItem(val, 0).GetText()
-            song =      self.lc_songdora_list.GetItem(val, 1).GetText()
-            self.parent.SetPlaylistItem(current_count, artist, song, '', '')
+            artist =    self.lc_songdora_results.GetItem(val, 0).GetText()
+            song =      self.lc_songdora_results.GetItem(val, 1).GetText()
+            album =     self.lc_songdora_results.GetItem(val, 2).GetText()
+            self.parent.SetPlaylistItem(current_count, artist, song, album=album)
             current_select = val
             if total > 1:
-                for x in range(1, self.lc_songdora_list.GetSelectedItemCount()):
-                    current_select =    self.lc_songdora_list.GetNextSelected(current_select)
-                    artist =            self.lc_songdora_list.GetItem(current_select, 0).GetText()
-                    song =              self.lc_songdora_list.GetItem(current_select, 1).GetText()                    
-                    self.parent.SetPlaylistItem(current_count + x, artist, song, '', '')
+                for x in range(1, self.lc_songdora_results.GetSelectedItemCount()):
+                    current_select =    self.lc_songdora_results.GetNextSelected(current_select)
+                    artist =            self.lc_songdora_results.GetItem(current_select, 0).GetText()
+                    song =              self.lc_songdora_results.GetItem(current_select, 1).GetText()                    
+                    album =             self.lc_songdora_results.GetItem(current_select, 2).GetText()
+                    self.parent.SetPlaylistItem(current_count + x, artist, song, album=album)
 
         #save the playlist
         self.parent.SavePlaylist(MAIN_PLAYLIST)
