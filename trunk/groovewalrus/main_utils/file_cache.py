@@ -48,10 +48,11 @@ def CheckCache(cache_path):
     
     if len(file_list) > CACHE_LIMIT:
         
-        for file_name in objects:
+        for file_name in file_list:
         # find oldest file
             full_file_path = file_path + os.sep + file_name
-            modified = os.path.getmtime(full_file_path)
+            # use created time, modifed time is not what we want
+            modified = os.path.getctime(full_file_path)
             if modified < first_modified:
                     first_modified = modified
                     oldest_file = full_file_path
