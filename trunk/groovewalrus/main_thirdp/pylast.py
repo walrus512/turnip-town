@@ -229,7 +229,8 @@ class _Request(object):
         else:
             conn = httplib.HTTPConnection(host=self.HOST_NAME)
             conn.request(method='POST', url=self.HOST_SUBDIR, body=data, headers=headers)
-        
+            ##print data
+            
         response = conn.getresponse().read()
         self._check_response_for_errors(response)
         return response
@@ -3109,6 +3110,7 @@ class _ScrobblerRequest(object):
         debug("Scrobbler Request:\n\tHOST :" + self.hostname + "\n\tSUBDIR: " + self.subdir +
             "\n\tDATA:" + repr(data) + "\n\tHEADERS: " + repr(headers))
         connection.request("POST", self.subdir, data, headers)
+        ##print data
         response = connection.getresponse().read()
         
         self._check_response_for_errors(response)
@@ -3216,7 +3218,7 @@ class Scrobbler(object):
         params = {"s": self._get_session_id(), "a[0]": artist, "t[0]": title,
             "i[0]": str(time_started), "o[0]": source, "r[0]": mode, "l[0]": str(duration),
             "b[0]": album, "n[0]": track_number, "m[0]": mbid}
-        print self.submissions_url
+        #print self.submissions_url
         #print album
         
         #remove the port number from the sub url
@@ -3237,8 +3239,8 @@ class Scrobbler(object):
             from_port = '/' + self.submissions_url.rsplit('/', 1)[1]
             x_sub_url = to_port + ':' + str(sub_type) + from_port
             
-        print x_sub_url
+        #print x_sub_url
             
         response = _ScrobblerRequest(self.submissions_url, params).execute()
 
-        info(artist + " - " + title + " was scrobbled")
+        #info(artist + " - " + title + " was scrobbled")
