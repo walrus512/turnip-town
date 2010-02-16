@@ -127,7 +127,7 @@ class RateEvents(object):
                
 def LoveTrack(artist, song, sk):
     #love track on last.fm too    
-    if (len(artist) > 0) & (len(song) > 0):
+    if (len(artist) > 0) & (len(song) > 0) & (sk != None):
         last_track = pylast.Track(artist, song, API_KEY, '6a2eb503cff117001fac5d1b8e230211', sk)
         last_track.love()        
         
