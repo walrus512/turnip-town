@@ -24,7 +24,7 @@ from main_utils.read_write_xml import xml_utils
 import  wx
 import sys, os
 
-SYSLOC = os.getcwd()
+SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0])) #os.getcwd()
 PLUGINS_LOCATION = SYSLOC + os.sep + "plugins" + os.sep
 
 class PluginLoader():

@@ -34,6 +34,7 @@ if os.name == 'nt':
     import comtypes
 import urllib
 from threading import Thread
+import sqlite3
 
 from main_utils import musicbrainz
 from main_utils import tinysong
@@ -48,6 +49,7 @@ from main_utils import file_cache
 
 from main_controls import drag_and_drop
 from main_controls import playback_panel
+from main_controls import ratings_button
 #from main_controls import custom_slider
 
 from main_windows import version_check
@@ -72,15 +74,15 @@ from main_thirdp import grooveshark_old
 #from plugins.griddle import griddle
 #from plugins.ratings import ratings
 
-PROGRAM_VERSION = "0.205"
+PROGRAM_VERSION = "0.206"
 PROGRAM_NAME = "GrooveWalrus"
 PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
 PLAY_SONG_ALTERNATE_URL ="http://listen.grooveshark.com/main.swf?hostname=cowbell.grooveshark.com&p=1&songID="
 SONG_SENDER_URL = "http://gwp.turnip-town.net/?"
 
 
-SYSLOC = os.getcwd()
-GRAPHICS_LOCATION = os.path.join(os.getcwd(), 'graphics') + os.sep
+SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0])) #os.getcwd()
+GRAPHICS_LOCATION = os.path.join(SYSLOC, 'graphics') + os.sep
 
 #COVER_SIZE = (75,75)
 #COVER_SIZE_LARGE = (150,150)
@@ -204,7 +206,7 @@ class MainPanel(wx.Panel):
         xrc.XRCCTRL(self, 'm_pa_options_plugins').SetScrollRate(20,20)
                
         # control references --------------------
-        self.pa_player = xrc.XRCCTRL(self, 'm_pa_player')        
+        #self.pa_player = xrc.XRCCTRL(self, 'm_pa_player')        
         #self.st_track_info = xrc.XRCCTRL(self, 'm_st_track_info')
         #self.st_status = xrc.XRCCTRL(self, 'm_st_status')
         #self.st_time = xrc.XRCCTRL(self, 'm_st_time')        
@@ -307,6 +309,7 @@ class MainPanel(wx.Panel):
         self.cb_options_scrobble = xrc.XRCCTRL(self, 'm_cb_options_scrobble')
         self.cb_options_scrobble_album = xrc.XRCCTRL(self, 'm_cb_options_scrobble_album')
         self.cb_options_tray = xrc.XRCCTRL(self, 'm_cb_options_tray')
+        self.cb_options_autosave = xrc.XRCCTRL(self, 'm_cb_options_autosave')
         #self.ch_options_bitrate = xrc.XRCCTRL(self, 'm_ch_options_bitrate')
         self.bu_options_record_dir = xrc.XRCCTRL(self, 'm_bu_options_record_dir')
         
@@ -359,7 +362,7 @@ class MainPanel(wx.Panel):
         # wxGTK
         self.lc_playlist.Bind(wx.EVT_RIGHT_UP, self.OnPlaylistRightClick)
         #self.lc_playlist.Bind(wx.EVT_CHAR, self.OnPlaylistKeyPress)
-        self.lc_playlist.Bind(wx.EVT_KEY_UP, self.OnDeleteClick)
+        self.lc_playlist.Bind(wx.EVT_KEY_UP, self.OnDeletePress)
         
         #dynamic listctrl resize
         #wx.EVT_SIZE(self.parent, self.ResizePlaylist)
@@ -388,7 +391,22 @@ class MainPanel(wx.Panel):
         self.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.OnFavesRightClick, self.lc_faves)
         # wxGTK
         self.lc_faves.Bind(wx.EVT_RIGHT_UP, self.OnFavesRightClick)
-        self.lc_faves.Bind(wx.EVT_KEY_UP, self.OnDeleteClick)        
+        #self.lc_faves.Bind(wx.EVT_KEY_UP, self.OnDeleteClick)
+        self.lc_faves.Bind(wx.EVT_LIST_COL_CLICK, self.OnFavesColClick)
+        self.faves_sorter = [1,0,0,0,0]
+        
+        rate_images = wx.ImageList(16, 16, True)        
+        image_files = [
+            GRAPHICS_LOCATION + 'weather-clear-night.png', 
+            GRAPHICS_LOCATION + 'weather-storm.png', 
+            GRAPHICS_LOCATION + 'weather-overcast.png', 
+            GRAPHICS_LOCATION + 'weather-few-clouds.png', 
+            GRAPHICS_LOCATION + 'weather-clear.png'
+            ]
+        for file_name in image_files:
+            bmp = wx.Bitmap(file_name, wx.BITMAP_TYPE_PNG)
+            rate_images.Add(bmp)            
+        self.lc_faves.AssignImageList(rate_images, wx.IMAGE_LIST_SMALL)        
                 
         self.lc_sift = xrc.XRCCTRL(self, 'm_lc_sift')
         self.lc_sift.InsertColumn(0,"Artist")
@@ -459,13 +477,14 @@ class MainPanel(wx.Panel):
         self.Bind(wx.EVT_BUTTON, self.OnLoadPlaylistClick, id=xrc.XRCID('m_bb_load_playlist'))
         self.Bind(wx.EVT_BUTTON, self.RemoveFavesItem, id=xrc.XRCID('m_bb_faves_remove'))        
         #self.Bind(wx.EVT_BUTTON, self.OnAutoGenerateLastfmPlayist2, id=xrc.XRCID('m_bb_last_fill'))
-        self.Bind(wx.EVT_BUTTON, self.OnAutoGenerateFavesPlayist, id=xrc.XRCID('m_bu_faves_plize'))
+        self.Bind(wx.EVT_BUTTON, self.OnAutoGenerateFavesPlayist, id=xrc.XRCID('m_bb_faves_plize'))
         self.Bind(wx.EVT_BUTTON, self.OnAutoGenerateLastfmPlayist, id=xrc.XRCID('m_bu_last_plize'))
         self.Bind(wx.EVT_BUTTON, self.OnAutoGenerateMyLastPlayist, id=xrc.XRCID('m_bu_mylast_plize'))
         self.Bind(wx.EVT_BUTTON, self.OnAutoGenerateAlbumPlayist, id=xrc.XRCID('m_bu_album_plize'))
         self.Bind(wx.EVT_BUTTON, self.OnAutoGenerateSiftPlayist, id=xrc.XRCID('m_bu_sift_plize'))
         
         self.Bind(wx.EVT_BUTTON, self.OnFavesClick, id=xrc.XRCID('m_bb_faves'))
+        #self.Bind(wx.EVT_BUTTON, self.OnFavesDropClick, id=xrc.XRCID('m_bb_faves_drop'))
         #self.Bind(wx.EVT_LEFT_DOWN, self.OnStatusTextClick, id=xrc.XRCID('m_lb_status_text'))
         #self.Bind(wx.EVT_LEFT_UP, self.OnStatusTextClick, id=xrc.XRCID('m_lb_status_text'))
         #self.lb_status_text.Bind(wx.EVT_LEFT_UP, self.OnStatusTextClick)
@@ -508,9 +527,10 @@ class MainPanel(wx.Panel):
         self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_scrobble_album'))
         self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_noid'))
         self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_tray'))
+        self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_autosave'))
         #self.Bind(wx.EVT_CHOICE, self.SaveOptions, id=xrc.XRCID('m_ch_options_bitrate'))
         self.Bind(wx.EVT_BUTTON, self.OnSaveOptionsClick, id=xrc.XRCID('m_bu_options_save'))
-        self.Bind(wx.EVT_BUTTON, self.OnAboutClick, id=xrc.XRCID('m_bu_options_about'))
+        #self.Bind(wx.EVT_BUTTON, self.OnAboutClick, id=xrc.XRCID('m_bu_options_about'))
         self.Bind(wx.EVT_BUTTON, self.OnSetRecordDirClick, id=xrc.XRCID('m_bu_options_record_dir'))
         
         self.Bind(wx.EVT_BUTTON, self.OnSColAddClick, id=xrc.XRCID('m_bb_scol_add'))
@@ -575,7 +595,7 @@ class MainPanel(wx.Panel):
             #print self.main_playlist_location
         
         
-        self.ReadFaves(self.faves_playlist_location)
+        self.ReadFaves() #self.faves_playlist_location)
 
         
         self.tc_search.SetFocus()
@@ -637,6 +657,7 @@ class MainPanel(wx.Panel):
         self.scrobbed_active = 0
         self.auth_attempts = 0
         self.scrobbed_track = 0
+        self.session_key2 = None
         #self.SetScrobb()
         
         #autoplay ---------------
@@ -821,8 +842,21 @@ class MainPanel(wx.Panel):
             except:
                 self.st_options_auth.SetLabel('Status: something failed. User/password?')
                 self.st_options_auth.SetBackgroundColour('Yellow')
-                self.nb_main.SetSelection(NB_OPTIONS)
+                #self.nb_main.SetSelection(NB_OPTIONS)
          
+    def GenerateSessionKey2(self, regenerate=False):
+        # generate a non-song scrobbling seesion key
+        
+        username = self.tc_options_username.GetValue()
+        password = self.tc_options_password.GetValue()
+        if (password != '') & (username !='' ):        
+            if (self.session_key2 == None) or (regenerate == True):
+                last_sess = pylast.SessionKeyGenerator(API_KEY, '6a2eb503cff117001fac5d1b8e230211')
+    
+                md5_password = pylast.md5(password)
+                self.session_key2 = last_sess.get_session_key(username, md5_password)
+        return self.session_key2            
+                
     def OnToggleScrobble(self, event):        
         if self.cb_options_scrobble.IsChecked():
             self.lastfm_toggle.Check(False)
@@ -1027,7 +1061,7 @@ class MainPanel(wx.Panel):
         dialog = wx.DirDialog(None, "Choose a directory:")
         if dialog.ShowModal() == wx.ID_OK:
             #print dialog.GetPath()
-            self.bu_options_record_dir.SetLabel(dialog.GetPath() + os.sep)
+            self.bu_options_record_dir.SetLabel(dialog.GetPath())
             self.SaveOptions(None)
         dialog.Destroy()
         #pass
@@ -1361,7 +1395,7 @@ class MainPanel(wx.Panel):
         #print url    
         
         #get song time
-        if duration =='':
+        if (duration =='') or (duration == '0:00'):
             if (song_id.endswith('.mp3') == True):
                 track_time = local_songs.GetMp3Length(song_id)
             else:
@@ -1681,7 +1715,7 @@ class MainPanel(wx.Panel):
         
         menu = wx.Menu()
         menu.Append(ID_FAVES, "Add to Favorites")
-        ##menu.Append(ID_SHARE, "Clipboard Share Link")
+        menu.Append(ID_SHARE, "Clipboard Share Link")
         menu.AppendSeparator()
         menu.Append(ID_SEARCH, "Find Better Version")        
         menu.Append(ID_FIX, "Song Details")
@@ -1692,11 +1726,11 @@ class MainPanel(wx.Panel):
         
         wx.EVT_MENU(self, ID_DELETE, self.RemovePlaylistItem)
         wx.EVT_MENU(self, ID_SEARCH, self.SearchAgain)
-        wx.EVT_MENU(self, ID_FAVES, self.OnFavesClick)
+        wx.EVT_MENU(self, ID_FAVES, self.OnPlaylistFavesClick)
         wx.EVT_MENU(self, ID_FIX, self.FixPlaylistItem)
         wx.EVT_MENU(self, ID_FIX_ALBUM, self.FixAlbumName)
         wx.EVT_MENU(self, ID_CLEAR, self.ClearId)
-        ##wx.EVT_MENU(self, ID_SHARE, self.MakeShareLink)
+        wx.EVT_MENU(self, ID_SHARE, self.MakeShareLink)
         
         # Popup the menu.  If an item is selected then its handler
         # will be called before PopupMenu returns.
@@ -1794,16 +1828,26 @@ class MainPanel(wx.Panel):
         if self.lc_faves.IsShownOnScreen():
             return self.lc_faves
 
+    def OnDeletePress(self, event=None):
+        #check which listctrl is visable
+        #save list for undo
+        #delete items(s)
+        #check if it's the delete key
+         if event.GetKeyCode() == wx.WXK_DELETE:
+            if self.lc_playlist.IsShownOnScreen():
+                self.RemovePlaylistItem()
+            #if self.lc_faves.IsShownOnScreen():
+                #self.RemoveFavesItem()
+                
     def OnDeleteClick(self, event=None):
         #check which listctrl is visable
         #save list for undo
         #delete items(s)
         #check if it's the delete key
-        if event.GetKeyCode() == wx.WXK_DELETE:
-            if self.lc_playlist.IsShownOnScreen():
-                self.RemovePlaylistItem()
-            if self.lc_faves.IsShownOnScreen():
-                self.RemoveFavesItem()
+        if self.lc_playlist.IsShownOnScreen():
+            self.RemovePlaylistItem()
+            #if self.lc_faves.IsShownOnScreen():
+                #self.RemoveFavesItem()
             
     def OnKeyUp(self, event):
         print 'key'
@@ -1832,7 +1876,7 @@ class MainPanel(wx.Panel):
         #get the list to paste to
         self.BackupList()
         sel_list = self.GetSelectedList()
-        if sel_list != None:
+        if sel_list == self.lc_playlist:
             #cycle through copied items and paste
             for x in range(0, len(self.copy_array)):
                 cur_item = sel_list.GetItemCount()
@@ -1851,22 +1895,22 @@ class MainPanel(wx.Panel):
             else:
                 self.ReadPlaylist(self.main_playlist_location)
                 self.undo_toggle = 0
-        if self.lc_faves.IsShownOnScreen():
-            self.lc_faves.DeleteAllItems()
-            if self.undo_toggle_faves == 0:
-                self.ReadFaves(self.faves_playlist_location_bak)
-                self.undo_toggle_faves = 1
-            else:
-                self.ReadFaves(self.faves_playlist_location)
-                self.undo_toggle_faves = 0        
+        #if self.lc_faves.IsShownOnScreen():
+        #    self.lc_faves.DeleteAllItems()
+        #    if self.undo_toggle_faves == 0:
+        #        self.ReadFaves(self.faves_playlist_location_bak)
+        #        self.undo_toggle_faves = 1
+        #    else:
+        #        self.ReadFaves(self.faves_playlist_location)
+        #        self.undo_toggle_faves = 0        
         
     def BackupList(self):
-        if self.lc_faves.IsShownOnScreen():
-            self.SaveFaves(self.faves_playlist_location_bak)
-            self.undo_toggle_faves = 0
-        else: # self.lc_playlist.IsShownOnScreen():
-            self.SavePlaylist(self.main_playlist_location_bak)
-            self.undo_toggle = 0
+        #if self.lc_faves.IsShownOnScreen():
+         #   self.SaveFaves(self.faves_playlist_location_bak)
+        #    self.undo_toggle_faves = 0
+        #else: # self.lc_playlist.IsShownOnScreen():
+        self.SavePlaylist(self.main_playlist_location_bak)
+        self.undo_toggle = 0
         
 # --------------------------------------------------------- 
 # My last.fm ----------------------------------------------
@@ -2583,27 +2627,63 @@ class MainPanel(wx.Panel):
   
     def OnFavesClick(self, event):
         # get current song and add to favourites list
-        # save self.faves_playlist_location
+        # this is not the same as clicking from the playlist
+        
+        music_id = self.pmusic_id
+        grooveshark_id = self.pgroove_id
+        artist = self.partist
+        song = self.ptrack
+        
+        track_id = ratings_button.GetTrackId(artist, song, grooveshark_id, music_id)
+        ratings_button.AddRating(self, track_id, 4)
+        sk = self.GenerateSessionKey2()
+        ratings_button.LoveTrack(artist, song, sk)        
+        
+    def OnPlaylistFavesClick(self, event):
+        # add a favorite (or many faves) from the right-click menu on the playlist
         val = self.lc_playlist.GetFirstSelected()
         # check if something is selected
+        need_love = True
         if val >= 0:
-            current_count = (self.lc_faves.GetItemCount())
-            artist = self.lc_playlist.GetItem(val, 0).GetText()
-            song = self.lc_playlist.GetItem(val, 1).GetText()
-            album = self.lc_playlist.GetItem(val, 2).GetText()
-            url = self.lc_playlist.GetItem(val, 3).GetText()
-            duration = self.lc_playlist.GetItem(val, 4).GetText()
-            # *** genrnic transfer selected to list would be better, used elsewhere too        
-            self.SetFavesItem(current_count, artist, song, album, url, duration)
+        #    current_count = (self.lc_faves.GetItemCount())
+            for x in range(0, self.lc_playlist.GetSelectedItemCount()):
+                artist = self.lc_playlist.GetItem(val, 0).GetText()
+                song = self.lc_playlist.GetItem(val, 1).GetText()
+                grooveshark_id = ''
+                music_id = ''
+                
+                the_id = self.lc_playlist.GetItem(val, 1).GetText()
+                if os.path.isfile(the_id) == False:            
+                    if the_id.isdigit() == True:
+                        grooveshark_id = the_id
+                else:
+                    music_id = the_id
+ 
+                track_id = ratings_button.GetTrackId(artist, song, grooveshark_id, music_id)
+                ratings_button.AddRating(self, track_id, 4)
+                # only love the first one, don't want to hammer last.fm
+                if need_love == True:
+                    need_love = False
+                    sk = self.GenerateSessionKey2()
+                    ratings_button.LoveTrack(artist, song, sk)
+                val = self.lc_playlist.GetNextSelected(val)
+                
+            
+        #    album = self.lc_playlist.GetItem(val, 2).GetText()
+        #    url = self.lc_playlist.GetItem(val, 3).GetText()
+        #    duration = self.lc_playlist.GetItem(val, 4).GetText()
+        #    # *** genrnic transfer selected to list would be better, used elsewhere too        
+        #    self.SetFavesItem(current_count, artist, song, album, url, duration)
         
-            # save playlist file
-            # *** more genereic save list to file name
-            self.SaveFaves(self.faves_playlist_location)
+        #    # save playlist file
+        #    # *** more genereic save list to file name
+        #    self.SaveFaves(self.faves_playlist_location)       
         
     def SetFavesItem(self, current_count, artist, song, album, url, duration):
         
         #set value
-        index = self.lc_faves.InsertStringItem(current_count, artist)
+        #index = self.lc_faves.InsertStringItem(current_count, artist)
+        index = self.lc_faves.InsertImageStringItem(current_count, artist, 0)
         self.lc_faves.SetStringItem(current_count, 1, song)
         self.lc_faves.SetStringItem(current_count, 2, album)
         self.lc_faves.SetStringItem(current_count, 3, url)
@@ -2626,7 +2706,44 @@ class MainPanel(wx.Panel):
             
         read_write_xml.xml_utils().save_tracks(filename, track_dict)
         
-    def ReadFaves(self, filename):
+    def ReadFaves(self, query=None):
+        self.lc_faves.DeleteAllItems()
+        #populate favourites listctrl with songs that are rated 4 stars
+        FILEDB = system_files.GetDirectories(None).DataDirectory() + os.sep + 'gravydb.sq3'
+        conn = sqlite3.connect(FILEDB)
+        c = conn.cursor()
+        if query == None:
+            query = "SELECT artist, song, album, track_time, rating_type_id FROM m_rating INNER JOIN m_tracks ON m_rating.track_id = m_tracks.track_id WHERE rating_type_id = 4 ORDER BY artist, song"
+        
+        c.execute(query)
+        h = c.fetchall()
+        counter = 0
+        for x in h:
+            #print x
+            try:
+                #index = self.lc_faves.InsertStringItem(counter, x['creator'])
+                index = self.lc_faves.InsertImageStringItem(counter, x[0], x[4])
+                self.lc_faves.SetStringItem(counter, 1, x[1])
+                album = x[2]
+                if album == None:
+                    album = ''
+                self.lc_faves.SetStringItem(counter, 2, album)
+                #song_id = x['location']
+                song_id = ''
+                #if song_id == None:
+                    #song_id = ''
+                self.lc_faves.SetStringItem(counter, 3, song_id)
+                duration = self.ConvertTimeFormated(x[3])
+                if duration == None:
+                    duration = ''
+                self.lc_faves.SetStringItem(counter, 4, duration)
+                counter = counter + 1
+            except TypeError:
+                pass
+        c.close()
+        self.ResizeFaves()
+        
+    def ReadFaves1(self, filename):
         # take current playlist and write to listcontrol
         track_dict = read_write_xml.xml_utils().get_tracks(filename)
         counter = 0
@@ -2634,7 +2751,8 @@ class MainPanel(wx.Panel):
             #print x
             #set value
             try:
-                index = self.lc_faves.InsertStringItem(counter, x['creator'])
+                #index = self.lc_faves.InsertStringItem(counter, x['creator'])
+                index = self.lc_faves.InsertImageStringItem(counter, x['creator'], 0)
                 self.lc_faves.SetStringItem(counter, 1, x['title'])
                 album = x['album']
                 if album == None:
@@ -2674,15 +2792,16 @@ class MainPanel(wx.Panel):
         
     def RemoveFavesItem(self, event=None):        
         # remove slected list item
-        val = self.lc_faves.GetFirstSelected()
+        ##val = self.lc_faves.GetFirstSelected()
         # iterate over all selected items and delete
-        for x in range(val, val + self.lc_faves.GetSelectedItemCount()):
+        ##for x in range(val, val + self.lc_faves.GetSelectedItemCount()):
             #print 'dete - ' + str(val)
             #self.lc_playlist.DeleteItem(val)
-            self.lc_faves.DeleteItem(self.lc_faves.GetFirstSelected())
+        ##    self.lc_faves.DeleteItem(self.lc_faves.GetFirstSelected())
         # save default playlist
-        self.SaveFaves(self.faves_playlist_location)
-        self.ResizeFaves()
+        ##self.SaveFaves(self.faves_playlist_location)
+        ##self.ResizeFaves()
+        pass
         
     def ResizeFaves(self):
         # 
@@ -2695,6 +2814,7 @@ class MainPanel(wx.Panel):
     def OnAutoGenerateFavesPlayist(self, event):
         # copy the faves list to the playlist
         self.CheckClear()
+        self.BackupList()
         insert_at = self.lc_playlist.GetItemCount()
         for x in range(self.lc_faves.GetItemCount(), 0, -1):
             artist = self.lc_faves.GetItem(x-1, 0).GetText()
@@ -2713,18 +2833,36 @@ class MainPanel(wx.Panel):
         if val != -1:
             if (self.lc_faves.GetItem(val, 0).GetText() != '') & (self.lc_faves.GetItem(val, 1).GetText() != ''):    
                 # make a menu
-                ID_PLAYLIST = 1
-                ID_CLEAR = 2
+                ID_PLAYLIST = 13
+                ID_CLEAR = 23
                 menu = wx.Menu()
-                menu.Append(ID_PLAYLIST, "Add to Playlist")
-                menu.AppendSeparator()
+                menu.Append(ID_PLAYLIST, "Add to Playlist")                
                 menu.Append(ID_CLEAR, "Clear Playlist")
+                menu.AppendSeparator()
                 wx.EVT_MENU(self, ID_PLAYLIST, self.FavesAddPlaylist)
-                wx.EVT_MENU(self, ID_CLEAR, self.OnClearPlaylistClick)       
+                wx.EVT_MENU(self, ID_CLEAR, self.OnClearPlaylistClick)
+                #append the ratings menu
+                re = self.SongRate
+                ratings_button.MenuAppend(menu, self, re)
                 self.PopupMenu(menu)
                 menu.Destroy()
+                
+    def SongRate(self, event):
+        #re-rate selected favourite list item
+        event_id = event.GetId()
+        val = self.lc_faves.GetFirstSelected()
+        music_id = ''
+        grooveshark_id = ''
+        artist = self.lc_faves.GetItem(val, 0).GetText()
+        song = self.lc_faves.GetItem(val, 1).GetText()
+        track_id = ratings_button.GetTrackId(artist, song, grooveshark_id, music_id)
+        ratings_button.AddRating(self, track_id, event_id)
+        if event_id == 4:
+            sk = self.GenerateSessionKey2()
+            LoveTrack(artist, song, sk)
   
     def FavesAddPlaylist(self, event):
+        # add from favourite list to the playlist
         self.BackupList()
         val = self.lc_faves.GetFirstSelected()
         total = self.lc_faves.GetSelectedItemCount()
@@ -2743,9 +2881,31 @@ class MainPanel(wx.Panel):
                     self.SetPlaylistItem(current_count + x, artist, song, '', '')
 
         #save the playlist
-        self.SavePlaylist(self.main_playlist_location)
+        #self.SavePlaylist(self.main_playlist_location)
         # switch tabs
         #self.nb_main.SetSelection(NB_PLAYLIST)
+        
+    def OnFavesColClick(self, event):
+        #excepts listcrtl column header click events and toggles sorting
+        column = event.GetColumn()
+        #self.faves_sorter = [0,0,0,0,0]
+        toggle = self.faves_sorter[column]
+                    
+        query = "SELECT artist, song, album, track_time, rating_type_id FROM m_rating INNER JOIN m_tracks ON m_rating.track_id = m_tracks.track_id WHERE rating_type_id = 4 "
+        order_by_arr = [["ORDER BY artist, song", "ORDER BY artist DESC, song", "ORDER BY rating_id", "ORDER BY rating_id DESC"],
+            ["ORDER BY song, artist", "ORDER BY song DESC, artist", "ORDER BY rating_id", "ORDER BY rating_id DESC"],
+            ["ORDER BY album, song", "ORDER BY album DESC, song", "ORDER BY rating_id", "ORDER BY rating_id DESC"],
+            [],
+            ["ORDER BY track_time, song", "ORDER BY track_time DESC, song", "ORDER BY rating_id", "ORDER BY rating_id DESC"]
+            ]
+        complete_query = query + order_by_arr[column][toggle]
+        
+        self.faves_sorter[column] = toggle + 1
+        if toggle == 3:
+            self.faves_sorter[column] = 0
+        
+        self.ReadFaves(complete_query)
+        
         
 # --------------------------------------------------------- 
 # song collection -----------------------------------------  
@@ -2816,7 +2976,10 @@ class MainPanel(wx.Panel):
                     mfile = self.lc_scol_col.GetItem(x, 1).GetText()
                     mfolder = self.lc_scol_col.GetItem(x, 2).GetText()
                     mpath = self.lc_scol_col.GetItem(x, 3).GetText()
-                    self.ScolFileAdd(mpath + '/' + mfolder + '/' + mfile)
+                    if mfolder == ' ':
+                        self.ScolFileAdd(mpath + '/' + mfile)
+                    else:
+                        self.ScolFileAdd(mpath + '/' + mfolder + '/' + mfile)
 
             
     def ScolFileAdd(self, file_name):
@@ -2837,7 +3000,7 @@ class MainPanel(wx.Panel):
     def OnSColClearClick(self, event):
         # clear album search field
         self.tc_scol_song.Clear()
-        self.tc_scol_folder.Clear()
+        #self.tc_scol_folder.Clear()
       
     def OnSColSongText(self, event):
         # search local db for matches
@@ -3129,13 +3292,26 @@ class FileThread(Thread):
         
         track_time = local_songs.GetMp3Length(self.temp_file)
         self.parent.current_play_time = track_time
-        if self.parent.record_toggle == True:
+        # check if recording or the save all new checkbox is checked
+        if (self.parent.record_toggle == True) or (self.parent.cb_options_autosave.GetValue() == True):
             #copy and rname the file to teh record dir
             record_dir = self.parent.bu_options_record_dir.GetLabel()
             if (record_dir == None) | (record_dir == ''):
                 record_dir = system_files.GetDirectories(self.parent).Mp3DataDirectory()
                 self.parent.bu_options_record_dir.SetLabel(record_dir)            
-            system_files.GetDirectories(self.parent).CopyFile(self.temp_file, record_dir, self.parent.partist + '-' + self.parent.ptrack + '.mp3')
+            complete_filename = system_files.GetDirectories(self.parent).CopyFile(self.temp_file, record_dir, self.parent.partist + '-' + self.parent.ptrack + '.mp3')
+            # add file to database
+            if complete_filename != None:
+                #print complete_filename
+                song_collection.AddSingleFile(complete_filename)
+                self.parent.lc_scol_col.SetItemCount(song_collection.GetCount())
+                # clear id for this song on the playlist
+                # ASSUME that it's the current selection
+                val = self.parent.lc_playlist.GetFirstSelected()
+                self.parent.lc_playlist.SetStringItem(val, 3, '')
+                
+                
+                
             
 # ####################################
 class ProgressThread(Thread): 
