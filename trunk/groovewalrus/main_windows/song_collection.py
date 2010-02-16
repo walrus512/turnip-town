@@ -240,6 +240,7 @@ class FileThread(Thread):
     def FillDb(self, base_path):
         #basePath = 'E:\\Music\\Albums\\Albums_01'
         #basePath = 'E:\\Music'
+        #basepath = e:\
             
         allfiles = []
         subfiles = []
@@ -281,17 +282,49 @@ class FileThread(Thread):
             self.parent.ga_songdb_index.SetValue(counter)            
         c.close()
         self.parent.st_songdb_status.SetLabel("Finished")
-        self.parent.parent.lc_scol_col.SetItemCount(self.GetCount())
+        self.parent.parent.lc_scol_col.SetItemCount(GetCount())
     
-    def GetCount(self):
-        # get row count
-        rcount = 0    
-        conn = sqlite3.connect(self.FILEDB)
-        c = conn.cursor()
-        t = "SELECT COUNT(*) as rcount FROM m_files ORDER BY music_id DESC LIMIT 1"
+        
+#-----------------------------------------------------
+
+
+def GetCount():
+    FILEDB = system_files.GetDirectories(None).DataDirectory() + os.sep + 'gravydb.sq3'
+    # get row count
+    rcount = 0    
+    conn = sqlite3.connect(FILEDB)
+    c = conn.cursor()
+    t = "SELECT COUNT(*) as rcount FROM m_files ORDER BY music_id DESC LIMIT 1"
+    c.execute(t)
+    h = c.fetchall()
+    for x in h:        
+        rcount = x[0]
+    c.close()
+    return rcount 
+
+def AddSingleFile(complete_filename):
+    #add a single file to the database, files table
+    FILEDB = system_files.GetDirectories(None).DataDirectory() + os.sep + 'gravydb.sq3'
+        
+    conn = sqlite3.connect(FILEDB)
+    c = conn.cursor()
+    f = complete_filename
+    
+    if f.endswith('.mp3'):
+        path_n = f.rsplit(os.sep, 1)[0].replace(os.sep, '/')
+        folder_n = ''
+        file_n = f.rsplit(os.sep, 1)[1]
+        
+        #check if file already exists in db
+        t = 'SELECT music_id FROM m_files WHERE folder_path = "' + path_n + '" AND folder_name = "' + folder_n + '" AND file_name = "' + file_n + '"'
         c.execute(t)
         h = c.fetchall()
-        for x in h:        
-            rcount = x[0]
-        c.close()
-        return rcount   
+        
+        #add if not found
+        if len(h) == 0:                    
+            c.execute('INSERT INTO m_files values (null,?,?,?)', (path_n, folder_n, file_n))                    
+            conn.commit()            
+        #print file_n
+        #print path_n
+        #print folder_n        
+    c.close()
