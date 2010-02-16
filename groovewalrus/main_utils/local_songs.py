@@ -219,17 +219,18 @@ class DbFuncs(object):
         #if p_grooveshark_id >= 1:
         #    qp = " grooveshark_id = " + str(p_grooveshark_id)
         #else:
-        qp = " music_id = " + str(p_music_id)
+        ##qp = " music_id = " + str(p_music_id)
         #print qp
-        if p_music_id >= 1:
-            t = "SELECT track_id FROM m_tracks WHERE" + qp
+        ##if p_music_id >= 1:
+        ##    t = "SELECT track_id FROM m_tracks WHERE" + qp
         #print t
         ##if (p_grooveshark_id == 0) & (p_music_id == 0):
-        elif p_grooveshark_id >= 1:
-            qp = " grooveshark_id = " + str(p_grooveshark_id)
-            t = "SELECT track_id FROM m_tracks WHERE" + qp
-        else:
-            t = 'SELECT track_id FROM m_tracks WHERE artist="' + p_artist + '" AND song="' + p_song + '"' # AND track_time=' + str(p_track_time)
+        ##elif p_grooveshark_id >= 1:
+        ##    qp = " grooveshark_id = " + str(p_grooveshark_id)
+        ##    t = "SELECT track_id FROM m_tracks WHERE" + qp
+        ##else:
+        t = 'SELECT track_id FROM m_tracks WHERE artist="' + p_artist + '" AND song="' + p_song + '"' # AND track_time=' + str(p_track_time)
+        
         c.execute(t)
         h = c.fetchall()
         #print t
@@ -239,6 +240,25 @@ class DbFuncs(object):
             conn.commit()
         else:
             c.execute('INSERT INTO m_tracks values (null,?,?,?,?,?,?,?,?)', (p_grooveshark_id, p_music_id, p_track_time, p_tag_id, p_artist, p_song, p_album, p_album_art_file))
+            conn.commit()
+            t = 'SELECT track_id FROM m_tracks ORDER BY track_id DESC LIMIT 1'
+            c.execute(t)
+            #print t
+            g_track_id = c.fetchall()[0][0]
+        c.close()
+        return g_track_id
+        
+    def GetTrackId(self, grooveshark_id, music_id, artist, song):
+        conn = sqlite3.connect(self.FILEDB)
+        c = conn.cursor()
+        t = 'SELECT track_id FROM m_tracks WHERE artist="' + artist + '" AND song="' + song + '"'
+        c.execute(t)
+        h = c.fetchall()
+        #print t
+        if len(h) >= 1:
+            g_track_id = h[0][0]        
+        else:
+            c.execute('INSERT INTO m_tracks values (null,?,?,?,?,?,?,?,?)', (grooveshark_id, music_id, 240, '', artist, song, '', ''))
             conn.commit()
             t = 'SELECT track_id FROM m_tracks ORDER BY track_id DESC LIMIT 1'
             c.execute(t)
@@ -574,6 +594,9 @@ class VirtualList(wx.ListCtrl):
             h = c.fetchall()
             for x in h:
                 ritem = x[column]
+                #check for ''
+                if len(str(x[column])) == 0:
+                    ritem = ' '                
             c.close()
         else:            
             ritem = '1'
