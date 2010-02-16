@@ -35,7 +35,8 @@ class PlaybackPanel(wx.Panel):
         self.font = wx.Font(9, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
         self.font_bold = wx.Font(9, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
         self.Bind(wx.EVT_PAINT, self.OnPaint)
-        self.Bind(wx.EVT_SIZE, self.OnSize)        
+        self.Bind(wx.EVT_SIZE, self.OnSize)
+        self.Bind(wx.EVT_ERASE_BACKGROUND, self.OnEraseBackground)        
 
     def OnCreate(self, evt):
         self.Unbind(self._firstEventType)
@@ -44,10 +45,14 @@ class PlaybackPanel(wx.Panel):
         self.Refresh()
 
     def OnPaint(self, event):
-        dc = wx.PaintDC(self)
-        dc.SetFont(self.font)
         w, h = self.GetSize()
-
+        #let's use double buffering to avoid flickering        
+        dbuffer = wx.EmptyBitmap(w, h)
+        dc = wx.BufferedPaintDC(self, dbuffer)        
+        #dc = wx.PaintDC(self)
+        dc.Clear()
+        
+        dc.SetFont(self.font)
         artist = self.GetGrandParent().partist
         track = self.GetGrandParent().ptrack
         status = self.GetGrandParent().pstatus
@@ -83,3 +88,6 @@ class PlaybackPanel(wx.Panel):
 
     def OnSize(self, event):
         self.Refresh()
+        
+    def OnEraseBackground(self, event):
+        pass # Or None, for DBuffer       
