@@ -244,7 +244,7 @@
                                                         <property name="permission">none</property>
                                                         <object class="sizeritem" expanded="1">
                                                             <property name="border">5</property>
-                                                            <property name="flag">wxALL</property>
+                                                            <property name="flag">wxTOP|wxBOTTOM|wxLEFT|wxALIGN_CENTER_VERTICAL</property>
                                                             <property name="proportion">0</property>
                                                             <object class="wxBitmapButton" expanded="1">
                                                                 <property name="bg"></property>
@@ -270,6 +270,63 @@
                                                                 <property name="style">wxBU_AUTODRAW</property>
                                                                 <property name="subclass"></property>
                                                                 <property name="tooltip">Add Favorite</property>
+                                                                <property name="window_extra_style"></property>
+                                                                <property name="window_name"></property>
+                                                                <property name="window_style"></property>
+                                                                <event name="OnButtonClick"></event>
+                                                                <event name="OnChar"></event>
+                                                                <event name="OnEnterWindow"></event>
+                                                                <event name="OnEraseBackground"></event>
+                                                                <event name="OnKeyDown"></event>
+                                                                <event name="OnKeyUp"></event>
+                                                                <event name="OnKillFocus"></event>
+                                                                <event name="OnLeaveWindow"></event>
+                                                                <event name="OnLeftDClick"></event>
+                                                                <event name="OnLeftDown"></event>
+                                                                <event name="OnLeftUp"></event>
+                                                                <event name="OnMiddleDClick"></event>
+                                                                <event name="OnMiddleDown"></event>
+                                                                <event name="OnMiddleUp"></event>
+                                                                <event name="OnMotion"></event>
+                                                                <event name="OnMouseEvents"></event>
+                                                                <event name="OnMouseWheel"></event>
+                                                                <event name="OnPaint"></event>
+                                                                <event name="OnRightDClick"></event>
+                                                                <event name="OnRightDown"></event>
+                                                                <event name="OnRightUp"></event>
+                                                                <event name="OnSetFocus"></event>
+                                                                <event name="OnSize"></event>
+                                                                <event name="OnUpdateUI"></event>
+                                                            </object>
+                                                        </object>
+                                                        <object class="sizeritem" expanded="1">
+                                                            <property name="border">5</property>
+                                                            <property name="flag">wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM</property>
+                                                            <property name="proportion">0</property>
+                                                            <object class="wxBitmapButton" expanded="1">
+                                                                <property name="bg"></property>
+                                                                <property name="bitmap">graphics/arrow-down.png; Load From File</property>
+                                                                <property name="context_help"></property>
+                                                                <property name="default">0</property>
+                                                                <property name="disabled"></property>
+                                                                <property name="enabled">1</property>
+                                                                <property name="fg"></property>
+                                                                <property name="focus"></property>
+                                                                <property name="font"></property>
+                                                                <property name="hidden">0</property>
+                                                                <property name="hover"></property>
+                                                                <property name="id">wxID_ANY</property>
+                                                                <property name="label">MyButton</property>
+                                                                <property name="maximum_size"></property>
+                                                                <property name="minimum_size"></property>
+                                                                <property name="name">m_bb_faves_drop</property>
+                                                                <property name="permission">protected</property>
+                                                                <property name="pos"></property>
+                                                                <property name="selected"></property>
+                                                                <property name="size"></property>
+                                                                <property name="style">wxBU_AUTODRAW</property>
+                                                                <property name="subclass">main_controls.ratings_button.RatingsButton; </property>
+                                                                <property name="tooltip"></property>
                                                                 <property name="window_extra_style"></property>
                                                                 <property name="window_name"></property>
                                                                 <property name="window_style"></property>
@@ -5645,21 +5702,11 @@
                                                             </object>
                                                             <object class="sizeritem" expanded="1">
                                                                 <property name="border">5</property>
-                                                                <property name="flag">wxEXPAND</property>
-                                                                <property name="proportion">0</property>
-                                                                <object class="spacer" expanded="1">
-                                                                    <property name="height">20</property>
-                                                                    <property name="permission">protected</property>
-                                                                    <property name="width">0</property>
-                                                                </object>
-                                                            </object>
-                                                            <object class="sizeritem" expanded="1">
-                                                                <property name="border">5</property>
                                                                 <property name="flag">wxALL</property>
                                                                 <property name="proportion">0</property>
                                                                 <object class="wxBitmapButton" expanded="1">
                                                                     <property name="bg"></property>
-                                                                    <property name="bitmap">graphics/user-trash.png; Load From File</property>
+                                                                    <property name="bitmap">graphics/list-add-all.png; Load From File</property>
                                                                     <property name="context_help"></property>
                                                                     <property name="default">0</property>
                                                                     <property name="disabled"></property>
@@ -5673,14 +5720,14 @@
                                                                     <property name="label">MyButton</property>
                                                                     <property name="maximum_size"></property>
                                                                     <property name="minimum_size"></property>
-                                                                    <property name="name">m_bb_faves_remove</property>
+                                                                    <property name="name">m_bb_faves_plize</property>
                                                                     <property name="permission">protected</property>
                                                                     <property name="pos"></property>
                                                                     <property name="selected"></property>
-                                                                    <property name="size"></property>
+                                                                    <property name="size">-1,104</property>
                                                                     <property name="style">wxBU_AUTODRAW</property>
                                                                     <property name="subclass"></property>
-                                                                    <property name="tooltip">Remove Selected</property>
+                                                                    <property name="tooltip">Add all songs to Playlist</property>
                                                                     <property name="window_extra_style"></property>
                                                                     <property name="window_name"></property>
                                                                     <property name="window_style"></property>
@@ -5788,79 +5835,6 @@
                                                                     <event name="OnSetFocus"></event>
                                                                     <event name="OnSize"></event>
                                                                     <event name="OnUpdateUI"></event>
-                                                                </object>
-                                                            </object>
-                                                            <object class="sizeritem" expanded="1">
-                                                                <property name="border">5</property>
-                                                                <property name="flag">wxEXPAND</property>
-                                                                <property name="proportion">0</property>
-                                                                <object class="wxBoxSizer" expanded="1">
-                                                                    <property name="minimum_size"></property>
-                                                                    <property name="name">bSizer31</property>
-                                                                    <property name="orient">wxHORIZONTAL</property>
-                                                                    <property name="permission">none</property>
-                                                                    <object class="sizeritem" expanded="1">
-                                                                        <property name="border">5</property>
-                                                                        <property name="flag">wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</property>
-                                                                        <property name="proportion">0</property>
-                                                                        <object class="wxButton" expanded="1">
-                                                                            <property name="bg"></property>
-                                                                            <property name="context_help"></property>
-                                                                            <property name="default">0</property>
-                                                                            <property name="enabled">1</property>
-                                                                            <property name="fg"></property>
-                                                                            <property name="font"></property>
-                                                                            <property name="hidden">0</property>
-                                                                            <property name="id">wxID_ANY</property>
-                                                                            <property name="label">Playlistize!</property>
-                                                                            <property name="maximum_size"></property>
-                                                                            <property name="minimum_size"></property>
-                                                                            <property name="name">m_bu_faves_plize</property>
-                                                                            <property name="permission">protected</property>
-                                                                            <property name="pos"></property>
-                                                                            <property name="size">100,-1</property>
-                                                                            <property name="style"></property>
-                                                                            <property name="subclass"></property>
-                                                                            <property name="tooltip"></property>
-                                                                            <property name="window_extra_style"></property>
-                                                                            <property name="window_name"></property>
-                                                                            <property name="window_style"></property>
-                                                                            <event name="OnButtonClick"></event>
-                                                                            <event name="OnChar"></event>
-                                                                            <event name="OnEnterWindow"></event>
-                                                                            <event name="OnEraseBackground"></event>
-                                                                            <event name="OnKeyDown"></event>
-                                                                            <event name="OnKeyUp"></event>
-                                                                            <event name="OnKillFocus"></event>
-                                                                            <event name="OnLeaveWindow"></event>
-                                                                            <event name="OnLeftDClick"></event>
-                                                                            <event name="OnLeftDown"></event>
-                                                                            <event name="OnLeftUp"></event>
-                                                                            <event name="OnMiddleDClick"></event>
-                                                                            <event name="OnMiddleDown"></event>
-                                                                            <event name="OnMiddleUp"></event>
-                                                                            <event name="OnMotion"></event>
-                                                                            <event name="OnMouseEvents"></event>
-                                                                            <event name="OnMouseWheel"></event>
-                                                                            <event name="OnPaint"></event>
-                                                                            <event name="OnRightDClick"></event>
-                                                                            <event name="OnRightDown"></event>
-                                                                            <event name="OnRightUp"></event>
-                                                                            <event name="OnSetFocus"></event>
-                                                                            <event name="OnSize"></event>
-                                                                            <event name="OnUpdateUI"></event>
-                                                                        </object>
-                                                                    </object>
-                                                                    <object class="sizeritem" expanded="1">
-                                                                        <property name="border">5</property>
-                                                                        <property name="flag">wxEXPAND</property>
-                                                                        <property name="proportion">1</property>
-                                                                        <object class="spacer" expanded="1">
-                                                                            <property name="height">0</property>
-                                                                            <property name="permission">protected</property>
-                                                                            <property name="width">0</property>
-                                                                        </object>
-                                                                    </object>
                                                                 </object>
                                                             </object>
                                                         </object>
@@ -6714,7 +6688,7 @@
                                                                     <object class="notebookpage" expanded="1">
                                                                         <property name="bitmap">; Load From File</property>
                                                                         <property name="label">Main</property>
-                                                                        <property name="select">0</property>
+                                                                        <property name="select">1</property>
                                                                         <object class="wxScrolledWindow" expanded="1">
                                                                             <property name="bg"></property>
                                                                             <property name="context_help"></property>
@@ -6768,7 +6742,7 @@
                                                                                     <property name="border">5</property>
                                                                                     <property name="flag">wxEXPAND</property>
                                                                                     <property name="proportion">0</property>
-                                                                                    <object class="wxBoxSizer" expanded="0">
+                                                                                    <object class="wxBoxSizer" expanded="1">
                                                                                         <property name="minimum_size"></property>
                                                                                         <property name="name">bSizer74</property>
                                                                                         <property name="orient">wxHORIZONTAL</property>
@@ -6782,16 +6756,6 @@
                                                                                                 <property name="name">bSizer68</property>
                                                                                                 <property name="orient">wxVERTICAL</property>
                                                                                                 <property name="permission">none</property>
-                                                                                                <object class="sizeritem" expanded="1">
-                                                                                                    <property name="border">5</property>
-                                                                                                    <property name="flag">wxEXPAND</property>
-                                                                                                    <property name="proportion">0</property>
-                                                                                                    <object class="spacer" expanded="1">
-                                                                                                        <property name="height">10</property>
-                                                                                                        <property name="permission">protected</property>
-                                                                                                        <property name="width">0</property>
-                                                                                                    </object>
-                                                                                                </object>
                                                                                                 <object class="sizeritem" expanded="1">
                                                                                                     <property name="border">5</property>
                                                                                                     <property name="flag">wxALL|wxEXPAND</property>
@@ -6846,45 +6810,33 @@
                                                                                                         <event name="OnUpdateUI"></event>
                                                                                                     </object>
                                                                                                 </object>
-                                                                                            </object>
-                                                                                        </object>
-                                                                                        <object class="sizeritem" expanded="1">
-                                                                                            <property name="border">5</property>
-                                                                                            <property name="flag">wxEXPAND</property>
-                                                                                            <property name="proportion">1</property>
-                                                                                            <object class="wxBoxSizer" expanded="1">
-                                                                                                <property name="minimum_size"></property>
-                                                                                                <property name="name">bSizer69</property>
-                                                                                                <property name="orient">wxVERTICAL</property>
-                                                                                                <property name="permission">none</property>
                                                                                                 <object class="sizeritem" expanded="1">
-                                                                                                    <property name="border">7</property>
-                                                                                                    <property name="flag">wxALL</property>
+                                                                                                    <property name="border">8</property>
+                                                                                                    <property name="flag">wxALL|wxALIGN_CENTER_VERTICAL</property>
                                                                                                     <property name="proportion">0</property>
-                                                                                                    <object class="wxCheckBox" expanded="1">
+                                                                                                    <object class="wxStaticText" expanded="1">
                                                                                                         <property name="bg"></property>
-                                                                                                        <property name="checked">1</property>
                                                                                                         <property name="context_help"></property>
                                                                                                         <property name="enabled">1</property>
                                                                                                         <property name="fg"></property>
                                                                                                         <property name="font"></property>
                                                                                                         <property name="hidden">0</property>
                                                                                                         <property name="id">wxID_ANY</property>
-                                                                                                        <property name="label">Playlistize! clears playlist before adding.</property>
+                                                                                                        <property name="label">Locale:</property>
                                                                                                         <property name="maximum_size"></property>
                                                                                                         <property name="minimum_size"></property>
-                                                                                                        <property name="name">m_cb_options_list_clear</property>
+                                                                                                        <property name="name">m_st_options_i18n_default</property>
                                                                                                         <property name="permission">protected</property>
                                                                                                         <property name="pos"></property>
-                                                                                                        <property name="size"></property>
+                                                                                                        <property name="size">250,-1</property>
                                                                                                         <property name="style"></property>
                                                                                                         <property name="subclass"></property>
                                                                                                         <property name="tooltip"></property>
                                                                                                         <property name="window_extra_style"></property>
                                                                                                         <property name="window_name"></property>
                                                                                                         <property name="window_style"></property>
+                                                                                                        <property name="wrap">-1</property>
                                                                                                         <event name="OnChar"></event>
-                                                                                                        <event name="OnCheckBox"></event>
                                                                                                         <event name="OnEnterWindow"></event>
                                                                                                         <event name="OnEraseBackground"></event>
                                                                                                         <event name="OnKeyDown"></event>
@@ -6909,6 +6861,17 @@
                                                                                                         <event name="OnUpdateUI"></event>
                                                                                                     </object>
                                                                                                 </object>
+                                                                                            </object>
+                                                                                        </object>
+                                                                                        <object class="sizeritem" expanded="1">
+                                                                                            <property name="border">5</property>
+                                                                                            <property name="flag">wxEXPAND</property>
+                                                                                            <property name="proportion">1</property>
+                                                                                            <object class="wxBoxSizer" expanded="1">
+                                                                                                <property name="minimum_size"></property>
+                                                                                                <property name="name">bSizer69</property>
+                                                                                                <property name="orient">wxVERTICAL</property>
+                                                                                                <property name="permission">none</property>
                                                                                                 <object class="sizeritem" expanded="1">
                                                                                                     <property name="border">7</property>
                                                                                                     <property name="flag">wxALL</property>
@@ -6922,10 +6885,10 @@
                                                                                                         <property name="font"></property>
                                                                                                         <property name="hidden">0</property>
                                                                                                         <property name="id">wxID_ANY</property>
-                                                                                                        <property name="label">Use alternate GrooveShark source.</property>
+                                                                                                        <property name="label">Playlistize! clears playlist before adding.</property>
                                                                                                         <property name="maximum_size"></property>
                                                                                                         <property name="minimum_size"></property>
-                                                                                                        <property name="name">m_cb_options_alternate</property>
+                                                                                                        <property name="name">m_cb_options_list_clear</property>
                                                                                                         <property name="permission">protected</property>
                                                                                                         <property name="pos"></property>
                                                                                                         <property name="size"></property>
@@ -7080,303 +7043,147 @@
                                                                                         <property name="permission">none</property>
                                                                                         <object class="sizeritem" expanded="1">
                                                                                             <property name="border">5</property>
-                                                                                            <property name="flag">wxEXPAND | wxALL</property>
-                                                                                            <property name="proportion">0</property>
-                                                                                            <object class="wxStaticLine" expanded="1">
-                                                                                                <property name="bg"></property>
-                                                                                                <property name="context_help"></property>
-                                                                                                <property name="enabled">1</property>
-                                                                                                <property name="fg"></property>
-                                                                                                <property name="font"></property>
-                                                                                                <property name="hidden">0</property>
-                                                                                                <property name="id">wxID_ANY</property>
-                                                                                                <property name="maximum_size"></property>
-                                                                                                <property name="minimum_size"></property>
-                                                                                                <property name="name">m_staticline711</property>
-                                                                                                <property name="permission">protected</property>
-                                                                                                <property name="pos"></property>
-                                                                                                <property name="size"></property>
-                                                                                                <property name="style">wxLI_VERTICAL</property>
-                                                                                                <property name="subclass"></property>
-                                                                                                <property name="tooltip"></property>
-                                                                                                <property name="window_extra_style"></property>
-                                                                                                <property name="window_name"></property>
-                                                                                                <property name="window_style"></property>
-                                                                                                <event name="OnChar"></event>
-                                                                                                <event name="OnEnterWindow"></event>
-                                                                                                <event name="OnEraseBackground"></event>
-                                                                                                <event name="OnKeyDown"></event>
-                                                                                                <event name="OnKeyUp"></event>
-                                                                                                <event name="OnKillFocus"></event>
-                                                                                                <event name="OnLeaveWindow"></event>
-                                                                                                <event name="OnLeftDClick"></event>
-                                                                                                <event name="OnLeftDown"></event>
-                                                                                                <event name="OnLeftUp"></event>
-                                                                                                <event name="OnMiddleDClick"></event>
-                                                                                                <event name="OnMiddleDown"></event>
-                                                                                                <event name="OnMiddleUp"></event>
-                                                                                                <event name="OnMotion"></event>
-                                                                                                <event name="OnMouseEvents"></event>
-                                                                                                <event name="OnMouseWheel"></event>
-                                                                                                <event name="OnPaint"></event>
-                                                                                                <event name="OnRightDClick"></event>
-                                                                                                <event name="OnRightDown"></event>
-                                                                                                <event name="OnRightUp"></event>
-                                                                                                <event name="OnSetFocus"></event>
-                                                                                                <event name="OnSize"></event>
-                                                                                                <event name="OnUpdateUI"></event>
-                                                                                            </object>
-                                                                                        </object>
-                                                                                        <object class="sizeritem" expanded="1">
-                                                                                            <property name="border">5</property>
                                                                                             <property name="flag">wxEXPAND</property>
-                                                                                            <property name="proportion">1</property>
-                                                                                            <object class="wxBoxSizer" expanded="1">
-                                                                                                <property name="minimum_size"></property>
-                                                                                                <property name="name">bSizer761</property>
-                                                                                                <property name="orient">wxHORIZONTAL</property>
-                                                                                                <property name="permission">none</property>
-                                                                                                <object class="sizeritem" expanded="1">
-                                                                                                    <property name="border">5</property>
-                                                                                                    <property name="flag">wxALL|wxALIGN_CENTER_VERTICAL</property>
-                                                                                                    <property name="proportion">0</property>
-                                                                                                    <object class="wxStaticText" expanded="1">
-                                                                                                        <property name="bg"></property>
-                                                                                                        <property name="context_help"></property>
-                                                                                                        <property name="enabled">1</property>
-                                                                                                        <property name="fg"></property>
-                                                                                                        <property name="font"></property>
-                                                                                                        <property name="hidden">0</property>
-                                                                                                        <property name="id">wxID_ANY</property>
-                                                                                                        <property name="label">Save music to:</property>
-                                                                                                        <property name="maximum_size"></property>
-                                                                                                        <property name="minimum_size"></property>
-                                                                                                        <property name="name">m_staticText49</property>
-                                                                                                        <property name="permission">protected</property>
-                                                                                                        <property name="pos"></property>
-                                                                                                        <property name="size"></property>
-                                                                                                        <property name="style"></property>
-                                                                                                        <property name="subclass"></property>
-                                                                                                        <property name="tooltip"></property>
-                                                                                                        <property name="window_extra_style"></property>
-                                                                                                        <property name="window_name"></property>
-                                                                                                        <property name="window_style"></property>
-                                                                                                        <property name="wrap">-1</property>
-                                                                                                        <event name="OnChar"></event>
-                                                                                                        <event name="OnEnterWindow"></event>
-                                                                                                        <event name="OnEraseBackground"></event>
-                                                                                                        <event name="OnKeyDown"></event>
-                                                                                                        <event name="OnKeyUp"></event>
-                                                                                                        <event name="OnKillFocus"></event>
-                                                                                                        <event name="OnLeaveWindow"></event>
-                                                                                                        <event name="OnLeftDClick"></event>
-                                                                                                        <event name="OnLeftDown"></event>
-                                                                                                        <event name="OnLeftUp"></event>
-                                                                                                        <event name="OnMiddleDClick"></event>
-                                                                                                        <event name="OnMiddleDown"></event>
-                                                                                                        <event name="OnMiddleUp"></event>
-                                                                                                        <event name="OnMotion"></event>
-                                                                                                        <event name="OnMouseEvents"></event>
-                                                                                                        <event name="OnMouseWheel"></event>
-                                                                                                        <event name="OnPaint"></event>
-                                                                                                        <event name="OnRightDClick"></event>
-                                                                                                        <event name="OnRightDown"></event>
-                                                                                                        <event name="OnRightUp"></event>
-                                                                                                        <event name="OnSetFocus"></event>
-                                                                                                        <event name="OnSize"></event>
-                                                                                                        <event name="OnUpdateUI"></event>
-                                                                                                    </object>
-                                                                                                </object>
-                                                                                                <object class="sizeritem" expanded="1">
-                                                                                                    <property name="border">5</property>
-                                                                                                    <property name="flag">wxALL|wxALIGN_CENTER_VERTICAL</property>
-                                                                                                    <property name="proportion">1</property>
-                                                                                                    <object class="wxButton" expanded="1">
-                                                                                                        <property name="bg"></property>
-                                                                                                        <property name="context_help"></property>
-                                                                                                        <property name="default">0</property>
-                                                                                                        <property name="enabled">1</property>
-                                                                                                        <property name="fg"></property>
-                                                                                                        <property name="font"></property>
-                                                                                                        <property name="hidden">0</property>
-                                                                                                        <property name="id">wxID_ANY</property>
-                                                                                                        <property name="label"></property>
-                                                                                                        <property name="maximum_size"></property>
-                                                                                                        <property name="minimum_size"></property>
-                                                                                                        <property name="name">m_bu_options_record_dir</property>
-                                                                                                        <property name="permission">protected</property>
-                                                                                                        <property name="pos"></property>
-                                                                                                        <property name="size"></property>
-                                                                                                        <property name="style"></property>
-                                                                                                        <property name="subclass"></property>
-                                                                                                        <property name="tooltip"></property>
-                                                                                                        <property name="window_extra_style"></property>
-                                                                                                        <property name="window_name"></property>
-                                                                                                        <property name="window_style"></property>
-                                                                                                        <event name="OnButtonClick"></event>
-                                                                                                        <event name="OnChar"></event>
-                                                                                                        <event name="OnEnterWindow"></event>
-                                                                                                        <event name="OnEraseBackground"></event>
-                                                                                                        <event name="OnKeyDown"></event>
-                                                                                                        <event name="OnKeyUp"></event>
-                                                                                                        <event name="OnKillFocus"></event>
-                                                                                                        <event name="OnLeaveWindow"></event>
-                                                                                                        <event name="OnLeftDClick"></event>
-                                                                                                        <event name="OnLeftDown"></event>
-                                                                                                        <event name="OnLeftUp"></event>
-                                                                                                        <event name="OnMiddleDClick"></event>
-                                                                                                        <event name="OnMiddleDown"></event>
-                                                                                                        <event name="OnMiddleUp"></event>
-                                                                                                        <event name="OnMotion"></event>
-                                                                                                        <event name="OnMouseEvents"></event>
-                                                                                                        <event name="OnMouseWheel"></event>
-                                                                                                        <event name="OnPaint"></event>
-                                                                                                        <event name="OnRightDClick"></event>
-                                                                                                        <event name="OnRightDown"></event>
-                                                                                                        <event name="OnRightUp"></event>
-                                                                                                        <event name="OnSetFocus"></event>
-                                                                                                        <event name="OnSize"></event>
-                                                                                                        <event name="OnUpdateUI"></event>
-                                                                                                    </object>
-                                                                                                </object>
-                                                                                            </object>
-                                                                                        </object>
-                                                                                        <object class="sizeritem" expanded="1">
-                                                                                            <property name="border">5</property>
-                                                                                            <property name="flag">wxEXPAND | wxALL</property>
                                                                                             <property name="proportion">0</property>
-                                                                                            <object class="wxStaticLine" expanded="1">
-                                                                                                <property name="bg"></property>
-                                                                                                <property name="context_help"></property>
-                                                                                                <property name="enabled">1</property>
-                                                                                                <property name="fg"></property>
-                                                                                                <property name="font"></property>
-                                                                                                <property name="hidden">0</property>
+                                                                                            <object class="wxStaticBoxSizer" expanded="1">
                                                                                                 <property name="id">wxID_ANY</property>
-                                                                                                <property name="maximum_size"></property>
+                                                                                                <property name="label">Song Collection</property>
                                                                                                 <property name="minimum_size"></property>
-                                                                                                <property name="name">m_staticline71</property>
-                                                                                                <property name="permission">protected</property>
-                                                                                                <property name="pos"></property>
-                                                                                                <property name="size"></property>
-                                                                                                <property name="style">wxLI_VERTICAL</property>
-                                                                                                <property name="subclass"></property>
-                                                                                                <property name="tooltip"></property>
-                                                                                                <property name="window_extra_style"></property>
-                                                                                                <property name="window_name"></property>
-                                                                                                <property name="window_style"></property>
-                                                                                                <event name="OnChar"></event>
-                                                                                                <event name="OnEnterWindow"></event>
-                                                                                                <event name="OnEraseBackground"></event>
-                                                                                                <event name="OnKeyDown"></event>
-                                                                                                <event name="OnKeyUp"></event>
-                                                                                                <event name="OnKillFocus"></event>
-                                                                                                <event name="OnLeaveWindow"></event>
-                                                                                                <event name="OnLeftDClick"></event>
-                                                                                                <event name="OnLeftDown"></event>
-                                                                                                <event name="OnLeftUp"></event>
-                                                                                                <event name="OnMiddleDClick"></event>
-                                                                                                <event name="OnMiddleDown"></event>
-                                                                                                <event name="OnMiddleUp"></event>
-                                                                                                <event name="OnMotion"></event>
-                                                                                                <event name="OnMouseEvents"></event>
-                                                                                                <event name="OnMouseWheel"></event>
-                                                                                                <event name="OnPaint"></event>
-                                                                                                <event name="OnRightDClick"></event>
-                                                                                                <event name="OnRightDown"></event>
-                                                                                                <event name="OnRightUp"></event>
-                                                                                                <event name="OnSetFocus"></event>
-                                                                                                <event name="OnSize"></event>
-                                                                                                <event name="OnUpdateUI"></event>
-                                                                                            </object>
-                                                                                        </object>
-                                                                                        <object class="sizeritem" expanded="1">
-                                                                                            <property name="border">5</property>
-                                                                                            <property name="flag">wxEXPAND</property>
-                                                                                            <property name="proportion">1</property>
-                                                                                            <object class="wxBoxSizer" expanded="1">
-                                                                                                <property name="minimum_size"></property>
-                                                                                                <property name="name">bSizer741</property>
-                                                                                                <property name="orient">wxHORIZONTAL</property>
+                                                                                                <property name="name">sbSizer1</property>
+                                                                                                <property name="orient">wxVERTICAL</property>
                                                                                                 <property name="permission">none</property>
-                                                                                                <object class="sizeritem" expanded="1">
-                                                                                                    <property name="border">5</property>
-                                                                                                    <property name="flag">wxALL|wxALIGN_CENTER_VERTICAL</property>
-                                                                                                    <property name="proportion">0</property>
-                                                                                                    <object class="wxStaticText" expanded="1">
-                                                                                                        <property name="bg"></property>
-                                                                                                        <property name="context_help"></property>
-                                                                                                        <property name="enabled">1</property>
-                                                                                                        <property name="fg"></property>
-                                                                                                        <property name="font"></property>
-                                                                                                        <property name="hidden">0</property>
-                                                                                                        <property name="id">wxID_ANY</property>
-                                                                                                        <property name="label"></property>
-                                                                                                        <property name="maximum_size"></property>
-                                                                                                        <property name="minimum_size"></property>
-                                                                                                        <property name="name">m_st_options_i18n_default</property>
-                                                                                                        <property name="permission">protected</property>
-                                                                                                        <property name="pos"></property>
-                                                                                                        <property name="size">250,-1</property>
-                                                                                                        <property name="style"></property>
-                                                                                                        <property name="subclass"></property>
-                                                                                                        <property name="tooltip"></property>
-                                                                                                        <property name="window_extra_style"></property>
-                                                                                                        <property name="window_name"></property>
-                                                                                                        <property name="window_style"></property>
-                                                                                                        <property name="wrap">-1</property>
-                                                                                                        <event name="OnChar"></event>
-                                                                                                        <event name="OnEnterWindow"></event>
-                                                                                                        <event name="OnEraseBackground"></event>
-                                                                                                        <event name="OnKeyDown"></event>
-                                                                                                        <event name="OnKeyUp"></event>
-                                                                                                        <event name="OnKillFocus"></event>
-                                                                                                        <event name="OnLeaveWindow"></event>
-                                                                                                        <event name="OnLeftDClick"></event>
-                                                                                                        <event name="OnLeftDown"></event>
-                                                                                                        <event name="OnLeftUp"></event>
-                                                                                                        <event name="OnMiddleDClick"></event>
-                                                                                                        <event name="OnMiddleDown"></event>
-                                                                                                        <event name="OnMiddleUp"></event>
-                                                                                                        <event name="OnMotion"></event>
-                                                                                                        <event name="OnMouseEvents"></event>
-                                                                                                        <event name="OnMouseWheel"></event>
-                                                                                                        <event name="OnPaint"></event>
-                                                                                                        <event name="OnRightDClick"></event>
-                                                                                                        <event name="OnRightDown"></event>
-                                                                                                        <event name="OnRightUp"></event>
-                                                                                                        <event name="OnSetFocus"></event>
-                                                                                                        <event name="OnSize"></event>
-                                                                                                        <event name="OnUpdateUI"></event>
-                                                                                                    </object>
-                                                                                                </object>
+                                                                                                <event name="OnUpdateUI"></event>
                                                                                                 <object class="sizeritem" expanded="1">
                                                                                                     <property name="border">5</property>
                                                                                                     <property name="flag">wxEXPAND</property>
                                                                                                     <property name="proportion">1</property>
-                                                                                                    <object class="spacer" expanded="1">
-                                                                                                        <property name="height">0</property>
-                                                                                                        <property name="permission">protected</property>
-                                                                                                        <property name="width">0</property>
+                                                                                                    <object class="wxBoxSizer" expanded="1">
+                                                                                                        <property name="minimum_size"></property>
+                                                                                                        <property name="name">bSizer761</property>
+                                                                                                        <property name="orient">wxHORIZONTAL</property>
+                                                                                                        <property name="permission">none</property>
+                                                                                                        <object class="sizeritem" expanded="1">
+                                                                                                            <property name="border">5</property>
+                                                                                                            <property name="flag">wxALL|wxALIGN_CENTER_VERTICAL</property>
+                                                                                                            <property name="proportion">0</property>
+                                                                                                            <object class="wxStaticText" expanded="1">
+                                                                                                                <property name="bg"></property>
+                                                                                                                <property name="context_help"></property>
+                                                                                                                <property name="enabled">1</property>
+                                                                                                                <property name="fg"></property>
+                                                                                                                <property name="font"></property>
+                                                                                                                <property name="hidden">0</property>
+                                                                                                                <property name="id">wxID_ANY</property>
+                                                                                                                <property name="label">Save music to:</property>
+                                                                                                                <property name="maximum_size"></property>
+                                                                                                                <property name="minimum_size"></property>
+                                                                                                                <property name="name">m_staticText49</property>
+                                                                                                                <property name="permission">protected</property>
+                                                                                                                <property name="pos"></property>
+                                                                                                                <property name="size"></property>
+                                                                                                                <property name="style"></property>
+                                                                                                                <property name="subclass"></property>
+                                                                                                                <property name="tooltip"></property>
+                                                                                                                <property name="window_extra_style"></property>
+                                                                                                                <property name="window_name"></property>
+                                                                                                                <property name="window_style"></property>
+                                                                                                                <property name="wrap">-1</property>
+                                                                                                                <event name="OnChar"></event>
+                                                                                                                <event name="OnEnterWindow"></event>
+                                                                                                                <event name="OnEraseBackground"></event>
+                                                                                                                <event name="OnKeyDown"></event>
+                                                                                                                <event name="OnKeyUp"></event>
+                                                                                                                <event name="OnKillFocus"></event>
+                                                                                                                <event name="OnLeaveWindow"></event>
+                                                                                                                <event name="OnLeftDClick"></event>
+                                                                                                                <event name="OnLeftDown"></event>
+                                                                                                                <event name="OnLeftUp"></event>
+                                                                                                                <event name="OnMiddleDClick"></event>
+                                                                                                                <event name="OnMiddleDown"></event>
+                                                                                                                <event name="OnMiddleUp"></event>
+                                                                                                                <event name="OnMotion"></event>
+                                                                                                                <event name="OnMouseEvents"></event>
+                                                                                                                <event name="OnMouseWheel"></event>
+                                                                                                                <event name="OnPaint"></event>
+                                                                                                                <event name="OnRightDClick"></event>
+                                                                                                                <event name="OnRightDown"></event>
+                                                                                                                <event name="OnRightUp"></event>
+                                                                                                                <event name="OnSetFocus"></event>
+                                                                                                                <event name="OnSize"></event>
+                                                                                                                <event name="OnUpdateUI"></event>
+                                                                                                            </object>
+                                                                                                        </object>
+                                                                                                        <object class="sizeritem" expanded="1">
+                                                                                                            <property name="border">5</property>
+                                                                                                            <property name="flag">wxALL|wxALIGN_CENTER_VERTICAL</property>
+                                                                                                            <property name="proportion">1</property>
+                                                                                                            <object class="wxButton" expanded="1">
+                                                                                                                <property name="bg"></property>
+                                                                                                                <property name="context_help"></property>
+                                                                                                                <property name="default">0</property>
+                                                                                                                <property name="enabled">1</property>
+                                                                                                                <property name="fg"></property>
+                                                                                                                <property name="font"></property>
+                                                                                                                <property name="hidden">0</property>
+                                                                                                                <property name="id">wxID_ANY</property>
+                                                                                                                <property name="label"></property>
+                                                                                                                <property name="maximum_size"></property>
+                                                                                                                <property name="minimum_size"></property>
+                                                                                                                <property name="name">m_bu_options_record_dir</property>
+                                                                                                                <property name="permission">protected</property>
+                                                                                                                <property name="pos"></property>
+                                                                                                                <property name="size"></property>
+                                                                                                                <property name="style"></property>
+                                                                                                                <property name="subclass"></property>
+                                                                                                                <property name="tooltip"></property>
+                                                                                                                <property name="window_extra_style"></property>
+                                                                                                                <property name="window_name"></property>
+                                                                                                                <property name="window_style"></property>
+                                                                                                                <event name="OnButtonClick"></event>
+                                                                                                                <event name="OnChar"></event>
+                                                                                                                <event name="OnEnterWindow"></event>
+                                                                                                                <event name="OnEraseBackground"></event>
+                                                                                                                <event name="OnKeyDown"></event>
+                                                                                                                <event name="OnKeyUp"></event>
+                                                                                                                <event name="OnKillFocus"></event>
+                                                                                                                <event name="OnLeaveWindow"></event>
+                                                                                                                <event name="OnLeftDClick"></event>
+                                                                                                                <event name="OnLeftDown"></event>
+                                                                                                                <event name="OnLeftUp"></event>
+                                                                                                                <event name="OnMiddleDClick"></event>
+                                                                                                                <event name="OnMiddleDown"></event>
+                                                                                                                <event name="OnMiddleUp"></event>
+                                                                                                                <event name="OnMotion"></event>
+                                                                                                                <event name="OnMouseEvents"></event>
+                                                                                                                <event name="OnMouseWheel"></event>
+                                                                                                                <event name="OnPaint"></event>
+                                                                                                                <event name="OnRightDClick"></event>
+                                                                                                                <event name="OnRightDown"></event>
+                                                                                                                <event name="OnRightUp"></event>
+                                                                                                                <event name="OnSetFocus"></event>
+                                                                                                                <event name="OnSize"></event>
+                                                                                                                <event name="OnUpdateUI"></event>
+                                                                                                            </object>
+                                                                                                        </object>
                                                                                                     </object>
                                                                                                 </object>
                                                                                                 <object class="sizeritem" expanded="1">
                                                                                                     <property name="border">10</property>
                                                                                                     <property name="flag">wxALL</property>
                                                                                                     <property name="proportion">0</property>
-                                                                                                    <object class="wxButton" expanded="1">
+                                                                                                    <object class="wxCheckBox" expanded="1">
                                                                                                         <property name="bg"></property>
+                                                                                                        <property name="checked">0</property>
                                                                                                         <property name="context_help"></property>
-                                                                                                        <property name="default">0</property>
                                                                                                         <property name="enabled">1</property>
                                                                                                         <property name="fg"></property>
                                                                                                         <property name="font"></property>
                                                                                                         <property name="hidden">0</property>
                                                                                                         <property name="id">wxID_ANY</property>
-                                                                                                        <property name="label">About...</property>
+                                                                                                        <property name="label">Automatically save new music to your collection.</property>
                                                                                                         <property name="maximum_size"></property>
                                                                                                         <property name="minimum_size"></property>
-                                                                                                        <property name="name">m_bu_options_about</property>
+                                                                                                        <property name="name">m_cb_options_autosave</property>
                                                                                                         <property name="permission">protected</property>
                                                                                                         <property name="pos"></property>
                                                                                                         <property name="size"></property>
@@ -7386,8 +7193,8 @@
                                                                                                         <property name="window_extra_style"></property>
                                                                                                         <property name="window_name"></property>
                                                                                                         <property name="window_style"></property>
-                                                                                                        <event name="OnButtonClick"></event>
                                                                                                         <event name="OnChar"></event>
+                                                                                                        <event name="OnCheckBox"></event>
                                                                                                         <event name="OnEnterWindow"></event>
                                                                                                         <event name="OnEraseBackground"></event>
                                                                                                         <event name="OnKeyDown"></event>
@@ -8159,7 +7966,7 @@
                                                                         <property name="bitmap"></property>
                                                                         <property name="label">Music Stream</property>
                                                                         <property name="select">0</property>
-                                                                        <object class="wxScrolledWindow" expanded="0">
+                                                                        <object class="wxScrolledWindow" expanded="1">
                                                                             <property name="bg"></property>
                                                                             <property name="context_help"></property>
                                                                             <property name="enabled">1</property>
@@ -8390,67 +8197,7 @@
                                                                                     <property name="border">5</property>
                                                                                     <property name="flag">wxEXPAND</property>
                                                                                     <property name="proportion">0</property>
-                                                                                    <object class="wxBoxSizer" expanded="1">
-                                                                                        <property name="minimum_size"></property>
-                                                                                        <property name="name">bSizer77</property>
-                                                                                        <property name="orient">wxHORIZONTAL</property>
-                                                                                        <property name="permission">none</property>
-                                                                                        <object class="sizeritem" expanded="1">
-                                                                                            <property name="border">5</property>
-                                                                                            <property name="flag">wxEXPAND | wxALL</property>
-                                                                                            <property name="proportion">1</property>
-                                                                                            <object class="wxStaticLine" expanded="1">
-                                                                                                <property name="bg"></property>
-                                                                                                <property name="context_help"></property>
-                                                                                                <property name="enabled">1</property>
-                                                                                                <property name="fg"></property>
-                                                                                                <property name="font"></property>
-                                                                                                <property name="hidden">0</property>
-                                                                                                <property name="id">wxID_ANY</property>
-                                                                                                <property name="maximum_size"></property>
-                                                                                                <property name="minimum_size"></property>
-                                                                                                <property name="name">m_staticline11</property>
-                                                                                                <property name="permission">protected</property>
-                                                                                                <property name="pos"></property>
-                                                                                                <property name="size"></property>
-                                                                                                <property name="style">wxLI_HORIZONTAL</property>
-                                                                                                <property name="subclass"></property>
-                                                                                                <property name="tooltip"></property>
-                                                                                                <property name="window_extra_style"></property>
-                                                                                                <property name="window_name"></property>
-                                                                                                <property name="window_style"></property>
-                                                                                                <event name="OnChar"></event>
-                                                                                                <event name="OnEnterWindow"></event>
-                                                                                                <event name="OnEraseBackground"></event>
-                                                                                                <event name="OnKeyDown"></event>
-                                                                                                <event name="OnKeyUp"></event>
-                                                                                                <event name="OnKillFocus"></event>
-                                                                                                <event name="OnLeaveWindow"></event>
-                                                                                                <event name="OnLeftDClick"></event>
-                                                                                                <event name="OnLeftDown"></event>
-                                                                                                <event name="OnLeftUp"></event>
-                                                                                                <event name="OnMiddleDClick"></event>
-                                                                                                <event name="OnMiddleDown"></event>
-                                                                                                <event name="OnMiddleUp"></event>
-                                                                                                <event name="OnMotion"></event>
-                                                                                                <event name="OnMouseEvents"></event>
-                                                                                                <event name="OnMouseWheel"></event>
-                                                                                                <event name="OnPaint"></event>
-                                                                                                <event name="OnRightDClick"></event>
-                                                                                                <event name="OnRightDown"></event>
-                                                                                                <event name="OnRightUp"></event>
-                                                                                                <event name="OnSetFocus"></event>
-                                                                                                <event name="OnSize"></event>
-                                                                                                <event name="OnUpdateUI"></event>
-                                                                                            </object>
-                                                                                        </object>
-                                                                                    </object>
-                                                                                </object>
-                                                                                <object class="sizeritem" expanded="1">
-                                                                                    <property name="border">5</property>
-                                                                                    <property name="flag">wxEXPAND</property>
-                                                                                    <property name="proportion">0</property>
-                                                                                    <object class="wxBoxSizer" expanded="1">
+                                                                                    <object class="wxBoxSizer" expanded="0">
                                                                                         <property name="minimum_size"></property>
                                                                                         <property name="name">bSizer76</property>
                                                                                         <property name="orient">wxHORIZONTAL</property>
@@ -8722,50 +8469,114 @@
                                                                                 </object>
                                                                                 <object class="sizeritem" expanded="1">
                                                                                     <property name="border">5</property>
-                                                                                    <property name="flag">wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND</property>
-                                                                                    <property name="proportion">1</property>
-                                                                                    <object class="wxPanel" expanded="1">
-                                                                                        <property name="bg"></property>
-                                                                                        <property name="context_help"></property>
-                                                                                        <property name="enabled">1</property>
-                                                                                        <property name="fg"></property>
-                                                                                        <property name="font"></property>
-                                                                                        <property name="hidden">0</property>
-                                                                                        <property name="id">wxID_ANY</property>
-                                                                                        <property name="maximum_size"></property>
+                                                                                    <property name="flag">wxEXPAND</property>
+                                                                                    <property name="proportion">0</property>
+                                                                                    <object class="wxBoxSizer" expanded="1">
                                                                                         <property name="minimum_size"></property>
-                                                                                        <property name="name">m_pa_player</property>
-                                                                                        <property name="permission">protected</property>
-                                                                                        <property name="pos"></property>
-                                                                                        <property name="size">100,50</property>
-                                                                                        <property name="subclass"></property>
-                                                                                        <property name="tooltip"></property>
-                                                                                        <property name="window_extra_style"></property>
-                                                                                        <property name="window_name"></property>
-                                                                                        <property name="window_style">wxTAB_TRAVERSAL</property>
-                                                                                        <event name="OnChar"></event>
-                                                                                        <event name="OnEnterWindow"></event>
-                                                                                        <event name="OnEraseBackground"></event>
-                                                                                        <event name="OnKeyDown"></event>
-                                                                                        <event name="OnKeyUp"></event>
-                                                                                        <event name="OnKillFocus"></event>
-                                                                                        <event name="OnLeaveWindow"></event>
-                                                                                        <event name="OnLeftDClick"></event>
-                                                                                        <event name="OnLeftDown"></event>
-                                                                                        <event name="OnLeftUp"></event>
-                                                                                        <event name="OnMiddleDClick"></event>
-                                                                                        <event name="OnMiddleDown"></event>
-                                                                                        <event name="OnMiddleUp"></event>
-                                                                                        <event name="OnMotion"></event>
-                                                                                        <event name="OnMouseEvents"></event>
-                                                                                        <event name="OnMouseWheel"></event>
-                                                                                        <event name="OnPaint"></event>
-                                                                                        <event name="OnRightDClick"></event>
-                                                                                        <event name="OnRightDown"></event>
-                                                                                        <event name="OnRightUp"></event>
-                                                                                        <event name="OnSetFocus"></event>
-                                                                                        <event name="OnSize"></event>
-                                                                                        <event name="OnUpdateUI"></event>
+                                                                                        <property name="name">bSizer77</property>
+                                                                                        <property name="orient">wxVERTICAL</property>
+                                                                                        <property name="permission">none</property>
+                                                                                        <object class="sizeritem" expanded="1">
+                                                                                            <property name="border">5</property>
+                                                                                            <property name="flag">wxEXPAND | wxALL</property>
+                                                                                            <property name="proportion">0</property>
+                                                                                            <object class="wxStaticLine" expanded="1">
+                                                                                                <property name="bg"></property>
+                                                                                                <property name="context_help"></property>
+                                                                                                <property name="enabled">1</property>
+                                                                                                <property name="fg"></property>
+                                                                                                <property name="font"></property>
+                                                                                                <property name="hidden">0</property>
+                                                                                                <property name="id">wxID_ANY</property>
+                                                                                                <property name="maximum_size"></property>
+                                                                                                <property name="minimum_size"></property>
+                                                                                                <property name="name">m_staticline11</property>
+                                                                                                <property name="permission">protected</property>
+                                                                                                <property name="pos"></property>
+                                                                                                <property name="size"></property>
+                                                                                                <property name="style">wxLI_HORIZONTAL</property>
+                                                                                                <property name="subclass"></property>
+                                                                                                <property name="tooltip"></property>
+                                                                                                <property name="window_extra_style"></property>
+                                                                                                <property name="window_name"></property>
+                                                                                                <property name="window_style"></property>
+                                                                                                <event name="OnChar"></event>
+                                                                                                <event name="OnEnterWindow"></event>
+                                                                                                <event name="OnEraseBackground"></event>
+                                                                                                <event name="OnKeyDown"></event>
+                                                                                                <event name="OnKeyUp"></event>
+                                                                                                <event name="OnKillFocus"></event>
+                                                                                                <event name="OnLeaveWindow"></event>
+                                                                                                <event name="OnLeftDClick"></event>
+                                                                                                <event name="OnLeftDown"></event>
+                                                                                                <event name="OnLeftUp"></event>
+                                                                                                <event name="OnMiddleDClick"></event>
+                                                                                                <event name="OnMiddleDown"></event>
+                                                                                                <event name="OnMiddleUp"></event>
+                                                                                                <event name="OnMotion"></event>
+                                                                                                <event name="OnMouseEvents"></event>
+                                                                                                <event name="OnMouseWheel"></event>
+                                                                                                <event name="OnPaint"></event>
+                                                                                                <event name="OnRightDClick"></event>
+                                                                                                <event name="OnRightDown"></event>
+                                                                                                <event name="OnRightUp"></event>
+                                                                                                <event name="OnSetFocus"></event>
+                                                                                                <event name="OnSize"></event>
+                                                                                                <event name="OnUpdateUI"></event>
+                                                                                            </object>
+                                                                                        </object>
+                                                                                        <object class="sizeritem" expanded="1">
+                                                                                            <property name="border">7</property>
+                                                                                            <property name="flag">wxALL</property>
+                                                                                            <property name="proportion">0</property>
+                                                                                            <object class="wxCheckBox" expanded="1">
+                                                                                                <property name="bg"></property>
+                                                                                                <property name="checked">0</property>
+                                                                                                <property name="context_help"></property>
+                                                                                                <property name="enabled">1</property>
+                                                                                                <property name="fg"></property>
+                                                                                                <property name="font"></property>
+                                                                                                <property name="hidden">0</property>
+                                                                                                <property name="id">wxID_ANY</property>
+                                                                                                <property name="label">Use alternate GrooveShark source.</property>
+                                                                                                <property name="maximum_size"></property>
+                                                                                                <property name="minimum_size"></property>
+                                                                                                <property name="name">m_cb_options_alternate</property>
+                                                                                                <property name="permission">protected</property>
+                                                                                                <property name="pos"></property>
+                                                                                                <property name="size"></property>
+                                                                                                <property name="style"></property>
+                                                                                                <property name="subclass"></property>
+                                                                                                <property name="tooltip"></property>
+                                                                                                <property name="window_extra_style"></property>
+                                                                                                <property name="window_name"></property>
+                                                                                                <property name="window_style"></property>
+                                                                                                <event name="OnChar"></event>
+                                                                                                <event name="OnCheckBox"></event>
+                                                                                                <event name="OnEnterWindow"></event>
+                                                                                                <event name="OnEraseBackground"></event>
+                                                                                                <event name="OnKeyDown"></event>
+                                                                                                <event name="OnKeyUp"></event>
+                                                                                                <event name="OnKillFocus"></event>
+                                                                                                <event name="OnLeaveWindow"></event>
+                                                                                                <event name="OnLeftDClick"></event>
+                                                                                                <event name="OnLeftDown"></event>
+                                                                                                <event name="OnLeftUp"></event>
+                                                                                                <event name="OnMiddleDClick"></event>
+                                                                                                <event name="OnMiddleDown"></event>
+                                                                                                <event name="OnMiddleUp"></event>
+                                                                                                <event name="OnMotion"></event>
+                                                                                                <event name="OnMouseEvents"></event>
+                                                                                                <event name="OnMouseWheel"></event>
+                                                                                                <event name="OnPaint"></event>
+                                                                                                <event name="OnRightDClick"></event>
+                                                                                                <event name="OnRightDown"></event>
+                                                                                                <event name="OnRightUp"></event>
+                                                                                                <event name="OnSetFocus"></event>
+                                                                                                <event name="OnSize"></event>
+                                                                                                <event name="OnUpdateUI"></event>
+                                                                                            </object>
+                                                                                        </object>
                                                                                     </object>
                                                                                 </object>
                                                                             </object>
@@ -9417,7 +9228,7 @@
                         <property name="help"></property>
                         <property name="id">wxID_ANY</property>
                         <property name="kind">wxITEM_NORMAL</property>
-                        <property name="label">Version Update</property>
+                        <property name="label">Version Update...</property>
                         <property name="name">m_mi_version_update</property>
                         <property name="permission">none</property>
                         <property name="shortcut"></property>
@@ -9432,7 +9243,7 @@
                         <property name="help"></property>
                         <property name="id">wxID_ANY</property>
                         <property name="kind">wxITEM_NORMAL</property>
-                        <property name="label">Song Collection Locations</property>
+                        <property name="label">Song Collection Locations...</property>
                         <property name="name">m_mi_song_collection</property>
                         <property name="permission">none</property>
                         <property name="shortcut"></property>
