@@ -15,7 +15,11 @@ import urllib2
 import urllib
 import re
 import uuid
-import json
+#import json
+try:
+    import json
+except ImportError:
+    from main_thirdp import simplejson as json
 import hashlib
 import random
 import time
@@ -38,12 +42,14 @@ RE_SESSION = re.compile('sessionID:\s*?\'([A-z0-9]+)\',')
 class Request:
     """class: For making a standard API request"""
 
-    def __init__(self, api, parameters, method, type="default"):
+    def __init__(self, api, parameters, method, type="default", clientVersion=None):
         """function: Initiates the Request"""
+        if clientVersion == None:
+            clientVersion = CLIENT_VERSION
         postData = {
             "header": {
                 "client": CLIENT_NAME,
-                "clientRevision": CLIENT_VERSION,
+                "clientRevision": clientVersion,
                 "uuid": api._uuid,
                 "session": api._session},
             "parameters": parameters,
@@ -82,20 +88,21 @@ class Request:
             raise StandardError("API error: " + response["fault"]["message"])
 
 
-def jsonrpcSession(clientUuid=None):
+def jsonrpcSession(clientUuid=None, clientVersion=None):
     """function: Makes an API instance"""
     if None == clientUuid:
         clientUuid = str(uuid.uuid4())
 
-    return JsonRPC(clientUuid)
+    return JsonRPC(clientUuid, clientVersion)
 
 
 class JsonRPC:
     """class: An abstraction for the Grooveshark JSON-RPC API"""
 
-    def __init__(self, uuid):
+    def __init__(self, uuid, clientVersion):
         """function: Init the Grooveshark API class"""
         self._uuid = uuid
+        self.clientVersion = clientVersion
 
     _token = None
     _lastTokenTime = None
@@ -121,8 +128,9 @@ class JsonRPC:
 
         try:
             return response["result"]
-        except TypeError as error:
-            raise error
+        except TypeError: #as error:
+            pass
+            #raise error
 
     def _generateToken(self, method):
         """function: Make a token ready for a request header"""
@@ -163,7 +171,7 @@ class JsonRPC:
 
     def request(self, parameters, method, type="default"):
         """function: Create a request"""
-        return Request(self, parameters, method, type)
+        return Request(self, parameters, method, type, self.clientVersion)
 
     def getSearchResults(self, query, type="Songs"):
         """function: Get some search results :p"""
