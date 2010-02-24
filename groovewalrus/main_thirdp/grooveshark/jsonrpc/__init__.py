@@ -15,11 +15,7 @@ import urllib2
 import urllib
 import re
 import uuid
-###import json
-try:
-    import json
-except ImportError:
-    from main_thirdp import simplejson as json
+import json
 import hashlib
 import random
 import time
@@ -125,9 +121,8 @@ class JsonRPC:
 
         try:
             return response["result"]
-        except: ###TypeError as error:
-            pass
-        ###    raise error
+        except TypeError as error:
+            raise error
 
     def _generateToken(self, method):
         """function: Make a token ready for a request header"""

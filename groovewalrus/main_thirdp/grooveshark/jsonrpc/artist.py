@@ -30,8 +30,8 @@ class Artist(Playlist):
         """function: Initiates the Artist class"""
         self._gsapi = gsapi
         self._parseItem(item)
-        self._parseData(data["Result"])
-        Playlist.__init__(self, gsapi, data["Result"]["songs"])
+        self._parseData(data)
+        Playlist.__init__(self, gsapi, data["songs"])
 
     id = None
     name = ""
