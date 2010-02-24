@@ -11,7 +11,7 @@ def searchResults(gsapi, query):
 
     response = gsapi.request(parameters, "getSearchResults").send()
 
-    return SearchResults(gsapi, query, response["result"]["Return"])
+    return SearchResults(gsapi, query, response["result"])
 
 
 class SearchResults(Playlist):

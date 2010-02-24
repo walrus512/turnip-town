@@ -29,9 +29,9 @@ class Album(Playlist):
     def __init__(self, gsapi, data, song=None):
         """function: Initiates the Album class"""
         self._gsapi = gsapi
-        self._parseData(data["Result"])
+        self._parseData(data)
         self._parseSong(song)
-        Playlist.__init__(self, gsapi, data["Result"]["songs"])
+        Playlist.__init__(self, gsapi, data["songs"])
 
     id = None
     name = ""
