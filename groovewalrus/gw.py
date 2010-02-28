@@ -74,7 +74,7 @@ from main_thirdp import grooveshark_old
 #from plugins.griddle import griddle
 #from plugins.ratings import ratings
 
-PROGRAM_VERSION = "0.206"
+PROGRAM_VERSION = "0.207"
 PROGRAM_NAME = "GrooveWalrus"
 PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
 PLAY_SONG_ALTERNATE_URL ="http://listen.grooveshark.com/main.swf?hostname=cowbell.grooveshark.com&p=1&songID="
@@ -1329,7 +1329,7 @@ class MainPanel(wx.Panel):
                 self.SavePlaylist(self.main_playlist_location)
             # try grooveshark
             else:
-                query_results = tinysong.Tsong().get_search_results(query_string, 20)
+                query_results = tinysong.Tsong().get_search_results(query_string, 32)
                 split_array = query_results[0].split('; ')
                 if len(split_array) >= 2:                
                     # song id is at [1] - 4,2,6,1
