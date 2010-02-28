@@ -45,7 +45,7 @@ class Tsong(object):
     	#self.last_similar_file_name = ''    	
         #self.last_country_name = ''
 
-    def get_search_results(self, query_string, limit=16):
+    def get_search_results(self, query_string, limit=25):
         # http://ws.audioscrobbler.com/2.0/?method=track.getinfo&api_key=b25b959554ed76058ac220b7b2e0a026&artist=cher&track=believe
         # get an image for track requested
         # <lfm <album <image
