@@ -34,7 +34,7 @@ SERVICE_URL = "http://cowbell." + DOMAIN + "/service.php"
 RANDOM_CHARS = "1234567890abcdef"
 
 CLIENT_NAME = "gslite"
-CLIENT_VERSION = "20100115.09"
+CLIENT_VERSION = "20100211.19"
 
 RE_SESSION = re.compile('sessionID:\s*?\'([A-z0-9]+)\',')
 
@@ -128,9 +128,8 @@ class JsonRPC:
 
         try:
             return response["result"]
-        except TypeError: #as error:
-            pass
-            #raise error
+        except TypeError, error:            
+            raise error
 
     def _generateToken(self, method):
         """function: Make a token ready for a request header"""
