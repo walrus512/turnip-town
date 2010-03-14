@@ -41,7 +41,8 @@ OPTIONS_ARR = [ 'last_password',
                 #'bitrate', 
                 'record_dir',
                 'tray',
-                'autosave'
+                'autosave',
+                'scrobble'
                 ]
 
 # ===================================================================
@@ -79,6 +80,8 @@ class Options(object):
                 self.parent.cb_options_tray.SetValue(int(options_dict['tray']))
             if options_dict.has_key('autosave'):
                 self.parent.cb_options_autosave.SetValue(int(options_dict['autosave']))
+            if options_dict.has_key('scrobble'):
+                self.parent.cb_options_scrobble.SetValue(int(options_dict['scrobble']))
             if options_dict.has_key('record_dir'):
                 if options_dict['record_dir'] != None:                    
                     self.parent.bu_options_record_dir.SetLabel(options_dict['record_dir'])
@@ -92,6 +95,9 @@ class Options(object):
                 self.parent.sc_options_song_seconds.SetValue(int(seconds))
             self.parent.rx_options_double_click.SetSelection(int(options_dict['double_click']))
         
+        #set the scrobble menu item checkmark
+        self.SetScrobbleMenuItem()
+            
     def SaveOptions(self):
         # save value to options.xml
         #print (self.search_settings_tree)
@@ -111,6 +117,7 @@ class Options(object):
         window_dict['scrobble_album'] = str(int(self.parent.cb_options_scrobble_album.GetValue()))
         window_dict['tray'] = str(int(self.parent.cb_options_tray.GetValue()))
         window_dict['autosave'] = str(int(self.parent.cb_options_autosave.GetValue()))
+        window_dict['scrobble'] = str(int(self.parent.cb_options_scrobble.GetValue()))
         #window_dict['bitrate'] = str(self.parent.ch_options_bitrate.GetStringSelection())
         window_dict['record_dir'] = str(self.parent.bu_options_record_dir.GetLabel())
         
@@ -119,6 +126,9 @@ class Options(object):
         formated_time = str(minutes) + ':' + str(seconds)
         converted = str(ConvertTimeSeconds(formated_time))
         window_dict['song_time'] = str(converted)
+        
+        #set the scrobble menu item checkmark
+        self.SetScrobbleMenuItem()
         
         if (window_dict['alternate_source'] == '1'):
             dlg = wx.MessageDialog(self.parent, 'Warning!\r\nUsing the alternate GrooveShark source may cause HUGE problems when using the GrooveShark website (ie. it will not work for you anymore).\r\nSave anyway?', 'Alert', wx.CANCEL | wx.OK | wx.ICON_WARNING)
@@ -135,6 +145,12 @@ class Options(object):
             xml_utils().save_generic_settings(self.save_location  + os.sep, 'settings.xml', window_dict)
             #print window_dict 
         
+    def SetScrobbleMenuItem(self):
+        if self.parent.cb_options_scrobble.IsChecked():
+            self.parent.lastfm_toggle.Check(True)
+        else:
+            self.parent.lastfm_toggle.Check(False)
+            
     def ShowAbout(self, program_name, program_version):
         # First we create and fill the info object
         info = wx.AboutDialogInfo()
