@@ -43,15 +43,15 @@ def CheckCache(cache_path):
     file_path = cache_path.replace("\\", os.sep)
     file_list = os.listdir(file_path)
     
-    first_modified = 2000000000
-    oldest_file = ''
-    
-    if len(file_list) > CACHE_LIMIT:
+    while len(file_list) > CACHE_LIMIT:
+    # keep removing files until we're down to the cache limit
+        oldest_file = ''
+        first_modified = 2000000000
         
         for file_name in file_list:
         # find oldest file
             full_file_path = file_path + os.sep + file_name
-            # use created time, modifed time is not what we want
+            # use created time, modifed time is not what we want            
             modified = os.path.getctime(full_file_path)
             if modified < first_modified:
                     first_modified = modified
@@ -60,3 +60,4 @@ def CheckCache(cache_path):
         # remove oldest file
         os.remove(oldest_file)
         #print oldest_file
+        file_list = os.listdir(file_path)
