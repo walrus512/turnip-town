@@ -34,6 +34,8 @@ NEWS_URL = "http://groove-walrus.turnip-town.net/dru/version/news2.xml"
 FILES_URL = "http://groove-walrus.turnip-town.net/dru/version/files2.xml"
 LW = 'http://groove-walrus.turnip-town.net'
 
+SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0]))
+
 
 class VersionCheck():
     def __init__(self, parent, current_version):
@@ -311,7 +313,8 @@ class UpdateThread(Thread):
                 if len(x[1]) >= 1:
                     directory = x[1] + os.sep
                 from_dir = self.update_data_directory + x[2] + os.sep + directory
-                to_dir = self.data_directory + os.sep + directory
+                #to_dir = self.data_directory + os.sep + directory
+                to_dir = SYSLOC + os.sep + directory                
                 file_name = x[0].rsplit("/", 1)[1]
                 self.parent.UpdateTC('copying: %s' % file_name)
                 if (self.CopyFile(file_name, from_dir, to_dir) != True):
