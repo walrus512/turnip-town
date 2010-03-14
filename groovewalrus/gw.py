@@ -46,7 +46,7 @@ from main_utils import local_songs
 from main_utils import plugin_loader
 from main_utils import system_files
 from main_utils import file_cache
-#from main_utils import prefetch
+from main_utils import prefetch
 
 from main_controls import drag_and_drop
 from main_controls import playback_panel
@@ -89,8 +89,8 @@ GRAPHICS_LOCATION = os.path.join(SYSLOC, 'graphics') + os.sep
 #COVER_SIZE_LARGE = (150,150)
 
 
-RESFILE =           SYSLOC + os.sep + "layout.xml"
-P_ICON =            SYSLOC + os.sep + "gw.ico"
+RESFILE = SYSLOC + os.sep + "layout.xml"
+P_ICON = SYSLOC + os.sep + "gw.ico"
 
 # notebook pages
 NB_PLAYLIST = 0
@@ -526,6 +526,7 @@ class MainPanel(wx.Panel):
         self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_list_clear'))
         self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_alternate'))
         self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_scrobble_album'))
+        self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_scrobble'))
         self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_noid'))
         self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_tray'))
         self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_autosave'))
@@ -649,13 +650,7 @@ class MainPanel(wx.Panel):
         self.time_count = 0
         self.Bind(wx.EVT_TIMER, self.OnTimer, self.timer)
 
-        #wx.CallAfter(self.Refresh)
-        
-        # options ---------------
-        # load options from settings.xml
-        options_window.Options(self).LoadOptions()
-        if self.cb_options_tray.GetValue() == 1:
-            self.parent.UseTrayIcon()
+        #wx.CallAfter(self.Refresh)        
         
         # scrobb ----------------
         self.scrobbed_active = 0
@@ -786,8 +781,7 @@ class MainPanel(wx.Panel):
         self.parent.Bind(wx.EVT_MENU, self.OnSColAddClick, id=xrc.XRCID("m_mi_song_collection"))
         #
         self.lastfm_toggle = self.parent.menu_tools.Append(7666, "Last.fm Scrobbling", kind=wx.ITEM_CHECK)
-        self.parent.Bind(wx.EVT_MENU, self.OnToggleScrobble, id=7666)
-        self.lastfm_toggle.Check(True)
+        self.parent.Bind(wx.EVT_MENU, self.OnToggleScrobble, id=7666)        
         
         # help menu
         self.parent.Bind(wx.EVT_MENU, self.OnAboutClick, id=xrc.XRCID("m_mi_about"))        
@@ -795,7 +789,16 @@ class MainPanel(wx.Panel):
         
         #-------------
         #plugins
-        a = plugin_loader.PluginLoader(self)       
+        a = plugin_loader.PluginLoader(self)
+        
+        # options ---------------
+        # load options from settings.xml
+        options_window.Options(self).LoadOptions()
+        if self.cb_options_tray.GetValue() == 1:
+            self.parent.UseTrayIcon()
+        
+        #toggle
+        #self.lastfm_toggle.Check(True)
         
         #print system_files.GetDirectories(self).TempDirectory()
         #print system_files.GetDirectories(self).DataDirectory()
@@ -847,24 +850,28 @@ class MainPanel(wx.Panel):
          
     def GenerateSessionKey2(self, regenerate=False):
         # generate a non-song scrobbling seesion key
+        self.session_key2 = None
+        #check if scrobbling is enabled, yes: get key, no: return None
+        if self.cb_options_scrobble.IsChecked():        
+            username = self.tc_options_username.GetValue()
+            password = self.tc_options_password.GetValue()
+            if (password != '') & (username !='' ):        
+                if (self.session_key2 == None) or (regenerate == True):
+                    last_sess = pylast.SessionKeyGenerator(API_KEY, '6a2eb503cff117001fac5d1b8e230211')
         
-        username = self.tc_options_username.GetValue()
-        password = self.tc_options_password.GetValue()
-        if (password != '') & (username !='' ):        
-            if (self.session_key2 == None) or (regenerate == True):
-                last_sess = pylast.SessionKeyGenerator(API_KEY, '6a2eb503cff117001fac5d1b8e230211')
-    
-                md5_password = pylast.md5(password)
-                self.session_key2 = last_sess.get_session_key(username, md5_password)
+                    md5_password = pylast.md5(password)
+                    self.session_key2 = last_sess.get_session_key(username, md5_password)
         return self.session_key2            
                 
     def OnToggleScrobble(self, event):        
         if self.cb_options_scrobble.IsChecked():
             self.lastfm_toggle.Check(False)
             self.cb_options_scrobble.SetValue(False)
+            self.SaveOptions(None)
         else:
             self.lastfm_toggle.Check(True)
             self.cb_options_scrobble.SetValue(True)
+            self.SaveOptions(None)
         
     def OnTimer(self, event):
         # the heartbeat of the evil machine
@@ -923,11 +930,11 @@ class MainPanel(wx.Panel):
                         self.song_scrobb.scrobble(self.partist, self.ptrack, time_started, 'P', 'L', self.current_play_time, s_album, "", "", port)
                         #pylast.BadSession:
                         
-            ##if (float(self.time_count) / float(self.current_play_time) > .05) & (self.prefetch == True):
+            if (float(self.time_count) / float(self.current_play_time) > .05) & (self.prefetch == True):
                 #let's fetch the next track if possible
-                ##self.prefetch = False
-                ##print 'fetching'
-                ##prefetch.PreFetch(self).GetNextSong()
+                self.prefetch = False
+                print 'fetching'
+                print prefetch.PreFetch(self).GetNextSong()
             
         # check if we should go to the next track   
         if (self.current_play_time > 0) & (self.time_count > self.current_play_time) & (self.pstatus != "stopped"):
@@ -1055,7 +1062,7 @@ class MainPanel(wx.Panel):
             #self.bb_record.SetWindowStyle(wx.DOUBLE_BORDER)            
         
     def SaveOptions(self, event):
-        # hide the notebook, or show it
+        # hide the notebook, or show it        
         options_window.Options(self).SaveOptions()
         if self.cb_options_tray.IsChecked():
             self.parent.UseTrayIcon()
@@ -3270,8 +3277,22 @@ class FileThread(Thread):
         file_size = grooveshark_old.Grooveshark(self).GetFileSize(keyandserver[0], keyandserver[1])
         return file_size
         
+    def GetLocalGroovesharkVersion(self):
+        #gets the grooveshark version from the local grooveshark.xml file
+        #check if file exists
+        file_name = 'grooveshark.xml'
+        g_version = None
+        if os.path.isfile(file_name):
+            #get the version number from the file
+            xml_dict = read_write_xml.xml_utils().get_generic_settings(file_name)
+            if xml_dict.has_key('version'):
+                if len(xml_dict['version']) > 0:
+                    g_version = xml_dict['version']
+        return g_version
+        
     def GetStreamKeyAndServer(self):
-        g_session = jsonrpcSession()
+        g_version = self.GetLocalGroovesharkVersion()
+        g_session = jsonrpcSession(g_version)
         g_session.startSession()
         g_data = {'SongID': self.song_id, 'Name': self.track, 'ArtistName': self.artist, 'AlbumName': self.album, 'AlbumID': '', 'ArtistID': ''}
         g_song = song.songFromData(g_session, g_data)
