@@ -97,7 +97,7 @@ class Scrobb(object):
         return self.genenric_song_list(data_url, 'name', 'match')
         
     def make_song_top_tags_list(self, artist, song):
-        # gets settings from window settings file returns an object / settings
+        # returns top tags for selected song
         artist = url_quote(artist)
         song = url_quote(song)
         data_url = SONG_TOP_TAGS + "&artist=" + artist + "&track=" + song
@@ -132,7 +132,7 @@ class Scrobb(object):
         return self.genenric_song_list(data_url, 'name', 'listeners')
         
     def make_genre_top_song_list(self, genre):
-        # gets top songs per country
+        # gets top songs per genre (tag)
         #scrobb_url = "http://ws.audioscrobbler.com/2.0/?method=geo.gettoptracks&country=united+states&api_key=b25b959554ed76058ac220b7b2e0a026
         genre = url_quote(genre)
         data_url = GENRE_TOP_SONGS + "&tag=" + genre
@@ -191,10 +191,13 @@ class Scrobb(object):
             for x in names:             
                 name_list.append(x.text)
             # playcount
-            if match[0].text == None:
-                name_list.append('')
+            if len(match) != 0:
+                if match[0].text == None:
+                    name_list.append('')
+                else:
+                    name_list.append(match[0].text)
             else:
-                name_list.append(match[0].text)
+                name_list.append('')
             #for y in cover_image:
             #   name_list.append(y.text)
             #print ET.tostring(x)
