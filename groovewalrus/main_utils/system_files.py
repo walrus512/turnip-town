@@ -116,12 +116,15 @@ def string_wrap(s, want_unicode=True):
     """
     
     """
+    s = s.encode(charset)
+    """    
     if isinstance(s, unicode):
         s = s.encode(charset)
-    elif not isinstance(s, str):
+    #elif not isinstance(s, str):
         s = str(s)
     #s = urllib.quote(s, safe)
     if want_unicode:
         s = s.decode(charset) # ascii would also work
+    """
     return s
 # ===================================================================   
