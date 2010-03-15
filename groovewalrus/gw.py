@@ -797,8 +797,9 @@ class MainPanel(wx.Panel):
         if self.cb_options_tray.GetValue() == 1:
             self.parent.UseTrayIcon()
         
-        #toggle
-        #self.lastfm_toggle.Check(True)
+        # clean cache dir -------
+        temp_dir = system_files.GetDirectories(self).TempDirectory()
+        file_cache.CheckCache(temp_dir)
         
         #print system_files.GetDirectories(self).TempDirectory()
         #print system_files.GetDirectories(self).DataDirectory()
@@ -930,11 +931,23 @@ class MainPanel(wx.Panel):
                         self.song_scrobb.scrobble(self.partist, self.ptrack, time_started, 'P', 'L', self.current_play_time, s_album, "", "", port)
                         #pylast.BadSession:
                         
-            if (float(self.time_count) / float(self.current_play_time) > .05) & (self.prefetch == True):
+            if (float(self.time_count) / float(self.current_play_time) > .5) & (self.prefetch == True):
                 #let's fetch the next track if possible
-                self.prefetch = False
-                print 'fetching'
-                print prefetch.PreFetch(self).GetNextSong()
+                self.prefetch = False                
+                pf_artistsong =  prefetch.PreFetch(self).GetNextSong()
+                if pf_artistsong != None:
+                    pf_artist = pf_artistsong[0]
+                    pf_song = pf_artistsong[1]
+                    pf_cached_file_name = pf_artistsong[2]
+                    print 'pre-fetching: ' + pf_song + ' ' + pf_cached_file_name
+                    pf_song_id = prefetch.PreFetch(self).GetSongId(pf_artist, pf_song)
+                    #print pf_song_id
+                    #download file
+                    if pf_song_id != None:
+                        #THREAD
+                        current2 = FileThread(self, pf_cached_file_name, pf_song_id, pf_song, pf_artist, album='', prefetch=True)                    
+                        #THREAD
+                        current2.start()
             
         # check if we should go to the next track   
         if (self.current_play_time > 0) & (self.time_count > self.current_play_time) & (self.pstatus != "stopped"):
@@ -1272,6 +1285,7 @@ class MainPanel(wx.Panel):
         self.gobbled_track = 0
         #self.ga_download.SetValue(0)
         self.download_percent = 0
+        self.prefetch = True
 
                                  
         # check for random
@@ -3262,14 +3276,15 @@ class WebFetchThread(Thread):
 # ####################################
 class FileThread(Thread): 
     # grab file
-    def __init__(self, parent, temp_file, song_id, track, artist, album):
+    def __init__(self, parent, temp_file, song_id, track, artist, album, prefetch=False):
         Thread.__init__(self)
         self.parent = parent
         self.temp_file = temp_file
         self.song_id = song_id
         self.track = track
         self.artist = artist
-        self.album = album       
+        self.album = album
+        self.prefetch = prefetch
         
     def GetFileSize(self):
         # file size
@@ -3311,8 +3326,10 @@ class FileThread(Thread):
         keyandserver = self.GetStreamKeyAndServer()                
         grooveshark_old.Grooveshark(self.parent).download(keyandserver[0], keyandserver[1], self.temp_file)
         
-        track_time = local_songs.GetMp3Length(self.temp_file)
-        self.parent.current_play_time = track_time
+        if self.prefetch == False:
+            track_time = local_songs.GetMp3Length(self.temp_file)
+            self.parent.current_play_time = track_time
+            
         # check if recording or the save all new checkbox is checked
         if (self.parent.record_toggle == True) or (self.parent.cb_options_autosave.GetValue() == True):
             #copy and rname the file to teh record dir
