@@ -54,72 +54,60 @@ class PreFetch(object):
                 #query_results = local_songs.GetResults(query_string, 1)
                 query_results = local_songs.DbFuncs().GetResultsArray(query_string, 1, True)
                 if len(query_results) == 1:
-                    song_id = str(query_results[0][4])
+                    song_id = query_results[0][4]
                 #check if file exists
                 if os.path.isfile(song_id):
                     pass
                 else:
                     temp_dir = system_files.GetDirectories(self).TempDirectory()
                     file_name_plain = artist + '-' + track + '.mp3'
-                    # clean cache dir
-                    file_cache.CheckCache(temp_dir)
+                    # don't clean cache dir, might try to delete the currently playing song
+                    #file_cache.CheckCache(temp_dir)
                     # check if file previously cached
                     cached_file = file_cache.CreateCachedFilename(temp_dir, file_name_plain)
                     cached_file_name = cached_file[0]
                     if cached_file[1] == False:
                         # download this file
-                        return (artist, track)
-                
-"""                
-                        query_results = tinysong.Tsong().get_search_results(query_string, 32)
-                        split_array = query_results[0].split('; ')
-                        if len(split_array) >= 2:                
-                            # song id is at [1] - 4,2,6,1
-                            song_id = split_array[1]
-                            # let's check for album and update that too
-                            if (album =='') & (split_array[6] != ''):
-                                album = split_array[6]
-                                self.parent.lc_playlist.SetStringItem(playlist_number, 2, album)
-                            #print artist
-                            #print split_array[4]
-                            
-                            # check for song match
-                            if track.upper() != split_array[2].upper():
-                                #cylce through results to see if we can get and exact match
-                                #otherwise use the first result
-                                found_it = False
-                                for x in range(1, len(query_results) - 1):
-                                    y = query_results[x].split('; ')
-                                    #print y
-                                    if (y[2].upper() == track.upper()) & (found_it != True):
-                                        song_id = y[1]
-                                        self.parent.lc_playlist.SetStringItem(playlist_number, 3, song_id)
-                                        self.parent.SavePlaylist(self.parent.main_playlist_location)
-                                        found_it = True                           
-                            
-                            # check for artist match
-                            if artist.upper() != split_array[4].upper():
-                                # cycle through till will hit the right artist
-                                found_it = False
-                                for x in range(1, len(query_results) - 1):
-                                    y = query_results[x].split('; ')
-                                    #print y
-                                    if (y[4].upper() == artist.upper()) & (found_it != True):
-                                        song_id = y[1]
-                                        self.parent.lc_playlist.SetStringItem(playlist_number, 3, song_id)
-                                        self.parent.SavePlaylist(self.parent.main_playlist_location)
-                                        found_it = True
-                                if found_it == False:
-                                    self.parent.lc_playlist.SetItemBackgroundColour(playlist_number, lolight)                    
-                                    # don't scrobb the wrong song
-                                    self.parent.scrobbed_track = 1
-                                    self.parent.lc_playlist.SetStringItem(playlist_number, 3, song_id)
-                            #update playlist
-                            else:
-                                self.parent.lc_playlist.SetStringItem(playlist_number, 3, song_id)
-                                self.parent.SavePlaylist(self.parent.main_playlist_location)
-                        else:
-                            # we fucked
-                            #print "no search results -- fucked"
-                            pass
-"""
+                        return (artist, track, cached_file_name)
+
+    def GetSongId(self, artist, track):
+    # use tinysong to find the song id
+    # THIS SHOULD ALL BE SOMEWHERE ELSE, IT'S DUPLICATING STUFF IN gw.py
+            
+        query_results = tinysong.Tsong().get_search_results(artist + ' ' + track, 32)
+        split_array = query_results[0].split('; ')
+        song_id = None
+        
+        if len(split_array) >= 2:                
+            # song id is at [1] - 4,2,6,1
+            song_id = split_array[1]
+            
+            # check for song match
+            song_id2 = None
+            if track.upper() != split_array[2].upper():
+                #cylce through results to see if we can get and exact match
+                #otherwise use the first result
+                found_it = False
+                for x in range(1, len(query_results) - 1):
+                    y = query_results[x].split('; ')
+                    if (y[2].upper() == track.upper()) & (found_it != True):
+                        song_id2 = y[1]
+                        found_it = True
+                        break                           
+            
+            # check for artist match, if there's not a song match
+            if (artist.upper() != split_array[4].upper()) & (song_id2 == None):
+                # cycle through till will hit the right artist
+                found_it = False
+                for x in range(1, len(query_results) - 1):
+                    y = query_results[x].split('; ')
+                    if (y[4].upper() == artist.upper()) & (found_it != True):
+                        song_id = y[1]
+                        found_it = True
+                        break
+            else:
+            # we found the same song title match, lets use that
+                if song_id2 != None:
+                    song_id = song_id2
+            
+        return song_id
