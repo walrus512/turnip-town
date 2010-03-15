@@ -30,7 +30,11 @@ def CreateCachedFilename(cache_path, file_string):
     """ Checks if file exists, returns new file name if it doesn't. """
     
     # lets make file names as hex strings for something to do
-    hex_file_name = hashlib.md5(file_string).hexdigest()
+    
+    charset = 'utf-8'
+    ufile_string = file_string.encode(charset)
+    
+    hex_file_name = hashlib.md5(ufile_string).hexdigest()
     full_file_path = cache_path.replace("\\", os.sep) + os.sep + hex_file_name + '.mp3'
     if os.path.isfile(full_file_path):
         return (full_file_path, True)
