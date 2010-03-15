@@ -29,6 +29,7 @@ from main_utils import system_files
 
 import sys
 SYSLOC = os.getcwd()
+CHARSET = 'utf-8'
 
 #queries
 
@@ -593,10 +594,10 @@ class VirtualList(wx.ListCtrl):
             c.execute(tq)
             h = c.fetchall()
             for x in h:
-                ritem = x[column]
+                ritem = x[column]                
                 #check for ''
-                if len(str(x[column])) == 0:
-                    ritem = ' '                
+                if (ritem == None) or (ritem == ''):
+                    ritem = ' '
             c.close()
         else:            
             ritem = '1'
