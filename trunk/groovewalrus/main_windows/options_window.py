@@ -42,7 +42,8 @@ OPTIONS_ARR = [ 'last_password',
                 'record_dir',
                 'tray',
                 'autosave',
-                'scrobble'
+                'scrobble',
+                'prefetch'
                 ]
 
 # ===================================================================
@@ -82,6 +83,8 @@ class Options(object):
                 self.parent.cb_options_autosave.SetValue(int(options_dict['autosave']))
             if options_dict.has_key('scrobble'):
                 self.parent.cb_options_scrobble.SetValue(int(options_dict['scrobble']))
+            if options_dict.has_key('prefetch'):
+                self.parent.cb_options_prefetch.SetValue(int(options_dict['prefetch']))
             if options_dict.has_key('record_dir'):
                 if options_dict['record_dir'] != None:                    
                     self.parent.bu_options_record_dir.SetLabel(options_dict['record_dir'])
@@ -118,6 +121,7 @@ class Options(object):
         window_dict['tray'] = str(int(self.parent.cb_options_tray.GetValue()))
         window_dict['autosave'] = str(int(self.parent.cb_options_autosave.GetValue()))
         window_dict['scrobble'] = str(int(self.parent.cb_options_scrobble.GetValue()))
+        window_dict['prefetch'] = str(int(self.parent.cb_options_prefetch.GetValue()))
         #window_dict['bitrate'] = str(self.parent.ch_options_bitrate.GetStringSelection())
         window_dict['record_dir'] = str(self.parent.bu_options_record_dir.GetLabel())
         
