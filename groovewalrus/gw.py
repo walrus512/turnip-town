@@ -75,7 +75,7 @@ from main_thirdp import grooveshark_old
 #from plugins.griddle import griddle
 #from plugins.ratings import ratings
 
-PROGRAM_VERSION = "0.207"
+PROGRAM_VERSION = "0.208"
 PROGRAM_NAME = "GrooveWalrus"
 PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
 PLAY_SONG_ALTERNATE_URL ="http://listen.grooveshark.com/main.swf?hostname=cowbell.grooveshark.com&p=1&songID="
@@ -308,6 +308,7 @@ class MainPanel(wx.Panel):
         self.sc_options_song_minutes = xrc.XRCCTRL(self, 'm_sc_options_song_minutes')
         self.rx_options_scrobble_port = xrc.XRCCTRL(self, 'm_rx_options_scrobble_port')
         self.cb_options_scrobble = xrc.XRCCTRL(self, 'm_cb_options_scrobble')
+        self.cb_options_prefetch = xrc.XRCCTRL(self, 'm_cb_options_prefetch')
         self.cb_options_scrobble_album = xrc.XRCCTRL(self, 'm_cb_options_scrobble_album')
         self.cb_options_tray = xrc.XRCCTRL(self, 'm_cb_options_tray')
         self.cb_options_autosave = xrc.XRCCTRL(self, 'm_cb_options_autosave')
@@ -527,6 +528,7 @@ class MainPanel(wx.Panel):
         self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_alternate'))
         self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_scrobble_album'))
         self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_scrobble'))
+        self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_prefetch'))
         self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_noid'))
         self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_tray'))
         self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_autosave'))
@@ -931,6 +933,8 @@ class MainPanel(wx.Panel):
                         self.song_scrobb.scrobble(self.partist, self.ptrack, time_started, 'P', 'L', self.current_play_time, s_album, "", "", port)
                         #pylast.BadSession:
                         
+            if self.cb_options_prefetch.GetValue() == False:
+                self.prefetch = False
             if (float(self.time_count) / float(self.current_play_time) > .5) & (self.prefetch == True):
                 #let's fetch the next track if possible
                 self.prefetch = False                
@@ -1416,10 +1420,11 @@ class MainPanel(wx.Panel):
         
         # throw together a url      
         url = PLAY_SONG_URL + song_id
-        if self.cb_options_alternate.GetValue():
+        ###if self.cb_options_alternate.GetValue():
+        ### disabled, no real need for this, i think?
             #use the main page instead of the widget
             # http://listen.grooveshark.com/#/song/One/21880276            
-            url = PLAY_SONG_ALTERNATE_URL + song_id
+            ###url = PLAY_SONG_ALTERNATE_URL + song_id
         #print url    
         
         #get song time
@@ -3337,7 +3342,7 @@ class FileThread(Thread):
             if (record_dir == None) | (record_dir == ''):
                 record_dir = system_files.GetDirectories(self.parent).Mp3DataDirectory()
                 self.parent.bu_options_record_dir.SetLabel(record_dir)            
-            complete_filename = system_files.GetDirectories(self.parent).CopyFile(self.temp_file, record_dir, self.parent.partist + '-' + self.parent.ptrack + '.mp3')
+            complete_filename = system_files.GetDirectories(self.parent).CopyFile(self.temp_file, record_dir, self.artist + '-' + self.track + '.mp3')
             # add file to database
             if complete_filename != None:
                 #print complete_filename
@@ -3347,8 +3352,6 @@ class FileThread(Thread):
                 # ASSUME that it's the current selection
                 val = self.parent.lc_playlist.GetFirstSelected()
                 self.parent.lc_playlist.SetStringItem(val, 3, '')
-                
-                
                 
             
 # ####################################
