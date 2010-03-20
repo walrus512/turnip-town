@@ -2089,6 +2089,15 @@
 																							<checked>0</checked>
 																						</object>
 																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALL</flag>
+																						<border>7</border>
+																						<object class="wxCheckBox" name="m_cb_options_prefetch">
+																							<label>Pre-fetch songs (loads next song while current song is playing).</label>
+																							<checked>1</checked>
+																						</object>
+																					</object>
 																				</object>
 																			</object>
 																		</object>
