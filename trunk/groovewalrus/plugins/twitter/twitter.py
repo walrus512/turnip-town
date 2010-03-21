@@ -23,20 +23,29 @@ import urllib2
 
 import wx
 import wx.xrc as xrc
-from main_utils.read_write_xml import xml_utils
 import sys, os
+import re
+
+from main_utils.read_write_xml import xml_utils
+from main_utils import system_files
+from main_utils import default_app_open
+
+import api
 
 #SYSLOC = os.getcwd()
 TWITTER_UPDATE = 'http://twitter.com/statuses/update.xml'
-TWITTER_SETTINGS = os.path.join(os.getcwd(), 'plugins','twitter') + os.sep + "settings_twitter.xml"
+#TWITTER_SETTINGS = os.path.join(os.getcwd(), 'plugins','twitter') + os.sep + "settings_twitter.xml"
 TWITTER = os.path.join(os.getcwd(), 'plugins','twitter') + os.sep
 RESFILE = os.path.join(os.getcwd(), 'plugins','twitter') + os.sep + "layout_twitter.xml"
 
 
 class MainPanel(wx.Dialog):
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, -1, "Twitter", size=(475,310), style=wx.FRAME_SHAPED) #STAY_ON_TOP)        
+        wx.Dialog.__init__(self, parent, -1, "Twitter", size=(475,510), style=wx.FRAME_SHAPED) #STAY_ON_TOP)        
         self.parent = parent
+        
+        self.TWITTER_SETTINGS = system_files.GetDirectories(self).MakeDataDirectory('plugins') + os.sep
+        
         
         # XML Resources can be loaded from a file like this:
         res = xrc.XmlResource(RESFILE)
@@ -53,10 +62,20 @@ class MainPanel(wx.Dialog):
         #header for dragging and moving
         self.st_twitter_header = xrc.XRCCTRL(self, 'm_st_twitter_header')
         self.bm_twitter_close = xrc.XRCCTRL(self, 'm_bm_twitter_close')
+        self.hw_twitter_home = xrc.XRCCTRL(self, 'm_hw_twitter_home')
+        self.hw_twitter_at = xrc.XRCCTRL(self, 'm_hw_twitter_at')
 
         # bindings ----------------
         self.Bind(wx.EVT_BUTTON, self.SaveOptions, id=xrc.XRCID('m_bu_twitter_save'))
         self.Bind(wx.EVT_BUTTON, self.Twat, id=xrc.XRCID('m_bu_twitter_tweet'))
+        
+        self.Bind(wx.EVT_BUTTON, self.GetHomeTimeline, id=xrc.XRCID('m_bu_twitter_update_home'))
+        self.Bind(wx.EVT_BUTTON, self.GetMentions, id=xrc.XRCID('m_bu_twitter_update_at'))
+        self.Bind(wx.EVT_BUTTON, self.CopyReplace, id=xrc.XRCID('m_bu_twitter_update_default'))
+        
+        self.hw_twitter_home.Bind(wx.html.EVT_HTML_LINK_CLICKED, self.OnWebClick)
+        self.hw_twitter_at.Bind(wx.html.EVT_HTML_LINK_CLICKED, self.OnWebClick)
+        
         self.Bind(wx.EVT_TEXT, self.OnChars, self.tc_twitter_text)
         self.bm_twitter_close.Bind(wx.EVT_LEFT_UP, self.CloseMe)
         
@@ -67,7 +86,8 @@ class MainPanel(wx.Dialog):
         self.st_twitter_header.Bind(wx.EVT_LEFT_DOWN, self.OnMouseLeftDown)
         self.st_twitter_header.Bind(wx.EVT_MOTION, self.OnMouseMotion)
         self.st_twitter_header.Bind(wx.EVT_LEFT_UP, self.OnMouseLeftUp)
-        self.st_twitter_header.Bind(wx.EVT_RIGHT_UP, self.OnRightUp)
+        self.st_twitter_header.Bind(wx.EVT_RIGHT_UP, self.OnRightUp)       
+
             
         #self.bu_update_restart.Enable(False)    
         # set layout --------------
@@ -75,16 +95,77 @@ class MainPanel(wx.Dialog):
         sizer.Add(panel, 1, wx.EXPAND|wx.ALL, 5)
         self.SetSizer(sizer)
         self.SetAutoLayout(True)
-        self.LoadSetings()
+        self.LoadSettings()
         self.CopyReplace()
         self.OnChars()
+        xrc.XRCCTRL(self, 'm_notebook1').SetPageText(1, '@' + self.tc_twitter_username.GetValue())
 
+    def GetHomeTimeline(self, event=None):
+        username = self.tc_twitter_username.GetValue()
+        password = self.tc_twitter_password.GetValue()
+        if (username !='') & (password !=''):
+            twitter = api.Twitter(username, password)
+            # Get the public timeline
+            x = twitter.statuses.home_timeline()
+            html = ''
+            for y in x:
+                #<B><FONT COLOR="#FFFFFF"><FONT SIZE=+1>N</FONT></FONT></B>
+                html = html + '<p><b><a href="' + y['user']['screen_name'] + '"><FONT COLOR="#336600">' + y['user']['screen_name'] + '</FONT></a></b> '
+                ttext = self.LinkReplace(y['text'])
+                html = html + '' + ttext + '</FONT><br>'            
+                html = html + '<FONT SIZE=-2>' + y['created_at'] + '</FONT></p>'
+                
+            self.hw_twitter_home.SetPage(html)
+        else:
+            self.ErrorMessage()
+            
+    def GetMentions(self, event=None):
+        username = self.tc_twitter_username.GetValue()
+        password = self.tc_twitter_password.GetValue()
+        if (username !='') & (password !=''):
+            twitter = api.Twitter(username, password)
+            # Get the public timeline
+            x = twitter.statuses.mentions()
+            html = ''
+            for y in x:
+                html = html + '<p><b><a href="' + y['user']['screen_name'] + '"><FONT COLOR="#336600">' + y['user']['screen_name'] + '</FONT></a></b> '
+                ttext = self.LinkReplace(y['text'])
+                html = html + '' + ttext + '</FONT><br>'            
+                html = html + '<FONT SIZE=-2>' + y['created_at'] + '</FONT></p>'
+                
+            self.hw_twitter_at.SetPage(html)
+        else:
+            self.ErrorMessage()
+            
+    def LinkReplace(self, ttext):
+        r1 = r"(\b(http|https)://([-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]))"
+        ttext = re.sub(r1,r'<a href="\1">\1</a>',ttext)
+        return ttext
+            
+    def OnWebClick(self, event):
+        mouse_type_id = event.GetLinkInfo().GetEvent().GetEventType()
+        
+        #check if it's a web link
+        if event.GetLinkInfo().GetHref()[:4] == 'http':        
+            default_app_open.dopen(event.GetLinkInfo().GetHref())
+        else:
+            if wx.EVT_LEFT_UP.typeId == mouse_type_id:
+                self.Reply(event.GetLinkInfo().GetHref())
+            else:
+                #right click prepends existing data to reply
+                self.Reply(event.GetLinkInfo().GetHref(), True)
+            
+    def ErrorMessage(self):
+            dlg = wx.MessageDialog(self, "Username/password not entered", 'Alert', wx.OK | wx.ICON_WARNING)
+            if (dlg.ShowModal() == wx.ID_OK):
+                dlg.Destroy()
+            
     def CloseMe(self, event=None):
         self.Destroy()
         
-    def LoadSetings(self):
+    def LoadSettings(self):
         #load the setting from settings_twitter.xml if it exists
-        settings_dict = xml_utils().get_generic_settings(TWITTER_SETTINGS)
+        settings_dict = xml_utils().get_generic_settings(self.TWITTER_SETTINGS + "settings_twitter.xml")
         #print settings_dict
         if len(settings_dict) > 1:
             username=''
@@ -108,7 +189,7 @@ class MainPanel(wx.Dialog):
         window_dict['username'] = self.tc_twitter_username.GetValue()
         window_dict['default_text'] = self.tc_twitter_default.GetValue()
         
-        xml_utils().save_generic_settings(TWITTER, "settings_twitter.xml", window_dict)
+        xml_utils().save_generic_settings(self.TWITTER_SETTINGS, "settings_twitter.xml", window_dict)
 
             
 # --------------------------------------------------------- 
@@ -138,11 +219,19 @@ class MainPanel(wx.Dialog):
         #self..Destroy()
         
 # --------------------------------------------------------- 
-    def CopyReplace(self):        
+    def CopyReplace(self, event=None):        
         tt = self.tc_twitter_default.GetValue()
         tt = tt.replace('[artist]', self.parent.partist)
         tt = tt.replace('[song]', self.parent.ptrack)
         self.tc_twitter_text.SetValue(tt)
+        
+    def Reply(self, reply_to, prepend=False):
+        if prepend == True:
+            #prepend the reply name
+            self.tc_twitter_text.SetValue('@'+reply_to+' ' + self.tc_twitter_text.GetValue())
+        else:
+            #clear the field first
+            self.tc_twitter_text.SetValue('@'+reply_to+' ')
         
     def OnChars(self, event=None):
         #print 'chars'
@@ -198,9 +287,12 @@ class MainPanel(wx.Dialog):
             
             #pagehandle = urllib2.urlopen(theurl)
             # authentication is now handled automatically for us
-            self.CloseMe()
+            self.GetHomeTimeline()
+            xrc.XRCCTRL(self, 'm_notebook1').SetPage(0)
+        else:
+            self.ErrorMessage()
             
-            
+           
 # ===================================================================            
 
               
