@@ -419,7 +419,7 @@ class MainPanel(wx.Dialog):
 #SYSLOC = os.getcwd()
 
 #FILEDB = SYSLOC + '\\gravydb.sq3'
-FILEDB = system_files.GetDirectories(None).DataDirectory() + os.sep + 'gravydb.sq3'
+FILEDB = system_files.GetDirectories(None).DatabaseLocation()
      
 #2track id
 #3tag id

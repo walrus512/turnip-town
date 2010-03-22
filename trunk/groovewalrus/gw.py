@@ -75,7 +75,7 @@ from main_thirdp import grooveshark_old
 #from plugins.griddle import griddle
 #from plugins.ratings import ratings
 
-PROGRAM_VERSION = "0.208"
+PROGRAM_VERSION = "0.209"
 PROGRAM_NAME = "GrooveWalrus"
 PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
 PLAY_SONG_ALTERNATE_URL ="http://listen.grooveshark.com/main.swf?hostname=cowbell.grooveshark.com&p=1&songID="
@@ -190,6 +190,7 @@ class MainPanel(wx.Panel):
         self.playlist_save_location = system_files.GetDirectories(self).MakeDataDirectory('playlists') + os.sep
         self.main_playlist_location = system_files.GetDirectories(self).DataDirectory() + os.sep + "playlist.xspf"
         self.main_playlist_location_bak = system_files.GetDirectories(self).DataDirectory() + os.sep + "playlist.bak"
+        ### should remove these:
         self.faves_playlist_location = system_files.GetDirectories(self).DataDirectory() + os.sep + "faves.xspf"
         self.faves_playlist_location_bak = system_files.GetDirectories(self).DataDirectory() + os.sep + "faves.bak"
         
@@ -702,6 +703,7 @@ class MainPanel(wx.Panel):
         ctrlrID = 802
         ctrlbID = 803
         ctrl9ID = 910
+        ctrlfID = 804
         
         
         self.aTable_values = [
@@ -720,7 +722,8 @@ class MainPanel(wx.Panel):
                                    (wx.ACCEL_CTRL, ord('D'), ctrldID),
                                    (wx.ACCEL_CTRL, ord('R'), ctrlrID),
                                    (wx.ACCEL_CTRL, ord('B'), ctrlbID),
-                                   (wx.ACCEL_CTRL, ord('9'), ctrl9ID)
+                                   (wx.ACCEL_CTRL, ord('9'), ctrl9ID),
+                                   (wx.ACCEL_CTRL, ord('F'), ctrlfID)
                                            ]
         aTable = wx.AcceleratorTable(self.aTable_values)
         self.SetAcceleratorTable(aTable)
@@ -744,6 +747,7 @@ class MainPanel(wx.Panel):
         wx.EVT_MENU(self, ctrldID, self.OnClearPlaylistClick)
         wx.EVT_MENU(self, ctrlrID, self.ResetPosition)
         wx.EVT_MENU(self, ctrlbID, self.RandomBackgroundColour)
+        wx.EVT_MENU(self, ctrlfID, self.OnSearchClick)
         
         wx.EVT_MENU(self, ctrl9ID, self.ClearAlbumValues)
         
@@ -1098,6 +1102,7 @@ class MainPanel(wx.Panel):
         #pass
 
     def OnExit(self, event):
+        self.SavePlaylist(self.main_playlist_location)
         self.SaveOptions(event)
         self.parent.Destroy()
         
@@ -2718,7 +2723,7 @@ class MainPanel(wx.Panel):
     def ReadFaves(self, query=None):
         self.lc_faves.DeleteAllItems()
         #populate favourites listctrl with songs that are rated 4 stars
-        FILEDB = system_files.GetDirectories(None).DataDirectory() + os.sep + 'gravydb.sq3'
+        FILEDB = system_files.GetDirectories(None).DatabaseLocation()
         conn = sqlite3.connect(FILEDB)
         c = conn.cursor()
         if query == None:

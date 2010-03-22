@@ -28,7 +28,7 @@ import sqlite3
 #SYSLOC = os.getcwd()
 RESFILE = os.path.join(os.getcwd(), 'plugins','played') + os.sep + "layout_played.xml"
 MAIN_PLAYLIST = system_files.GetDirectories(None).DataDirectory() + os.sep + "playlist.xspf"
-FILEDB = system_files.GetDirectories(None).DataDirectory() + os.sep + 'gravydb.sq3'
+FILEDB = system_files.GetDirectories(None).DatabaseLocation()
 
 class MainPanel(wx.Dialog):
     def __init__(self, parent):

@@ -38,7 +38,7 @@ class SongDBWindow(wx.Dialog):
         wx.Dialog.__init__(self, parent, -1, "Song Collection Locations", size=(600, 400), pos=(10,10))#, style=wx.FRAME_SHAPED) #STAY_ON_TOP)#wx.FRAME_SHAPED)
         self.parent = parent
         
-        self.FILEDB = system_files.GetDirectories(None).DataDirectory() + os.sep + 'gravydb.sq3'
+        self.FILEDB = system_files.GetDirectories(None).DatabaseLocation()
         
         # XML Resources can be loaded from a file like this:
         res = xrc.XmlResource(SONGDB_RESFILE)
