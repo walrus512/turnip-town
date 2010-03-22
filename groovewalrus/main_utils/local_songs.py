@@ -29,7 +29,6 @@ from main_utils import system_files
 
 import sys
 SYSLOC = os.getcwd()
-CHARSET = 'utf-8'
 
 #queries
 
@@ -39,10 +38,12 @@ CHARSET = 'utf-8'
 # update based on folder numbers
 class DbFuncs(object):
     def __init__(self):
-        self.FILEDB = system_files.GetDirectories(None).DataDirectory() + os.sep + 'gravydb.sq3'
+        self.FILEDB = system_files.GetDirectories(None).DatabaseLocation()
        
-    def create_tables(self):        
+    def create_tables(self):
+
         conn = sqlite3.connect(self.FILEDB)
+
         c = conn.cursor()        
         tabledict = {"m_files": "CREATE TABLE IF NOT EXISTS m_files (music_id INTEGER PRIMARY KEY, folder_path TEXT, folder_name TEXT, file_name TEXT)",
          "m_tracks": "CREATE TABLE IF NOT EXISTS m_tracks (track_id INTEGER PRIMARY KEY, grooveshark_id INTEGER, music_id INTEGER, track_time INTEGER, tag_id INTEGER, artist TEXT, song TEXT, album TEXT, album_art_file TEXT)",
@@ -700,8 +701,6 @@ def GetMp3Album(file_name):
     return c.tag.getAlbum()
     
  #---------------------------------------------------------------------------   
-
-    
     
 '''   
 m_files
