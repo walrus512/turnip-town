@@ -194,7 +194,7 @@ class VirtualList(wx.ListCtrl):
         p = wx.PreListCtrl()
         # the Create step is done by XRC.
         self.PostCreate(p)
-        self.FILEDB = system_files.GetDirectories(None).DataDirectory() + os.sep + 'gravydb.sq3'
+        self.FILEDB = system_files.GetDirectories(None).DatabaseLocation()
     
     def OnGetItemText(self, item, col):
         ritem = self.GetRow(item, col)

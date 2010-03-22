@@ -50,6 +50,11 @@ class GetDirectories(object):
         return u_dir
         #return self.sp.GetUserDataDir()
         
+    def DatabaseLocation(self):
+        #sqlite requires utf-8
+        dbl = unicode(self.DataDirectory() + os.sep + 'gravydb.sq3').encode('utf-8')
+        return dbl
+        
     def Mp3DataDirectory(self):
         p_name = string_wrap(self.sp.GetUserDataDir() + self.Seperator() + 'mp3s')
         if os.path.isdir(p_name) == False:
