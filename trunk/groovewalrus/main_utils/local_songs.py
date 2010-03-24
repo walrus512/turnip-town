@@ -52,7 +52,8 @@ class DbFuncs(object):
          "m_playcount": "CREATE TABLE IF NOT EXISTS m_playcount (playcount_id INTEGER PRIMARY KEY, track_id INTEGER, local_playcount INTEGER, last_play_date DATETIME)",
          "m_rating": "CREATE TABLE IF NOT EXISTS m_rating (rating_id INTEGER PRIMARY KEY, track_id INTEGER, rating_type_id INTEGER)",
          "m_settings": "CREATE TABLE IF NOT EXISTS m_settings (setting_id INTEGER PRIMARY KEY, setting_name TEXT, setting_value TEXT)",
-         "m_folders": "CREATE TABLE IF NOT EXISTS m_folders (folder_id INTEGER PRIMARY KEY, folder_name TEXT, last_update DATE_TIME, primary_folder CHAR)"
+         "m_folders": "CREATE TABLE IF NOT EXISTS m_folders (folder_id INTEGER PRIMARY KEY, folder_name TEXT, last_update DATE_TIME, primary_folder CHAR)",
+         "m_feeds": "CREATE TABLE IF NOT EXISTS m_feeds (feed_id INTEGER PRIMARY KEY, feed_name TEXT, feed_url TEXT, last_update DATE_TIME)"
          }
     
         # Create table
@@ -363,6 +364,36 @@ class DbFuncs(object):
             conn.commit()
         c.close()
         
+    def InsertFeedData(self, p_feed_url):
+        # add feed url
+        #check for existing
+        #update record or creat new        
+        conn = sqlite3.connect(self.FILEDB)
+        c = conn.cursor()        
+        t = 'SELECT feed_url FROM m_feeds WHERE feed_url="' + str(p_feed_url) + '"'
+        c.execute(t)
+        h = c.fetchall()
+        #print h
+        if len(h) >= 1:                        
+            #c.execute('UPDATE m_feed SET rating_type_id= ' + str(p_rating_id) + ' WHERE track_id =' + str(p_track_id))
+            #conn.commit()
+            pass
+        else:
+            c.execute('INSERT INTO m_feeds (feed_url) VALUES ("' + str(p_feed_url) +'")')
+            conn.commit()
+        c.close()
+        
+    def RemoveFeedRow(self, p_feed_url):
+        # get row count
+        
+        if len(p_feed_url) > 0:
+            conn = sqlite3.connect(self.FILEDB)
+            c = conn.cursor()
+            #t = "DELETE FROM m_files WHERE music_id = " + str(music_id) # + " LIMIT 1"   
+            #print t
+            c.execute('DELETE FROM m_feeds WHERE feed_url=?', (p_feed_url, ))
+            conn.commit()
+            c.close()
                     
 #if (os.path.isfile(self.FILEDB)):
 #    pass
