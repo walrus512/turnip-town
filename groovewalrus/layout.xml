@@ -1483,94 +1483,245 @@
 												<orient>wxHORIZONTAL</orient>
 												<object class="sizeritem">
 													<option>1</option>
-													<flag>wxALL|wxEXPAND</flag>
+													<flag>wxEXPAND</flag>
 													<border>5</border>
-													<object class="wxTextCtrl" name="m_tc_sift_rawlist">
-														<style>wxTE_DONTWRAP|wxTE_MULTILINE</style>
-														<value></value>
-														<maxlength>0</maxlength>
+													<object class="wxBoxSizer">
+														<orient>wxVERTICAL</orient>
+														<object class="sizeritem">
+															<option>1</option>
+															<flag>wxEXPAND | wxALL</flag>
+															<border>5</border>
+															<object class="wxNotebook" name="m_nb_sift_rss">
+																<style>wxNB_FIXEDWIDTH</style>
+																<object class="notebookpage">
+																	<label>Text PasteBox</label>
+																	<selected>1</selected>
+																	<object class="wxPanel" name="m_panel2">
+																		<style>wxTAB_TRAVERSAL</style>
+																		<object class="wxBoxSizer">
+																			<orient>wxVERTICAL</orient>
+																			<object class="sizeritem">
+																				<option>1</option>
+																				<flag>wxALL|wxEXPAND</flag>
+																				<border>5</border>
+																				<object class="wxTextCtrl" name="m_tc_sift_rawlist">
+																					<style>wxTE_DONTWRAP|wxTE_MULTILINE</style>
+																					<value></value>
+																					<maxlength>0</maxlength>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxEXPAND</flag>
+																				<border>5</border>
+																				<object class="wxBoxSizer">
+																					<orient>wxHORIZONTAL</orient>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																						<border>5</border>
+																						<object class="wxStaticText" name="m_staticText18">
+																							<label>Pre:</label>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
+																						<border>5</border>
+																						<object class="wxTextCtrl" name="m_tc_sift_pre">
+																							<size>70,-1</size>
+																							<value></value>
+																							<maxlength>0</maxlength>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																						<border>5</border>
+																						<object class="wxChoice" name="m_ch_sift_choice">
+																							<selection>0</selection>
+																							<content>
+																								<item>artist</item>
+																								<item>song</item>
+																							</content>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																						<border>5</border>
+																						<object class="wxStaticText" name="m_staticText191">
+																							<label>Sep:</label>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
+																						<border>5</border>
+																						<object class="wxTextCtrl" name="m_tc_sift_seperator">
+																							<size>70,-1</size>
+																							<value></value>
+																							<maxlength>0</maxlength>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																						<border>5</border>
+																						<object class="wxStaticText" name="m_staticText44">
+																							<label>Post:</label>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxTOP|wxBOTTOM|wxRIGHT</flag>
+																						<border>5</border>
+																						<object class="wxTextCtrl" name="m_tc_sift_post">
+																							<size>70,-1</size>
+																							<value></value>
+																							<maxlength>0</maxlength>
+																						</object>
+																					</object>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxEXPAND</flag>
+																				<border>5</border>
+																				<object class="wxBoxSizer">
+																					<orient>wxHORIZONTAL</orient>
+																					<object class="sizeritem">
+																						<option>1</option>
+																						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																						<border>5</border>
+																						<object class="wxButton" name="m_bu_sift_sift">
+																							<label>Sift List</label>
+																							<default>0</default>
+																						</object>
+																					</object>
+																				</object>
+																			</object>
+																		</object>
+																	</object>
+																</object>
+																<object class="notebookpage">
+																	<label>RSS Feeds</label>
+																	<selected>0</selected>
+																	<object class="wxPanel" name="m_panel3">
+																		<style>wxTAB_TRAVERSAL</style>
+																		<object class="wxBoxSizer">
+																			<orient>wxVERTICAL</orient>
+																			<object class="sizeritem">
+																				<option>1</option>
+																				<flag>wxEXPAND</flag>
+																				<border>5</border>
+																				<object class="wxBoxSizer">
+																					<orient>wxHORIZONTAL</orient>
+																					<object class="sizeritem">
+																						<option>1</option>
+																						<flag>wxALL|wxEXPAND</flag>
+																						<border>5</border>
+																						<object class="wxListCtrl" name="m_lc_sift_rss">
+																							<style>wxLC_REPORT|wxLC_SINGLE_SEL</style>
+																						</object>
+																					</object>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxEXPAND</flag>
+																				<border>5</border>
+																				<object class="wxBoxSizer">
+																					<orient>wxHORIZONTAL</orient>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																						<border>5</border>
+																						<object class="wxStaticText" name="m_staticText451">
+																							<label>Feed URL:</label>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>1</option>
+																						<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
+																						<border>5</border>
+																						<object class="wxTextCtrl" name="m_tc_sift_rss_url">
+																							<value></value>
+																							<maxlength>0</maxlength>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxTOP|wxBOTTOM|wxRIGHT</flag>
+																						<border>5</border>
+																						<object class="wxBitmapButton" name="m_bb_sift_url_clear">
+																							<style>wxBU_AUTODRAW</style>
+																							<tooltip>Clear Feed URL</tooltip>
+																							<bitmap>graphics/edit-clear.png</bitmap>
+																							<default>0</default>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																						<border>5</border>
+																						<object class="wxBitmapButton" name="m_bb_sift_rss_save">
+																							<style>wxBU_AUTODRAW</style>
+																							<tooltip>Save RSS Feed</tooltip>
+																							<bitmap>graphics/document-save.png</bitmap>
+																							<default>0</default>
+																						</object>
+																					</object>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxEXPAND</flag>
+																				<border>5</border>
+																				<object class="wxBoxSizer">
+																					<orient>wxHORIZONTAL</orient>
+																					<object class="sizeritem">
+																						<option>1</option>
+																						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																						<border>5</border>
+																						<object class="wxButton" name="m_bu_sift_rss">
+																							<label>Get RSS Feed</label>
+																							<default>0</default>
+																						</object>
+																					</object>
+																				</object>
+																			</object>
+																		</object>
+																	</object>
+																</object>
+															</object>
+														</object>
 													</object>
 												</object>
-												<object class="sizeritem">
-													<option>1</option>
-													<flag>wxALL|wxEXPAND</flag>
-													<border>5</border>
-													<object class="wxListCtrl" name="m_lc_sift">
-														<style>wxLC_REPORT</style>
-													</object>
-												</object>
-											</object>
-										</object>
-										<object class="sizeritem">
-											<option>0</option>
-											<flag>wxEXPAND</flag>
-											<border>5</border>
-											<object class="wxBoxSizer">
-												<orient>wxHORIZONTAL</orient>
 												<object class="sizeritem">
 													<option>0</option>
-													<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+													<flag>wxEXPAND</flag>
 													<border>5</border>
-													<object class="wxStaticText" name="m_staticText18">
-														<label>Pre-split:</label>
-													</object>
-												</object>
-												<object class="sizeritem">
-													<option>1</option>
-													<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
-													<border>5</border>
-													<object class="wxTextCtrl" name="m_tc_sift_pre">
-														<size>50,-1</size>
-														<value></value>
-														<maxlength>0</maxlength>
-													</object>
-												</object>
-												<object class="sizeritem">
-													<option>0</option>
-													<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
-													<border>5</border>
-													<object class="wxChoice" name="m_ch_sift_choice">
-														<selection>0</selection>
-														<content>
-															<item>artist</item>
-															<item>song</item>
-														</content>
-													</object>
-												</object>
-												<object class="sizeritem">
-													<option>0</option>
-													<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
-													<border>5</border>
-													<object class="wxStaticText" name="m_staticText191">
-														<label>Separator:</label>
-													</object>
-												</object>
-												<object class="sizeritem">
-													<option>1</option>
-													<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
-													<border>5</border>
-													<object class="wxTextCtrl" name="m_tc_sift_seperator">
-														<size>50,-1</size>
-														<value></value>
-														<maxlength>0</maxlength>
-													</object>
-												</object>
-												<object class="sizeritem">
-													<option>0</option>
-													<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
-													<border>5</border>
-													<object class="wxButton" name="m_bu_sift_sift">
-														<label>Sift!</label>
-														<default>0</default>
-													</object>
-												</object>
-												<object class="sizeritem">
-													<option>1</option>
-													<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
-													<border>5</border>
-													<object class="wxButton" name="m_bu_sift_plize">
-														<label>Playlistize!</label>
-														<default>0</default>
+													<object class="wxBoxSizer">
+														<orient>wxVERTICAL</orient>
+														<object class="sizeritem">
+															<option>1</option>
+															<flag>wxALL|wxEXPAND</flag>
+															<border>5</border>
+															<object class="wxListCtrl" name="m_lc_sift">
+																<style>wxLC_REPORT</style>
+																<size>200,-1</size>
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND</flag>
+															<border>5</border>
+															<object class="wxButton" name="m_bu_sift_plize">
+																<label>Playlistize!</label>
+																<default>0</default>
+															</object>
+														</object>
 													</object>
 												</object>
 											</object>
@@ -2084,15 +2235,6 @@
 																						<option>0</option>
 																						<flag>wxALL</flag>
 																						<border>7</border>
-																						<object class="wxCheckBox" name="m_cb_options_alternate">
-																							<label>Use alternate GrooveShark source.</label>
-																							<checked>0</checked>
-																						</object>
-																					</object>
-																					<object class="sizeritem">
-																						<option>0</option>
-																						<flag>wxALL</flag>
-																						<border>7</border>
 																						<object class="wxCheckBox" name="m_cb_options_prefetch">
 																							<label>Pre-fetch songs (loads next song while current song is playing).</label>
 																							<checked>1</checked>
@@ -2278,6 +2420,10 @@
 			</object>
 			<object class="wxMenu" name="m_menu5">
 				<label>_Help</label>
+				<object class="wxMenuItem" name="m_mi_gs_version">
+					<label>GrooveShark Version...</label>
+					<help></help>
+				</object>
 				<object class="wxMenuItem" name="m_mi_about">
 					<label>About...</label>
 					<help></help>
