@@ -30,7 +30,7 @@ import sys, os
 OPTIONS_ARR = [ 'last_password',
                 'last_user',
                 'list_clear',
-                'alternate_source',
+                #'alternate_source',
                 'search_noid',
                 'double_click',
                 'win_pos',
@@ -66,7 +66,7 @@ class Options(object):
             self.parent.tc_options_username.SetValue(user)        
             self.parent.GetParent().SetPosition(( int(options_dict['win_pos'].split(',')[0][1:]), int(options_dict['win_pos'].split(',')[1][:-1])  ))
             self.parent.cb_options_list_clear.SetValue(int(options_dict['list_clear']))            
-            self.parent.cb_options_alternate.SetValue(int(options_dict['alternate_source']))
+            #self.parent.cb_options_alternate.SetValue(int(options_dict['alternate_source']))
             if options_dict.has_key('search_noid'):
                 self.parent.cb_options_noid.SetValue(int(options_dict['search_noid']))
             #if options_dict.has_key('bitrate'):
@@ -111,7 +111,7 @@ class Options(object):
         window_dict['last_user'] = self.parent.tc_options_username.GetValue()
         #str(int( to convert true/fales to 1/0
         window_dict['list_clear'] = str(int(self.parent.cb_options_list_clear.GetValue()))
-        window_dict['alternate_source'] = str(int(self.parent.cb_options_alternate.GetValue()))
+        #window_dict['alternate_source'] = str(int(self.parent.cb_options_alternate.GetValue()))
         window_dict['search_noid'] = str(int(self.parent.cb_options_noid.GetValue()))
         window_dict['double_click'] = str(int(self.parent.rx_options_double_click.GetSelection()))
         window_dict['win_pos'] = str(self.parent.GetParent().GetPosition())
@@ -134,20 +134,20 @@ class Options(object):
         #set the scrobble menu item checkmark
         self.SetScrobbleMenuItem()
         
-        if (window_dict['alternate_source'] == '1'):
-            dlg = wx.MessageDialog(self.parent, 'Warning!\r\nUsing the alternate GrooveShark source may cause HUGE problems when using the GrooveShark website (ie. it will not work for you anymore).\r\nSave anyway?', 'Alert', wx.CANCEL | wx.OK | wx.ICON_WARNING)
-            if (dlg.ShowModal() == wx.ID_OK):
-                #save new settings        
-                xml_utils().save_generic_settings(self.save_location + os.sep + 'settings.xml', 'settings.xml', window_dict)
-                #print window_dict
-            else:
-                self.parent.cb_options_alternate.SetValue(0)
-            dlg.Destroy()
+        #if (window_dict['alternate_source'] == '1'):
+        #    dlg = wx.MessageDialog(self.parent, 'Warning!\r\nUsing the alternate GrooveShark source may cause HUGE problems when using the GrooveShark website (ie. it will not work for you anymore).\r\nSave anyway?', 'Alert', wx.CANCEL | wx.OK | wx.ICON_WARNING)
+        #    if (dlg.ShowModal() == wx.ID_OK):
+        #        #save new settings        
+        #        xml_utils().save_generic_settings(self.save_location + os.sep + 'settings.xml', 'settings.xml', window_dict)
+        #        #print window_dict
+        #    else:
+        #        self.parent.cb_options_alternate.SetValue(0)
+        #    dlg.Destroy()
             
-        else:
-            #save new settings        
-            xml_utils().save_generic_settings(self.save_location  + os.sep, 'settings.xml', window_dict)
-            #print window_dict 
+        #else:
+        #save new settings        
+        xml_utils().save_generic_settings(self.save_location  + os.sep, 'settings.xml', window_dict)
+        #print window_dict 
         
     def SetScrobbleMenuItem(self):
         if self.parent.cb_options_scrobble.IsChecked():
