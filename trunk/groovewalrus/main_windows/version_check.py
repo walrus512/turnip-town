@@ -45,7 +45,7 @@ class VersionCheck():
     def CheckVersion(self):
         tree =''
     	try:
-        	url_blob = urllib.urlopen(VERSION_URL)
+        	url_blob = urllib.urlopen(VERSION_URL + '?' + self.current_version)
         	tree = read_write_xml.xml_utils().read_xml_tree(url_blob)
        	except Exception, inst:
        	     print 'Exception: version check: ' + str(inst)
