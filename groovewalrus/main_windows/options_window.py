@@ -63,8 +63,17 @@ class Options(object):
             if user == None:
                 user =''
             self.parent.tc_options_password.SetValue(password)
-            self.parent.tc_options_username.SetValue(user)        
-            self.parent.GetParent().SetPosition(( int(options_dict['win_pos'].split(',')[0][1:]), int(options_dict['win_pos'].split(',')[1][:-1])  ))
+            self.parent.tc_options_username.SetValue(user)
+            
+            #screen position
+            xpos =  int(options_dict['win_pos'].split(',')[0][1:])
+            if (xpos > (wx.GetDisplaySize()[0] - 50)) | (xpos < 0):
+                xpos = 0
+            ypos = int(options_dict['win_pos'].split(',')[1][:-1])
+            if (ypos > (wx.GetDisplaySize()[1] - 50)) | (ypos < 0):
+                ypos = 20
+            self.parent.GetParent().SetPosition((xpos, ypos))            
+            
             self.parent.cb_options_list_clear.SetValue(int(options_dict['list_clear']))            
             #self.parent.cb_options_alternate.SetValue(int(options_dict['alternate_source']))
             if options_dict.has_key('search_noid'):
