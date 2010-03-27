@@ -288,7 +288,7 @@ class MainPanel(wx.Dialog):
             #pagehandle = urllib2.urlopen(theurl)
             # authentication is now handled automatically for us
             self.GetHomeTimeline()
-            xrc.XRCCTRL(self, 'm_notebook1').SetPage(0)
+            xrc.XRCCTRL(self, 'm_notebook1').SetSelection(0)
         else:
             self.ErrorMessage()
             
