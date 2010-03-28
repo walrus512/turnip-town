@@ -76,7 +76,7 @@ from main_thirdp import grooveshark_old
 #from plugins.griddle import griddle
 #from plugins.ratings import ratings
 
-PROGRAM_VERSION = "0.210"
+PROGRAM_VERSION = "0.211"
 PROGRAM_NAME = "GrooveWalrus"
 PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
 PLAY_SONG_ALTERNATE_URL ="http://listen.grooveshark.com/main.swf?hostname=cowbell.grooveshark.com&p=1&songID="
@@ -723,6 +723,7 @@ class MainPanel(wx.Panel):
         ctrlbID = 803
         ctrl9ID = 910
         ctrlfID = 804
+        ctrlmID = 805
         
         
         self.aTable_values = [
@@ -742,7 +743,8 @@ class MainPanel(wx.Panel):
                                    (wx.ACCEL_CTRL, ord('R'), ctrlrID),
                                    (wx.ACCEL_CTRL, ord('B'), ctrlbID),
                                    (wx.ACCEL_CTRL, ord('9'), ctrl9ID),
-                                   (wx.ACCEL_CTRL, ord('F'), ctrlfID)
+                                   (wx.ACCEL_CTRL, ord('F'), ctrlfID),
+                                   (wx.ACCEL_CTRL, ord('M'), ctrlmID)
                                            ]
         aTable = wx.AcceleratorTable(self.aTable_values)
         self.SetAcceleratorTable(aTable)
@@ -769,6 +771,7 @@ class MainPanel(wx.Panel):
         wx.EVT_MENU(self, ctrlfID, self.OnSearchClick)
         
         wx.EVT_MENU(self, ctrl9ID, self.ClearAlbumValues)
+        wx.EVT_MENU(self, ctrlmID, self.MiniMode)
         
         
         # menu items -----------
@@ -850,7 +853,7 @@ class MainPanel(wx.Panel):
         rand_col = random.randint(0, (len(colour_array) - 1))
         self.panel.SetBackgroundColour(colour_array[rand_col])
         self.parent.SetBackgroundColour(colour_array[rand_col])
-        self.sl_volume.SetBackgroundColour(colour_array[rand_col])
+        self.sl_volume.SetBackgroundColour(colour_array[rand_col])        
         # for updating slider background to:
         event = wx.SysColourChangedEvent()
         self.ProcessEvent(event)
@@ -1153,6 +1156,27 @@ class MainPanel(wx.Panel):
             
     def OnAboutClick(self, event):
         options_window.Options(self).ShowAbout(PROGRAM_NAME, PROGRAM_VERSION)
+
+    def MiniMode(self, event):
+        if self.nb_main.IsShown():
+            self.nb_main.Show(False)
+            self.parent.SetSize((690, 165))
+        else:
+            self.nb_main.Show(True)
+            self.parent.SetSize((690, 530))
+            #self.Refresh()
+        #self.parent.GetMenuBar()
+        #self.parent.SetMenuBar(None)
+        #self.parent.Layout()
+        #self.parent.SetAutoLayout(True)
+        #background = 'f:/temp/a.bmp'        
+        #img = wx.Image(background, wx.BITMAP_TYPE_ANY)
+        #self.buffer = wx.BitmapFromImage(img)
+        #dc = wx.BufferedDC(wx.ClientDC(self.panel), self.buffer)           
+        #self.Bind(wx.EVT_PAINT, self.OnPaint)
+        
+    #def OnPaint(self, evt):
+        #dc = wx.BufferedPaintDC(self.panel, self.buffer)
         
     def OnGSVersionClick(self, event):
         #show a dialog tat let's you change the GS Version
@@ -3157,7 +3181,7 @@ class MainPanel(wx.Panel):
         # show menu for deleting the rss feed
         val = self.lc_sift_rss.GetFirstSelected()
         if val != -1:
-            if (self.lc_sift.GetItem(val, 0).GetText() != '') & (self.lc_sift.GetItem(val, 1).GetText() != ''):    
+            if (self.lc_sift_rss.GetItem(val, 0).GetText() != ''):    
                 # make a menu
                 ID_DELETE = 1
                 menu = wx.Menu()
