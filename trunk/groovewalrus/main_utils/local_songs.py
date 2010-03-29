@@ -535,11 +535,37 @@ import time
 class Player(object): 
     def __init__(self):
         self.local_play_status = True
-        
+        self.paused = False
+                
     def stop_play(self):
         self.local_play_status = False
         if os.name != 'nt':
             time.sleep(4)
+            
+    def toggle_pause(self):
+        if self.paused == False:
+            self.pause()
+        else:
+            self.unpause()
+            
+    def pause(self):
+        """ Pause playing the current file """
+        if self.snd.isPlaying():
+            self.paused= True
+            if self.snd:
+                self.snd.pause()
+                
+    def unpause(self):
+        """ Resume playing the current file """
+        if self.snd.isPlaying():
+            if self.snd:
+                self.snd.unpause()
+        self.paused= False
+  
+    def isPaused( self ):
+        """ Returns whether playback is paused """
+        return self.paused
+
 
     def play(self, name, card=0, rate=1, tt=-1):
     
@@ -549,7 +575,7 @@ class Player(object):
         if card not in range( len( snds ) ):
             raise 'Cannot play sound to non existent device %d out of %d' % ( card+ 1, len( snds ) )
         f= open( name, 'rb' )
-        snd= resampler= dec= None
+        self.snd= resampler= dec= None
         s= f.read( 32000 )
         t= 0
         while (len( s )):
@@ -565,9 +591,9 @@ class Player(object):
             
                     r= dec.decode( fr[ 1 ] )
                     if r and r.data:
-                        if snd== None:
+                        if self.snd== None:
                             #print 'Opening sound with %d channels -> %s' % ( r.channels, snds[ card ][ 'name' ] )
-                            snd= sound.Output( int( r.sample_rate* rate ), r.channels, sound.AFMT_S16_LE, card )
+                            self.snd= sound.Output( int( r.sample_rate* rate ), r.channels, sound.AFMT_S16_LE, card )
                             #print r.channels
                             if rate< 1 or rate> 1:
                                 resampler= sound.Resampler( (r.sample_rate,r.channels), (int(r.sample_rate/rate),r.channels) )
@@ -585,16 +611,17 @@ class Player(object):
                                 print 'playing: %d sec\r' % ( t+d ),
                             t+= d
                         else:
-                            snd.play( data )
+                            self.snd.play( data )
+                        #print snd.getPosition()
             if tt> 0:
-                if snd and snd.getPosition()> tt:
+                if self.snd and self.snd.getPosition()> tt:
                     break
         
             s= f.read( 512 )
-            if self.local_play_status == False:
+            if self.local_play_status == False:               
                 break
-    
-        while snd.isPlaying():
+                    
+        while self.snd.isPlaying():
             time.sleep( 0.05 )
 
 #====================================================
