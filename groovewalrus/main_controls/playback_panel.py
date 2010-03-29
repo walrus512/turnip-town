@@ -65,7 +65,7 @@ class PlaybackPanel(wx.Panel):
             play_to = w * (float(self.GetGrandParent().time_count) / float(self.GetGrandParent().current_play_time))
         down_to = w * float(download_percent * 0.01)
         
-        if status != 'playing':
+        if status == 'stopped':
             play_to = 0
             play_time = ''
 

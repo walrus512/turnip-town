@@ -914,7 +914,9 @@ class MainPanel(wx.Panel):
         
         self.pa_playback.Refresh()
         
-        self.time_count = self.time_count + 1
+        if self.pstatus != 'paused':
+            self.time_count = self.time_count + 1
+        
         # set time labels
         #if (self.st_status.GetLabelText() == 'playing'):
         #    self.st_time.SetLabel(self.ConvertTimeFormated(self.current_play_time) + ' ' + self.ConvertTimeFormated(self.time_count))
@@ -1233,8 +1235,13 @@ class MainPanel(wx.Panel):
         self.SetVolume(volume)
         
     def OnMuteClick(self, event):
-        #just mute for now 
-        self.SetVolume(0)
+        #just mute for now
+        if self.GetVolume() == 0:
+            if self.muted_volume:
+                self.SetVolume(self.muted_volume)
+        else:
+            self.muted_volume = self.GetVolume()
+            self.SetVolume(0)
         
     def OnPreviousTab(self, event):
         cur_tab = self.nb_main.GetSelection()
@@ -1272,14 +1279,32 @@ class MainPanel(wx.Panel):
 # --------------------------------------------------------- 
 # play click events---------------------------------------- 
     def OnPlayClick(self, event):
-        # get selected search relsult list item and add to playlist
-        #val = event.GetIndex()
-        val = self.lc_playlist.GetFirstSelected()
-        if val >= 0:
-            #print val
-            self.PlaySong(val)
-        elif self.lc_playlist.GetItemCount() >=1:
-            self.PlaySong(0)
+        #handles playing and pausing        
+        play_button = xrc.XRCCTRL(self, 'm_bb_play')
+        pause_bmp = wx.Bitmap(GRAPHICS_LOCATION + "media-playback-pause.png", wx.BITMAP_TYPE_ANY)
+        play_bmp = wx.Bitmap(GRAPHICS_LOCATION + "media-playback-start.png", wx.BITMAP_TYPE_ANY)
+        
+        if self.pstatus == 'paused':
+            self.TogglePause()
+            self.pstatus = 'playing'
+            play_button.SetBitmapLabel(pause_bmp)            
+        elif (self.pstatus == 'playing'):
+            self.TogglePause()
+            self.pstatus = 'paused'
+            play_button.SetBitmapLabel(play_bmp)
+        else:
+            val = self.lc_playlist.GetFirstSelected()
+            if val >= 0:
+                #print val
+                self.PlaySong(val)
+                play_button.SetBitmapLabel(pause_bmp)
+            elif self.lc_playlist.GetItemCount() >=1:
+                self.PlaySong(0)
+                play_button.SetBitmapLabel(pause_bmp)
+            
+    def TogglePause(self):
+        if self.current_local != None:
+            self.current_local.pause()
             
     def OnPlayListPlayClick(self, event):
         # get selected search relsult list item and add to playlist
@@ -1303,7 +1328,9 @@ class MainPanel(wx.Panel):
         self.pstatus = 'stopped'
         self.download_percent = 0
         
-        
+        play_button = xrc.XRCCTRL(self, 'm_bb_play')
+        play_bmp = wx.Bitmap(GRAPHICS_LOCATION + "media-playback-start.png", wx.BITMAP_TYPE_ANY)
+        play_button.SetBitmapLabel(play_bmp)
         #try:
         #    self.recorder.stop()
         #except AttributeError:
@@ -3327,6 +3354,9 @@ class WebFetchThread(Thread):
                
     def stop(self):
         self.lsp.stop_play()
+        
+    def pause(self):
+        self.lsp.toggle_pause()
          
     def run(self):
         if self.webfetchtype == 'COVERS':
