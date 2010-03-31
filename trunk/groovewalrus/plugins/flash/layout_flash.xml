@@ -62,36 +62,43 @@
 				<object class="wxBoxSizer">
 					<orient>wxHORIZONTAL</orient>
 					<object class="sizeritem">
-						<option>0</option>
-						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
-						<border>5</border>
-						<object class="wxButton" name="m_bu_dizzler_use_dizzler">
-							<label>Use Dizzler</label>
-							<default>0</default>
-						</object>
-					</object>
-					<object class="sizeritem">
-						<option>0</option>
-						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
-						<border>5</border>
-						<object class="wxButton" name="m_bu_dizzler_use_grooveshark">
-							<label>Use GrooveShark</label>
-							<default>0</default>
-						</object>
-					</object>
-					<object class="spacer">
-						<option>0</option>
+						<option>1</option>
 						<flag>wxEXPAND</flag>
 						<border>5</border>
-						<size>20,0</size>
+						<object class="wxBoxSizer">
+							<orient>wxVERTICAL</orient>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALL|wxEXPAND</flag>
+								<border>5</border>
+								<object class="wxRadioBox" name="m_rx_flash_service">
+									<style>wxRA_SPECIFY_COLS</style>
+									<label>Using:</label>
+									<selection>0</selection>
+									<content>
+										<item>Grooveshark</item>
+										<item>Dizzler</item>
+									</content>
+									<dimension>2</dimension>
+								</object>
+							</object>
+						</object>
 					</object>
 					<object class="sizeritem">
-						<option>0</option>
-						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+						<option>1</option>
+						<flag>wxEXPAND</flag>
 						<border>5</border>
-						<object class="wxStaticText" name="m_st_dizzler_using">
-							<size>200,-1</size>
-							<label></label>
+						<object class="wxBoxSizer">
+							<orient>wxHORIZONTAL</orient>
+							<object class="sizeritem">
+								<option>1</option>
+								<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+								<border>7</border>
+								<object class="wxCheckBox" name="m_cb_flash_autoload">
+									<label>Load on startup</label>
+									<checked>0</checked>
+								</object>
+							</object>
 						</object>
 					</object>
 				</object>
@@ -107,7 +114,8 @@
 						<flag>wxEXPAND | wxALL</flag>
 						<border>5</border>
 						<object class="wxPanel" name="m_pa_dizzler_player">
-							<style>wxTAB_TRAVERSAL</style>
+							<style>wxSIMPLE_BORDER|wxTAB_TRAVERSAL</style>
+							<bg>#f9f9f9</bg>
 						</object>
 					</object>
 				</object>

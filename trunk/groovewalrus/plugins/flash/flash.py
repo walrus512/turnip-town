@@ -18,13 +18,14 @@ this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place, Suite 330, Boston, MA 02111-1307 USA
 """
 
-import urllib
-import urllib2
+#import urllib
+#import urllib2
 
 import wx
 import wx.xrc as xrc
 from main_utils.read_write_xml import xml_utils
-import sys, os
+from main_utils import system_files
+import os #,sys
 from wx.lib.flashwin import FlashWindow
 
 #SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0]))
@@ -39,6 +40,8 @@ class MainPanel(wx.Dialog):
         wx.Dialog.__init__(self, parent, -1, "Flash", size=(475,310), style=wx.FRAME_SHAPED) #STAY_ON_TOP)        
         self.parent = parent
         
+        self.FLASH_SETTINGS = system_files.GetDirectories(self).MakeDataDirectory('plugins') + os.sep
+        
         # XML Resources can be loaded from a file like this:
         res = xrc.XmlResource(RESFILE)
 
@@ -49,16 +52,20 @@ class MainPanel(wx.Dialog):
         self.pa_dizzler_player = xrc.XRCCTRL(self, 'm_pa_dizzler_player')
         #header for dragging and moving
         self.st_dizzler_header = xrc.XRCCTRL(self, 'm_st_dizzler_header')
-        self.st_dizzler_using = xrc.XRCCTRL(self, 'm_st_dizzler_using')
+        #self.st_dizzler_using = xrc.XRCCTRL(self, 'm_st_dizzler_using')
         self.bm_dizzler_close = xrc.XRCCTRL(self, 'm_bm_dizzler_close')
         self.bm_dizzler_tab = xrc.XRCCTRL(self, 'm_bm_dizzler_tab')
+        self.cb_flash_autoload = xrc.XRCCTRL(self, 'm_cb_flash_autoload')
+        self.rx_flash_service = xrc.XRCCTRL(self, 'm_rx_flash_service')
 
         # bindings ----------------
-        self.Bind(wx.EVT_BUTTON, self.SetDizzler, id=xrc.XRCID('m_bu_dizzler_use_dizzler'))
-        self.Bind(wx.EVT_BUTTON, self.SetGrooveShark, id=xrc.XRCID('m_bu_dizzler_use_grooveshark'))
+        #self.Bind(wx.EVT_BUTTON, self.SetDizzler, id=xrc.XRCID('m_bu_dizzler_use_dizzler'))
+        #self.Bind(wx.EVT_BUTTON, self.SetGrooveShark, id=xrc.XRCID('m_bu_dizzler_use_grooveshark'))
         #self.Bind(wx.EVT_TEXT, self.OnChars, self.tc_dizzler_text)
         self.bm_dizzler_close.Bind(wx.EVT_LEFT_UP, self.CloseMe)
         self.bm_dizzler_tab.Bind(wx.EVT_LEFT_UP, self.OnMakeTabClick)
+        self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, self.cb_flash_autoload)
+        self.Bind(wx.EVT_RADIOBOX, self.SetService, self.rx_flash_service)
         
         self.Bind(wx.EVT_LEFT_DOWN, self.OnMouseLeftDown)
         self.Bind(wx.EVT_MOTION, self.OnMouseMotion)
@@ -69,7 +76,7 @@ class MainPanel(wx.Dialog):
         self.st_dizzler_header.Bind(wx.EVT_LEFT_UP, self.OnMouseLeftUp)
         self.st_dizzler_header.Bind(wx.EVT_RIGHT_UP, self.OnRightUp)
             
-        self.st_dizzler_using.SetLabel('Using: ' + self.parent.web_music_type)
+        #self.st_dizzler_using.SetLabel('Using: ' + self.parent.web_music_type)
         
         #self.bu_update_restart.Enable(False)    
         # set layout --------------
@@ -92,6 +99,9 @@ class MainPanel(wx.Dialog):
         ##self.parent.web_music_url = DIZZLER_URL
         ##self.parent.web_music_type = "Dizzler"
         ##self.MakeModal(False)
+        
+        self.LoadSettings()
+        self.SetService(None)
 
     def CloseMe(self, event=None):
         self.parent.use_web_music = False
@@ -135,33 +145,36 @@ class MainPanel(wx.Dialog):
         self.parent.web_music_type = "GrooveShark"
         self.st_dizzler_using.SetLabel('Using GrooveShark')
         
-    def LoadSetings(self):
-        #load the setting from settings_dizzler.xml if it exists
-        settings_dict = xml_utils().get_generic_settings(DIZZLER_SETTINGS)
+    def SetService(self, event):
+        service = self.rx_flash_service.GetSelection()
+        if service == 0:
+            self.parent.web_music_url =''
+            self.parent.web_music_type = "GrooveShark"
+        else:
+           self.parent.web_music_url = DIZZLER_URL
+           self.parent.web_music_type = "Dizzler"
+        self.SaveOptions(None)
+        
+    def LoadSettings(self):
+        #load the setting from settings_falsh.xml if it exists
+        settings_dict = xml_utils().get_generic_settings(self.FLASH_SETTINGS + "settings_flash.xml")
         #print settings_dict
-        if len(settings_dict) > 1:
-            username=''
-            if settings_dict.has_key('username'):
-                username = settings_dict['username']
-            password =''
-            if settings_dict.has_key('password'):
-                password = settings_dict['password']
-            default_text=''
-            if settings_dict.has_key('default_text'):
-                default_text = settings_dict['default_text']
-
-            self.tc_dizzler_username.SetValue(username)
-            self.tc_dizzler_password.SetValue(password)   
-            self.tc_dizzler_default.SetValue(default_text)
+        if len(settings_dict) >= 1:
+            autoload=0
+            if settings_dict.has_key('autoload'):
+                autoload = int(settings_dict['autoload'])
+            self.cb_flash_autoload.SetValue(autoload)
+            service=0
+            if settings_dict.has_key('service'):
+                service = int(settings_dict['service']) 
+            self.rx_flash_service.SetSelection(service)            
 
     def SaveOptions(self, event):
         # save value to options.xml
         window_dict = {}        
-        window_dict['password'] = self.tc_dizzler_password.GetValue()
-        window_dict['username'] = self.tc_dizzler_username.GetValue()
-        window_dict['default_text'] = self.tc_dizzler_default.GetValue()
-        
-        xml_utils().save_generic_settings(DIZZLER, "settings_dizzler.xml", window_dict)
+        window_dict['autoload'] = str(int(self.cb_flash_autoload.GetValue()))
+        window_dict['service'] = str(int(self.rx_flash_service.GetSelection()))
+        xml_utils().save_generic_settings(self.FLASH_SETTINGS, "settings_flash.xml", window_dict)
 
             
 # --------------------------------------------------------- 
