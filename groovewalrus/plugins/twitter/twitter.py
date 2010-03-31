@@ -167,7 +167,7 @@ class MainPanel(wx.Dialog):
         #load the setting from settings_twitter.xml if it exists
         settings_dict = xml_utils().get_generic_settings(self.TWITTER_SETTINGS + "settings_twitter.xml")
         #print settings_dict
-        if len(settings_dict) > 1:
+        if len(settings_dict) >= 1:
             username=''
             if settings_dict.has_key('username'):
                 username = settings_dict['username']

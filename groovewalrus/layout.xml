@@ -34,7 +34,7 @@
 									</object>
 									<object class="sizeritem">
 										<option>0</option>
-										<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL</flag>
+										<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT</flag>
 										<border>2</border>
 										<object class="wxSlider" name="m_sl_volume">
 											<style>wxSL_BOTH|wxSL_INVERSE|wxSL_VERTICAL</style>
