@@ -1006,7 +1006,8 @@ class MainPanel(wx.Panel):
                     self.PlaySong(0)
                 else:
                 #we've reached teh end, the end my friend
-                    self.pstatus = 'stopped'                    
+                    self.pstatus = 'stopped'
+                    self.SetPlayButtonGraphic('play')
         # check if we should start recording
         #print self.st_status.GetLabelText()
         #print self.cb_record.GetValue()
@@ -1280,27 +1281,34 @@ class MainPanel(wx.Panel):
 # play click events---------------------------------------- 
     def OnPlayClick(self, event):
         #handles playing and pausing        
-        play_button = xrc.XRCCTRL(self, 'm_bb_play')
-        pause_bmp = wx.Bitmap(GRAPHICS_LOCATION + "media-playback-pause.png", wx.BITMAP_TYPE_ANY)
-        play_bmp = wx.Bitmap(GRAPHICS_LOCATION + "media-playback-start.png", wx.BITMAP_TYPE_ANY)
-        
+
         if self.pstatus == 'paused':
             self.TogglePause()
             self.pstatus = 'playing'
-            play_button.SetBitmapLabel(pause_bmp)            
+            self.SetPlayButtonGraphic('pause')            
         elif (self.pstatus == 'playing'):
             self.TogglePause()
             self.pstatus = 'paused'
-            play_button.SetBitmapLabel(play_bmp)
+            self.SetPlayButtonGraphic('play')
         else:
             val = self.lc_playlist.GetFirstSelected()
             if val >= 0:
                 #print val
                 self.PlaySong(val)
-                play_button.SetBitmapLabel(pause_bmp)
+                self.SetPlayButtonGraphic('pause')
             elif self.lc_playlist.GetItemCount() >=1:
                 self.PlaySong(0)
-                play_button.SetBitmapLabel(pause_bmp)
+                self.SetPlayButtonGraphic('pause')
+                
+    def SetPlayButtonGraphic(self, playorpause):
+        
+        play_button = xrc.XRCCTRL(self, 'm_bb_play')
+        pause_bmp = wx.Bitmap(GRAPHICS_LOCATION + "media-playback-pause.png", wx.BITMAP_TYPE_ANY)
+        play_bmp = wx.Bitmap(GRAPHICS_LOCATION + "media-playback-start.png", wx.BITMAP_TYPE_ANY)
+        bmp = pause_bmp
+        if playorpause == 'play':
+            bmp = play_bmp        
+        play_button.SetBitmapLabel(bmp)
             
     def TogglePause(self):
         if self.current_local != None:
@@ -1311,6 +1319,7 @@ class MainPanel(wx.Panel):
         val = self.lc_playlist.GetFirstSelected()
         if val >= 0:
             self.PlaySong(val, True)
+            self.SetPlayButtonGraphic('pause')
             
     def OnStopClick(self, event):
         # stop local thread
@@ -1328,9 +1337,7 @@ class MainPanel(wx.Panel):
         self.pstatus = 'stopped'
         self.download_percent = 0
         
-        play_button = xrc.XRCCTRL(self, 'm_bb_play')
-        play_bmp = wx.Bitmap(GRAPHICS_LOCATION + "media-playback-start.png", wx.BITMAP_TYPE_ANY)
-        play_button.SetBitmapLabel(play_bmp)
+        self.SetPlayButtonGraphic('play')
         #try:
         #    self.recorder.stop()
         #except AttributeError:
