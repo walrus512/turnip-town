@@ -20,9 +20,11 @@ Place, Suite 330, Boston, MA 02111-1307 USA
 """
 
 #import sqlite3
-from main_utils.read_write_xml import xml_utils
 import  wx
 import sys, os
+
+from main_utils.read_write_xml import xml_utils
+from main_utils import system_files
 
 SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0])) #os.getcwd()
 PLUGINS_LOCATION = SYSLOC + os.sep + "plugins" + os.sep
@@ -31,7 +33,8 @@ class PluginLoader():
     #plug-in loader
     def __init__(self, parent):
         self.parent = parent
-        self.LoadPlugins()
+        self.SETTINGS_LOCATION = system_files.GetDirectories(self).MakeDataDirectory('plugins') + os.sep
+        self.LoadPlugins()        
     
     def LoadPlugins(self):
         base_path = PLUGINS_LOCATION
@@ -88,6 +91,16 @@ class PluginLoader():
                 
                 id_counter = id_counter + 1
                 
+                #check for autoload
+                if self.AutoloadSetting(dir_name):
+                    z = self.LoadPluginWindow(None, dir_name)
+                    #check to see if it has the ability to add itself as a tab, and do so
+                    try:
+                        z.OnMakeTabClick()
+                    except AttributeError, msg:
+                        print msg
+                        pass
+                
             counter = 0
             
         self.parent.pa_options_plugins.SetSizer(self.main_sizer)
@@ -110,13 +123,23 @@ class PluginLoader():
         # add gui to plugins tab
         # check db if plugin is active
         
-    def LoadPluginWindow(self, event):
+    def LoadPluginWindow(self, event, plugin_name=None):
         #get the button/plugin for the pressed button
-        plugin_name = self.id_array[event.GetId()]
+        if plugin_name==None:
+            plugin_name = self.id_array[event.GetId()]
         #load the plugin 
         exec ("from plugins." + plugin_name + " import " + plugin_name)
         #__import__(plugin_name)
         # show the window
         exec("z= " + plugin_name + ".MainPanel(self.parent)")
         z.Show(True)
+        return z
         
+    def AutoloadSetting(self, plugin_name):
+        #load the setting from settings_[plug-in name].xml if it exists
+        settings_dict = xml_utils().get_generic_settings(self.SETTINGS_LOCATION + "settings_" + plugin_name + ".xml")
+        autoload=''
+        if len(settings_dict) >= 1:
+            if settings_dict.has_key('autoload'):
+                autoload = int(settings_dict['autoload'])
+        return autoload
