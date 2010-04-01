@@ -61,6 +61,8 @@ from main_windows import options_window
 from main_windows import details_window
 from main_windows import song_collection
 
+from main_tabs import list_sifter_tab
+
 from main_thirdp import pylast
 if os.name == 'nt':
     from main_thirdp import soundmixer 
@@ -76,19 +78,15 @@ from main_thirdp import grooveshark_old
 #from plugins.griddle import griddle
 #from plugins.ratings import ratings
 
-PROGRAM_VERSION = "0.211"
+PROGRAM_VERSION = "0.212"
 PROGRAM_NAME = "GrooveWalrus"
+
 PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
 PLAY_SONG_ALTERNATE_URL ="http://listen.grooveshark.com/main.swf?hostname=cowbell.grooveshark.com&p=1&songID="
 SONG_SENDER_URL = "http://gwp.turnip-town.net/?"
 
-
 SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0])) #os.getcwd()
 GRAPHICS_LOCATION = os.path.join(SYSLOC, 'graphics') + os.sep
-
-#COVER_SIZE = (75,75)
-#COVER_SIZE_LARGE = (150,150)
-
 
 RESFILE = SYSLOC + os.sep + "layout.xml"
 P_ICON = SYSLOC + os.sep + "gw.ico"
@@ -175,56 +173,53 @@ class MainFrame(wx.Frame):
         #wx.LANGUAGE_DEFAULT
         #wx.LANGUAGE_TURKISH
         
-#$$$class MainPanel(wx.Dialog):
 class MainPanel(wx.Panel):
     def __init__(self, parent):
         wx.Panel.__init__(self, parent, -1)
-        # $$$ wx.Dialog.__init__(self, parent, -1, style=wx.STAY_ON_TOP)#wx.FRAME_SHAPED)
         
         self.parent = parent
         
-        # set directories
+        # set directories ------------
         system_files.GetDirectories(self).DataDirectory()
         self.image_save_location = system_files.GetDirectories(self).MakeDataDirectory('images') + os.sep
         system_files.GetDirectories(self).MakeDataDirectory('updates') + os.sep
         system_files.GetDirectories(self).MakeDataDirectory('plugins') + os.sep
         self.playlist_save_location = system_files.GetDirectories(self).MakeDataDirectory('playlists') + os.sep
         self.main_playlist_location = system_files.GetDirectories(self).DataDirectory() + os.sep + "playlist.xspf"
-        self.main_playlist_location_bak = system_files.GetDirectories(self).DataDirectory() + os.sep + "playlist.bak"
-        ### should remove these:
-        self.faves_playlist_location = system_files.GetDirectories(self).DataDirectory() + os.sep + "faves.xspf"
-        self.faves_playlist_location_bak = system_files.GetDirectories(self).DataDirectory() + os.sep + "faves.bak"
+        self.main_playlist_location_bak = system_files.GetDirectories(self).DataDirectory() + os.sep + "playlist.bak"        
+        ##self.faves_playlist_location = system_files.GetDirectories(self).DataDirectory() + os.sep + "faves.xspf"
+        ##self.faves_playlist_location_bak = system_files.GetDirectories(self).DataDirectory() + os.sep + "faves.bak"
         
+        # create/update database ----------
         local_songs.DbFuncs().create_tables()
-                      
+        
+        # xrc gui layout ------------------
         # XML Resources can be loaded from a file like this:
         res = xrc.XmlResource(RESFILE)
         # custom widget handler
-        #res.InsertHandler(custom_slider.MyCustomSliderXmlHandler(self))
+        ##res.InsertHandler(custom_slider.MyCustomSliderXmlHandler(self))
         # Now create a panel from the resource data
-        panel = res.LoadPanel(self, "m_pa_main")
-        self.panel = panel
+        self.panel = res.LoadPanel(self, "m_pa_main")        
         
         xrc.XRCCTRL(self, 'm_pa_options_plugins').SetVirtualSize((1000, 1000))
         xrc.XRCCTRL(self, 'm_pa_options_plugins').SetScrollRate(20,20)
+        
+        #list sifter tab        
+        list_sifter = list_sifter_tab.ListSifterTab(self)
                
-        # control references --------------------
-        #self.pa_player = xrc.XRCCTRL(self, 'm_pa_player')        
-        #self.st_track_info = xrc.XRCCTRL(self, 'm_st_track_info')
-        #self.st_status = xrc.XRCCTRL(self, 'm_st_status')
-        #self.st_time = xrc.XRCCTRL(self, 'm_st_time')        
+        # control references ---------------
+        # playback        
         self.bb_random = xrc.XRCCTRL(self, 'm_bb_random')
         self.bb_repeat = xrc.XRCCTRL(self, 'm_bb_repeat')
         self.bb_record = xrc.XRCCTRL(self, 'm_bb_record')
         self.tc_search = xrc.XRCCTRL(self, 'm_tc_search')        
         self.sl_volume = xrc.XRCCTRL(self, 'm_sl_volume')
         self.pa_playback = xrc.XRCCTRL(self, 'm_pa_playback')
-        #self.ga_download = xrc.XRCCTRL(self, 'm_ga_download')
-
-        #self.sl_volume = res.LoadObject(self, "m_cc_volume_slider", "CustomSlider")
-        #self.sl_volume2 = xrc.XRCCTRL(self, 'm_cc_volume_slider')
-        #self.sl_volume = self.cslid        
-        #self.sl_volume3 = self.FindWindowById( xrc.XRCID('m_cc_volume_slider' ))         
+        
+        ##self.sl_volume = res.LoadObject(self, "m_cc_volume_slider", "CustomSlider")
+        ##self.sl_volume2 = xrc.XRCCTRL(self, 'm_cc_volume_slider')
+        ##self.sl_volume = self.cslid        
+        ##self.sl_volume3 = self.FindWindowById( xrc.XRCID('m_cc_volume_slider' ))         
         
         self.bb_update = xrc.XRCCTRL(self, 'm_bb_update')
              
@@ -259,19 +254,10 @@ class MainPanel(wx.Panel):
         self.rx_mylast_period = xrc.XRCCTRL(self, 'm_rx_mylast_period')       
         
         # album
-        #self.st_album_get_tracks = xrc.XRCCTRL(self, 'm_st_album_get_tracks')
+        ##self.st_album_get_tracks = xrc.XRCCTRL(self, 'm_st_album_get_tracks')
         self.tc_album_search_artist = xrc.XRCCTRL(self, 'm_tc_album_search_artist')
         self.tc_album_search_song = xrc.XRCCTRL(self, 'm_tc_album_search_song')
         self.tc_album_search_album = xrc.XRCCTRL(self, 'm_tc_album_search_album')
-        
-        # sifter
-        self.tc_sift_pre = xrc.XRCCTRL(self, 'm_tc_sift_pre')
-        self.tc_sift_seperator = xrc.XRCCTRL(self, 'm_tc_sift_seperator')
-        self.tc_sift_post = xrc.XRCCTRL(self, 'm_tc_sift_post')
-        self.lc_sift_rss = xrc.XRCCTRL(self, 'm_lc_sift_rss')
-        self.tc_sift_rss_url = xrc.XRCCTRL(self, 'm_tc_sift_rss_url')
-        self.ch_sift_rss = xrc.XRCCTRL(self, 'm_ch_sift_rss')
-        self.tc_sift_rawlist = xrc.XRCCTRL(self, 'm_tc_sift_rawlist')
         
         # bio
         self.bm_bio_pic = xrc.XRCCTRL(self, 'm_bm_bio_pic')
@@ -318,20 +304,14 @@ class MainPanel(wx.Panel):
         self.cb_options_scrobble_album = xrc.XRCCTRL(self, 'm_cb_options_scrobble_album')
         self.cb_options_tray = xrc.XRCCTRL(self, 'm_cb_options_tray')
         self.cb_options_autosave = xrc.XRCCTRL(self, 'm_cb_options_autosave')
-        #self.ch_options_bitrate = xrc.XRCCTRL(self, 'm_ch_options_bitrate')
+        ##self.ch_options_bitrate = xrc.XRCCTRL(self, 'm_ch_options_bitrate')
         self.bu_options_record_dir = xrc.XRCCTRL(self, 'm_bu_options_record_dir')
         
         self.st_options_i18n_default = xrc.XRCCTRL(self, 'm_st_options_i18n_default')
         self.st_options_i18n_default.SetLabel('Locale: ' + wx.Locale(wx.LANGUAGE_DEFAULT).GetCanonicalName())
               
-        # list control, column setup ------------
-        #self.lc_search = xrc.XRCCTRL(self, 'm_lc_search')
-        #self.lc_search.InsertColumn(0,"Artist")
-        #self.lc_search.InsertColumn(1,"Song")
-        #self.lc_search.InsertColumn(2,"Album")
-        #self.lc_search.InsertColumn(3,"Id")
-        #self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.OnSearchListClick, self.lc_search)
-        
+        # list controls ------------
+        # last.fm
         self.lc_lastfm = xrc.XRCCTRL(self, 'm_lc_lastfm')
         self.lc_lastfm.InsertColumn(0,"Artist")
         self.lc_lastfm.InsertColumn(1,"Song")
@@ -345,6 +325,7 @@ class MainPanel(wx.Panel):
         # wxGTK
         self.lc_lastfm.Bind(wx.EVT_RIGHT_UP, self.OnLastfmRightClick)
         
+        # my last.fm
         self.lc_mylast = xrc.XRCCTRL(self, 'm_lc_mylast')
         self.lc_mylast.InsertColumn(0,"Artist")
         self.lc_mylast.InsertColumn(1,"Song")
@@ -357,6 +338,7 @@ class MainPanel(wx.Panel):
         # wxGTK
         self.lc_mylast.Bind(wx.EVT_RIGHT_UP, self.OnMyLastRightClick)
         
+        # playlist
         # playlist is subclassed to draglist in the xrc
         self.lc_playlist = xrc.XRCCTRL(self,'m_lc_playlist')
         self.lc_playlist.InsertColumn(0,"Artist")
@@ -369,13 +351,14 @@ class MainPanel(wx.Panel):
         self.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.OnPlaylistRightClick, self.lc_playlist)
         # wxGTK
         self.lc_playlist.Bind(wx.EVT_RIGHT_UP, self.OnPlaylistRightClick)
-        #self.lc_playlist.Bind(wx.EVT_CHAR, self.OnPlaylistKeyPress)
+        ##self.lc_playlist.Bind(wx.EVT_CHAR, self.OnPlaylistKeyPress)
         self.lc_playlist.Bind(wx.EVT_KEY_UP, self.OnDeletePress)
         
-        #dynamic listctrl resize
-        #wx.EVT_SIZE(self.parent, self.ResizePlaylist)
-        #wx.EVT_MAXIMIZE(self.parent, self.ResizePlaylist)
+        ##dynamic listctrl resize
+        ##wx.EVT_SIZE(self.parent, self.ResizePlaylist)
+        ##wx.EVT_MAXIMIZE(self.parent, self.ResizePlaylist)
         
+        # album
         self.lc_album = xrc.XRCCTRL(self, 'm_lc_album')
         self.lc_album.InsertColumn(0,"Artist")
         self.lc_album.InsertColumn(1,"Song")
@@ -388,6 +371,7 @@ class MainPanel(wx.Panel):
         # wxGTK
         self.lc_album.Bind(wx.EVT_RIGHT_UP, self.OnAlbumRightClick)
         
+        # faves
         self.lc_faves = xrc.XRCCTRL(self, 'm_lc_faves')
         self.lc_faves.InsertColumn(0,"Artist")
         self.lc_faves.InsertColumn(1,"Song")
@@ -403,6 +387,7 @@ class MainPanel(wx.Panel):
         self.lc_faves.Bind(wx.EVT_LIST_COL_CLICK, self.OnFavesColClick)
         self.faves_sorter = [1,0,0,0,0]
         
+        # song rating imagelist
         rate_images = wx.ImageList(16, 16, True)        
         image_files = [
             GRAPHICS_LOCATION + 'weather-clear-night.png', 
@@ -415,95 +400,52 @@ class MainPanel(wx.Panel):
             bmp = wx.Bitmap(file_name, wx.BITMAP_TYPE_PNG)
             rate_images.Add(bmp)            
         self.lc_faves.AssignImageList(rate_images, wx.IMAGE_LIST_SMALL)
-        
-        # list sifter: list control -------
-        self.lc_sift = xrc.XRCCTRL(self, 'm_lc_sift')
-        self.lc_sift.InsertColumn(0,"Artist")
-        self.lc_sift.InsertColumn(1,"Song")
-        self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.OnSiftDoubleClick, self.lc_sift)
-        # wxMSW
-        self.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.OnSiftRightClick, self.lc_sift)
-        # wxGTK
-        self.lc_sift.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.OnSiftRightClick)
-        
-        # list sifter: rss list control ----
-        self.lc_sift_rss = xrc.XRCCTRL(self, 'm_lc_sift_rss')
-        self.lc_sift_rss.InsertColumn(0,"Feed Url")
-        self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnRSSClick, self.lc_sift_rss)
-        # wxMSW
-        self.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.OnRSSRightClick, self.lc_sift_rss)
-        # wxGTK
-        self.lc_sift_rss.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.OnRSSRightClick)
-        
-        # ---------------------------------------------------------------
                 
-        # add custom controls ----------------------------
-        ##self.flash = FlashWindow(self.pa_player, style=wx.NO_BORDER, size=wx.Size(500,140))#, size=(400, 120))        
-        ##self.flash.Show(True)
-        self.flash = None
+        # ---------------------------------------------------------------
         
-        ##flash_sizer = wx.BoxSizer(wx.VERTICAL)
-        ##flash_sizer.Add(self.flash, 1, wx.EXPAND|wx.ALL, 5)
-        ##self.SetSizer(flash_sizer)
-        #self.flash_next = FlashWindow(self.pa_player, style=wx.NO_BORDER, size=(300, 40))        
-        #sizer_play = wx.BoxSizer(wx.HORIZONTAL)
-        #sizer_play.Add(self.flash, proportion=1, flag=wx.EXPAND)
-        #self.SetSizer(sizer_play)
-        
-        #self.st_status.SetLabel('stopped')                
-        
-        #sizer_pl = wx.BoxSizer(wx.VERTICAL)
-        #sizer_pl.Add(self.lc_playlist, 1, wx.EXPAND|wx.ALL, 5)
-        #self.SetSizer(sizer_pl)
         
         # and do the layout
         sizer = wx.BoxSizer(wx.VERTICAL)
-        #sizer.Add(label, 0, wx.EXPAND|wx.TOP|wx.LEFT, 5)
-        #sizer.Add(text, 1, wx.EXPAND|wx.ALL, 5)
-        #sizer.Add(line, 0, wx.EXPAND)
-        sizer.Add(panel, 1, wx.EXPAND|wx.ALL, 5)
+        sizer.Add(self.panel, 1, wx.EXPAND|wx.ALL, 5)
         self.SetSizer(sizer)
         self.SetAutoLayout(True)
-        #print self.sz_controls.GetSize()
-        #self.parent.SetSize((-1, 130))
-        #self.last_track_played = ''
-        #self.last_artist_played = ''
-        #self.last_album_played = ''
-              
-        #----------------------------------------------------------------------
         
         # bindings ----------------
-        #self.search_field.Bind(wx.EVT_RIGHT_DOWN, self.GetArtistTopTracks)
-        #self.m_bb_start.Bind(wx.EVT_LEFT_DOWN, self.OnPlayClick)
+        #playback                
         self.Bind(wx.EVT_BUTTON, self.OnRandomClick, id=xrc.XRCID('m_bb_random'))
         self.Bind(wx.EVT_BUTTON, self.OnRepeatClick, id=xrc.XRCID('m_bb_repeat'))
-        self.Bind(wx.EVT_BUTTON, self.OnRecordClick, id=xrc.XRCID('m_bb_record'))
-        
+        self.Bind(wx.EVT_BUTTON, self.OnRecordClick, id=xrc.XRCID('m_bb_record'))        
         self.Bind(wx.EVT_BUTTON, self.OnBackwardClick, id=xrc.XRCID('m_bb_backward'))
         self.Bind(wx.EVT_BUTTON, self.OnForwardClick, id=xrc.XRCID('m_bb_forward'))
         self.Bind(wx.EVT_BUTTON, self.OnPlayClick, id=xrc.XRCID('m_bb_play'))
         self.Bind(wx.EVT_BUTTON, self.OnStopClick, id=xrc.XRCID('m_bb_stop'))
+        self.Bind(wx.EVT_SLIDER, self.OnVolumeClick, id=xrc.XRCID('m_sl_volume'))
+        
+        #search
         self.Bind(wx.EVT_BUTTON, self.OnSearchClick, id=xrc.XRCID('m_bb_search'))
         self.Bind(wx.EVT_TEXT_ENTER, self.OnSearchClick, self.tc_search)
-        #self.Bind(wx.EVT_BUTTON, self.OnToggleNotebook, id=xrc.XRCID('m_bb_expand'))
+        self.search_window = search_window.SearchWindow(self)
+        self.parent.Bind(wx.EVT_MOVE, self.search_window.MoveMe)                
+        
+        #playlist
         self.Bind(wx.EVT_BUTTON, self.OnSavePlaylistClick, id=xrc.XRCID('m_bb_save_playlist'))
         self.Bind(wx.EVT_BUTTON, self.FixPlaylistItem, id=xrc.XRCID('m_bb_fix_song'))
         self.Bind(wx.EVT_BUTTON, self.OnClearPlaylistClick, id=xrc.XRCID('m_bb_clear_playlist'))
         self.Bind(wx.EVT_BUTTON, self.RemovePlaylistItem, id=xrc.XRCID('m_bb_remove_playlist_item'))
         self.Bind(wx.EVT_BUTTON, self.OnLoadPlaylistClick, id=xrc.XRCID('m_bb_load_playlist'))
+        
+        #faves
         self.Bind(wx.EVT_BUTTON, self.RemoveFavesItem, id=xrc.XRCID('m_bb_faves_remove'))        
-        #self.Bind(wx.EVT_BUTTON, self.OnAutoGenerateLastfmPlayist2, id=xrc.XRCID('m_bb_last_fill'))
+        self.Bind(wx.EVT_BUTTON, self.OnFavesClick, id=xrc.XRCID('m_bb_faves'))
+        self.Bind(wx.EVT_BUTTON, self.FavesAddPlaylist, id=xrc.XRCID('m_bb_faves_playlist'))
+        
+        #playlistize
         self.Bind(wx.EVT_BUTTON, self.OnAutoGenerateFavesPlayist, id=xrc.XRCID('m_bb_faves_plize'))
         self.Bind(wx.EVT_BUTTON, self.OnAutoGenerateLastfmPlayist, id=xrc.XRCID('m_bu_last_plize'))
         self.Bind(wx.EVT_BUTTON, self.OnAutoGenerateMyLastPlayist, id=xrc.XRCID('m_bu_mylast_plize'))
         self.Bind(wx.EVT_BUTTON, self.OnAutoGenerateAlbumPlayist, id=xrc.XRCID('m_bu_album_plize'))
-        self.Bind(wx.EVT_BUTTON, self.OnAutoGenerateSiftPlayist, id=xrc.XRCID('m_bu_sift_plize'))
         
-        self.Bind(wx.EVT_BUTTON, self.OnFavesClick, id=xrc.XRCID('m_bb_faves'))
-        #self.Bind(wx.EVT_BUTTON, self.OnFavesDropClick, id=xrc.XRCID('m_bb_faves_drop'))
-        #self.Bind(wx.EVT_LEFT_DOWN, self.OnStatusTextClick, id=xrc.XRCID('m_lb_status_text'))
-        #self.Bind(wx.EVT_LEFT_UP, self.OnStatusTextClick, id=xrc.XRCID('m_lb_status_text'))
-        #self.lb_status_text.Bind(wx.EVT_LEFT_UP, self.OnStatusTextClick)
+        #last.fm        
         self.st_last_ts_artist.Bind(wx.EVT_LEFT_UP, self.OnLastTSArtistClick)
         self.st_last_ta_artist.Bind(wx.EVT_LEFT_UP, self.OnLastTAArtistClick)
         self.st_last_ts_geo.Bind(wx.EVT_LEFT_UP, self.OnLastTSGeoClick)
@@ -512,32 +454,23 @@ class MainPanel(wx.Panel):
         self.st_last_ts_similar.Bind(wx.EVT_LEFT_UP, self.OnLastTSSimilarClick)
         self.st_last_art_similar.Bind(wx.EVT_LEFT_UP, self.OnLastArtistSimilarClick)
         self.st_last_tt_song.Bind(wx.EVT_LEFT_UP, self.OnLastTTSongClick)
-        
-        self.Bind(wx.EVT_BUTTON, self.OnAlbumGetTracks, id=xrc.XRCID('m_bu_album_tracks'))
-        
-        self.st_mylast_me.Bind(wx.EVT_LEFT_UP, self.OnMyLastMeClick)
-        self.st_mylast_friends.Bind(wx.EVT_LEFT_UP, self.OnMyLastFriendsClick)
-        self.st_mylast_neigh.Bind(wx.EVT_LEFT_UP, self.OnMyLastNeighClick)
-        ##self.st_mylast_recomm.Bind(wx.EVT_LEFT_UP, self.OnMyLastRecommenedArtistsClick)
-        #self.st_album_get_tracks.Bind(wx.EVT_LEFT_UP, self.OnAlbumCoverClick)
         self.Bind(wx.EVT_BUTTON, self.OnClearLastSearchClick, id=xrc.XRCID('m_bb_last_clear_search'))
+        
+        #albums
+        self.Bind(wx.EVT_BUTTON, self.OnAlbumGetTracks, id=xrc.XRCID('m_bu_album_tracks'))
         self.Bind(wx.EVT_BUTTON, self.OnClearAlbumSearchClick, id=xrc.XRCID('m_bb_album_clear_search'))
         self.Bind(wx.EVT_BUTTON, self.OnAlbumSearchClick, id=xrc.XRCID('m_bb_album_search'))
         self.bm_cover_large.Bind(wx.EVT_LEFT_UP, self.OnAlbumCoverClick)
         self.bm_cover.Bind(wx.EVT_LEFT_UP, self.OnAlbumCoverClick)
-        self.Bind(wx.EVT_BUTTON, self.OnUpdateClick, self.bb_update)        
-        
-        #list sifter
-        self.Bind(wx.EVT_BUTTON, self.OnSiftClick, id=xrc.XRCID('m_bu_sift_sift'))
-        self.Bind(wx.EVT_BUTTON, self.OnSiftRSS, id=xrc.XRCID('m_bu_sift_rss'))
-        self.Bind(wx.EVT_BUTTON, self.OnSaveRSSClick, id=xrc.XRCID('m_bb_sift_rss_save'))
-        self.Bind(wx.EVT_BUTTON, self.OnSiftURLClear, id=xrc.XRCID('m_bb_sift_url_clear'))
-        
+                
         #my last.fm
+        self.st_mylast_me.Bind(wx.EVT_LEFT_UP, self.OnMyLastMeClick)
+        self.st_mylast_friends.Bind(wx.EVT_LEFT_UP, self.OnMyLastFriendsClick)
+        self.st_mylast_neigh.Bind(wx.EVT_LEFT_UP, self.OnMyLastNeighClick)
         self.Bind(wx.EVT_BUTTON, self.OnMyLastClearClick, id=xrc.XRCID('m_bb_mylast_clear'))
         self.Bind(wx.EVT_BUTTON, self.OnMyLastSearchClick, id=xrc.XRCID('m_bb_mylast_search'))
         self.Bind(wx.EVT_BUTTON, self.OnMyLastWebClick, id=xrc.XRCID('m_bb_mylast_goweb'))
-        
+                
         #options
         self.Bind(wx.EVT_RADIOBOX, self.SaveOptions, id=xrc.XRCID('m_rx_options_double_click'))
         self.Bind(wx.EVT_RADIOBOX, self.SaveOptions, id=xrc.XRCID('m_rx_options_scrobble_port'))
@@ -552,40 +485,25 @@ class MainPanel(wx.Panel):
         self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_noid'))
         self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_tray'))
         self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_autosave'))
-        #self.Bind(wx.EVT_CHOICE, self.SaveOptions, id=xrc.XRCID('m_ch_options_bitrate'))
-        self.Bind(wx.EVT_BUTTON, self.OnSaveOptionsClick, id=xrc.XRCID('m_bu_options_save'))
-        #self.Bind(wx.EVT_BUTTON, self.OnAboutClick, id=xrc.XRCID('m_bu_options_about'))
+        ##self.Bind(wx.EVT_CHOICE, self.SaveOptions, id=xrc.XRCID('m_ch_options_bitrate'))
+        self.Bind(wx.EVT_BUTTON, self.OnSaveOptionsClick, id=xrc.XRCID('m_bu_options_save'))        
         self.Bind(wx.EVT_BUTTON, self.OnSetRecordDirClick, id=xrc.XRCID('m_bu_options_record_dir'))
         
+        #song collection
         self.Bind(wx.EVT_BUTTON, self.OnSColAddClick, id=xrc.XRCID('m_bb_scol_add'))
         self.Bind(wx.EVT_BUTTON, self.OnSColDeleteClick, id=xrc.XRCID('m_bb_scol_delete'))
         self.Bind(wx.EVT_BUTTON, self.ScolAddPlaylist, id=xrc.XRCID('m_bb_scol_playlist'))
         self.Bind(wx.EVT_BUTTON, self.OnSColClearClick, id=xrc.XRCID('m_bb_scol_clear'))
         
-        self.Bind(wx.EVT_BUTTON, self.FavesAddPlaylist, id=xrc.XRCID('m_bb_faves_playlist'))
         
-        self.Bind(wx.EVT_SLIDER, self.OnVolumeClick, id=xrc.XRCID('m_sl_volume'))
-        #self.sl_volume.Bind(wx.EVT_MOTION, self.OnVolumeClick)
-        
+        self.Bind(wx.EVT_BUTTON, self.OnUpdateClick, self.bb_update)
         wx.EVT_CLOSE(self.parent, self.OnExit)
            
-        self.search_window = search_window.SearchWindow(self)
-        self.parent.Bind(wx.EVT_MOVE, self.search_window.MoveMe)                
         # --------------------------------------------------------- 
+        #vars
         
-        #try:
-        #    self.winobj = winamp.Winamp()
-        #except winamp.WinampError:
-        #    pass
-        
-        # sysargv and gwp:// playlist loading -------
-        #y=''
-        #for arg in sys.argv:
-        #    y = y + '::' + arg
-        #dlg = wx.MessageDialog(self, y, 'Oops', wx.OK | wx.ICON_WARNING)
-        #dlg.ShowModal()
-        #dlg.Destroy()
-        
+        self.flash = None
+        # ***self.flash.LoadMovie(0, 'http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&songID=13721223&style=metal&p=0')
         self.autoplay = False
         
         #check for playlist
@@ -604,7 +522,7 @@ class MainPanel(wx.Panel):
                 self.SavePlaylist(self.main_playlist_location)
                 self.autoplay = True
         elif len(sys.argv) == 3:
-            #::C:\Users\Honkz\Desktop\GrooveWalrus\gw.exe
+            #::C:\Users\[username]\Desktop\GrooveWalrus\gw.exe
             #::-url
             #::gwp://u2:rattle%20and%20hum/
             meat = sys.argv[2].split('gwp://')
@@ -616,14 +534,8 @@ class MainPanel(wx.Panel):
                     self.autoplay = True
         else:
             self.ReadPlaylist(self.main_playlist_location)
-            #print self.main_playlist_location
-        
-        
-        self.ReadFaves() #self.faves_playlist_location)
-
-        
-        self.tc_search.SetFocus()
-        # ***self.flash.LoadMovie(0, 'http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&songID=13721223&style=metal&p=0')
+            
+       
         
         self.current_play_time = 0
         self.current_track = -1
@@ -654,6 +566,14 @@ class MainPanel(wx.Panel):
         self.gobbled_track = 0
         
         self.bb_update.Show(False)
+        
+        
+        # load favorites
+        self.ReadFaves() #self.faves_playlist_location)
+
+        # set focus to search text control
+        self.tc_search.SetFocus()
+        
         #version check ----------
         version_check = WebFetchThread(self, '', '', PROGRAM_VERSION, 'VERSION')
         #THREAD
@@ -696,14 +616,7 @@ class MainPanel(wx.Panel):
             pass
         else:
             self.SetVolume(self.GetVolume())
-        #SoundMixer.GetPeakLevel()
-        
-        #temp download files --------------
-        #self.temp_counter = 0
-        #d_file = system_files.GetDirectories(self).BuildTempFile('temp0.mp3')
-        #if os.path.isfile(d_file):
-        #    os.remove(d_file)
-        
+               
         # hotkeys ------------------
         backID = 701
         playID = 702
@@ -723,8 +636,7 @@ class MainPanel(wx.Panel):
         ctrlbID = 803
         ctrl9ID = 910
         ctrlfID = 804
-        ctrlmID = 805
-        
+        ctrlmID = 805        
         
         self.aTable_values = [
                                    (wx.ACCEL_NORMAL, wx.WXK_F1, backID),
@@ -747,7 +659,9 @@ class MainPanel(wx.Panel):
                                    (wx.ACCEL_CTRL, ord('M'), ctrlmID)
                                            ]
         aTable = wx.AcceleratorTable(self.aTable_values)
+        #add to main program
         self.SetAcceleratorTable(aTable)
+        #add to album viewer window too
         self.album_viewer.SetAcceleratorTable(aTable)
          
         wx.EVT_MENU(self, backID, self.OnBackwardClick)
@@ -831,10 +745,7 @@ class MainPanel(wx.Panel):
         file_cache.CheckCache(temp_dir)
         
         # load rss feeds --------
-        self.LoadRSSFeeds()
-        
-        #print system_files.GetDirectories(self).TempDirectory()
-        #print system_files.GetDirectories(self).DataDirectory()
+        list_sifter.LoadRSSFeeds()
                 
         # background image --------------------
 #        background = system_files.GetDirectories(self).DataDirectory() + os.sep + 'background.png'
@@ -3144,207 +3055,6 @@ class MainPanel(wx.Panel):
             self.lc_scol_col.SetColumnWidth(2, 520)
             self.lc_scol_col.SetColumnWidth(3, 0)
 # --------------------------------------------------------- 
-# sifter  -------------------------------------------------- 
-  
-    def OnSiftClick(self, event):
-        # check to see if there's stuff in the 'list' text control
-        # split pre-split and rest
-        # next split that with seperator
-        # add the results to the list control
-        sift_pre = self.tc_sift_pre.GetValue()
-        sift_seperator = self.tc_sift_seperator.GetValue()
-        sift_post = self.tc_sift_post.GetValue()
-        s_choice = xrc.XRCCTRL(self, 'm_ch_sift_choice').GetSelection()
-        #print s_choice
-        # check if something is selected
-        # cycle through each 'list' line
-        text_glob = self.tc_sift_rawlist.GetValue().split('\n')
-        
-        self.lc_sift.DeleteAllItems()
-        counter = 0;
-        
-        # use '[#]char' to skip to the seperator ex [2]. is second .
-        split_number = 1
-        if len(sift_pre) > 3:
-            if (sift_pre[0] == '[') & (sift_pre[2] == ']') & (sift_pre[1].isdigit()):
-                print 'boo'
-                split_number = int(sift_pre[1])
-                sift_pre = sift_pre[3:]
-        
-        if (len(text_glob) > 0) & (sift_seperator != ''):
-            #print len(text_glob)
-            for x in text_glob:
-                if len(sift_pre) > 0:
-                    part_one = x.split(sift_pre, split_number)[-1]
-                else:
-                    part_one = x
-                part_two = part_one.split(sift_seperator, 1)
-                artist = part_two[0]
-                if len(part_two) > 1:
-                    song = part_two[1]
-                    if sift_post != '':
-                        post_song = song.rsplit(sift_post, 1)
-                        song = post_song[0]
-                else:
-                    song = ''
-                                    
-                # add to list control
-                if s_choice == 0:
-                    if (artist != '') & (song != ''):
-                        self.lc_sift.InsertStringItem(counter, artist.strip())
-                        self.lc_sift.SetStringItem(counter, 1, song.strip().replace('"', ''))
-                        counter = counter + 1
-                else:
-                    if (artist != '') & (song != ''):
-                        self.lc_sift.InsertStringItem(counter, song.strip().replace('"', ''))
-                        self.lc_sift.SetStringItem(counter, 1, artist.strip())          
-                        counter = counter + 1
-               
-            self.lc_sift.SetColumnWidth(0, 120)
-            self.lc_sift.SetColumnWidth(1, wx.LIST_AUTOSIZE)
-            #print self.lc_sift.GetItemCount()
-            
-    def OnRSSClick(self, event):
-        # load selected rss feed
-        val = self.lc_sift_rss.GetFirstSelected()
-        if val != None:
-            feed = self.lc_sift_rss.GetItem(val, 0).GetText()
-            self.tc_sift_rss_url.SetValue(feed)
-            
-    def OnRSSRightClick(self, event):
-        # show menu for deleting the rss feed
-        val = self.lc_sift_rss.GetFirstSelected()
-        if val != -1:
-            if (self.lc_sift_rss.GetItem(val, 0).GetText() != ''):    
-                # make a menu
-                ID_DELETE = 1
-                menu = wx.Menu()
-                menu.Append(ID_DELETE, "Delete Feed")
-                wx.EVT_MENU(self, ID_DELETE, self.OnDeleteRSSClick)       
-                self.PopupMenu(menu)
-                menu.Destroy()
-                
-    def OnDeleteRSSClick(self, event):
-        # remove the rss feed from the database
-        val = self.lc_sift_rss.GetFirstSelected()
-        feed = self.lc_sift_rss.GetItem(val, 0).GetText()
-        local_songs.DbFuncs().RemoveFeedRow(feed)   
-        self.LoadRSSFeeds()
-        
-    def OnSaveRSSClick(self, event):
-        # save the rss feed to the database
-        feed = self.tc_sift_rss_url.GetValue()
-        if feed !='':
-            self.SaveRSSFeed(feed)            
-        
-    def SaveRSSFeed(self, feed_name):
-        #save a feed url to the db               
-        local_songs.DbFuncs().InsertFeedData(feed_name)
-        self.LoadRSSFeeds()
-        
-    def LoadRSSFeeds(self):
-        self.lc_sift_rss.DeleteAllItems()
-        #populate rss listctrl
-        FILEDB = system_files.GetDirectories(None).DatabaseLocation()
-        conn = sqlite3.connect(FILEDB)
-        c = conn.cursor()
-        query = "SELECT feed_url FROM m_feeds ORDER BY feed_url"
-        
-        c.execute(query)
-        h = c.fetchall()
-        counter = 0
-        for x in h:
-            #print x
-            try:
-                index = self.lc_sift_rss.InsertStringItem(counter, x[counter])               
-            except TypeError, err:
-                print 'Type error: ' + str(err)
-                pass
-        c.close()
-        self.lc_sift_rss.SetColumnWidth(0, wx.LIST_AUTOSIZE)
-        
-    def OnSiftRSS(self, event):
-        # load the rss file and pass to the list sifter
-        if (self.tc_sift_rss_url.GetValue() != ''):
-            #fetch rss feed
-            rss_feed = download_feed.GetRSSFeed(self.tc_sift_rss_url.GetValue())
-            #pass to pastebox
-            feed_out = ''
-            for x in rss_feed:
-                feed_out = feed_out + x + '\n'
-            self.tc_sift_rawlist.SetValue(feed_out)
-            #switch to the textbox tab
-            xrc.XRCCTRL(self, 'm_nb_sift_rss').SetSelection(0)
-            
-    def OnSiftURLClear(self, event):
-        #clear the url field
-        self.tc_sift_rss_url.SetValue('')
-            
-    def OnAutoGenerateSiftPlayist(self, event):
-        # copy the sifted list to the playlist
-        self.CheckClear()
-        insert_at = self.lc_playlist.GetItemCount()
-        for x in range(self.lc_sift.GetItemCount(), 0, -1):
-            artist = self.lc_sift.GetItem(x-1, 0).GetText()
-            song = self.lc_sift.GetItem(x-1, 1).GetText()
-            self.SetPlaylistItem(insert_at, artist, song, '', '')
-        #save the playlist
-        self.SavePlaylist(self.main_playlist_location)
-        # switch tabs
-        self.nb_main.SetSelection(NB_PLAYLIST)
-        
-    def OnSiftDoubleClick(self, event):
-        # past the artist + track in the search field
-        val = self.lc_sift.GetFirstSelected()
-        artist = self.lc_sift.GetItem(val, 0).GetText()
-        song = self.lc_sift.GetItem(val, 1).GetText()
-        #search for selected song
-        self.SearchOrPlaylist(artist, song)
-        # display search page
-        #self.nb_main.SetSelection(NB_PLAYLIST)
-        #self.lc_search.SetFocus()
-        #self.lc_search.Select(0)
-     
-    def OnSiftRightClick(self, event):
-        val = self.lc_sift.GetFirstSelected()
-        if val != -1:
-            if (self.lc_sift.GetItem(val, 0).GetText() != '') & (self.lc_sift.GetItem(val, 1).GetText() != ''):    
-                # make a menu
-                ID_PLAYLIST = 1
-                ID_CLEAR = 2
-                menu = wx.Menu()
-                menu.Append(ID_PLAYLIST, "Add to Playlist")
-                menu.AppendSeparator()
-                menu.Append(ID_CLEAR, "Clear Playlist")
-                wx.EVT_MENU(self, ID_PLAYLIST, self.SiftAddPlaylist)
-                wx.EVT_MENU(self, ID_CLEAR, self.OnClearPlaylistClick)       
-                self.PopupMenu(menu)
-                menu.Destroy()
-  
-    def SiftAddPlaylist(self, event):
-        self.BackupList()
-        val = self.lc_sift.GetFirstSelected()
-        total = self.lc_sift.GetSelectedItemCount()
-        current_count = self.lc_playlist.GetItemCount()
-        #print val
-        if (val >= 0):            
-            artist =    self.lc_sift.GetItem(val, 0).GetText()
-            song =      self.lc_sift.GetItem(val, 1).GetText()
-            self.SetPlaylistItem(current_count, artist, song, '', '')
-            current_select = val
-            if total > 1:
-                for x in range(1, self.lc_sift.GetSelectedItemCount()):
-                    current_select =    self.lc_sift.GetNextSelected(current_select)
-                    artist =            self.lc_sift.GetItem(current_select, 0).GetText()
-                    song =              self.lc_sift.GetItem(current_select, 1).GetText()                    
-                    self.SetPlaylistItem(current_count + x, artist, song, '', '')
-
-        #save the playlist
-        self.SavePlaylist(self.main_playlist_location)
-        # switch tabs
-        #self.nb_main.SetSelection(NB_PLAYLIST)
-        
-        
         
 #---------------------------------------------------------------------------
 # ####################################
