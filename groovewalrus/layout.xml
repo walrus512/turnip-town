@@ -234,7 +234,7 @@
 							<object class="notebookpage">
 								<label>Playlist</label>
 								<selected>1</selected>
-								<object class="wxScrolledWindow" name="m_scrolledWindow3">
+								<object class="wxScrolledWindow" name="m_sw_playlist">
 									<style>wxHSCROLL|wxVSCROLL</style>
 									<object class="wxBoxSizer">
 										<orient>wxVERTICAL</orient>
@@ -356,7 +356,7 @@
 							<object class="notebookpage">
 								<label>Last.fm</label>
 								<selected>0</selected>
-								<object class="wxScrolledWindow" name="m_scrolledWindow2">
+								<object class="wxScrolledWindow" name="m_sw_last">
 									<style>wxHSCROLL|wxVSCROLL</style>
 									<object class="wxBoxSizer">
 										<orient>wxVERTICAL</orient>
@@ -705,7 +705,7 @@
 							<object class="notebookpage">
 								<label>My Last.fm</label>
 								<selected>0</selected>
-								<object class="wxScrolledWindow" name="m_scrolledWindow7">
+								<object class="wxScrolledWindow" name="m_sw_mylast">
 									<style>wxHSCROLL|wxVSCROLL</style>
 									<object class="wxBoxSizer">
 										<orient>wxVERTICAL</orient>
@@ -937,7 +937,7 @@
 							<object class="notebookpage">
 								<label>Album</label>
 								<selected>0</selected>
-								<object class="wxScrolledWindow" name="m_scrolledWindow1">
+								<object class="wxScrolledWindow" name="m_sw_album">
 									<style>wxHSCROLL|wxVSCROLL</style>
 									<object class="wxBoxSizer">
 										<orient>wxVERTICAL</orient>
@@ -1141,7 +1141,7 @@
 							<object class="notebookpage">
 								<label>Biography</label>
 								<selected>0</selected>
-								<object class="wxScrolledWindow" name="m_scrolledWindow8">
+								<object class="wxScrolledWindow" name="m_sw_bio">
 									<style>wxHSCROLL|wxVSCROLL</style>
 									<object class="wxBoxSizer">
 										<orient>wxVERTICAL</orient>
@@ -1212,9 +1212,91 @@
 								</object>
 							</object>
 							<object class="notebookpage">
+								<label>Favorites</label>
+								<selected>0</selected>
+								<object class="wxScrolledWindow" name="m_sw_faves">
+									<style>wxHSCROLL|wxVSCROLL</style>
+									<fg>#0080ff</fg>
+									<object class="wxBoxSizer">
+										<orient>wxVERTICAL</orient>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxEXPAND|wxTOP|wxRIGHT|wxLEFT</flag>
+											<border>5</border>
+											<object class="wxStaticText" name="m_staticText24">
+												<font>
+													<size>11</size>
+													<family>default</family>
+													<style>normal</style>
+													<weight>bold</weight>
+													<underlined>0</underlined>
+												</font>
+												<label>Favorites</label>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>1</option>
+											<flag>wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxBoxSizer">
+												<orient>wxHORIZONTAL</orient>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxEXPAND</flag>
+													<border>5</border>
+													<object class="wxBoxSizer">
+														<orient>wxVERTICAL</orient>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL</flag>
+															<border>5</border>
+															<object class="wxBitmapButton" name="m_bb_faves_playlist">
+																<style>wxBU_AUTODRAW</style>
+																<size>-1,104</size>
+																<tooltip>Add to Playlist</tooltip>
+																<bitmap>graphics/list-add.png</bitmap>
+																<default>0</default>
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL</flag>
+															<border>5</border>
+															<object class="wxBitmapButton" name="m_bb_faves_plize">
+																<style>wxBU_AUTODRAW</style>
+																<size>-1,104</size>
+																<tooltip>Add all songs to Playlist</tooltip>
+																<bitmap>graphics/list-add-all.png</bitmap>
+																<default>0</default>
+															</object>
+														</object>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>1</option>
+													<flag>wxEXPAND</flag>
+													<border>5</border>
+													<object class="wxBoxSizer">
+														<orient>wxVERTICAL</orient>
+														<object class="sizeritem">
+															<option>1</option>
+															<flag>wxEXPAND|wxALL</flag>
+															<border>5</border>
+															<object class="wxListCtrl" name="m_lc_faves">
+																<style>wxLC_REPORT</style>
+															</object>
+														</object>
+													</object>
+												</object>
+											</object>
+										</object>
+									</object>
+								</object>
+							</object>
+							<object class="notebookpage">
 								<label>Collection</label>
 								<selected>0</selected>
-								<object class="wxScrolledWindow" name="m_scrolledWindow10">
+								<object class="wxScrolledWindow" name="m_sw_scol">
 									<style>wxHSCROLL|wxVSCROLL</style>
 									<object class="wxBoxSizer">
 										<orient>wxVERTICAL</orient>
@@ -1371,91 +1453,9 @@
 								</object>
 							</object>
 							<object class="notebookpage">
-								<label>Favorites</label>
-								<selected>0</selected>
-								<object class="wxScrolledWindow" name="m_sw_faves">
-									<style>wxHSCROLL|wxVSCROLL</style>
-									<fg>#0080ff</fg>
-									<object class="wxBoxSizer">
-										<orient>wxVERTICAL</orient>
-										<object class="sizeritem">
-											<option>0</option>
-											<flag>wxEXPAND|wxTOP|wxRIGHT|wxLEFT</flag>
-											<border>5</border>
-											<object class="wxStaticText" name="m_staticText24">
-												<font>
-													<size>11</size>
-													<family>default</family>
-													<style>normal</style>
-													<weight>bold</weight>
-													<underlined>0</underlined>
-												</font>
-												<label>Favorites</label>
-											</object>
-										</object>
-										<object class="sizeritem">
-											<option>1</option>
-											<flag>wxEXPAND</flag>
-											<border>5</border>
-											<object class="wxBoxSizer">
-												<orient>wxHORIZONTAL</orient>
-												<object class="sizeritem">
-													<option>0</option>
-													<flag>wxEXPAND</flag>
-													<border>5</border>
-													<object class="wxBoxSizer">
-														<orient>wxVERTICAL</orient>
-														<object class="sizeritem">
-															<option>0</option>
-															<flag>wxALL</flag>
-															<border>5</border>
-															<object class="wxBitmapButton" name="m_bb_faves_playlist">
-																<style>wxBU_AUTODRAW</style>
-																<size>-1,104</size>
-																<tooltip>Add to Playlist</tooltip>
-																<bitmap>graphics/list-add.png</bitmap>
-																<default>0</default>
-															</object>
-														</object>
-														<object class="sizeritem">
-															<option>0</option>
-															<flag>wxALL</flag>
-															<border>5</border>
-															<object class="wxBitmapButton" name="m_bb_faves_plize">
-																<style>wxBU_AUTODRAW</style>
-																<size>-1,104</size>
-																<tooltip>Add all songs to Playlist</tooltip>
-																<bitmap>graphics/list-add-all.png</bitmap>
-																<default>0</default>
-															</object>
-														</object>
-													</object>
-												</object>
-												<object class="sizeritem">
-													<option>1</option>
-													<flag>wxEXPAND</flag>
-													<border>5</border>
-													<object class="wxBoxSizer">
-														<orient>wxVERTICAL</orient>
-														<object class="sizeritem">
-															<option>1</option>
-															<flag>wxEXPAND|wxALL</flag>
-															<border>5</border>
-															<object class="wxListCtrl" name="m_lc_faves">
-																<style>wxLC_REPORT</style>
-															</object>
-														</object>
-													</object>
-												</object>
-											</object>
-										</object>
-									</object>
-								</object>
-							</object>
-							<object class="notebookpage">
 								<label>List Sifter</label>
 								<selected>0</selected>
-								<object class="wxScrolledWindow" name="m_scrolledWindow6">
+								<object class="wxScrolledWindow" name="m_sw_list_sifter">
 									<style>wxHSCROLL|wxVSCROLL</style>
 									<object class="wxBoxSizer">
 										<orient>wxVERTICAL</orient>
@@ -1732,7 +1732,7 @@
 							<object class="notebookpage">
 								<label>Options</label>
 								<selected>0</selected>
-								<object class="wxScrolledWindow" name="m_scrolledWindow4">
+								<object class="wxScrolledWindow" name="m_sw_options">
 									<style>wxHSCROLL|wxVSCROLL</style>
 									<object class="wxBoxSizer">
 										<orient>wxVERTICAL</orient>
