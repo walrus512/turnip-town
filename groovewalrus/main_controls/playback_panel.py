@@ -53,16 +53,23 @@ class PlaybackPanel(wx.Panel):
         dc.Clear()
         
         dc.SetFont(self.font)
-        artist = self.GetGrandParent().partist
-        track = self.GetGrandParent().ptrack
-        status = self.GetGrandParent().pstatus
-        track_time = self.GetGrandParent().ConvertTimeFormated(self.GetGrandParent().current_play_time)
-        play_time = self.GetGrandParent().ConvertTimeFormated(self.GetGrandParent().time_count)
-        download_percent = self.GetGrandParent().download_percent
+        par = self.GetGrandParent()
+        try:
+            artist = par.partist
+        except AttributeError, error:
+            #print error
+            par = par.GetParent()
+            artist = par.partist
+            
+        track = par.ptrack
+        status = par.pstatus
+        track_time = par.ConvertTimeFormated(par.current_play_time)
+        play_time = par.ConvertTimeFormated(par.time_count)
+        download_percent = par.download_percent
         
         play_to = 0
-        if (self.GetGrandParent().current_play_time > 0) & (self.GetGrandParent().time_count > 0):
-            play_to = w * (float(self.GetGrandParent().time_count) / float(self.GetGrandParent().current_play_time))
+        if (par.current_play_time > 0) & (par.time_count > 0):
+            play_to = w * (float(par.time_count) / float(par.current_play_time))
         down_to = w * float(download_percent * 0.01)
         
         if status == 'stopped':
