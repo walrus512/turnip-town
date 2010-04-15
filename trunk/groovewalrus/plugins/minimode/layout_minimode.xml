@@ -11,7 +11,7 @@
 				<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
 				<border>0</border>
 				<object class="wxStaticBitmap" name="m_bm_minimode_grabber">
-					<tooltip>Drag (Right-click to close)</tooltip>
+					<tooltip>Drag</tooltip>
 					<bitmap>m_grabber.png</bitmap>
 				</object>
 			</object>
@@ -44,14 +44,24 @@
 				<flag>wxEXPAND</flag>
 				<border>5</border>
 				<object class="wxBoxSizer">
-					<orient>wxVERTICAL</orient>
+					<orient>wxHORIZONTAL</orient>
 					<object class="sizeritem">
 						<option>1</option>
-						<flag>wxEXPAND|wxALL</flag>
+						<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM</flag>
 						<border>5</border>
 						<object class="wxPanel" name="m_pa_minimode_status" subclass="main_controls.playback_panel.PlaybackPanel">
-							<style>wxTAB_TRAVERSAL</style>
+							<style>wxSIMPLE_BORDER|wxTAB_TRAVERSAL</style>
+							<size>-1,26</size>
 							<bg>#f0f0f0</bg>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL</flag>
+						<border>3</border>
+						<object class="wxStaticBitmap" name="m_bm_minimode_close">
+							<tooltip>Close</tooltip>
+							<bitmap>m_close.png</bitmap>
 						</object>
 					</object>
 				</object>

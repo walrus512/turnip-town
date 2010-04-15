@@ -28,7 +28,7 @@ GRAPHICS_LOCATION = ''
 
 class MainPanel(wx.Frame):
     def __init__(self, parent):
-        wx.Frame.__init__(self, parent, -1, "minimode", size=(620,42), pos=((wx.GetDisplaySize()[0] / 2) - (310),-2), style=wx.FRAME_SHAPED | wx.STAY_ON_TOP)        
+        wx.Frame.__init__(self, parent, -1, "minimode", size=(620,42), pos=((wx.GetDisplaySize()[0] / 2) - (310),-2), style=wx.FRAME_SHAPED | wx.STAY_ON_TOP | wx.FRAME_NO_TASKBAR)        
         
         self.parent = parent
         
@@ -59,7 +59,7 @@ class MainPanel(wx.Frame):
         self.bm_minimode_play.Bind(wx.EVT_LEFT_UP, self.OnPlayClick)
         self.bm_minimode_forward.Bind(wx.EVT_LEFT_UP, self.OnForwardClick)
         self.bm_minimode_backward.Bind(wx.EVT_LEFT_UP, self.OnBackwardClick)
-        #self.bm_minimode_close.Bind(wx.EVT_LEFT_UP, self.CloseMe)
+        self.bm_minimode_close.Bind(wx.EVT_LEFT_UP, self.CloseMe)
         
         self.bm_minimode_play.Bind(wx.EVT_ENTER_WINDOW, self.OnPlayHover)
         self.bm_minimode_play.Bind(wx.EVT_LEAVE_WINDOW, self.OnPlayHoverOut)
@@ -89,8 +89,12 @@ class MainPanel(wx.Frame):
         #self.SetSizer(sizer)
         self.SetSizerAndFit(sizer)
         self.SetAutoLayout(True)
-        self.SetSize((620,42))
-        #self.SetTransparent(200)         
+        self.SetSize((580,34))
+        #self.SetTransparent(200)
+        
+        #make it smaller and uglier
+        self.m_pa_minimode_status.SetSize(1)
+        #self.m_pa_minimode_status.SetColours(background='#f5f5f5', text='#000000', progress='#ff9000', download='#965b0f')
         
         # timer ----------------
         self.timer = wx.Timer(self)
@@ -149,7 +153,11 @@ class MainPanel(wx.Frame):
         if evt.Dragging() and evt.LeftIsDown():
             dPos = evt.GetEventObject().ClientToScreen(evt.GetPosition())
             #nPos = (self.wPos.x + (dPos.x - self.ldPos.x), -2)
-            nPos = (self.wPos.x + (dPos.x - self.ldPos.x), -2)#self.wPos.y + (dPos.y - self.ldPos.y))
+            if (self.wPos.y + (dPos.y - self.ldPos.y)) < 10:
+                #snap to top to screen
+                nPos = (self.wPos.x + (dPos.x - self.ldPos.x), -2)
+            else:
+                nPos = (self.wPos.x + (dPos.x - self.ldPos.x), self.wPos.y + (dPos.y - self.ldPos.y))
             self.Move(nPos)
 
     def OnMouseLeftUp(self, evt):
@@ -159,6 +167,7 @@ class MainPanel(wx.Frame):
             pass
 
     def OnRightUp(self, event):        
-        self.Destroy()
+        #self.Destroy()
+        pass
         
 # --------------------------------------------------------- 
