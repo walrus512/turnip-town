@@ -2428,6 +2428,10 @@
 					<label>About...</label>
 					<help></help>
 				</object>
+				<object class="wxMenuItem" name="m_mi_website">
+					<label>GrooveWalrus Website</label>
+					<help></help>
+				</object>
 			</object>
 		</object>
 
