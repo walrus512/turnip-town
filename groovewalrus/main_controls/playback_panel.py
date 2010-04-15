@@ -28,22 +28,49 @@ class PlaybackPanel(wx.Panel):
     def __init__(self):
         p = wx.PrePanel()
         self.PostCreate(p)
-        self.Bind(self._firstEventType, self.OnCreate)     
-    
+        self.Bind(self._firstEventType, self.OnCreate)
     
     def _PostInit(self):
-        self.font = wx.Font(9, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
-        self.font_bold = wx.Font(9, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
+        self.SetSize()
+        self.SetColours()
+                
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         self.Bind(wx.EVT_SIZE, self.OnSize)
-        self.Bind(wx.EVT_ERASE_BACKGROUND, self.OnEraseBackground)        
+        self.Bind(wx.EVT_ERASE_BACKGROUND, self.OnEraseBackground)
 
     def OnCreate(self, evt):
         self.Unbind(self._firstEventType)
         # Called at window creation time
         self._PostInit()
         self.Refresh()
+        
+    def SetSmallPanel(self):
+        #make a smaller version
+        self.font = wx.Font(6, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
+        self.font_bold = wx.Font(6, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
 
+    def SetColours(self, background='#f5f5f5', text='#000000', progress='#B0E2FF', download='#0080FF'):
+        '''Sets the background, text, progress, and download colors, #B0E2FF'''
+        self.SetBackgroundColour(background)
+        self.progress_colour = progress
+        self.download_colour = download
+        self.text_colour = text
+        
+    def SetSize(self, size_type=0):
+        '''Sets the size, 0 regular, 1 smaller'''
+        if size_type == 0:
+            self.font_size = 9
+            self.font = wx.Font(self.font_size, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
+            self.font_bold = wx.Font(self.font_size, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
+            self.progress_height = 25
+            self.download_height = 5
+        else:
+            self.font_size = 7
+            self.font = wx.Font(self.font_size, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
+            self.font_bold = wx.Font(self.font_size, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
+            self.progress_height = 21
+            self.download_height = 3
+            
     def OnPaint(self, event):
         w, h = self.GetSize()
         #let's use double buffering to avoid flickering        
@@ -76,22 +103,24 @@ class PlaybackPanel(wx.Panel):
             play_to = 0
             play_time = ''
 
-        dc.SetPen(wx.Pen('#B0E2FF'))
-        dc.SetBrush(wx.Brush('#B0E2FF'))
-        dc.DrawRectangle(0, 0, play_to, 25)
+        dc.SetPen(wx.Pen(self.progress_colour))
+        dc.SetBrush(wx.Brush(self.progress_colour))
+        dc.DrawRectangle(0, 0, play_to, self.progress_height)
         if download_percent > 0:
-            dc.SetPen(wx.Pen('#0080FF'))
-            dc.SetBrush(wx.Brush('#0080FF'))
-            dc.DrawRectangle(0, 25, down_to, 5)
+            dc.SetPen(wx.Pen(self.download_colour))
+            dc.SetBrush(wx.Brush(self.download_colour))
+            dc.DrawRectangle(0, self.progress_height, down_to, self.download_height)
         else:
-            dc.DrawRectangle(0, 25, play_to, 5)
+            dc.DrawRectangle(0, self.progress_height, play_to, self.download_height)
 
-        dc.DrawText(status, 10, 3)
-        dc.DrawText(track_time, 70, 3)
-        dc.DrawText(play_time, 115, 3)
+        dc.SetTextForeground(self.text_colour)
+        #font size is used to figure out approx spacing
+        dc.DrawText(status, self.font_size, 3)
+        dc.DrawText(track_time, self.font_size * 8, 3)
+        dc.DrawText(play_time, self.font_size * 13, 3)
         dc.SetFont(self.font_bold)
         if len(artist) > 0:
-            dc.DrawText(artist + ' - ' + track, 165, 3)
+            dc.DrawText(artist + ' - ' + track, self.font_size * 18, 3)
 
     def OnSize(self, event):
         self.Refresh()
