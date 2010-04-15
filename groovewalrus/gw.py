@@ -78,8 +78,10 @@ from main_thirdp import grooveshark_old
 #from plugins.played import played
 #from plugins.griddle import griddle
 #from plugins.ratings import ratings
+#from plugins.minimode import minimode
+#from plugins.lyrics import lyrics
 
-PROGRAM_VERSION = "0.212"
+PROGRAM_VERSION = "0.213"
 PROGRAM_NAME = "GrooveWalrus"
 
 PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -695,6 +697,7 @@ class MainPanel(wx.Panel):
         # help menu
         self.parent.Bind(wx.EVT_MENU, self.OnGSVersionClick, id=xrc.XRCID("m_mi_gs_version"))
         self.parent.Bind(wx.EVT_MENU, self.OnAboutClick, id=xrc.XRCID("m_mi_about"))
+        self.parent.Bind(wx.EVT_MENU, self.OpenWebsite, id=xrc.XRCID("m_mi_website"))        
         
         
         #-------------
@@ -750,6 +753,9 @@ class MainPanel(wx.Panel):
             self.parent.Refresh()
             
         dlg.Destroy()
+        
+    def OpenWebsite(self, event):        
+        default_app_open.dopen('http://groove-walrus.turnip-town.net')
         
     def RateImageList(self):
         # song rating imagelist
@@ -2781,6 +2787,7 @@ class WebFetchThread(Thread):
                
     def stop(self):
         self.lsp.stop_play()
+        #self.lsp.stop()
         
     def pause(self):
         self.lsp.toggle_pause()
