@@ -538,9 +538,11 @@ class Player(object):
         self.paused = False
                 
     def stop_play(self):
+        #self.stop()
         self.local_play_status = False
         if os.name != 'nt':
             time.sleep(4)
+        self.stop()
             
     def toggle_pause(self):
         if self.paused == False:
@@ -565,7 +567,12 @@ class Player(object):
     def isPaused( self ):
         """ Returns whether playback is paused """
         return self.paused
-
+        
+    def stop(self):
+        """ Stop playing the current file """
+        if self.snd.isPlaying():            
+            if self.snd:
+                self.snd.stop()
 
     def play(self, name, card=0, rate=1, tt=-1):
     
@@ -614,9 +621,9 @@ class Player(object):
                             self.snd.play( data )
                         #print snd.getPosition()
             if tt> 0:
-                if self.snd and self.snd.getPosition()> tt:
+                if self.snd and self.snd.getPosition()< tt:
                     break
-        
+
             s= f.read( 512 )
             if self.local_play_status == False:               
                 break
