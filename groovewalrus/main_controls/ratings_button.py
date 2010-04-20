@@ -144,7 +144,7 @@ def AddRating(parent, track_id, rating_type_id):
     if track_id > 0:
         local_songs.DbFuncs().InsertRatingData(track_id, rating_type_id)
     #self.UpdateRowCount()
-        parent.ReadFaves()
+        parent.favorites.ReadFaves()
         
 def MenuAppend(menu, parent, method_loc):
     for x in IMAGE_FILES:
