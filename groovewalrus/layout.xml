@@ -1216,7 +1216,6 @@
 								<selected>0</selected>
 								<object class="wxScrolledWindow" name="m_sw_faves">
 									<style>wxHSCROLL|wxVSCROLL</style>
-									<fg>#0080ff</fg>
 									<object class="wxBoxSizer">
 										<orient>wxVERTICAL</orient>
 										<object class="sizeritem">
@@ -1224,6 +1223,7 @@
 											<flag>wxEXPAND|wxTOP|wxRIGHT|wxLEFT</flag>
 											<border>5</border>
 											<object class="wxStaticText" name="m_staticText24">
+												<fg>#0080ff</fg>
 												<font>
 													<size>11</size>
 													<family>default</family>
@@ -1246,30 +1246,6 @@
 													<border>5</border>
 													<object class="wxBoxSizer">
 														<orient>wxVERTICAL</orient>
-														<object class="sizeritem">
-															<option>0</option>
-															<flag>wxALL</flag>
-															<border>5</border>
-															<object class="wxBitmapButton" name="m_bb_faves_playlist">
-																<style>wxBU_AUTODRAW</style>
-																<size>-1,104</size>
-																<tooltip>Add to Playlist</tooltip>
-																<bitmap>graphics/list-add.png</bitmap>
-																<default>0</default>
-															</object>
-														</object>
-														<object class="sizeritem">
-															<option>0</option>
-															<flag>wxALL</flag>
-															<border>5</border>
-															<object class="wxBitmapButton" name="m_bb_faves_plize">
-																<style>wxBU_AUTODRAW</style>
-																<size>-1,104</size>
-																<tooltip>Add all songs to Playlist</tooltip>
-																<bitmap>graphics/list-add-all.png</bitmap>
-																<default>0</default>
-															</object>
-														</object>
 													</object>
 												</object>
 												<object class="sizeritem">
@@ -1286,6 +1262,119 @@
 																<style>wxLC_REPORT</style>
 															</object>
 														</object>
+													</object>
+												</object>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxBoxSizer">
+												<orient>wxHORIZONTAL</orient>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+													<border>5</border>
+													<object class="wxBitmapButton" name="m_bb_faves_plize">
+														<style>wxBU_AUTODRAW</style>
+														<size>92,-1</size>
+														<tooltip>Playlistize: add all songs to Playlist</tooltip>
+														<bitmap>graphics/list-add-all.png</bitmap>
+														<default>0</default>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
+													<border>5</border>
+													<object class="wxBitmapButton" name="m_bb_faves_playlist">
+														<style>wxBU_AUTODRAW</style>
+														<tooltip>Add selected to Playlist</tooltip>
+														<bitmap>graphics/list-add.png</bitmap>
+														<default>0</default>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+													<border>5</border>
+													<object class="wxStaticText" name="m_staticText462">
+														<style>wxALIGN_RIGHT</style>
+														<size>100,-1</size>
+														<label>Rating:</label>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+													<border>5</border>
+													<object class="wxCheckBox" name="m_cb_faves_great">
+														<label></label>
+														<checked>0</checked>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
+													<border>5</border>
+													<object class="wxStaticBitmap" name="m_bitmap4">
+														<tooltip>Great</tooltip>
+														<bitmap>graphics/weather-clear.png</bitmap>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+													<border>5</border>
+													<object class="wxCheckBox" name="m_cb_faves_good">
+														<label></label>
+														<checked>0</checked>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
+													<border>5</border>
+													<object class="wxStaticBitmap" name="m_bitmap8">
+														<tooltip>Good</tooltip>
+														<bitmap>graphics/weather-few-clouds.png</bitmap>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+													<border>5</border>
+													<object class="wxCheckBox" name="m_cb_faves_average">
+														<label></label>
+														<checked>0</checked>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
+													<border>5</border>
+													<object class="wxStaticBitmap" name="m_bitmap5">
+														<tooltip>Average</tooltip>
+														<bitmap>graphics/weather-overcast.png</bitmap>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+													<border>5</border>
+													<object class="wxCheckBox" name="m_cb_faves_poor">
+														<label></label>
+														<checked>0</checked>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
+													<border>5</border>
+													<object class="wxStaticBitmap" name="m_bitmap6">
+														<tooltip>Poor</tooltip>
+														<bitmap>graphics/weather-storm.png</bitmap>
 													</object>
 												</object>
 											</object>
@@ -1328,6 +1417,14 @@
 													<border>5</border>
 													<object class="wxBoxSizer">
 														<orient>wxVERTICAL</orient>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxEXPAND</flag>
+													<border>5</border>
+													<object class="wxBoxSizer">
+														<orient>wxVERTICAL</orient>
 														<object class="sizeritem">
 															<option>0</option>
 															<flag>wxALL</flag>
@@ -1345,7 +1442,7 @@
 															<border>5</border>
 															<object class="wxBitmapButton" name="m_bb_scol_playlist">
 																<style>wxBU_AUTODRAW</style>
-																<size>-1,64</size>
+																<size>-1,92</size>
 																<tooltip>Add to Playlist</tooltip>
 																<bitmap>graphics/list-add.png</bitmap>
 																<default>0</default>
@@ -1375,76 +1472,166 @@
 													<flag>wxEXPAND</flag>
 													<border>5</border>
 													<object class="wxBoxSizer">
-														<orient>wxVERTICAL</orient>
+														<orient>wxHORIZONTAL</orient>
 														<object class="sizeritem">
 															<option>1</option>
-															<flag>wxALL|wxEXPAND</flag>
+															<flag>wxEXPAND|wxALL</flag>
 															<border>5</border>
-															<object class="wxListCtrl" name="m_lc_scol_col" subclass="main_utils.local_songs.VirtualList">
-																<style>wxLC_REPORT|wxLC_VIRTUAL</style>
+															<object class="wxNotebook" name="m_nb_scol_browser">
+																<style>wxNB_FIXEDWIDTH</style>
+																<object class="notebookpage">
+																	<label>Files</label>
+																	<selected>1</selected>
+																	<object class="wxPanel" name="m_panel4">
+																		<style>wxTAB_TRAVERSAL</style>
+																		<object class="wxBoxSizer">
+																			<orient>wxVERTICAL</orient>
+																			<object class="sizeritem">
+																				<option>1</option>
+																				<flag>wxALL|wxEXPAND</flag>
+																				<border>5</border>
+																				<object class="wxListCtrl" name="m_lc_scol_col" subclass="main_utils.local_songs.VirtualList">
+																					<style>wxLC_REPORT|wxLC_VIRTUAL</style>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxEXPAND</flag>
+																				<border>5</border>
+																				<object class="wxBoxSizer">
+																					<orient>wxHORIZONTAL</orient>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																						<border>5</border>
+																						<object class="wxStaticText" name="m_staticText37">
+																							<style>wxALIGN_RIGHT</style>
+																							<size>80,-1</size>
+																							<label>Search:</label>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT</flag>
+																						<border>5</border>
+																						<object class="wxTextCtrl" name="m_tc_scol_song">
+																							<size>160,-1</size>
+																							<value></value>
+																							<maxlength>0</maxlength>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxTOP|wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL</flag>
+																						<border>5</border>
+																						<object class="wxBitmapButton" name="m_bb_scol_clear">
+																							<style>wxBU_AUTODRAW</style>
+																							<tooltip>Clear File Filter</tooltip>
+																							<bitmap>graphics/edit-clear-small.png</bitmap>
+																							<default>0</default>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																						<border>5</border>
+																						<object class="wxRadioButton" name="m_rb_scol_file">
+																							<label>File</label>
+																							<value>1</value>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																						<border>5</border>
+																						<object class="wxRadioButton" name="m_rb_scol_folder">
+																							<label>Folder</label>
+																							<value>0</value>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																						<border>5</border>
+																						<object class="wxCheckBox" name="m_cb_scol_start">
+																							<hidden>1</hidden>
+																							<label>Starts with...</label>
+																							<checked>0</checked>
+																						</object>
+																					</object>
+																				</object>
+																			</object>
+																		</object>
+																	</object>
+																</object>
+																<object class="notebookpage">
+																	<label>Folders</label>
+																	<selected>0</selected>
+																	<object class="wxPanel" name="m_panel5">
+																		<style>wxTAB_TRAVERSAL</style>
+																		<object class="wxBoxSizer">
+																			<orient>wxVERTICAL</orient>
+																			<object class="sizeritem">
+																				<option>1</option>
+																				<flag>wxALL|wxEXPAND</flag>
+																				<border>5</border>
+																				<object class="wxTreeCtrl" name="m_tr_scol_folders">
+																					<style>wxTR_DEFAULT_STYLE|wxTR_HAS_BUTTONS|wxTR_HIDE_ROOT</style>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxEXPAND</flag>
+																				<border>5</border>
+																				<object class="wxBoxSizer">
+																					<orient>wxHORIZONTAL</orient>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																						<border>5</border>
+																						<object class="wxStaticText" name="m_staticText372">
+																							<style>wxALIGN_RIGHT</style>
+																							<size>80,-1</size>
+																							<label>Search:</label>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT</flag>
+																						<border>5</border>
+																						<object class="wxTextCtrl" name="m_tc_scol_folder">
+																							<size>160,-1</size>
+																							<value></value>
+																							<maxlength>0</maxlength>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxTOP|wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL</flag>
+																						<border>5</border>
+																						<object class="wxBitmapButton" name="m_bb_scol_clear_folder">
+																							<style>wxBU_AUTODRAW</style>
+																							<tooltip>Clear File Filter</tooltip>
+																							<bitmap>graphics/edit-clear-small.png</bitmap>
+																							<default>0</default>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																						<border>5</border>
+																						<object class="wxCheckBox" name="m_cb_scol_start_folder">
+																							<label>Starts with...</label>
+																							<checked>0</checked>
+																						</object>
+																					</object>
+																				</object>
+																			</object>
+																		</object>
+																	</object>
+																</object>
 															</object>
 														</object>
-													</object>
-												</object>
-											</object>
-										</object>
-										<object class="sizeritem">
-											<option>0</option>
-											<flag>wxEXPAND</flag>
-											<border>5</border>
-											<object class="wxBoxSizer">
-												<orient>wxHORIZONTAL</orient>
-												<object class="spacer">
-													<option>0</option>
-													<flag>wxEXPAND</flag>
-													<border>5</border>
-													<size>40,0</size>
-												</object>
-												<object class="sizeritem">
-													<option>0</option>
-													<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
-													<border>5</border>
-													<object class="wxStaticText" name="m_staticText37">
-														<label>Filter Songs</label>
-													</object>
-												</object>
-												<object class="sizeritem">
-													<option>0</option>
-													<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
-													<border>5</border>
-													<object class="wxTextCtrl" name="m_tc_scol_song">
-														<size>160,-1</size>
-														<value></value>
-														<maxlength>0</maxlength>
-													</object>
-												</object>
-												<object class="sizeritem">
-													<option>0</option>
-													<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
-													<border>5</border>
-													<object class="wxRadioButton" name="m_rb_scol_file">
-														<label>File</label>
-														<value>1</value>
-													</object>
-												</object>
-												<object class="sizeritem">
-													<option>0</option>
-													<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
-													<border>5</border>
-													<object class="wxRadioButton" name="m_rb_scol_folder">
-														<label>Folder</label>
-														<value>0</value>
-													</object>
-												</object>
-												<object class="sizeritem">
-													<option>0</option>
-													<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
-													<border>5</border>
-													<object class="wxBitmapButton" name="m_bb_scol_clear">
-														<style>wxBU_AUTODRAW</style>
-														<tooltip>Clear File Filter</tooltip>
-														<bitmap>graphics/edit-clear.png</bitmap>
-														<default>0</default>
 													</object>
 												</object>
 											</object>
@@ -1774,7 +1961,7 @@
 														<orient>wxVERTICAL</orient>
 														<object class="sizeritem">
 															<option>1</option>
-															<flag>wxEXPAND | wxALL</flag>
+															<flag>wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT</flag>
 															<border>5</border>
 															<object class="wxNotebook" name="m_notebook3">
 																<style>wxNB_FIXEDWIDTH</style>
