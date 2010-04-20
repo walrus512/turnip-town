@@ -282,7 +282,7 @@ class FileThread(Thread):
             self.parent.ga_songdb_index.SetValue(counter)            
         c.close()
         self.parent.st_songdb_status.SetLabel("Finished")
-        self.parent.parent.lc_scol_col.SetItemCount(GetCount())
+        self.parent.parent.tab_song_collection.lc_scol_col.SetItemCount(GetCount())
     
         
 #-----------------------------------------------------

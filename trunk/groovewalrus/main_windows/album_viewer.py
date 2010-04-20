@@ -50,8 +50,11 @@ class AlbumViewer(wx.Frame):
         # set 
         cover_bmp = wx.Bitmap(dir_name + file_name, wx.BITMAP_TYPE_ANY) #wx.BITMAP_TYPE_JPEG)
         
-        foo = wx.Bitmap.ConvertToImage(cover_bmp)        
-        foo.Rescale(300, 300)
+        foo = wx.Bitmap.ConvertToImage(cover_bmp)
+        if self.parent.palbum_art_file =='':
+            self.parent.Resizer(foo, (300,300))
+        else:
+            foo.Rescale(300, 300)
         goo = wx.BitmapFromImage(foo)
         self.bitmap_cover.SetBitmap(goo)
         
