@@ -165,7 +165,7 @@ class DbFuncs(object):
             r_arr.append(x[3] + '/' + x[2] + '/' + x[1])
         c.close()
         return r_arr
-        
+                
     def GetResultsArray(self, query, qlimit, with_count=False, folder_query=1):
         r_arr = []
         
@@ -542,7 +542,7 @@ class Player(object):
         self.local_play_status = False
         if os.name != 'nt':
             time.sleep(4)
-        self.stop()
+        #self.stop()
             
     def toggle_pause(self):
         if self.paused == False:
@@ -653,6 +653,8 @@ class VirtualList(wx.ListCtrl):
         ritem = ''
         if self.query_flag == True:            
             conn = sqlite3.connect(self.FILEDB)
+            # for unicode/crazy text errors
+            conn.text_factory = str
             c = conn.cursor()
             tq = "SELECT music_id, file_name, folder_name, folder_path FROM m_files WHERE music_id = " + str(row_num)            
             #tq = "SELECT music_id, file_name, folder_name, folder_path FROM m_files LIMIT 1 OFFSET " + str(row_num - 1)
@@ -755,15 +757,25 @@ def GetMp3Length(file_name):
     
 def GetMp3Artist(file_name):
     c = mp3tag.Mp3AudioFile(file_name)
-    return c.tag.getArtist()
+    b = c.tag.getArtist()
+    a = ' '.join(i.capitalize() for i in b.split(' '))
+    return a
+    
     
 def GetMp3Title(file_name):
     c = mp3tag.Mp3AudioFile(file_name)
-    return c.tag.getTitle()
+    b = c.tag.getTitle()
+    a = ' '.join(i.capitalize() for i in b.split(' '))
+    return a
     
 def GetMp3Album(file_name):
     c = mp3tag.Mp3AudioFile(file_name)
-    return c.tag.getAlbum()
+    try:
+        b = c.tag.getAlbum()
+        a = ' '.join(i.capitalize() for i in b.split(' '))
+    except AttributeError:
+        a = ''
+    return a
     
  #---------------------------------------------------------------------------   
     

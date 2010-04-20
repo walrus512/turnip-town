@@ -34,7 +34,7 @@ SERVICE_URL = "http://cowbell." + DOMAIN + "/service.php"
 RANDOM_CHARS = "1234567890abcdef"
 
 CLIENT_NAME = "gslite"
-CLIENT_VERSION = "20100211.21"
+CLIENT_VERSION = "20100412.02"
 
 RE_SESSION = re.compile('sessionID:\s*?\'([A-z0-9]+)\',')
 
@@ -142,7 +142,8 @@ class JsonRPC:
             randomChars = randomChars + random.choice(RANDOM_CHARS)
 
         token = hashlib.sha1(method + ":" + self._token +
-                ":theColorIsRed:" + randomChars).hexdigest()
+                ":quitStealinMahShit:" + randomChars).hexdigest()
+                #:quitBasinYoBidnessPlanOnBuildingALargeUserbaseViaCopyrightInfringment:
         return randomChars + token
 
     def _generateSecretKey(self, session):
