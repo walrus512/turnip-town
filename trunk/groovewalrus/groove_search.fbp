@@ -236,7 +236,7 @@
                         <property name="permission">none</property>
                         <object class="sizeritem" expanded="1">
                             <property name="border">5</property>
-                            <property name="flag">wxALL|wxALIGN_CENTER_VERTICAL</property>
+                            <property name="flag">wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT</property>
                             <property name="proportion">0</property>
                             <object class="wxTextCtrl" expanded="1">
                                 <property name="bg"></property>
@@ -291,11 +291,11 @@
                         </object>
                         <object class="sizeritem" expanded="1">
                             <property name="border">5</property>
-                            <property name="flag">wxALL</property>
+                            <property name="flag">wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</property>
                             <property name="proportion">0</property>
                             <object class="wxBitmapButton" expanded="1">
                                 <property name="bg"></property>
-                                <property name="bitmap">graphics/system-search.png; Load From File</property>
+                                <property name="bitmap">graphics/edit-clear-small.png; Load From File</property>
                                 <property name="context_help"></property>
                                 <property name="default">0</property>
                                 <property name="disabled"></property>
@@ -309,7 +309,7 @@
                                 <property name="label">MyButton</property>
                                 <property name="maximum_size"></property>
                                 <property name="minimum_size"></property>
-                                <property name="name">m_bb_search_button</property>
+                                <property name="name">m_bb_search_clear</property>
                                 <property name="permission">protected</property>
                                 <property name="pos"></property>
                                 <property name="selected"></property>
@@ -348,11 +348,11 @@
                         </object>
                         <object class="sizeritem" expanded="1">
                             <property name="border">5</property>
-                            <property name="flag">wxALL|wxALIGN_CENTER_VERTICAL</property>
+                            <property name="flag">wxALL</property>
                             <property name="proportion">0</property>
                             <object class="wxBitmapButton" expanded="1">
                                 <property name="bg"></property>
-                                <property name="bitmap">graphics/edit-clear.png; Load From File</property>
+                                <property name="bitmap">graphics/system-search.png; Load From File</property>
                                 <property name="context_help"></property>
                                 <property name="default">0</property>
                                 <property name="disabled"></property>
@@ -366,7 +366,7 @@
                                 <property name="label">MyButton</property>
                                 <property name="maximum_size"></property>
                                 <property name="minimum_size"></property>
-                                <property name="name">m_bb_search_clear</property>
+                                <property name="name">m_bb_search_button</property>
                                 <property name="permission">protected</property>
                                 <property name="pos"></property>
                                 <property name="selected"></property>
