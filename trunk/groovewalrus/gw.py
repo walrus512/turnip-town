@@ -22,6 +22,7 @@ Place, Suite 330, Boston, MA 02111-1307 USA
 import wx
 import wx.html
 import wx.xrc as xrc
+#import  wx.gizmos as gizmos
 #from wx.lib.flashwin import FlashWindow
 
 import os
@@ -63,6 +64,7 @@ from main_windows import song_collection
 
 from main_tabs import list_sifter_tab
 from main_tabs import favorites_tab
+from main_tabs import song_collection_tab
 
 from main_thirdp import pylast
 if os.name == 'nt':
@@ -200,6 +202,8 @@ class MainPanel(wx.Panel):
         # XML Resources can be loaded from a file like this:
         res = xrc.XmlResource(RESFILE)
         # custom widget handler
+        #get_resources().AddHandler(TreeListCtrlXmlHandler())
+        #res.InsertHandler(TreeListCtrlXmlHandler())
         ##res.InsertHandler(custom_slider.MyCustomSliderXmlHandler(self))
         # Now create a panel from the resource data
         self.panel = res.LoadPanel(self, "m_pa_main")        
@@ -212,6 +216,9 @@ class MainPanel(wx.Panel):
         
         #favorites tab        
         self.favorites = favorites_tab.FavoritesTab(self)
+        
+        #song collection tab        
+        self.tab_song_collection = song_collection_tab.SongCollectionTab(self)
                
         # control references ---------------
         # playback        
@@ -269,29 +276,7 @@ class MainPanel(wx.Panel):
         self.bm_bio_pic = xrc.XRCCTRL(self, 'm_bm_bio_pic')
         self.hm_bio_text = xrc.XRCCTRL(self, 'm_hm_bio_text')        
 
-        # song collection
-        self.tc_scol_song = xrc.XRCCTRL(self, 'm_tc_scol_song')
-        self.tc_scol_song.Bind(wx.EVT_TEXT, self.OnSColSongText)
-        self.rb_scol_folder = xrc.XRCCTRL(self, 'm_rb_scol_folder')
-        self.rb_scol_file = xrc.XRCCTRL(self, 'm_rb_scol_file')
-        self.Bind(wx.EVT_RADIOBUTTON, self.OnSColRadio, self.rb_scol_folder)
-        self.Bind(wx.EVT_RADIOBUTTON, self.OnSColRadio, self.rb_scol_file)
-        self.lc_scol_col = xrc.XRCCTRL(self, 'm_lc_scol_col')
-        self.lc_scol_col.InsertColumn(0,"Id")
-        self.lc_scol_col.InsertColumn(1,"File")
-        self.lc_scol_col.InsertColumn(2,"Folder")
-        self.lc_scol_col.InsertColumn(3,"Location")
-        
-        self.lc_scol_col.SetColumnWidth(0, 50)
-        self.lc_scol_col.SetColumnWidth(1, 175)
-        self.lc_scol_col.SetColumnWidth(2, 150)
-        self.lc_scol_col.SetColumnWidth(3, 190)
-        self.lc_scol_col.SetItemCount(local_songs.DbFuncs().GetCountAndLast()[0])
-        # wxMSW
-        self.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.OnScolRightClick, self.lc_scol_col)
-        # wxGTK
-        self.lc_scol_col.Bind(wx.EVT_RIGHT_UP, self.OnScolRightClick)
-        self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.ScolAddPlaylist, self.lc_scol_col)
+
         
         # options
         self.tc_options_username = xrc.XRCCTRL(self, 'm_tc_options_username')
@@ -461,12 +446,7 @@ class MainPanel(wx.Panel):
         self.Bind(wx.EVT_BUTTON, self.OnSaveOptionsClick, id=xrc.XRCID('m_bu_options_save'))        
         self.Bind(wx.EVT_BUTTON, self.OnSetRecordDirClick, id=xrc.XRCID('m_bu_options_record_dir'))
         
-        #song collection
-        self.Bind(wx.EVT_BUTTON, self.OnSColAddClick, id=xrc.XRCID('m_bb_scol_add'))
-        self.Bind(wx.EVT_BUTTON, self.OnSColDeleteClick, id=xrc.XRCID('m_bb_scol_delete'))
-        self.Bind(wx.EVT_BUTTON, self.ScolAddPlaylist, id=xrc.XRCID('m_bb_scol_playlist'))
-        self.Bind(wx.EVT_BUTTON, self.OnSColClearClick, id=xrc.XRCID('m_bb_scol_clear'))
-        
+
         
         self.Bind(wx.EVT_BUTTON, self.OnUpdateClick, self.bb_update)
         wx.EVT_CLOSE(self.parent, self.OnExit)
@@ -689,7 +669,7 @@ class MainPanel(wx.Panel):
         
         # tools menu        
         self.parent.Bind(wx.EVT_MENU, self.OnUpdateClick, id=xrc.XRCID("m_mi_version_update"))
-        self.parent.Bind(wx.EVT_MENU, self.OnSColAddClick, id=xrc.XRCID("m_mi_song_collection"))
+        self.parent.Bind(wx.EVT_MENU, self.tab_song_collection.OnSColAddClick, id=xrc.XRCID("m_mi_song_collection"))
         #
         self.lastfm_toggle = self.parent.menu_tools.Append(7666, "Last.fm Scrobbling", kind=wx.ITEM_CHECK)
         self.parent.Bind(wx.EVT_MENU, self.OnToggleScrobble, id=7666)        
@@ -1108,7 +1088,7 @@ class MainPanel(wx.Panel):
                 file_name = 'grooveshark.xml'    
                 if dlg.GetValue() !='':
                     #get the version number from the file
-                    print 'asfasfasf'
+                    #print 'asfasfasf'
                     data_dict = {'version':dlg.GetValue()}                    
                     read_write_xml.xml_utils().save_generic_settings(data_dir, file_name, data_dict)
         dlg.Destroy()
@@ -2630,146 +2610,48 @@ class MainPanel(wx.Panel):
             urllib.urlcleanup()
             #print 'getting new'
         
-    def SetImage(self, file_name, dir_name):
+    def SetImage(self, file_name, dir_name, resize=False):
         # get albumcover for artist/song from last.fm
         cover_bmp = wx.Bitmap(dir_name + file_name, wx.BITMAP_TYPE_ANY)
         
         foo = wx.Bitmap.ConvertToImage(cover_bmp)
         sma_bm = self.bm_cover.GetSize()
-        foo.Rescale(sma_bm[0], sma_bm[1])
+        if resize == True:
+            #for odd shaped bitmaps            
+            self.Resizer(foo, sma_bm)           
+        else:
+            foo.Rescale(sma_bm[0], sma_bm[1])
         goo = wx.BitmapFromImage(foo)
         self.bm_cover.SetBitmap(goo)
         
         # now the large one
         hoo = wx.Bitmap.ConvertToImage(cover_bmp)
         lar_bm = self.bm_cover_large.GetSize()
-        hoo.Rescale(lar_bm[0], lar_bm[1])
+        if resize == True:
+            #for odd shaped bitmaps
+            self.Resizer(hoo, lar_bm)        
+        else:
+            hoo.Rescale(lar_bm[0], lar_bm[1])
         ioo = wx.BitmapFromImage(hoo)
         self.bm_cover_large.SetBitmap(ioo)
         #self.bm_cover.Refresh()
         
         self.album_viewer.SetImage(file_name, dir_name)
         
-# --------------------------------------------------------- 
-# song collection -----------------------------------------  
-    def OnSColAddClick(self, event):
-        # show song db window
-        #song_db_window = local_songs.SongDBWindow(self)
-        song_db_window = song_collection.SongDBWindow(self)
-        song_db_window.show_me()
-        
-    def OnSColDeleteClick(self, event):
-        # show song db window        
-        # remove slected list item
-        val = self.lc_scol_col.GetFirstSelected()
-        # iterate over all selected items and delete
-        for x in range(val, val + self.lc_scol_col.GetSelectedItemCount()):
-            #print 'dete - ' + str(val)
-            #self.lc_playlist.DeleteItem(val)
-            #get the id and remove from db
-            row_id = self.lc_scol_col.GetItem(x, 0).GetText()
-            local_songs.DbFuncs().RemoveRow(row_id)
-            #self.lc_scol_col.DeleteItem(self.lc_scol_col.GetFirstSelected())
-        self.RefreshSCol()
-        
-    def RefreshSCol(self, event=None):
-        # refresh the song collection list control        
-        self.lc_scol_col.DeleteAllItems()
-        self.lc_scol_col.SetItemCount(local_songs.DbFuncs().GetCountAndLast()[0])
-        
-    def OnScolRightClick(self, event):        
-        # make a menu
-        ID_PLAYLIST = 1
-        ID_CLEAR = 2
-        #ID_FAVES = 3
-        
-        menu = wx.Menu()
-        menu.Append(ID_PLAYLIST, "Add to Playlist")
-        menu.AppendSeparator()
-        menu.Append(ID_CLEAR, "Clear Playlist")
-        #menu.Append(ID_SHARE, "Clipboard Share Link")
-        #menu.AppendSeparator()
-       # menu.Append(ID_SEARCH, "Find Better Version")        
-        
-        wx.EVT_MENU(self, ID_PLAYLIST, self.ScolAddPlaylist)
-        wx.EVT_MENU(self, ID_CLEAR, self.OnClearPlaylistClick)
-        #wx.EVT_MENU(self, ID_FAVES, self.OnFavesClick)        
-        
-        self.PopupMenu(menu)
-        menu.Destroy()
-        
-    def ScolAddPlaylist(self, event):
-        self.BackupList()
-        # cycle through selected
-        val = self.lc_scol_col.GetFirstSelected()
-        # iterate over all selected items and delete
-        #self.CheckClear()
-        #check for file or folder
-        if val != -1:
-            if self.lc_scol_col.GetItem(val, 0).GetText() == ' ':
-                #it's just a folder, first item is ' '  not ''
-                #pen folder, cycle through mp3 file adding to playlist
-                folder = self.lc_scol_col.GetItem(val, 2).GetText()
-                folder_arr = local_songs.DbFuncs().GetResultsArray(folder, 100, True, 2)
-                for x in range(0, len(folder_arr)):
-                    self.ScolFileAdd(folder_arr[x][4])
-            else:
-                # it's a file
-                for x in range(val, val + self.lc_scol_col.GetSelectedItemCount()):
-                    mfile = self.lc_scol_col.GetItem(x, 1).GetText()
-                    mfolder = self.lc_scol_col.GetItem(x, 2).GetText()
-                    mpath = self.lc_scol_col.GetItem(x, 3).GetText()
-                    if mfolder == ' ':
-                        self.ScolFileAdd(mpath + '/' + mfile)
-                    else:
-                        self.ScolFileAdd(mpath + '/' + mfolder + '/' + mfile)
+    def Resizer(self, image, target_size):
+        #scales a non-square image to make it look nice
+        image_size = image.GetSize()
+        #scale in the x axis
+        hr = float(image_size[0]) / target_size[0]
+        hs = float(image_size[1]) / hr
+        # rescale it so it's x= 250 y =? to keep aspect
+        image.Rescale(target_size[0], hs) #, wx.IMAGE_QUALITY_HIGH)
+        image_size = image.GetSize()
+        offset = (target_size[1] - image_size[1]) / 2
+        image.Resize((target_size[0], target_size[1]), (0,offset), 0, 0, 0)        
+        return image        
+    
 
-            
-    def ScolFileAdd(self, file_name):
-        # copy the faves list to the playlist        
-        insert_at = self.lc_playlist.GetItemCount()
-        
-        artist = local_songs.GetMp3Artist(file_name)
-        song = local_songs.GetMp3Title(file_name)
-        album = local_songs.GetMp3Album(file_name)
-        song_id = file_name.replace(os.sep, '/')
-        duration = self.ConvertTimeFormated(local_songs.GetMp3Length(file_name))
-        self.SetPlaylistItem(insert_at, artist, song, album, song_id, duration)
-        #save the playlist
-        self.SavePlaylist(self.main_playlist_location)
-        # switch tabs
-        #self.nb_main.SetSelection(NB_PLAYLIST)
-        
-    def OnSColClearClick(self, event):
-        # clear album search field
-        self.tc_scol_song.Clear()
-        #self.tc_scol_folder.Clear()
-      
-    def OnSColSongText(self, event):
-        # search local db for matches
-        if self.rb_scol_file.GetValue() == True:
-            qtype = 'file'
-            self.SCAdjustColumns('files')
-        else:
-            qtype = 'folder'
-            self.SCAdjustColumns('folders')
-        query = self.tc_scol_song.GetValue()
-        self.lc_scol_col.SetQuery(query, qtype)
-        
-    def OnSColRadio(self, event):
-        self.OnSColSongText(None)
-        
-    def SCAdjustColumns(self, col_type):
-        if col_type == 'files':        
-            self.lc_scol_col.SetColumnWidth(0, 50)
-            self.lc_scol_col.SetColumnWidth(1, 175)
-            self.lc_scol_col.SetColumnWidth(2, 150)
-            self.lc_scol_col.SetColumnWidth(3, 190)            
-        else:
-            self.lc_scol_col.SetColumnWidth(0, 0)
-            self.lc_scol_col.SetColumnWidth(1, 0)
-            self.lc_scol_col.SetColumnWidth(2, 520)
-            self.lc_scol_col.SetColumnWidth(3, 0)
 # --------------------------------------------------------- 
         
 #---------------------------------------------------------------------------
@@ -2824,7 +2706,11 @@ class WebFetchThread(Thread):
             if len(str(bio_url[0])) > 8:
                 file_name = bio_url[0].rsplit('/', 1)[1]
                 self.panel.SaveSongArt(bio_url[0], file_name)
-                self.panel.SetBioImage(file_name)            
+                self.panel.SetBioImage(file_name)
+                #if there's no album art set the bio image as the album cover
+                if self.panel.palbum_art_file =='':
+                    time.sleep(2)
+                    self.panel.SetImage(file_name, self.panel.image_save_location, resize=True)
             self.panel.SetBioText(bio_url[1], self.artist)
             
         if self.webfetchtype == 'PLAYLOCAL':
@@ -2973,7 +2859,7 @@ def GetLocalGroovesharkVersion(data_dir):
     #check if file exists
     file_name = 'grooveshark.xml'
     g_version = None
-    if os.path.isfile(file_name):
+    if os.path.isfile(data_dir + file_name):
         #get the version number from the file
         xml_dict = read_write_xml.xml_utils().get_generic_settings(data_dir + file_name)
         if xml_dict.has_key('version'):
@@ -3001,8 +2887,35 @@ class ProgressThread(Thread):
                 break
             time.sleep(1)
 #---------------------------------------------------------------------------
-#---------------------------------------------------------------------------
+# ####################################
 
+class TreeListCtrlXmlHandler(xrc.XmlResourceHandler):
+    def __init__(self):
+        xrc.XmlResourceHandler.__init__(self)
+        # Standard styles
+        self.AddWindowStyles()
+        # Custom styles
+        #self.AddStyle("wxTR_FULL_ROW_HIGHLIGHT", wx.TR_FULL_ROW_HIGHLIGHT)
+        #self.AddStyle('wxLED_ALIGN_LEFT', gizmos.LED_ALIGN_LEFT)
+        #self.AddStyle('wxLED_ALIGN_RIGHT', gizmos.LED_ALIGN_RIGHT)
+        #self.AddStyle('wxLED_ALIGN_CENTER', gizmos.LED_ALIGN_CENTER)
+        #self.AddStyle('wxLED_DRAW_FADED', gizmos.LED_DRAW_FADED)
+    def CanHandle(self,node):
+        return self.IsOfClass(node, 'TreeListCtrl')
+    # Process XML parameters and create the object
+    def DoCreateResource(self):
+        assert self.GetInstance() is None
+        w = gizmos.TreeListCtrl(self.GetParentAsWindow(),
+                                 self.GetID(),
+                                 self.GetPosition(),
+                                 self.GetSize(),
+                                 self.GetStyle())
+        #w.SetValue(self.GetText('value'))
+        self.SetupWindow(w)
+        return w
+
+#---------------------------------------------------------------------------
+#---------------------------------------------------------------------------
         
 if __name__ == '__main__':
 
