@@ -109,9 +109,9 @@ class MainPanel(wx.Dialog):
         #get some lyrics for the playing song
         #http://webservices.lyrdb.com/lookup.php?q=the%20shins|new%20slang&for=match&agent=agent
         if self.parent.partist !='':
-            query_string_value = self.parent.partist + '|' + self.parent.ptrack
+            query_string_value = self.parent.partist + '-' + self.parent.ptrack
             self.st_lyrics_song.SetLabel(self.parent.partist + ' - ' + self.parent.ptrack)
-            query_string = 'http://webservices.lyrdb.com/lookup.php?q=' + query_string_value + '&for=match&agent=GrooveWalrus/0.2'
+            query_string = 'http://webservices.lyrdb.com/lookup.php?q=' + query_string_value + '&for=fullt&agent=GrooveWalrus/0.2'
         
             query_string = url_quote(query_string)
             url_connection = urllib.urlopen(query_string.replace(' ', '+'))
