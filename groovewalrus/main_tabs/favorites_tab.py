@@ -111,7 +111,7 @@ class FavoritesTab(wx.ScrolledWindow):
         song = self.parent.ptrack
         
         track_id = ratings_button.GetTrackId(artist, song, grooveshark_id, music_id)
-        ratings_button.AddRating(self, track_id, R_GREAT)
+        ratings_button.AddRating(self.parent, track_id, R_GREAT)
         sk = self.parent.GenerateSessionKey2()
         ratings_button.LoveTrack(artist, song, sk)        
         
@@ -136,7 +136,7 @@ class FavoritesTab(wx.ScrolledWindow):
                     music_id = the_id
  
                 track_id = ratings_button.GetTrackId(artist, song, grooveshark_id, music_id)
-                ratings_button.AddRating(self, track_id, R_GREAT)
+                ratings_button.AddRating(self.parent, track_id, R_GREAT)
                 # only love the first one, don't want to hammer last.fm
                 if need_love == True:
                     need_love = False
