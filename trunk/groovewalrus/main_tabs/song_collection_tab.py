@@ -40,6 +40,13 @@ class SongCollectionTab(wx.ScrolledWindow):
         self.tr_scol_folders = xrc.XRCCTRL(self.parent, 'm_tr_scol_folders')
         self.parent.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.OnActivate, self.tr_scol_folders)
         #self.tl_scol_folder = xrc.XRCCTRL(self.parent, 'm_tl_scol_folder')
+        self.parent.Bind(wx.EVT_TREE_SEL_CHANGED, self.OnSelChanged, self.tr_scol_folders)
+        self.tr_scol_folders.Bind(wx.EVT_RIGHT_DOWN, self.OnRightUp)
+        # wxMSW
+        #self.parent.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.OnFoldersRightClick,  self.tr_scol_folders)
+        # wxGTK
+        #self.tr_scol_folders.Bind(wx.EVT_RIGHT_UP, self.OnFoldersRightClick)
+        
         
         #treelist control
         #self.tl_scol_folder.SetWindowStyleFlag(wx.TR_FULL_ROW_HIGHLIGHT)#wx.TR_DEFAULT_STYLE|wx.TR_FULL_ROW_HIGHLIGHT) #|wx.SIMPLE_BORDER
@@ -122,10 +129,10 @@ class SongCollectionTab(wx.ScrolledWindow):
         menu.AppendSeparator()
         menu.Append(ID_CLEAR, "Clear Playlist")       
         
-        wx.EVT_MENU(self, ID_PLAYLIST, self.ScolAddPlaylist)
-        wx.EVT_MENU(self, ID_CLEAR, self.OnClearPlaylistClick)
+        wx.EVT_MENU(self.parent, ID_PLAYLIST, self.ScolAddPlaylist)
+        wx.EVT_MENU(self.parent, ID_CLEAR, self.parent.OnClearPlaylistClick)
         
-        self.PopupMenu(menu)
+        self.parent.PopupMenu(menu)
         menu.Destroy()
         
     def ScolAddPlaylist(self, event):
@@ -250,6 +257,15 @@ class SongCollectionTab(wx.ScrolledWindow):
         #get the songs for the selected folder
         item = event.GetItem()
         folder_name = self.tr_scol_folders.GetItemText(item)
+        results = self.GetFiles(folder_name)        
+        self.tr_scol_folders.DeleteChildren(item)
+        
+        for x in results:
+            self.tr_scol_folders.AppendItem(item, x[0])
+        self.tr_scol_folders.Expand(item)
+        
+    def GetFiles(self, folder_name):
+        
         if folder_name == '(root)':
             folder_name = ''
         FILEDB = system_files.GetDirectories(None).DatabaseLocation()
@@ -258,14 +274,12 @@ class SongCollectionTab(wx.ScrolledWindow):
         conn.text_factory = str
         c = conn.cursor()
         
-        query = "SELECT file_name FROM m_files WHERE folder_name = '" + folder_name + "' ORDER BY file_name" #LIMIT 100"
+        query = "SELECT file_name, folder_name, folder_path FROM m_files WHERE folder_name = '" + folder_name + "' ORDER BY file_name" #LIMIT 100"
         
         c.execute(query)
         h = c.fetchall()
-        self.tr_scol_folders.DeleteChildren(item)
-        for x in h:
-            self.tr_scol_folders.AppendItem(item, x[0])
-        self.tr_scol_folders.Expand(item)
+        return h
+    
         
     def OnSColFolderText(self, event):
         # search local db for folder matches
@@ -276,3 +290,34 @@ class SongCollectionTab(wx.ScrolledWindow):
             query = "SELECT DISTINCT folder_name, folder_path FROM m_files WHERE folder_name LIKE '%" + q_text + "%' ORDER BY folder_name" #LIMIT 100" 
         self.tr_scol_folders.DeleteAllItems()
         self.FillFolderList(query)
+        
+    def OnRightUp(self, event):
+        # make a menu
+        ID_PLAYLIST = 1
+        ID_CLEAR = 2
+        #ID_FAVES = 3
+        
+        menu = wx.Menu()
+        menu.Append(ID_PLAYLIST, "Add to Playlist")
+        menu.AppendSeparator()
+        menu.Append(ID_CLEAR, "Clear Playlist")       
+        
+        wx.EVT_MENU(self.parent, ID_PLAYLIST, self.FolderAddPlaylist)
+        wx.EVT_MENU(self.parent, ID_CLEAR, self.parent.OnClearPlaylistClick)
+        
+        self.parent.PopupMenu(menu)
+        menu.Destroy()
+        
+    def FolderAddPlaylist(self, event):
+        item = self.tr_scol_folders.GetSelection()
+        if item:
+            folder_name = self.tr_scol_folders.GetItemText(item)
+            results = self.GetFiles(folder_name)
+            #add a complete folder from the treelist to the playlist
+            for x in results:
+                print x[0]
+                self.ScolFileAdd(x[2] + '/' + x[1] + '/' + x[0])
+        
+    def OnSelChanged(self, event):
+        pass #event.Skip()
+        
