@@ -146,8 +146,8 @@ class ListSifterTab(wx.ScrolledWindow):
                 ID_DELETE = 1
                 menu = wx.Menu()
                 menu.Append(ID_DELETE, "Delete Feed")
-                wx.EVT_MENU(self, ID_DELETE, self.OnDeleteRSSClick)       
-                self.PopupMenu(menu)
+                wx.EVT_MENU(self.parent, ID_DELETE, self.OnDeleteRSSClick)       
+                self.parent.PopupMenu(menu)
                 menu.Destroy()
                 
     def OnDeleteRSSClick(self, event):
