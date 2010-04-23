@@ -27,6 +27,7 @@ from main_utils.read_write_xml import xml_utils
 from main_utils import system_files
 
 SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0])) #os.getcwd()
+
 PLUGINS_LOCATION = SYSLOC + os.sep + "plugins" + os.sep
 
 class PluginLoader():
@@ -37,7 +38,7 @@ class PluginLoader():
         self.LoadPlugins()        
     
     def LoadPlugins(self):
-        base_path = PLUGINS_LOCATION
+        base_path = self.parent.working_directory + os.sep + "plugins" + os.sep #PLUGINS_LOCATION
         self.main_sizer = wx.BoxSizer(wx.VERTICAL)
         self.id_array = {}
         id_counter = 1100
