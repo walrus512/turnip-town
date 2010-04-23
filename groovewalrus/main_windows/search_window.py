@@ -156,7 +156,7 @@ class SearchWindow(wx.Dialog):
         if len(query_string) > 0:
             if self.cb_search_local.GetValue() == True:
                 query_results = local_songs.DbFuncs().GetResultsArray(query_string, 40)
-                self.FillSearchListLocal(query_results);
+                self.FillSearchListLocal(query_results, query_string);
             else:
                 query_results = tinysong.Tsong().get_search_results(query_string)
                 self.FillSearchList(query_results);            
@@ -192,7 +192,7 @@ class SearchWindow(wx.Dialog):
                 counter = counter + 1
         self.ResizeColumns()
         
-    def FillSearchListLocal(self, query_results):
+    def FillSearchListLocal(self, query_results, query):
         # search field, then search
         counter = 0
         # calc how many time to run through the loop, based on 8 items per result
@@ -201,18 +201,27 @@ class SearchWindow(wx.Dialog):
         self.lc_search.DeleteAllItems()
         for x in query_results:
             if len(x) > 0:
-                #print counter
-                # artist
-                file_path = x[3]
-                #song_artist = local_songs.get_mp3_song_artist(file_path)
-                index = self.lc_search.InsertStringItem(counter, x[0]) #.rsplit('-', 1)[0]. rsplit('-', 1)[-1].replace('_', ' '))
-                # title
-                self.lc_search.SetStringItem(counter, 1, x[1])
-                #album
-                self.lc_search.SetStringItem(counter, 2, x[2])
+                
+                found_exact_match = False                
+                # put results that match exactly at the top of the list
+                if query.upper() == (x[0] + ' ' + x[1]).upper():
+                    found_exact_match = True
+                        
+                if found_exact_match == True:    
+                    #add artist, song, album, path, add at top
+                    index = self.lc_search.InsertStringItem(0, x[0])
+                    self.lc_search.SetStringItem(0, 1, x[1])
+                    self.lc_search.SetStringItem(0, 2, x[2])
+                    if self.parent.cb_options_noid.GetValue() == False:
+                        self.lc_search.SetStringItem(0, 3, x[3])
 
-                if self.parent.cb_options_noid.GetValue() == False:
-                    self.lc_search.SetStringItem(counter, 3, file_path)
+                else:
+                    #add artist, song, album, path
+                    index = self.lc_search.InsertStringItem(counter, x[0])
+                    self.lc_search.SetStringItem(counter, 1, x[1])
+                    self.lc_search.SetStringItem(counter, 2, x[2])
+                    if self.parent.cb_options_noid.GetValue() == False:
+                        self.lc_search.SetStringItem(counter, 3, x[3])
 
                 counter = counter + 1
         self.ResizeColumns()
