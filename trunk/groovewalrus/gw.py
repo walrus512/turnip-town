@@ -1344,9 +1344,9 @@ class MainPanel(wx.Panel):
             
             # check locally for song
             #query_results = local_songs.GetResults(query_string, 1)
-            query_results = local_songs.DbFuncs().GetResultsArray(query_string, 1, True)
+            query_results = local_songs.DbFuncs().GetSpecificResultArray(query_string, artist, track)
             #GetResultsArray(query, qlimit, with_count=False, folder_query=1)
-            if len(query_results) == 1:
+            if len(query_results) >= 1:
                 #song_id = str(query_results[0])
                 song_id = str(query_results[0][4])
                 self.pmusic_id = query_results[0][0]
@@ -1428,6 +1428,9 @@ class MainPanel(wx.Panel):
             # http://listen.grooveshark.com/#/song/One/21880276            
             ###url = PLAY_SONG_ALTERNATE_URL + song_id
         #print url    
+        
+        if (song_id.endswith('.mp3') == True):
+            track_time = local_songs.GetMp3Length(song_id)
         
         #get song time
         if (duration =='') or (duration == '0:00'):
