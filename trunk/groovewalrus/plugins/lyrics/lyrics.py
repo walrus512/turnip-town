@@ -67,6 +67,7 @@ class MainPanel(wx.Dialog):
         self.st_lyrics_header = xrc.XRCCTRL(self, 'm_st_lyrics_header')
         self.bm_lyrics_close = xrc.XRCCTRL(self, 'm_bm_lyrics_close')
         self.st_lyrics_song = xrc.XRCCTRL(self, 'm_st_lyrics_song')
+        self.rb_lyrics_lazy = xrc.XRCCTRL(self, 'm_rb_lyrics_lazy')
         #self.hw_lyrics_at = xrc.XRCCTRL(self, 'm_hw_lyrics_at')
 
         # bindings ----------------
@@ -109,11 +110,15 @@ class MainPanel(wx.Dialog):
         #get some lyrics for the playing song
         #http://webservices.lyrdb.com/lookup.php?q=the%20shins|new%20slang&for=match&agent=agent
         if self.parent.partist !='':
-            query_string_value = self.parent.partist + '-' + self.parent.ptrack
+            query_string_value = self.parent.partist + ' - ' + self.parent.ptrack
             self.st_lyrics_song.SetLabel(self.parent.partist + ' - ' + self.parent.ptrack)
-            query_string = 'http://webservices.lyrdb.com/lookup.php?q=' + query_string_value + '&for=fullt&agent=GrooveWalrus/0.2'
-        
+            if self.rb_lyrics_lazy.GetValue() == True:
+                query_string = 'http://webservices.lyrdb.com/lookup.php?q=' + query_string_value + '&for=fullt&agent=GrooveWalrus/0.2'
+            else:
+                query_string_value = self.parent.partist + '|' + self.parent.ptrack
+                query_string = 'http://webservices.lyrdb.com/lookup.php?q=' + query_string_value + '&for=match&agent=GrooveWalrus/0.2'
             query_string = url_quote(query_string)
+            #print query_string
             url_connection = urllib.urlopen(query_string.replace(' ', '+'))
             raw_results = url_connection.read()
         
@@ -227,7 +232,7 @@ def url_quote(s, safe='/', want_unicode=False):
         s = s.encode(charset)
     elif not isinstance(s, str):
         s = str(s)
-    #s = urllib.quote(s, safe)
+    #s = urllib.quote(s)#, safe)
     if want_unicode:
         s = s.decode(charset) # ascii would also work
     return s
