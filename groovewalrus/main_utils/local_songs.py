@@ -140,9 +140,9 @@ class DbFuncs(object):
             for y in q_split:
                 s = s + the_and + " " + f_string + " LIKE '%" + y + "%'"
                 the_and = ' AND'
-            t = "SELECT music_id, file_name, folder_name, folder_path FROM m_files WHERE " + s + " LIMIT " + str(qlimit)
+            t = "SELECT music_id, file_name, folder_name, folder_path FROM m_files WHERE " + s + " ORDER BY RANDOM() LIMIT " + str(qlimit)
         else:
-            t = "SELECT music_id, file_name, folder_name, folder_path FROM m_files WHERE " + f_string + " LIKE '%" + query + "%' LIMIT " + str(qlimit) #('%' + query + '%',)
+            t = "SELECT music_id, file_name, folder_name, folder_path FROM m_files WHERE " + f_string + " LIKE '%" + query + "%'  ORDER BY RANDOM() LIMIT " + str(qlimit) #('%' + query + '%',)
             
         if folder_query > 2:
             t = t.replace(' music_id, file_name, folder_name, folder_path ', ' DISTINCT folder_name ')
@@ -206,6 +206,53 @@ class DbFuncs(object):
             
         c.close()
         return r_arr
+        
+    def GetSpecificResultArray(self, query, specific_artist, specific_song):
+        #used when automatically getting the first result for automatic playbalc
+        r_arr = []
+        
+        conn = sqlite3.connect(self.FILEDB)
+        c = conn.cursor()
+        limit = 15
+        t = self.MakeQuery(query, limit)#, with_count)
+        
+        c.execute(t)
+        h = c.fetchall()
+        c.close()
+        
+        for x in h:
+            file_name = ''
+            if len(x) > 1:
+                file_name = x[3] + '/' + x[2] + '/' + x[1]
+            s_arr = []
+            g_artist = ''
+            g_song = ''
+            if os.path.isfile(file_name):
+                g_artist = GetMp3Artist(file_name)
+                g_song = GetMp3Title(file_name)
+        
+            found_exact_match = False
+
+            if (specific_artist == g_artist) & (specific_song == g_song):
+                found_exact_match = True
+                    
+            if found_exact_match == True:
+                s_arr.append(x[0])
+                s_arr.append(x[1])
+                s_arr.append(x[2])
+                s_arr.append(x[3])
+                s_arr.append(file_name)
+                r_arr.insert(0, s_arr)
+            else:
+                s_arr.append(x[0])
+                s_arr.append(x[1])
+                s_arr.append(x[2])
+                s_arr.append(x[3])
+                s_arr.append(file_name)
+                r_arr.append(s_arr)                
+
+        return r_arr
+        
         
     def InsertTrackData(self, p_grooveshark_id, p_music_id, p_track_time, p_tag_id, p_artist, p_song, p_album, p_album_art_file):
         #check for existing track
