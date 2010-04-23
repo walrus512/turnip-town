@@ -171,17 +171,17 @@ class SearchWindow(wx.Dialog):
         for x in query_results:
             if len(x) > 0:
                 #print counter
-                split_array = x.split('; ')
-                if len(split_array) > 5:
-                    play_url = split_array[1]
+                #split_array = x.split('; ')
+                if len(x) > 5:
+                    play_url = x['SongID']#split_array[1]
                     # http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&songID=13721223&style=metal&p=0
 
                     # artist
-                    index = self.lc_search.InsertStringItem(counter, split_array[4])
+                    index = self.lc_search.InsertStringItem(counter, x['ArtistName'])
                     # title
-                    self.lc_search.SetStringItem(counter, 1, split_array[2])
+                    self.lc_search.SetStringItem(counter, 1, x['SongName'])
                     #album
-                    self.lc_search.SetStringItem(counter, 2, split_array[6])
+                    self.lc_search.SetStringItem(counter, 2, x['AlbumName'])
                     if self.parent.cb_options_noid.GetValue() == False:
                         self.lc_search.SetStringItem(counter, 3, play_url)
                 else:
@@ -210,6 +210,7 @@ class SearchWindow(wx.Dialog):
                 self.lc_search.SetStringItem(counter, 1, x[1])
                 #album
                 self.lc_search.SetStringItem(counter, 2, x[2])
+
                 if self.parent.cb_options_noid.GetValue() == False:
                     self.lc_search.SetStringItem(counter, 3, file_path)
 

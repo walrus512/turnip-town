@@ -20,6 +20,10 @@ Place, Suite 330, Boston, MA 02111-1307 USA
 """
 
 import urllib
+try:
+    import json
+except ImportError:
+    from main_thirdp import simplejson as json
 #import xml.etree.ElementTree as ET
 
 #Example
@@ -32,9 +36,14 @@ import urllib
 
 # http://tinysong.com/s/Beethoven?limit=3
 # http://www.tinysong.com/index.php?s=u2+lemon
+"""
+new json format
+[{"Url":"http:\/\/tinysong.com\/7Wm7","SongID":8815585,"SongName":"Moonlight Sonata","ArtistID":1833,"ArtistName":"Beethoven","AlbumID":258724,"AlbumName":"Beethoven"},{"Url":"http:\/\/tinysong.com\/6Jk3","SongID":564004,"SongName":"Fur Elise","ArtistID":1833,"ArtistName":"Beethoven","AlbumID":268605,"AlbumName":"Beethoven"},{"Url":"http:\/\/tinysong.com\/8We2","SongID":269743,"SongName":"The Legend Of Lil' Beethoven","ArtistID":7620,"ArtistName":"Sparks","AlbumID":204019,"AlbumName":"Sparks"}]
+http://tinysong.com/s/Beethoven?format=json&limit=3
+""" #'
 
 TRACK_GETINFO = "http://tinysong.com/s/"
-Q_LIMIT = "?limit="
+Q_LIMIT = "?format=json&limit="
 
 
     
@@ -45,7 +54,7 @@ class Tsong(object):
     	#self.last_similar_file_name = ''    	
         #self.last_country_name = ''
 
-    def get_search_results(self, query_string, limit=25):
+    def get_search_results(self, query_string, limit=32):
         # http://ws.audioscrobbler.com/2.0/?method=track.getinfo&api_key=b25b959554ed76058ac220b7b2e0a026&artist=cher&track=believe
         # get an image for track requested
         # <lfm <album <image
@@ -58,18 +67,33 @@ class Tsong(object):
         query_string = url_quote(query_string)
         #print query_string
         data_url = TRACK_GETINFO + query_string + Q_LIMIT + str(limit)
-        #print data_url
+        print data_url
 
         url_connection = urllib.urlopen(data_url.replace(' ', '+'))
         raw_results = url_connection.read()
-        
-        results_array = raw_results.split('\n')
 
-        #print results_array
-        #print len(results_array)
+        results_array = json.loads(raw_results)
+                
+        counter = 0
+        # cycle through the results and string any integers
+        for x in results_array:            
+            #cycle through each dictionary
+            for key, value in x.items():
+                if IsInteger(value):
+                    results_array[counter][key] = str(value)
+            counter = counter + 1
+        #results_array = raw_results.split('\n')        
 
         return results_array
+   
         
+def IsInteger(x):
+    try:
+        if int(x) == x:
+            return True
+    except:
+        return False
+    
 
 charset = 'utf-8'
         

@@ -191,7 +191,8 @@ class MainPanel(wx.Panel):
         system_files.GetDirectories(self).MakeDataDirectory('plugins') + os.sep
         self.playlist_save_location = system_files.GetDirectories(self).MakeDataDirectory('playlists') + os.sep
         self.main_playlist_location = system_files.GetDirectories(self).DataDirectory() + os.sep + "playlist.xspf"
-        self.main_playlist_location_bak = system_files.GetDirectories(self).DataDirectory() + os.sep + "playlist.bak"        
+        self.main_playlist_location_bak = system_files.GetDirectories(self).DataDirectory() + os.sep + "playlist.bak"
+        self.working_directory = SYSLOC
         ##self.faves_playlist_location = system_files.GetDirectories(self).DataDirectory() + os.sep + "faves.xspf"
         ##self.faves_playlist_location_bak = system_files.GetDirectories(self).DataDirectory() + os.sep + "faves.bak"
         
@@ -470,7 +471,7 @@ class MainPanel(wx.Panel):
                 self.SavePlaylist(self.main_playlist_location)
                 self.autoplay = True
             elif file_name.endswith('.mp3'):
-                self.ScolFileAdd(file_name)
+                self.tab_song_collection.ScolFileAdd(file_name)
                 self.SavePlaylist(self.main_playlist_location)
                 self.autoplay = True
         elif len(sys.argv) == 3:
@@ -1361,40 +1362,42 @@ class MainPanel(wx.Panel):
             # try grooveshark
             else:
                 query_results = tinysong.Tsong().get_search_results(query_string, 32)
-                split_array = query_results[0].split('; ')
-                if len(split_array) >= 2:                
+                #split_array = query_results[0].split('; ')
+                #print query_results
+                if len(query_results) >= 1:                
                     # song id is at [1] - 4,2,6,1
-                    song_id = split_array[1]
+                    #song_id = split_array[1]
+                    song_id = query_results[0]['SongID']
                     # let's check for album and update that too
-                    if (album =='') & (split_array[6] != ''):
-                        album = split_array[6]
+                    if (album =='') & (query_results[0]['AlbumName'] != ''):
+                        album = query_results[0]['AlbumName']
                         self.lc_playlist.SetStringItem(playlist_number, 2, album)
                     #print artist
                     #print split_array[4]
                     
                     # check for song match
-                    if track.upper() != split_array[2].upper():
+                    if track.upper() != query_results[0]['SongName'].upper():
                         #cylce through results to see if we can get and exact match
                         #otherwise use the first result
                         found_it = False
                         for x in range(1, len(query_results) - 1):
-                            y = query_results[x].split('; ')
+                            y = x #query_results[x].split('; ')
                             #print y
-                            if (y[2].upper() == track.upper()) & (found_it != True):
-                                song_id = y[1]
+                            if (y['SongName'].upper() == track.upper()) & (found_it != True):
+                                song_id = y['SongID']
                                 self.lc_playlist.SetStringItem(playlist_number, 3, song_id)
                                 self.SavePlaylist(self.main_playlist_location)
                                 found_it = True                           
                     
                     # check for artist match
-                    if artist.upper() != split_array[4].upper():
+                    if artist.upper() != query_results[0]['ArtistName'].upper():
                         # cycle through till will hit the right artist
                         found_it = False
                         for x in range(1, len(query_results) - 1):
-                            y = query_results[x].split('; ')
+                            y = x #query_results[x].split('; ')
                             #print y
-                            if (y[4].upper() == artist.upper()) & (found_it != True):
-                                song_id = y[1]
+                            if (y['ArtistName'].upper() == artist.upper()) & (found_it != True):
+                                song_id = y['SongID']
                                 self.lc_playlist.SetStringItem(playlist_number, 3, song_id)
                                 self.SavePlaylist(self.main_playlist_location)
                                 found_it = True
@@ -1624,7 +1627,7 @@ class MainPanel(wx.Panel):
                 elif path.endswith('.m3u'):
                     self.ReadWinampPlaylist(path)
                 elif path.endswith('.mp3'):                  
-                    self.ScolFileAdd(path)
+                    self.tab_song_collection.ScolFileAdd(path)
                 else:
                     pass
         dlg.Destroy()
@@ -1663,11 +1666,12 @@ class MainPanel(wx.Panel):
             for line in f:
                 if line[0] != '#':
                     filen = clean_path + '/' + line.strip()
-                    self.lc_playlist.InsertStringItem(counter, local_songs.GetMp3Artist(filen))
-                    self.lc_playlist.SetStringItem(counter, 1, local_songs.GetMp3Title(filen))
-                    self.lc_playlist.SetStringItem(counter, 2, local_songs.GetMp3Album(filen))
-                    self.lc_playlist.SetStringItem(counter, 3, filen)
-                    counter = counter + 1
+                    if os.path.isfile(filen):
+                        self.lc_playlist.InsertStringItem(counter, local_songs.GetMp3Artist(filen))
+                        self.lc_playlist.SetStringItem(counter, 1, local_songs.GetMp3Title(filen))
+                        self.lc_playlist.SetStringItem(counter, 2, local_songs.GetMp3Album(filen))
+                        self.lc_playlist.SetStringItem(counter, 3, filen)
+                        counter = counter + 1
         finally:
             f.close()
         self.SavePlaylist(self.main_playlist_location)
@@ -2629,11 +2633,14 @@ class MainPanel(wx.Panel):
         lar_bm = self.bm_cover_large.GetSize()
         if resize == True:
             #for odd shaped bitmaps
-            self.Resizer(hoo, lar_bm)        
+            #let's skip changing the album page's cover art to the bio pic
+            ##self.Resizer(hoo, lar_bm)
+            pass
         else:
             hoo.Rescale(lar_bm[0], lar_bm[1])
-        ioo = wx.BitmapFromImage(hoo)
-        self.bm_cover_large.SetBitmap(ioo)
+            ##
+            ioo = wx.BitmapFromImage(hoo)
+            self.bm_cover_large.SetBitmap(ioo)
         #self.bm_cover.Refresh()
         
         self.album_viewer.SetImage(file_name, dir_name)
@@ -2751,11 +2758,12 @@ class WebFetchThread(Thread):
             if len(query_results) == 1:
                 #add to playlist
                 #self.panel.SetPlaylistItem(0, artist, song, album, url)                
-                split_array = query_results[0].split('; ')
-                play_url = split_array[1]
+                #split_array = query_results[0].split('; ')
+                #"SongID":8815585,"SongName":"Moonlight Sonata","ArtistID":1833,"ArtistName":"Beethoven","AlbumID":258724,"AlbumName":"Beethoven"
+                play_url = query_results[0]['SongID']
                 # added a delay, seems to fuck up otherwise
                 #time.sleep(1.5)
-                self.panel.SetPlaylistItem(0, split_array[4], split_array[2], split_array[6], play_url)
+                self.panel.SetPlaylistItem(0, query_results[0]['ArtistName'], query_results[0]['SongName'], query_results[0]['AlbumName'], play_url)
                 
         if self.webfetchtype == 'PLAYCOUNT':
             #for grabbing playcounts
@@ -2847,7 +2855,7 @@ class FileThread(Thread):
             if complete_filename != None:
                 #print complete_filename
                 song_collection.AddSingleFile(complete_filename)
-                self.parent.lc_scol_col.SetItemCount(song_collection.GetCount())
+                self.parent.tab_song_collection.lc_scol_col.SetItemCount(song_collection.GetCount())
                 # clear id for this song on the playlist
                 # ASSUME that it's the current selection
                 val = self.parent.lc_playlist.GetFirstSelected()
