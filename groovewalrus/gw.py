@@ -22,6 +22,7 @@ Place, Suite 330, Boston, MA 02111-1307 USA
 import wx
 import wx.html
 import wx.xrc as xrc
+import wx.media
 #import  wx.gizmos as gizmos
 #from wx.lib.flashwin import FlashWindow
 
@@ -49,6 +50,7 @@ from main_utils import system_files
 from main_utils import file_cache
 from main_utils import prefetch
 from main_utils import download_feed
+#from main_utils import player_wx
 
 from main_controls import drag_and_drop
 from main_controls import playback_panel
@@ -83,7 +85,7 @@ from main_thirdp import grooveshark_old
 #from plugins.minimode import minimode
 #from plugins.lyrics import lyrics
 
-PROGRAM_VERSION = "0.213"
+PROGRAM_VERSION = "0.215"
 PROGRAM_NAME = "GrooveWalrus"
 
 PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -365,11 +367,14 @@ class MainPanel(wx.Panel):
         
                 
         # ---------------------------------------------------------------
-        
+        self.mediaPlayer = wx.media.MediaCtrl(self, style=wx.SIMPLE_BORDER, szBackend=wx.media.MEDIABACKEND_WMP10)
+        self.Bind(wx.media.EVT_MEDIA_LOADED, self.PlayWxMedia)
+        self.use_backend = 'wx.media' #or 'pymedia'
+        # ---------------------------------------------------------------
         
         # and do the layout
         sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(self.panel, 1, wx.EXPAND|wx.ALL, 5)
+        sizer.Add(self.panel, 1, wx.EXPAND|wx.ALL, 5)        
         self.SetSizer(sizer)
         self.SetAutoLayout(True)
         
@@ -1097,7 +1102,9 @@ class MainPanel(wx.Panel):
            
     def SetVolume(self, volume):
         soundmixer.SetMasterVolume(volume)
-        #print self.cslid
+        #wx.media too
+        self.mediaPlayer.SetVolume(float(volume)/100)
+        #print volume
         self.sl_volume.SetValue(volume)
         
     def OnVolumeClick(self, event):
@@ -1173,7 +1180,7 @@ class MainPanel(wx.Panel):
 # --------------------------------------------------------- 
 # play click events---------------------------------------- 
     def OnPlayClick(self, event):
-        #handles playing and pausing        
+        #handles playing and pausing                
 
         if self.pstatus == 'paused':
             self.TogglePause()
@@ -1193,6 +1200,15 @@ class MainPanel(wx.Panel):
                 self.PlaySong(0)
                 self.SetPlayButtonGraphic('pause')
                 
+    #def OnPlayClick(self, event):
+        #self.LoadWxMedia(song_id)
+                
+    def PlayWxMedia(self, event):
+        self.mediaPlayer.Play()   
+    
+    def LoadWxMedia(self, file_name):
+        self.mediaPlayer.Load(file_name)                
+                
     def SetPlayButtonGraphic(self, playorpause):
         
         play_button = xrc.XRCCTRL(self, 'm_bb_play')
@@ -1204,8 +1220,13 @@ class MainPanel(wx.Panel):
         play_button.SetBitmapLabel(bmp)
             
     def TogglePause(self):
+        #pymedia
         if self.current_local != None:
             self.current_local.pause()
+        #wx.media
+        self.mediaPlayer.Pause()
+        if self.pstatus == 'paused':
+            self.mediaPlayer.Play()
             
     def OnPlayListPlayClick(self, event):
         # get selected search relsult list item and add to playlist
@@ -1215,27 +1236,18 @@ class MainPanel(wx.Panel):
             self.SetPlayButtonGraphic('pause')
             
     def OnStopClick(self, event):
-        # stop local thread
+        # pymedia stop local thread
         if self.current_local != None:
-            self.current_local.stop()
-            
+            self.current_local.stop()        
+        #wx.media
+        self.mediaPlayer.Stop()
+        #flash
         self.StopFlashSong()
-        # destory the flash window and rebuild it
-        #try:
-        #    self.flash.Destroy()
-        #except wx._core.PyDeadObjectError:
-        #    pass        
-        #self.flash = FlashWindow(self.pa_player, style=wx.NO_BORDER)#, size=(20, 20))
         
         self.pstatus = 'stopped'
         self.download_percent = 0
         
         self.SetPlayButtonGraphic('play')
-        #try:
-        #    self.recorder.stop()
-        #except AttributeError:
-        #    pass
-        #self.recording_status = False
         
     def LoadFlashSong(self, url, artist, track):
         #
@@ -1285,6 +1297,7 @@ class MainPanel(wx.Panel):
             self.current_local.stop()
         if self.use_web_music == True:
             self.StopFlashSong()
+        self.mediaPlayer.Stop()
         
         self.gobbled_track = 0
         #self.ga_download.SetValue(0)
@@ -1328,9 +1341,7 @@ class MainPanel(wx.Panel):
             if len(query_results) == 1:
                 self.pmusic_id = query_results[0][0]
                 self.pgroove_id = 0
-        
-        
-        
+                        
         if album=='':            
             album_array = musicbrainz.Brainz().get_song_info(artist, track)
             album = album_array[1]
@@ -1488,26 +1499,6 @@ class MainPanel(wx.Panel):
             cached_file = file_cache.CreateCachedFilename(temp_dir, file_name_plain)
             cached_file_name = cached_file[0]
             if cached_file[1] == False:
-                # download it                 
-                
-                # file size
-                ##g_session = jsonrpcSession()
-                ##g_session.startSession()
-                ##g_data = {'SongID': song_id, 'Name': track, 'ArtistName': artist, 'AlbumName': album, 'AlbumID': '', 'ArtistID': ''}
-                ##g_song = song.songFromData(g_session, g_data)
-                ##g_song.getStreamDetails()                
-                ##file_size = grooveshark_old.Grooveshark(self).GetFileSize(g_song._lastStreamKey, g_song._lastStreamServer)
-                
-                
-                #streamkey/stream server
-                ###x,y = self.groove_session.songKeyfromID(song_id)
-                ##g_session = jsonrpcSession()
-                ##g_session.startSession()    
-                #g_data = {'SongID': song_id, 'Name': track, 'ArtistName': artist, 'AlbumName': album, 'AlbumID': '', 'ArtistID': ''}
-                ##g_song = song.songFromData(g_session, g_data)
-                #getStreamDetails(song_id)
-                ##g_song.getStreamDetails()
-                #print g_song._lastStreamServer            
                 
                 #download file
                 #THREAD
@@ -1519,11 +1510,16 @@ class MainPanel(wx.Panel):
                 self.current_play_time = local_songs.GetMp3Length(cached_file_name)
                                 
             #play song
-            #THREAD
-            #print song_id
-            self.current_local = WebFetchThread(self, '', cached_file_name, '', 'PLAYLOCAL')
-            #THREAD
-            self.current_local.start()            
+            if self.use_backend == 'pymedia':
+                # pymedia ------
+                #THREAD
+                #print song_id
+                self.current_local = WebFetchThread(self, '', cached_file_name, '', 'PLAYLOCAL')
+                #THREAD
+                self.current_local.start()
+            else:
+                # wx.media ------
+                self.LoadWxMedia(cached_file_name)
 
             #self.st_track_info.SetLabel(artist + ' - ' + track)
             self.pstatus ='playing'
@@ -1531,14 +1527,20 @@ class MainPanel(wx.Panel):
             self.pmusic_id = 0
         elif os.path.isfile(song_id): #len(song_id) > 2 & (len(song_id.split('/')) > 1):
         # local file
-            self.time_count = -2            
-            #THREAD
-            #print song_id
-            self.current_local = WebFetchThread(self, '', song_id, '', 'PLAYLOCAL')
-            #THREAD
-            self.current_local.start()
-            #print self.current_local
-            #self.st_track_info.SetLabel(artist + ' - ' + track)
+            self.time_count = -2
+            if self.use_backend == 'pymedia':
+                # pymedia ------
+                #THREAD
+                #print song_id
+                self.current_local = WebFetchThread(self, '', song_id, '', 'PLAYLOCAL')
+                #THREAD
+                self.current_local.start()
+                #print self.current_local
+                #self.st_track_info.SetLabel(artist + ' - ' + track)
+            else:
+                # wx.media -----
+                self.LoadWxMedia(song_id)
+            
             self.pstatus = 'playing'
 
         else:
@@ -2675,15 +2677,17 @@ class WebFetchThread(Thread):
         self.song = song
         self.album = album
         self.webfetchtype = webfetchtype
-        self.lsp = local_songs.Player()
+        #self.lsp = local_songs.Player()
+        if webfetchtype == 'PLAYLOCAL':
+            self.lsp = player_wx.Player(panel)
                
     def stop(self):
         self.lsp.stop_play()
         #self.lsp.stop()
-        
+                
     def pause(self):
         self.lsp.toggle_pause()
-         
+                 
     def run(self):
         if self.webfetchtype == 'COVERS':
             #for covers
@@ -2733,8 +2737,10 @@ class WebFetchThread(Thread):
                 time.sleep(2)
                 #print os.path.getsize(file_name)
             self.panel.time_count = -1
-            self.panel.pstatus = 'playing'    
+            self.panel.pstatus = 'playing'
+            
             self.lsp.play(self.song)
+
             
         if self.webfetchtype == 'VERSION':
             version_check.VersionCheck(self.panel, self.album).CheckVersion()
