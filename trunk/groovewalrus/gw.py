@@ -23,6 +23,7 @@ import wx
 import wx.html
 import wx.xrc as xrc
 import wx.media
+#import wx.aui
 #import  wx.gizmos as gizmos
 #from wx.lib.flashwin import FlashWindow
 
@@ -50,7 +51,7 @@ from main_utils import system_files
 from main_utils import file_cache
 from main_utils import prefetch
 from main_utils import download_feed
-#from main_utils import player_wx
+from main_utils import player_wx
 
 from main_controls import drag_and_drop
 from main_controls import playback_panel
@@ -369,7 +370,7 @@ class MainPanel(wx.Panel):
         # ---------------------------------------------------------------
         self.mediaPlayer = wx.media.MediaCtrl(self, style=wx.SIMPLE_BORDER, szBackend=wx.media.MEDIABACKEND_WMP10)
         self.Bind(wx.media.EVT_MEDIA_LOADED, self.PlayWxMedia)
-        self.use_backend = 'wx.media' #or 'pymedia'
+        self.use_backend = 'pymedia' #'wx.media' #or 'pymedia'
         # ---------------------------------------------------------------
         
         # and do the layout
@@ -704,7 +705,11 @@ class MainPanel(wx.Panel):
         list_sifter.LoadRSSFeeds()
         
         # load favorites --------
-        self.favorites.ReadFaves() #self.faves_playlist_location)
+        # *** actually fix the problem, i think non-utf-8 character encoding throws an error
+        try:
+            self.favorites.ReadFaves() #self.faves_playlist_location)
+        except:
+            print "Faves load error"
                 
         # background image --------------------
 #        background = system_files.GetDirectories(self).DataDirectory() + os.sep + 'background.png'
@@ -2679,7 +2684,10 @@ class WebFetchThread(Thread):
         self.webfetchtype = webfetchtype
         #self.lsp = local_songs.Player()
         if webfetchtype == 'PLAYLOCAL':
-            self.lsp = player_wx.Player(panel)
+            if panel.use_backend == 'pymedia':
+                self.lsp = local_songs.Player()
+            else:
+                self.lsp = player_wx.Player(panel)
                
     def stop(self):
         self.lsp.stop_play()
