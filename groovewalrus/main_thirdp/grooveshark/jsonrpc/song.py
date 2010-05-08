@@ -78,13 +78,14 @@ class Song:
         """function: Gets a stream key and host to get song content"""
         parameters = {
             "songID": self.id,
-            "prefetch": False}
+            "prefetch": False, 
+            "country": {"CC3":"0","CC2":"0","ID":"1","CC1":"0","CC4":"0"}}
         response = self._gsapi.request(parameters,
-                "getStreamKeyFromSongID").send()
-
-        self._lastStreamKey = response["result"]["result"]["streamKey"]
-        self._lastStreamServer = response["result"]["result"]["streamServer"]
-        self._lastStreamServerID = response["result"]["result"]["streamServerID"]
+                "getStreamKeyFromSongIDEx").send()
+        print response
+        self._lastStreamKey = response["result"]["streamKey"]
+        self._lastStreamServer = response["result"]["ip"]
+        self._lastStreamServerID = response["result"]["streamServerID"]
 
     # Only sometimes works
     def getStreamURL(self):
