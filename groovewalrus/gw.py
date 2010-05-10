@@ -51,7 +51,7 @@ from main_utils import system_files
 from main_utils import file_cache
 from main_utils import prefetch
 from main_utils import download_feed
-from main_utils import player_wx
+#from main_utils import player_wx
 
 from main_controls import drag_and_drop
 from main_controls import playback_panel
@@ -86,7 +86,7 @@ from main_thirdp import grooveshark_old
 #from plugins.minimode import minimode
 #from plugins.lyrics import lyrics
 
-PROGRAM_VERSION = "0.215"
+PROGRAM_VERSION = "0.216"
 PROGRAM_NAME = "GrooveWalrus"
 
 PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -301,6 +301,8 @@ class MainPanel(wx.Panel):
         self.cb_options_autosave = xrc.XRCCTRL(self, 'm_cb_options_autosave')
         ##self.ch_options_bitrate = xrc.XRCCTRL(self, 'm_ch_options_bitrate')
         self.bu_options_record_dir = xrc.XRCCTRL(self, 'm_bu_options_record_dir')
+        self.rx_options_backend =  xrc.XRCCTRL(self, 'm_rx_options_backend')
+        self.ch_options_wxbackend =  xrc.XRCCTRL(self, 'm_ch_options_wxbackend')
         
         self.st_options_i18n_default = xrc.XRCCTRL(self, 'm_st_options_i18n_default')
         self.st_options_i18n_default.SetLabel('Locale: ' + wx.Locale(wx.LANGUAGE_DEFAULT).GetCanonicalName())
@@ -367,12 +369,7 @@ class MainPanel(wx.Panel):
         self.lc_album.Bind(wx.EVT_RIGHT_UP, self.OnAlbumRightClick)
         
                 
-        # ---------------------------------------------------------------
-        self.mediaPlayer = wx.media.MediaCtrl(self, style=wx.SIMPLE_BORDER, szBackend=wx.media.MEDIABACKEND_WMP10)
-        self.Bind(wx.media.EVT_MEDIA_LOADED, self.PlayWxMedia)
-        self.use_backend = 'pymedia' #'wx.media' #or 'pymedia'
-        # ---------------------------------------------------------------
-        
+
         # and do the layout
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self.panel, 1, wx.EXPAND|wx.ALL, 5)        
@@ -452,6 +449,8 @@ class MainPanel(wx.Panel):
         ##self.Bind(wx.EVT_CHOICE, self.SaveOptions, id=xrc.XRCID('m_ch_options_bitrate'))
         self.Bind(wx.EVT_BUTTON, self.OnSaveOptionsClick, id=xrc.XRCID('m_bu_options_save'))        
         self.Bind(wx.EVT_BUTTON, self.OnSetRecordDirClick, id=xrc.XRCID('m_bu_options_record_dir'))
+        self.Bind(wx.EVT_RADIOBOX, self.SetBackend, id=xrc.XRCID('m_rx_options_backend'))
+        self.Bind(wx.EVT_CHOICE, self.SetBackend, id=xrc.XRCID('m_ch_options_wxbackend'))
         
 
         
@@ -566,12 +565,7 @@ class MainPanel(wx.Panel):
         #cover_bmp = wx.Bitmap(self.image_save_location + 'no_cover.png', wx.BITMAP_TYPE_ANY) #wx.BITMAP_TYPE_JPEG)
         self.SetImage('no_cover.png', GRAPHICS_LOCATION)
         
-        # volume control
-        #check for txt, don't adjust volume if present
-        if os.path.isfile('disable_set_volume.txt'):
-            pass
-        else:
-            self.SetVolume(self.GetVolume())
+
                
         # hotkeys ------------------
         backID = 701
@@ -696,6 +690,24 @@ class MainPanel(wx.Panel):
         options_window.Options(self).LoadOptions()
         if self.cb_options_tray.GetValue() == 1:
             self.parent.UseTrayIcon()
+            
+        # ---------------------------------------------------------------
+        #setup wxmedia backend
+        backend = eval('wx.media.MEDIABACKEND_' + self.ch_options_wxbackend.GetStringSelection())
+        self.mediaPlayer = wx.media.MediaCtrl(self, style=wx.SIMPLE_BORDER, szBackend=backend) #wx.media.MEDIABACKEND_WMP10)
+        self.Bind(wx.media.EVT_MEDIA_LOADED, self.PlayWxMedia)
+        if self.rx_options_backend.GetSelection() == 0:#()'pymedia' #'wx.media' #or 'pymedia'
+            self.use_backend = 'pymedia'
+        else:
+            self.use_backend = 'wx.media'
+        # ---------------------------------------------------------------
+        
+        # volume control
+        #check for txt, don't adjust volume if present
+        if os.path.isfile('disable_set_volume.txt'):
+            pass
+        else:
+            self.SetVolume(self.GetVolume())
         
         # clean cache dir -------
         temp_dir = system_files.GetDirectories(self).TempDirectory()
@@ -705,7 +717,7 @@ class MainPanel(wx.Panel):
         list_sifter.LoadRSSFeeds()
         
         # load favorites --------
-        # *** actually fix the problem, i think non-utf-8 character encoding throws an error
+        # might not need this try:
         try:
             self.favorites.ReadFaves() #self.faves_playlist_location)
         except:
@@ -722,6 +734,21 @@ class MainPanel(wx.Panel):
 
 # ---------------------------------------------------------
 #-----------------------------------------------------------
+
+    def SetBackend(self, event):
+        #sets backend type, pymedia or wx.media
+        self.SaveOptions(None)
+        self.OnStopClick(None)
+        backend_type = self.rx_options_backend.GetSelection()
+        if backend_type == 1:
+            backend = eval('wx.media.MEDIABACKEND_' + self.ch_options_wxbackend.GetStringSelection())
+            #self.mediaPlayer.Destroy()
+            print backend
+            self.mediaPlayer = wx.media.MediaCtrl(self, style=wx.SIMPLE_BORDER, szBackend=backend)
+            self.Bind(wx.media.EVT_MEDIA_LOADED, self.PlayWxMedia)
+            self.use_backend = 'wx.media'
+        else:
+            self.use_backend = 'pymedia'
 
     def RandomBackgroundColour(self, event):        
         #colour_array = ('#ced1ff', '#f7b3f5', '#ff95ae', '#ffd074', '#e6ff3a', '#aaff99', '#e4e4e4')
@@ -2686,8 +2713,8 @@ class WebFetchThread(Thread):
         if webfetchtype == 'PLAYLOCAL':
             if panel.use_backend == 'pymedia':
                 self.lsp = local_songs.Player()
-            else:
-                self.lsp = player_wx.Player(panel)
+            ##else:
+            ##    self.lsp = player_wx.Player(panel)
                
     def stop(self):
         self.lsp.stop_play()
