@@ -24,10 +24,14 @@ import urllib
 import wx
 import wx.xrc as xrc
 import os #, sys
+import shutil
+import hashlib
 #import re
 
 from main_utils.read_write_xml import xml_utils
 from main_utils import system_files
+from main_utils import local_songs
+from main_utils import file_cache
 
 #SYSLOC = os.getcwd()
 #TWITTER_SETTINGS = os.path.join(os.getcwd(), 'plugins','sync') + os.sep + "settings_sync.xml"
@@ -69,6 +73,8 @@ class MainPanel(wx.Dialog):
         self.Bind(wx.EVT_BUTTON, self.OnRemoveClick, id=xrc.XRCID('m_bu_sync_remove'))
         self.Bind(wx.EVT_BUTTON, self.OnSyncClick, id=xrc.XRCID('m_bu_sync_sync'))
         
+        self.Bind(wx.EVT_LISTBOX, self.EvtListBox, self.lb_sync_directories)
+        
         self.bm_sync_close.Bind(wx.EVT_LEFT_UP, self.CloseMe)
         
         self.Bind(wx.EVT_LEFT_DOWN, self.OnMouseLeftDown)
@@ -106,19 +112,13 @@ class MainPanel(wx.Dialog):
             self.SaveOptions()
         dlg.Destroy()
         
-                   
-    def OnSyncClick(self, event):
-        #try and copy files from playlist to device
-        pass
-        
     def OnRemoveClick(self, event):
         # check for selected folder and remove
         list_item = self.lb_sync_directories.GetSelection()
         if list_item >= 0:
             folder_name = self.lb_sync_directories.GetString(list_item)
             if len(folder_name) > 1:
-                self.SaveOptions()
-                
+                self.SaveOptions()                
         
     def ErrorMessage(self, message):
             dlg = wx.MessageDialog(self, message, 'Alert', wx.OK | wx.ICON_WARNING)
@@ -156,6 +156,105 @@ class MainPanel(wx.Dialog):
             window_dict['directories'] = dir_string
             xml_utils().save_generic_settings(self.SYNC_SETTINGS, "settings_sync.xml", window_dict)
             
+         
+    def EvtListBox(self, event):
+        #set disk free space label for selected device
+        self.st_sync_space.SetLabel(self.GetDeviceFreeSpace(event.GetString()))
+               
+    def OnSyncClick(self, event):
+        #try and copy files from playlist to device
+        #check if dir is selected
+        sync_dir = self.lb_sync_directories.GetStringSelection()
+        if sync_dir != '':
+            #check if dir exists
+            if os.path.isdir(sync_dir):
+                #get playlist
+                for x in range(0, self.parent.lc_playlist.GetItemCount()):
+                    artist = self.parent.lc_playlist.GetItem(x, 0).GetText()
+                    track = self.parent.lc_playlist.GetItem(x, 1).GetText()                    
+                    query_string = artist + ' ' + track
+                    #check for file locally
+                    local_file = self.SearchLocal(query_string, artist, track)
+                    copy_file = None
+                    if local_file != None:
+                        copy_file = local_file
+                    else:
+                        #check for cached file
+                        copy_file = self.SearchCache(artist, track)
+                        
+                    if copy_file != None:                        
+                        #copy the file
+                        file_name_plain = artist + '-' + track + '.mp3'
+                        charset = 'utf-8'
+                        ufile_string = file_name_plain.encode(charset)    
+                        hex_file_name = hashlib.md5(ufile_string).hexdigest()
+                        destination_file = sync_dir + os.sep + hex_file_name + '.mp3'
+                        
+                        if os.path.isfile(destination_file) == False:
+                            try:
+                                shutil.copy (copy_file, destination_file)
+                                print destination_file
+                            except e, error:
+                                self.ErrorMessage(error) 
+            else:
+                self.ErrorMessage('Can\'t find ' + sync_dir + '.')
+        else:
+            self.ErrorMessage('Device not selected.')
+        #cycle throught each file
+        #check if file exists on device
+        #check cache
+        #check songdb
+        #copy file
+        #cancel
+        
+    def GetDeviceCapacity(self):
+        #gets drive capacity
+        pass
+    
+    def GetDeviceFreeSpace(self, path):
+        #gets drive free space
+        #print path
+        x = os.popen("dir " + path).readlines()        
+        return x[-1].strip()
+
+        
+        # linux
+        #disk = os.statvfs("/")
+        # Information is recieved in numbers of blocks free
+        # so we need to multiply by the block size to get the space free in bytes
+        #capacity = disk.f_bsize * disk.f_blocks
+        #available = disk.f_bsize * disk.f_bavail
+        #used = disk.f_bsize * (disk.f_blocks - disk.f_bavail) 
+    
+        
+    def SearchLocal(self, query_string, artist, track):           
+        # check locally for song
+        #query_results = local_songs.GetResults(query_string, 1)
+        query_results = local_songs.DbFuncs().GetSpecificResultArray(query_string, artist, track)
+        #GetResultsArray(query, qlimit, with_count=False, folder_query=1)
+        song_id = ''
+        if len(query_results) >= 1:
+            #song_id = str(query_results[0])
+            song_id = str(query_results[0][4])                        
+        #check if file exists
+        if os.path.isfile(song_id):            
+            return song_id
+        else:
+            return None
+            
+    def SearchCache(self, artist, track):
+        temp_dir = system_files.GetDirectories(self).TempDirectory()
+        file_name_plain = artist + '-' + track + '.mp3'
+        
+        # check if file previously cached
+        cached_file = file_cache.CreateCachedFilename(temp_dir, file_name_plain)
+        cached_file_name = cached_file[0]
+        if cached_file[1] == True:
+            return(cached_file_name)
+        else:
+            return(None)
+
+        
 # --------------------------------------------------------- 
 # titlebar-like move and drag
     
