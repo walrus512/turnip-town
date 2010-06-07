@@ -25,7 +25,7 @@ import wx
 import wx.xrc as xrc
 import os #, sys
 import shutil
-import hashlib
+from threading import Thread
 #import re
 
 from main_utils.read_write_xml import xml_utils
@@ -57,6 +57,10 @@ class MainPanel(wx.Dialog):
         self.st_sync_device = xrc.XRCCTRL(self, 'm_st_sync_device')
         self.st_sync_space = xrc.XRCCTRL(self, 'm_st_sync_space')
         self.st_sync_file = xrc.XRCCTRL(self, 'm_st_sync_file')
+        self.ga_sync_progress = xrc.XRCCTRL(self, 'm_ga_sync_progress')
+        self.bu_sync_sync = xrc.XRCCTRL(self, 'm_bu_sync_sync')
+        self.cb_sync_album = xrc.XRCCTRL(self, 'm_cb_sync_album')
+        
         #header for dragging and moving
         self.st_sync_header = xrc.XRCCTRL(self, 'm_st_sync_header')
         self.bm_sync_close = xrc.XRCCTRL(self, 'm_bm_sync_close')
@@ -118,6 +122,7 @@ class MainPanel(wx.Dialog):
         if list_item >= 0:
             folder_name = self.lb_sync_directories.GetString(list_item)
             if len(folder_name) > 1:
+                self.lb_sync_directories.Delete(list_item)
                 self.SaveOptions()                
         
     def ErrorMessage(self, message):
@@ -131,7 +136,7 @@ class MainPanel(wx.Dialog):
     def LoadSettings(self):
         #load the setting from settings_sync.xml if it exists
         settings_dict = xml_utils().get_generic_settings(self.SYNC_SETTINGS + "settings_sync.xml")
-        print settings_dict
+        #print settings_dict
         if len(settings_dict) >= 1:
             directories=''
             if settings_dict.has_key('directories'):
@@ -160,6 +165,7 @@ class MainPanel(wx.Dialog):
     def EvtListBox(self, event):
         #set disk free space label for selected device
         self.st_sync_space.SetLabel(self.GetDeviceFreeSpace(event.GetString()))
+        self.st_sync_device.SetLabel(event.GetString())
                
     def OnSyncClick(self, event):
         #try and copy files from playlist to device
@@ -169,33 +175,15 @@ class MainPanel(wx.Dialog):
             #check if dir exists
             if os.path.isdir(sync_dir):
                 #get playlist
-                for x in range(0, self.parent.lc_playlist.GetItemCount()):
-                    artist = self.parent.lc_playlist.GetItem(x, 0).GetText()
-                    track = self.parent.lc_playlist.GetItem(x, 1).GetText()                    
-                    query_string = artist + ' ' + track
-                    #check for file locally
-                    local_file = self.SearchLocal(query_string, artist, track)
-                    copy_file = None
-                    if local_file != None:
-                        copy_file = local_file
-                    else:
-                        #check for cached file
-                        copy_file = self.SearchCache(artist, track)
-                        
-                    if copy_file != None:                        
-                        #copy the file
-                        file_name_plain = artist + '-' + track + '.mp3'
-                        charset = 'utf-8'
-                        ufile_string = file_name_plain.encode(charset)    
-                        hex_file_name = hashlib.md5(ufile_string).hexdigest()
-                        destination_file = sync_dir + os.sep + hex_file_name + '.mp3'
-                        
-                        if os.path.isfile(destination_file) == False:
-                            try:
-                                shutil.copy (copy_file, destination_file)
-                                print destination_file
-                            except e, error:
-                                self.ErrorMessage(error) 
+                self.ga_sync_progress.SetRange(self.parent.lc_playlist.GetItemCount())
+                self.ga_sync_progress.SetValue(0)
+                
+                #copy file
+                #THREAD
+                current = CopyThread(self.parent, self, sync_dir)                
+                #THREAD
+                current.start()
+                
             else:
                 self.ErrorMessage('Can\'t find ' + sync_dir + '.')
         else:
@@ -214,8 +202,11 @@ class MainPanel(wx.Dialog):
     def GetDeviceFreeSpace(self, path):
         #gets drive free space
         #print path
-        x = os.popen("dir " + path).readlines()        
-        return x[-1].strip()
+        if os.path.isdir(path):
+            x = os.popen("dir " + path).readlines()        
+            return x[-1].strip()
+        else:
+            return ' '
 
         
         # linux
@@ -227,7 +218,119 @@ class MainPanel(wx.Dialog):
         #used = disk.f_bsize * (disk.f_blocks - disk.f_bavail) 
     
         
-    def SearchLocal(self, query_string, artist, track):           
+
+
+        
+# --------------------------------------------------------- 
+# titlebar-like move and drag
+    
+    def OnMouseLeftDown(self, evt):
+        self.Refresh()
+        self.ldPos = evt.GetEventObject().ClientToScreen(evt.GetPosition())
+        self.wPos = self.ClientToScreen((0,0))
+        self.CaptureMouse()
+
+    def OnMouseMotion(self, evt):
+        if evt.Dragging() and evt.LeftIsDown():
+            dPos = evt.GetEventObject().ClientToScreen(evt.GetPosition())
+            #nPos = (self.wPos.x + (dPos.x - self.ldPos.x), -2)
+            try:
+                nPos = (self.wPos.x + (dPos.x - self.ldPos.x), self.wPos.y + (dPos.y - self.ldPos.y))
+                self.Move(nPos)
+            except AttibuteError:
+                pass
+            
+
+    def OnMouseLeftUp(self, evt):
+        try:
+            self.ReleaseMouse()
+        except wx._core.PyAssertionError:
+            pass
+
+    def OnRightUp(self, evt):
+        pass
+        #self.hide_me()
+        #self..Destroy()
+        
+# --------------------------------------------------------- 
+            
+           
+# ===================================================================            
+
+       
+charset = 'utf-8'
+        
+def url_quote(s, safe='/', want_unicode=False):
+    """
+    Wrapper around urllib.quote doing the encoding/decoding as usually wanted:
+    
+    @param s: the string to quote (can be str or unicode, if it is unicode,
+              config.charset is used to encode it before calling urllib)
+    @param safe: just passed through to urllib
+    @param want_unicode: for the less usual case that you want to get back
+                         unicode and not str, set this to True
+                         Default is False.
+    """
+    if isinstance(s, unicode):
+        s = s.encode(charset)
+    elif not isinstance(s, str):
+        s = str(s)
+    #s = urllib.quote(s)#, safe)
+    if want_unicode:
+        s = s.decode(charset) # ascii would also work
+    return s
+     
+# ===================================================================   
+# ####################################
+class CopyThread(Thread): 
+    # another thread to update download progress
+    def __init__(self, parent, coparent, sync_dir):
+        Thread.__init__(self)
+        self.parent = parent
+        self.coparent = coparent
+        self.sync_dir = sync_dir
+                        
+    def run(self):
+        self.coparent.bu_sync_sync.Enable(False)
+        for x in range(0, self.parent.lc_playlist.GetItemCount()):
+            artist = self.parent.lc_playlist.GetItem(x, 0).GetText()
+            track = self.parent.lc_playlist.GetItem(x, 1).GetText()                    
+            query_string = artist + ' ' + track
+            #check for file locally
+            local_file = self.SearchLocal(query_string, artist, track)
+            copy_file = None
+            if local_file != None:
+                copy_file = local_file
+            else:
+                #check for cached file
+                copy_file = self.SearchCache(artist, track)
+                
+            self.coparent.ga_sync_progress.SetValue(x+1)
+                
+            if copy_file != None:                        
+                #copy the file
+                file_name_plain = artist + '-' + track + '.mp3'
+                file_name_plain  = system_files.replace_all(file_name_plain)
+                charset = 'utf-8'
+                ufile_string = file_name_plain.encode(charset)    
+                #hex_file_name = hashlib.md5(ufile_string).hexdigest()
+                destination_file = self.sync_dir + os.sep + ufile_string # + '.mp3'
+                self.coparent.st_sync_file.SetLabel(ufile_string)
+                
+
+                if os.path.isfile(destination_file) == False:
+                    try:                                
+                        shutil.copy (copy_file, destination_file)                                
+                        #print destination_file
+                    except e, error:
+                        self.ErrorMessage(error)
+                    if self.coparent.cb_sync_album.IsChecked():
+                        #check if we want to rename the id3 tag for the album to something standard to help crappy mp3 players that don't list by folders
+                        local_songs.SetMp3Album(destination_file, 'GrooveWalrus')
+                        
+        self.coparent.bu_sync_sync.Enable(True)
+                    
+    def SearchLocal(self, query_string, artist, track):
         # check locally for song
         #query_results = local_songs.GetResults(query_string, 1)
         query_results = local_songs.DbFuncs().GetSpecificResultArray(query_string, artist, track)
@@ -252,61 +355,4 @@ class MainPanel(wx.Dialog):
         if cached_file[1] == True:
             return(cached_file_name)
         else:
-            return(None)
-
-        
-# --------------------------------------------------------- 
-# titlebar-like move and drag
-    
-    def OnMouseLeftDown(self, evt):
-        self.Refresh()
-        self.ldPos = evt.GetEventObject().ClientToScreen(evt.GetPosition())
-        self.wPos = self.ClientToScreen((0,0))
-        self.CaptureMouse()
-
-    def OnMouseMotion(self, evt):
-        if evt.Dragging() and evt.LeftIsDown():
-            dPos = evt.GetEventObject().ClientToScreen(evt.GetPosition())
-            #nPos = (self.wPos.x + (dPos.x - self.ldPos.x), -2)
-            nPos = (self.wPos.x + (dPos.x - self.ldPos.x), self.wPos.y + (dPos.y - self.ldPos.y))
-            self.Move(nPos)
-
-    def OnMouseLeftUp(self, evt):
-        try:
-            self.ReleaseMouse()
-        except wx._core.PyAssertionError:
-            pass
-
-    def OnRightUp(self, evt):
-        self.hide_me()
-        #self..Destroy()
-        
-# --------------------------------------------------------- 
-            
-           
-# ===================================================================            
-
-              
-charset = 'utf-8'
-        
-def url_quote(s, safe='/', want_unicode=False):
-    """
-    Wrapper around urllib.quote doing the encoding/decoding as usually wanted:
-    
-    @param s: the string to quote (can be str or unicode, if it is unicode,
-              config.charset is used to encode it before calling urllib)
-    @param safe: just passed through to urllib
-    @param want_unicode: for the less usual case that you want to get back
-                         unicode and not str, set this to True
-                         Default is False.
-    """
-    if isinstance(s, unicode):
-        s = s.encode(charset)
-    elif not isinstance(s, str):
-        s = str(s)
-    #s = urllib.quote(s)#, safe)
-    if want_unicode:
-        s = s.decode(charset) # ascii would also work
-    return s
-     
-# ===================================================================   
+            return(None)     
