@@ -804,15 +804,23 @@ def GetMp3Length(file_name):
     
 def GetMp3Artist(file_name):
     c = mp3tag.Mp3AudioFile(file_name)
-    b = c.tag.getArtist()
-    a = ' '.join(i.capitalize() for i in b.split(' '))
+    a =''
+    try:
+        b = c.tag.getArtist()    
+        a = ' '.join(i.capitalize() for i in b.split(' '))
+    except AttributeError:
+        pass
     return a
     
     
 def GetMp3Title(file_name):
     c = mp3tag.Mp3AudioFile(file_name)
-    b = c.tag.getTitle()
-    a = ' '.join(i.capitalize() for i in b.split(' '))
+    a =''
+    try:
+        b = c.tag.getTitle()
+        a = ' '.join(i.capitalize() for i in b.split(' '))
+    except AttributeError:
+        pass
     return a
     
 def GetMp3Album(file_name):
@@ -823,6 +831,20 @@ def GetMp3Album(file_name):
     except AttributeError:
         a = ''
     return a
+    
+def SetMp3Album(file_name, album):
+    c = mp3tag.Mp3AudioFile(file_name)
+    try:    
+        c.tag.setAlbum(album)
+        c.tag.update()
+    except AttributeError:
+        print 'AttributeError'
+
+    #try:
+    #c.tag.setAlbum(album)
+    #except e, error:
+        #pass
+    
     
  #---------------------------------------------------------------------------   
     

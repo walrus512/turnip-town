@@ -2,7 +2,7 @@
 <resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
 	<object class="wxPanel" name="m_pa_plugin_sync">
 		<style>wxTAB_TRAVERSAL</style>
-		<size>354,385</size>
+		<size>354,410</size>
 		<object class="wxBoxSizer">
 			<orient>wxVERTICAL</orient>
 			<object class="sizeritem">
@@ -163,7 +163,7 @@
 											<orient>wxVERTICAL</orient>
 											<object class="sizeritem">
 												<option>0</option>
-												<flag>wxALL</flag>
+												<flag>wxALL|wxALIGN_RIGHT</flag>
 												<border>5</border>
 												<object class="wxStaticText" name="m_staticText4">
 													<style>wxALIGN_RIGHT</style>
@@ -181,12 +181,18 @@
 											</object>
 											<object class="sizeritem">
 												<option>0</option>
-												<flag>wxALL</flag>
+												<flag>wxALL|wxALIGN_RIGHT</flag>
 												<border>5</border>
 												<object class="wxStaticText" name="m_staticText2">
-													<style>wxALIGN_RIGHT</style>
-													<size>100,-1</size>
 													<label>File</label>
+												</object>
+											</object>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALL|wxALIGN_RIGHT</flag>
+												<border>5</border>
+												<object class="wxStaticText" name="m_staticText81">
+													<label>ID3 Tag</label>
 												</object>
 											</object>
 										</object>
@@ -219,6 +225,15 @@
 												<border>5</border>
 												<object class="wxStaticText" name="m_st_sync_file">
 													<label></label>
+												</object>
+											</object>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALL</flag>
+												<border>5</border>
+												<object class="wxCheckBox" name="m_cb_sync_album">
+													<label>Rename album</label>
+													<checked>0</checked>
 												</object>
 											</object>
 										</object>
