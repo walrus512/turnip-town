@@ -130,6 +130,8 @@ class MyApp(wx.App):
     
     def OnExitClick(self, event=None):
         self.frame.Destroy()
+        sys.exit()#1
+        os._exit()#2
         
 #----------------------------------------------------------------------       
     def GetNews(self):
