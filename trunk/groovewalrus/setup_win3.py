@@ -19,7 +19,7 @@ class Target:
     def __init__(self, **kw):
         self.__dict__.update(kw)
         # for the versioninfo resources
-        self.version = "0.215"
+        self.version = "0.217"
         self.company_name = "Turnip-Town.net"
         self.copyright = "lots of copyright"
         self.name = "GrooveWalrus"
@@ -63,7 +63,7 @@ RT_MANIFEST = 24
 
 test_wx = Target(
     # used for the versioninfo resource
-    description = "Groove Walrus",
+    description = "GrooveWalrus",
 
     # what to build
     script = "gw.py",

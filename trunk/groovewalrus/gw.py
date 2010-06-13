@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 GrooveWalrus: GrooveWalrus
-Copyright (C) 2009
+Copyright (C) 2009,2010
 11y3y3y3y43@gmail.com
 http://groove-walrus.turnip-town.net
 -----
@@ -38,6 +38,7 @@ if os.name == 'nt':
 import urllib
 from threading import Thread
 import sqlite3
+import subprocess
 
 from main_utils import musicbrainz
 from main_utils import tinysong
@@ -85,8 +86,11 @@ from main_thirdp import grooveshark_old
 #from plugins.ratings import ratings
 #from plugins.minimode import minimode
 #from plugins.lyrics import lyrics
+#from plugins.sync import sync
+#from plugins.zongdora import zongdora
 
-PROGRAM_VERSION = "0.216"
+
+PROGRAM_VERSION = "0.217"
 PROGRAM_NAME = "GrooveWalrus"
 
 PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -1123,12 +1127,13 @@ class MainPanel(wx.Panel):
         if dlg.ShowModal() == wx.ID_OK:
             if g_version != dlg.GetValue():
                 #save xml file
-                file_name = 'grooveshark.xml'    
-                if dlg.GetValue() !='':
-                    #get the version number from the file
-                    #print 'asfasfasf'
+                file_name = 'grooveshark.xml'
+                if dlg.GetValue() =='':                    
+                    data_dict = {'version':' '}
+                else:
+                    #get the version number from the file                    
                     data_dict = {'version':dlg.GetValue()}                    
-                    read_write_xml.xml_utils().save_generic_settings(data_dir, file_name, data_dict)
+                read_write_xml.xml_utils().save_generic_settings(data_dir, file_name, data_dict)
         dlg.Destroy()
         
            
@@ -1207,8 +1212,37 @@ class MainPanel(wx.Panel):
 
     def OnUpdateClick(self, event):
         # open website
-        version_check.VersionCheck(self, PROGRAM_VERSION).DisplayNewVersionMessage()
+        #version_check.VersionCheck(self, PROGRAM_VERSION).DisplayNewVersionMessage()
+        dlg = wx.MessageDialog(self, 'Launch Version Update?',
+                               'Launcher', wx.YES_NO | wx.ICON_INFORMATION )
+        if (dlg.ShowModal() == wx.ID_YES):        
+            sys.stdout.flush()
+            if os.path.isfile (SYSLOC + os.sep + "version_update.exe"):
+                program = "version_update.exe"
+                arguments = ["v=" + PROGRAM_VERSION]
+                os.execvp(program, (program,) +  tuple(arguments))
 
+                #os.execvp("version_update.exe", ['v='+PROGRAM_VERSION])
+                #self.parent.Destroy()
+                self.KillCurrent()
+            elif os.path.isfile (SYSLOC + os.sep + "version_update.py"):            
+                child = subprocess.Popen("python version_update.py v=" + PROGRAM_VERSION)
+                #self.parent.Destroy()
+                self.KillCurrent()
+                #if os.name == 'nt':
+                #    os.execvp("gw.py", [])
+                #else:
+                #    os.execvp("python", ['gw.py'])
+            else:
+                dlg = wx.MessageDialog(self.parent, "Can't find version_update.exe/version_update.py\r\nThis is not good.", 'Alert', wx.OK | wx.ICON_WARNING)
+                if (dlg.ShowModal() == wx.ID_OK):
+                    dlg.Destroy()
+        dlg.Destroy()
+        
+    def KillCurrent(self):
+        sys.exit()#1
+        os._exit()#2
+        
 # --------------------------------------------------------- 
 # play click events---------------------------------------- 
     def OnPlayClick(self, event):
@@ -2915,7 +2949,7 @@ def GetLocalGroovesharkVersion(data_dir):
         #get the version number from the file
         xml_dict = read_write_xml.xml_utils().get_generic_settings(data_dir + file_name)
         if xml_dict.has_key('version'):
-            if len(xml_dict['version']) > 0:
+            if len(xml_dict['version']) > 1:
                 g_version = xml_dict['version']
     return g_version     
             
