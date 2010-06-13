@@ -44,8 +44,13 @@ class Request:
 
     def __init__(self, api, parameters, method, type="default", clientVersion=None):
         """function: Initiates the Request"""
+        
+        if clientVersion != None:
+            if float(clientVersion) < float(CLIENT_VERSION):
+                clientVersion = CLIENT_VERSION
         if clientVersion == None:
             clientVersion = CLIENT_VERSION
+            
         postData = {
             "header": {
                 "client": CLIENT_NAME,
