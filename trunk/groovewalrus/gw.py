@@ -1068,6 +1068,8 @@ class MainPanel(wx.Panel):
         self.SavePlaylist(self.main_playlist_location)
         self.SaveOptions(event)
         self.parent.Destroy()
+        sys.exit()#1
+        os._exit()#2
         
     def OnSaveOptionsClick(self, event):
         # hide the notebook, or show it
@@ -1459,7 +1461,8 @@ class MainPanel(wx.Panel):
                         found_it = False
                         for x in range(1, len(query_results) - 1):
                             y = x #query_results[x].split('; ')
-                            #print y
+                            print y
+                            print track
                             if (y['SongName'].upper() == track.upper()) & (found_it != True):
                                 song_id = y['SongID']
                                 self.lc_playlist.SetStringItem(playlist_number, 3, song_id)

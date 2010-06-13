@@ -72,7 +72,7 @@ def GetRSSFeed2(feed_location):
                 rss_list.append(text_out) 
         
         return rss_list
-   
+           
 #------------    
 def CleanText(text):
     text = text.strip()
