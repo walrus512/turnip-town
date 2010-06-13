@@ -28,6 +28,7 @@ from main_utils import default_app_open
 import wx.xrc as xrc
 from threading import Thread
 from main_utils import system_files
+import zipfile
 
 VERSION_URL = "http://groove-walrus.turnip-town.net/dru/version/version2.xml"
 NEWS_URL = "http://groove-walrus.turnip-town.net/dru/version/news2.xml"
@@ -125,6 +126,15 @@ class UpdateWindow(wx.Dialog):
             root = tree.getroot()            
             self.UpdateTC(root.text)
 
+        
+            
+        # check files.xml, get zip file and checksum
+        # download zip file
+        # checksum zip file
+        # extract zip file to updates dir
+        # copy updates to groovewalrus install dir, overwriting
+            
+            
 
     def OnUpdateClick(self, event):        
         # check for admin priviliges
@@ -261,7 +271,7 @@ class UpdateWindow(wx.Dialog):
 #---------------------------------------------------------------------------
 # ####################################
 class UpdateThread(Thread): 
-    # grab rss feeds, thread style  
+    # update files, thread style  
     def __init__(self, parent, current_version, file_array, data_directory, update_data_directory):
         Thread.__init__(self)
         self.parent = parent
@@ -379,3 +389,35 @@ class UpdateThread(Thread):
                     self.parent.UpdateTC('error: creating directory: %s' % (base + directory))
         return status
         
+    def UnzipFile(self, zip_file_name, extract_to):
+    
+        if zipfile.is_zipfile(zip_file_name):
+            
+            # open the zipped file
+            zfile = zipfile.ZipFile(zip_file_name, "r")
+            
+            if zfile.testzip() == None:
+            
+                zfile.printdir()
+                
+                # get each archived file and process the decompressed data
+                for info in zfile.infolist():
+                    fname = info.filename
+                    # decompress each file's data
+                    data = zfile.read(fname)
+                    
+                    # save the decompressed data to a new file
+                    filename = extract_to + fname
+                    if filename[-1] == '/':
+                        #it's a directory
+                        self.CreateDir(extract_to, fname)
+                    else:
+                        #it's a file
+                        fout = open(filename, "w")
+                        fout.write(data)
+                        fout.close()
+            else:
+                print 'failed test zipfile: ' + zip_file_name
+        else:
+            print 'not zipfile: ' + zip_file_name
+                

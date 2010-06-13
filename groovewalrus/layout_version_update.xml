@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
+	<object class="wxFrame" name="m_fr_main">
+		<style>wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL</style>
+		<size>608,382</size>
+		<title>Version Update</title>
+		<object class="wxPanel" name="m_panel1">
+			<style>wxTAB_TRAVERSAL</style>
+			<object class="wxBoxSizer">
+				<orient>wxVERTICAL</orient>
+				<object class="sizeritem">
+					<option>1</option>
+					<flag>wxEXPAND | wxALL</flag>
+					<border>5</border>
+					<object class="wxListbook" name="m_lb_main">
+						<style>wxLB_DEFAULT|wxNO_BORDER</style>
+						<object class="listbookpage">
+							<label>Update</label>
+							<selected>1</selected>
+							<object class="wxPanel" name="m_panel7">
+								<style>wxTAB_TRAVERSAL</style>
+								<object class="wxBoxSizer">
+									<orient>wxVERTICAL</orient>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxTOP|wxRIGHT|wxLEFT|wxEXPAND</flag>
+										<border>5</border>
+										<object class="wxStaticText" name="m_staticText81">
+											<font>
+												<size>12</size>
+												<family>default</family>
+												<style>normal</style>
+												<weight>bold</weight>
+												<underlined>0</underlined>
+											</font>
+											<label>Update</label>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxEXPAND|wxALL</flag>
+										<border>5</border>
+										<object class="wxStaticLine" name="m_staticline11">
+											<style>wxLI_VERTICAL</style>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>1</option>
+										<flag>wxALL|wxEXPAND</flag>
+										<border>5</border>
+										<object class="wxHtmlWindow" name="m_hl_news">
+											<style>wxHW_SCROLLBAR_AUTO</style>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxEXPAND</flag>
+										<border>5</border>
+										<object class="wxBoxSizer">
+											<orient>wxHORIZONTAL</orient>
+											<object class="spacer">
+												<option>1</option>
+												<flag>wxEXPAND</flag>
+												<border>5</border>
+												<size>0,0</size>
+											</object>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALL</flag>
+												<border>5</border>
+												<object class="wxButton" name="m_bu_restart">
+													<enabled>0</enabled>
+													<label>Restart</label>
+													<default>0</default>
+												</object>
+											</object>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALL|wxALIGN_RIGHT</flag>
+												<border>5</border>
+												<object class="wxButton" name="m_bu_update">
+													<label>Update</label>
+													<default>0</default>
+												</object>
+											</object>
+										</object>
+									</object>
+								</object>
+							</object>
+						</object>
+						<object class="listbookpage">
+							<label>Settings</label>
+							<selected>0</selected>
+							<object class="wxPanel" name="m_panel8">
+								<style>wxTAB_TRAVERSAL</style>
+								<object class="wxBoxSizer">
+									<orient>wxVERTICAL</orient>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxTOP|wxRIGHT|wxLEFT|wxEXPAND</flag>
+										<border>5</border>
+										<object class="wxStaticText" name="m_staticText8">
+											<font>
+												<size>12</size>
+												<family>default</family>
+												<style>normal</style>
+												<weight>bold</weight>
+												<underlined>0</underlined>
+											</font>
+											<label>Settings</label>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxEXPAND | wxALL</flag>
+										<border>5</border>
+										<object class="wxStaticLine" name="m_staticline2">
+											<style>wxLI_HORIZONTAL</style>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxEXPAND</flag>
+										<border>5</border>
+										<object class="wxStaticBoxSizer">
+											<orient>wxVERTICAL</orient>
+											<label></label>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxEXPAND</flag>
+												<border>5</border>
+												<object class="wxBoxSizer">
+													<orient>wxHORIZONTAL</orient>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>15</border>
+														<object class="wxStaticBitmap" name="m_bitmap1">
+															<bitmap>graphics/network-workgroup-32.png</bitmap>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxEXPAND | wxALL</flag>
+														<border>5</border>
+														<object class="wxStaticLine" name="m_staticline1">
+															<style>wxLI_VERTICAL</style>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>1</option>
+														<flag>wxEXPAND</flag>
+														<border>5</border>
+														<object class="wxBoxSizer">
+															<orient>wxVERTICAL</orient>
+															<object class="sizeritem">
+																<option>1</option>
+																<flag>wxEXPAND</flag>
+																<border>5</border>
+																<object class="wxBoxSizer">
+																	<orient>wxHORIZONTAL</orient>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																		<border>5</border>
+																		<object class="wxStaticText" name="m_staticText1">
+																			<style>wxALIGN_RIGHT</style>
+																			<size>80,-1</size>
+																			<label>Version:</label>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>1</option>
+																		<flag>wxALL</flag>
+																		<border>5</border>
+																		<object class="wxTextCtrl" name="m_tc_version">
+																			<style>wxTE_READONLY</style>
+																			<value></value>
+																			<maxlength>0</maxlength>
+																		</object>
+																	</object>
+																</object>
+															</object>
+															<object class="sizeritem">
+																<option>1</option>
+																<flag>wxEXPAND</flag>
+																<border>5</border>
+																<object class="wxBoxSizer">
+																	<orient>wxHORIZONTAL</orient>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																		<border>5</border>
+																		<object class="wxStaticText" name="m_staticText11">
+																			<style>wxALIGN_RIGHT</style>
+																			<size>80,-1</size>
+																			<label>Files:</label>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>1</option>
+																		<flag>wxALL</flag>
+																		<border>5</border>
+																		<object class="wxTextCtrl" name="m_tc_files">
+																			<style>wxTE_READONLY</style>
+																			<value></value>
+																			<maxlength>0</maxlength>
+																		</object>
+																	</object>
+																</object>
+															</object>
+															<object class="sizeritem">
+																<option>1</option>
+																<flag>wxEXPAND</flag>
+																<border>5</border>
+																<object class="wxBoxSizer">
+																	<orient>wxHORIZONTAL</orient>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																		<border>5</border>
+																		<object class="wxStaticText" name="m_staticText12">
+																			<style>wxALIGN_RIGHT</style>
+																			<size>80,-1</size>
+																			<label>News:</label>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>1</option>
+																		<flag>wxALL</flag>
+																		<border>5</border>
+																		<object class="wxTextCtrl" name="m_tc_news">
+																			<style>wxTE_READONLY</style>
+																			<value></value>
+																			<maxlength>0</maxlength>
+																		</object>
+																	</object>
+																</object>
+															</object>
+															<object class="sizeritem">
+																<option>1</option>
+																<flag>wxEXPAND</flag>
+																<border>5</border>
+																<object class="wxBoxSizer">
+																	<orient>wxHORIZONTAL</orient>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																		<border>5</border>
+																		<object class="wxStaticText" name="m_staticText13">
+																			<style>wxALIGN_RIGHT</style>
+																			<size>80,-1</size>
+																			<label>Website:</label>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>1</option>
+																		<flag>wxALL</flag>
+																		<border>5</border>
+																		<object class="wxTextCtrl" name="m_tc_website">
+																			<style>wxTE_READONLY</style>
+																			<value></value>
+																			<maxlength>0</maxlength>
+																		</object>
+																	</object>
+																</object>
+															</object>
+														</object>
+													</object>
+												</object>
+											</object>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxEXPAND</flag>
+										<border>5</border>
+										<object class="wxStaticBoxSizer">
+											<orient>wxVERTICAL</orient>
+											<label></label>
+											<object class="sizeritem">
+												<option>1</option>
+												<flag>wxEXPAND</flag>
+												<border>5</border>
+												<object class="wxBoxSizer">
+													<orient>wxHORIZONTAL</orient>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>15</border>
+														<object class="wxStaticBitmap" name="m_bitmap11">
+															<bitmap>graphics/network-workgroup-32.png</bitmap>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxEXPAND | wxALL</flag>
+														<border>5</border>
+														<object class="wxStaticLine" name="m_staticline12">
+															<style>wxLI_VERTICAL</style>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>1</option>
+														<flag>wxEXPAND</flag>
+														<border>5</border>
+														<object class="wxBoxSizer">
+															<orient>wxVERTICAL</orient>
+															<object class="sizeritem">
+																<option>1</option>
+																<flag>wxEXPAND</flag>
+																<border>5</border>
+																<object class="wxBoxSizer">
+																	<orient>wxHORIZONTAL</orient>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																		<border>5</border>
+																		<object class="wxStaticText" name="m_staticText14">
+																			<style>wxALIGN_RIGHT</style>
+																			<size>80,-1</size>
+																			<label>Local:</label>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>1</option>
+																		<flag>wxALL</flag>
+																		<border>5</border>
+																		<object class="wxTextCtrl" name="m_tc_local_dir">
+																			<style>wxTE_READONLY</style>
+																			<value></value>
+																			<maxlength>0</maxlength>
+																		</object>
+																	</object>
+																</object>
+															</object>
+															<object class="sizeritem">
+																<option>1</option>
+																<flag>wxEXPAND</flag>
+																<border>5</border>
+																<object class="wxBoxSizer">
+																	<orient>wxHORIZONTAL</orient>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																		<border>5</border>
+																		<object class="wxStaticText" name="m_staticText111">
+																			<style>wxALIGN_RIGHT</style>
+																			<size>80,-1</size>
+																			<label>Update:</label>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>1</option>
+																		<flag>wxALL</flag>
+																		<border>5</border>
+																		<object class="wxTextCtrl" name="m_tc_update_dir">
+																			<style>wxTE_READONLY</style>
+																			<value></value>
+																			<maxlength>0</maxlength>
+																		</object>
+																	</object>
+																</object>
+															</object>
+														</object>
+													</object>
+												</object>
+											</object>
+										</object>
+									</object>
+								</object>
+							</object>
+						</object>
+					</object>
+				</object>
+			</object>
+		</object>
+		<object class="wxMenuBar" name="m_menubar1">
+			<label>MyMenuBar</label>
+			<object class="wxMenu" name="m_menu1">
+				<label>File</label>
+				<object class="wxMenuItem" name="m_mi_exit">
+					<label>Exit</label>
+					<help></help>
+				</object>
+			</object>
+			<object class="wxMenu" name="m_menu2">
+				<label>Help</label>
+				<object class="wxMenuItem" name="m_mi_about">
+					<label>About Version Update</label>
+					<help></help>
+				</object>
+			</object>
+		</object>
+	</object>
+</resource>
