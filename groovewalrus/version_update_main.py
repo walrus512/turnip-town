@@ -35,7 +35,6 @@ from threading import Thread
 from main_utils import default_app_open
 from main_utils import read_write_xml
 from main_utils import system_files
-from main_utils import update_utils
 
 PROGRAM_VERSION = "0.001"
 PROGRAM_NAME = "Version Update"
@@ -119,13 +118,15 @@ class MyApp(wx.App):
         frame.tc_website.SetValue(self.settings_dict['website'])
         
         # load news.xml -----
-        self.news_html = update_utils.GetNews(self.settings_dict['news'])
-        frame.hl_news.SetPage(self.news_html)
+        self.GetNews()
         
         # update text
         self.current_text = '<b>Updating...</b><br>'
         
         frame.Show(True)
+        #dlg = wx.MessageDialog(frame, sys.argv[0]+sys.argv[1]+str(len(sys.argv)), 'Alert', wx.OK | wx.ICON_WARNING)
+        #if (dlg.ShowModal() == wx.ID_OK):
+        #    dlg.Destroy()
     
     def OnExitClick(self, event=None):
         self.frame.Destroy()
@@ -235,11 +236,15 @@ class MyApp(wx.App):
     # restart main program
         sys.stdout.flush()
         if os.path.isfile (SYSLOC + os.sep + "gw.exe"):
-            os.execvp("gw.exe", [])
-            self.frame.Destroy()
+            program = "gw.exe"
+            arguments = []
+            os.execvp(program, (program,) +  tuple(arguments))
+            #self.frame.Destroy()
+            self.KillCurrent()
         elif os.path.isfile (SYSLOC + os.sep + "gw.py"):            
             child = subprocess.Popen("python gw.py")
-            self.frame.Destroy()
+            #self.frame.Destroy()
+            self.KillCurrent()
             #if os.name == 'nt':
             #    os.execvp("gw.py", [])
             #else:
@@ -249,6 +254,9 @@ class MyApp(wx.App):
             if (dlg.ShowModal() == wx.ID_OK):
                 dlg.Destroy()
        
+    def KillCurrent(self):
+        sys.exit()#1
+        os._exit()#2
 # --------------------------------------------------------- 
     def OnAboutClick(self, event):
         # First we create and fill the info object
@@ -454,7 +462,7 @@ class UpdateThread(Thread):
                         self.CreateDir(extract_to, fname)
                     else:
                         #it's a file
-                        fout = open(filename, "w")
+                        fout = open(filename, "wb")
                         fout.write(data)
                         fout.close()
                         self.parent.UpdateTC('extracted: ' + fname)

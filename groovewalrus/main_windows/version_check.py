@@ -30,9 +30,9 @@ from threading import Thread
 from main_utils import system_files
 import zipfile
 
-VERSION_URL = "http://groove-walrus.turnip-town.net/dru/version/version2.xml"
-NEWS_URL = "http://groove-walrus.turnip-town.net/dru/version/news2.xml"
-FILES_URL = "http://groove-walrus.turnip-town.net/dru/version/files2.xml"
+VERSION_URL = "http://groove-walrus.turnip-town.net/dru/version/version3.xml"
+NEWS_URL = "http://groove-walrus.turnip-town.net/dru/version/news3.xml"
+FILES_URL = "http://groove-walrus.turnip-town.net/dru/version/files3.xml"
 LW = 'http://groove-walrus.turnip-town.net'
 
 SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0]))
