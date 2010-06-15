@@ -23,6 +23,8 @@ import wx
 import wx.xrc as xrc
 import sys, os
 SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0]))
+if os.path.isfile(SYSLOC + os.sep + "layout.xml") == False:
+    SYSLOC = os.path.abspath(os.getcwd())
 
 DETAILS_RESFILE = SYSLOC + '\\layout_details.xml'
 

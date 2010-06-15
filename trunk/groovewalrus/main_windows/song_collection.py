@@ -22,13 +22,16 @@ Place, Suite 330, Boston, MA 02111-1307 USA
 
 import wx
 import wx.xrc as xrc
-import os
+import os, sys
 import sqlite3
 from main_utils import system_files
 from threading import Thread
 import time
 
-SYSLOC = os.getcwd()
+SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0]))
+if os.path.isfile(SYSLOC + os.sep + "layout.xml") == False:
+    SYSLOC = os.path.abspath(os.getcwd())
+    
 SONGDB_RESFILE = SYSLOC + os.sep + 'layout_songdb.xml'
 #GRAPHICS_LOCATION = os.path.join(os.getcwd(), 'graphics') + os.sep
 

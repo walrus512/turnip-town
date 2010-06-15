@@ -29,7 +29,9 @@ API_KEY = "13eceb51a4c2e0f825c492f04bf693c8"
 #from main_utils import system_files
 #import sqlite3
 
-SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0])) #os.getcwd()
+SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0]))
+if os.path.isfile(SYSLOC + os.sep + "layout.xml") == False:
+    SYSLOC = os.path.abspath(os.getcwd())
 GRAPHICS_LOCATION = os.path.join(SYSLOC, 'graphics') + os.sep
 
 IMAGE_FILES = [

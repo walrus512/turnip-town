@@ -19,7 +19,7 @@ Place, Suite 330, Boston, MA 02111-1307 USA
 """
 
 import wx
-import wx.html
+#import wx.html
 import wx.xrc as xrc
 
 import os
@@ -39,7 +39,22 @@ from main_utils import system_files
 PROGRAM_VERSION = "0.001"
 PROGRAM_NAME = "Version Update"
 
+
+##if sys.argv[-1][0:2] == 'v=':
+    #killing the process also kills the cwd, we must rebuild it
+    #C:\ProgramFiles(x86)\GrooveWalrus\version_update.exe v=0.213
+    #yy = ''
+    #for xx in range (0, (len(sys.argv)-1)):
+    #    yy = yy + sys.argv[xx]
+    #SYSLOC = yy.rsplit(os.sep, 1)[0]
+##    SYSLOC = os.getcwd()
+##else:
+##    SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0])) 
+
 SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0]))
+if os.path.isfile(SYSLOC + os.sep + "layout.xml") == False:
+    SYSLOC = os.path.abspath(os.getcwd())
+    
 GRAPHICS_LOCATION = os.path.join(SYSLOC, 'graphics') + os.sep
 
 RESFILE = os.getcwd() + os.sep + 'layout_version_update.xml'
@@ -69,7 +84,7 @@ class MyApp(wx.App):
         frame.tc_files = xrc.XRCCTRL(frame, 'm_tc_files')
         frame.tc_news = xrc.XRCCTRL(frame, 'm_tc_news')
         frame.tc_website = xrc.XRCCTRL(frame, 'm_tc_website')
-        frame.hl_news = xrc.XRCCTRL(frame, 'm_hl_news')
+        frame.tc_news_text = xrc.XRCCTRL(frame, 'm_tc_news_text')
         frame.bu_update = xrc.XRCCTRL(frame, 'm_bu_update')
         frame.bu_restart = xrc.XRCCTRL(frame, 'm_bu_restart')
         
@@ -86,28 +101,27 @@ class MyApp(wx.App):
         frame.Bind(wx.EVT_MENU, self.OnExitClick, id=xrc.XRCID("m_mi_exit"))
 
         #listbook images ------
-        il = wx.ImageList(32, 32, True)        
-        image_files = [
-            GRAPHICS_LOCATION + 'network-workgroup-32.png', 
-            GRAPHICS_LOCATION + 'preferences-system-32.png', 
+        ##il = wx.ImageList(32, 32, True)        
+        ##image_files = [
+        ##    GRAPHICS_LOCATION + 'network-workgroup-32.png', 
+        ##    GRAPHICS_LOCATION + 'preferences-system-32.png'
             #GRAPHICS_LOCATION + 'weather-overcast.png', 
             #GRAPHICS_LOCATION + 'weather-few-clouds.png', 
             #GRAPHICS_LOCATION + 'weather-clear.png'
-            ]            
-        for file_name in image_files:
-            bmp = wx.Bitmap(file_name, wx.BITMAP_TYPE_PNG)
-            il.Add(bmp)
-        frame.lb_main.AssignImageList(il)
-        frame.lb_main.SetPageImage(0, 0)
-        frame.lb_main.SetPageImage(1, 1)
+        ##    ]            
+        ##for file_name in image_files:
+        ##    bmp = wx.Bitmap(file_name, wx.BITMAP_TYPE_PNG)
+        ##    il.Add(bmp)
+        ##frame.lb_main.AssignImageList(il)
+        ##frame.lb_main.SetPageImage(0, 0)
+        ##frame.lb_main.SetPageImage(1, 1)
         
         # get current version -----
         # current version is either passed from the command line
         #  or called directly
         if self.current_version == None:
-            if len(sys.argv) == 2:
-                if sys.argv[1][0:2] == 'v=':
-                    self.current_version = sys.argv[1][2:]
+            if sys.argv[-1][0:2] == 'v=':
+                self.current_version = sys.argv[-1][2:]
         #print self.current_version
 
         # load settings -----
@@ -121,17 +135,23 @@ class MyApp(wx.App):
         self.GetNews()
         
         # update text
-        self.current_text = '<b>Updating...</b><br>'
+        self.current_text = """========
+Updating
+========
+"""
         
         frame.Show(True)
-        #dlg = wx.MessageDialog(frame, sys.argv[0]+sys.argv[1]+str(len(sys.argv)), 'Alert', wx.OK | wx.ICON_WARNING)
+        #y=''
+        #for x in sys.argv:
+        #    y = y + x
+        #dlg = wx.MessageDialog(frame, y+str(len(sys.argv)), 'Alert', wx.OK | wx.ICON_WARNING)
         #if (dlg.ShowModal() == wx.ID_OK):
         #    dlg.Destroy()
     
     def OnExitClick(self, event=None):
         self.frame.Destroy()
-        sys.exit()#1
-        os._exit()#2
+        #sys.exit()#1
+        #os._exit()#2
         
 #----------------------------------------------------------------------       
     def GetNews(self):
@@ -145,11 +165,11 @@ class MyApp(wx.App):
         
         if tree != '':
             root = tree.getroot()    
-            self.news_html = root.text.replace('[', '<')
-            self.news_html = self.news_html.replace(']', '>')
+            self.news_html = root.text #.replace('[', '<')
+            #self.news_html = self.news_html.replace(']', '>')
             #self.UpdateTC(root.text)
             #page_contents = '<p><FONT SIZE=3><b>' + unicode(artist) + '</b></FONT><br><br><FONT SIZE=-1>' + unicode(bio_text_str) + '</FONT></p>'
-            self.frame.hl_news.SetPage(self.news_html)
+            self.frame.tc_news_text.SetValue(self.news_html)
    
     def OnUpdateClick(self, event):        
         # check for admin priviliges
@@ -216,9 +236,10 @@ class MyApp(wx.App):
         default_app_open.dopen(self.settings_dict['website'])
         
     def UpdateTC(self, u_text):
-        self.current_text = self.current_text + '<i>' + u_text + '</i><br>'
-        out_text = self.current_text + '<br><br>' + self.news_html
-        self.frame.hl_news.SetPage(out_text)
+        self.current_text = self.current_text + '...' + u_text + '\r\n'
+        out_text = self.current_text + '\r\n' + self.news_html
+        self.frame.tc_news_text.SetValue(out_text)
+        #pass
         #self.tc_update_text.SetValue(self.tc_update_text.GetValue() + '\r\n...' + u_text)
         
     def GetUpdateFile(self, file_url, file_name, ver_dir, file_size):
@@ -238,7 +259,7 @@ class MyApp(wx.App):
     # restart main program
         sys.stdout.flush()
         if os.path.isfile (SYSLOC + os.sep + "gw.exe"):
-            program = "gw.exe"
+            program = SYSLOC + os.sep + "gw.exe"
             arguments = []
             os.execvp(program, (program,) +  tuple(arguments))
             #self.frame.Destroy()

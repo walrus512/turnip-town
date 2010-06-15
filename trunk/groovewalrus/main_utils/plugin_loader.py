@@ -20,13 +20,15 @@ Place, Suite 330, Boston, MA 02111-1307 USA
 """
 
 #import sqlite3
-import  wx
+import wx
 import sys, os
 
 from main_utils.read_write_xml import xml_utils
 from main_utils import system_files
 
-SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0])) #os.getcwd()
+SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0]))
+if os.path.isfile(SYSLOC + os.sep + "layout.xml") == False:
+    SYSLOC = os.path.abspath(os.getcwd())
 
 PLUGINS_LOCATION = SYSLOC + os.sep + "plugins" + os.sep
 
