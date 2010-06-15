@@ -89,8 +89,13 @@ from main_thirdp import grooveshark_old
 #from plugins.sync import sync
 #from plugins.zongdora import zongdora
 
+#8888888888
+#stdoutlog = file('c:\\gw.log', 'a+')
+#sys.stdout = stdoutlog
+#sys.stderr = stdoutlog
+#8888888888
 
-PROGRAM_VERSION = "0.217"
+PROGRAM_VERSION = "0.218"
 PROGRAM_NAME = "GrooveWalrus"
 
 PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -100,6 +105,8 @@ SONG_SENDER_URL = "http://gwp.turnip-town.net/?"
 SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0]))
 if os.path.isfile(SYSLOC + os.sep + "layout.xml") == False:
     SYSLOC = os.path.abspath(os.getcwd())
+
+#print SYSLOC
     
 GRAPHICS_LOCATION = os.path.join(SYSLOC, 'graphics') + os.sep
 
@@ -285,9 +292,7 @@ class MainPanel(wx.Panel):
         
         # bio
         self.bm_bio_pic = xrc.XRCCTRL(self, 'm_bm_bio_pic')
-        self.hm_bio_text = xrc.XRCCTRL(self, 'm_hm_bio_text')        
-
-
+        self.hm_bio_text = xrc.XRCCTRL(self, 'm_hm_bio_text')
         
         # options
         self.tc_options_username = xrc.XRCCTRL(self, 'm_tc_options_username')
@@ -328,6 +333,7 @@ class MainPanel(wx.Panel):
         self.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.OnLastfmRightClick, self.lc_lastfm)
         # wxGTK
         self.lc_lastfm.Bind(wx.EVT_RIGHT_UP, self.OnLastfmRightClick)
+        self.lc_lastfm.Bind(wx.EVT_CHAR, self.OnChar)
         
         # my last.fm
         self.lc_mylast = xrc.XRCCTRL(self, 'm_lc_mylast')
@@ -341,6 +347,7 @@ class MainPanel(wx.Panel):
         self.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.OnMyLastRightClick, self.lc_mylast)
         # wxGTK
         self.lc_mylast.Bind(wx.EVT_RIGHT_UP, self.OnMyLastRightClick)
+        self.lc_mylast.Bind(wx.EVT_CHAR, self.OnChar)
         
         # playlist
         # playlist is subclassed to draglist in the xrc
@@ -356,8 +363,9 @@ class MainPanel(wx.Panel):
         # wxGTK
         self.lc_playlist.Bind(wx.EVT_RIGHT_UP, self.OnPlaylistRightClick)
         ##self.lc_playlist.Bind(wx.EVT_CHAR, self.OnPlaylistKeyPress)
-        self.lc_playlist.Bind(wx.EVT_KEY_UP, self.OnDeletePress)
-        
+        self.lc_playlist.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
+        self.lc_playlist.Bind(wx.EVT_CHAR, self.OnChar)
+                
         ##dynamic listctrl resize
         ##wx.EVT_SIZE(self.parent, self.ResizePlaylist)
         ##wx.EVT_MAXIMIZE(self.parent, self.ResizePlaylist)
@@ -374,7 +382,7 @@ class MainPanel(wx.Panel):
         self.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.OnAlbumRightClick, self.lc_album)
         # wxGTK
         self.lc_album.Bind(wx.EVT_RIGHT_UP, self.OnAlbumRightClick)
-        
+        self.lc_album.Bind(wx.EVT_CHAR, self.OnChar)
                 
 
         # and do the layout
@@ -565,11 +573,7 @@ class MainPanel(wx.Panel):
         self.auth_attempts = 0
         self.scrobbed_track = 0
         self.session_key2 = None
-        #self.SetScrobb()
-        
-        #autoplay ---------------
-        if self.autoplay == True:
-            self.OnPlayClick(event=None)           
+        #self.SetScrobb()                  
         
         # album cover
         self.album_viewer = album_viewer.AlbumViewer(self, GRAPHICS_LOCATION)
@@ -734,6 +738,11 @@ class MainPanel(wx.Panel):
         except:
             print "Faves load error"
                 
+        #autoplay ---------------
+        # should be one of the last things loaded
+        if self.autoplay == True:
+            self.OnPlayClick(event=None)
+            
         # background image --------------------
 #        background = system_files.GetDirectories(self).DataDirectory() + os.sep + 'background.png'
 #        self.panel = panel
@@ -1925,7 +1934,7 @@ class MainPanel(wx.Panel):
         if self.lc_faves.IsShownOnScreen():
             return self.lc_faves
 
-    def OnDeletePress(self, event=None):
+    def OnKeyPress(self, event=None):
         #check which listctrl is visable
         #save list for undo
         #delete items(s)
@@ -1935,6 +1944,15 @@ class MainPanel(wx.Panel):
                 self.RemovePlaylistItem()
             #if self.lc_faves.IsShownOnScreen():
                 #self.RemoveFavesItem()
+                
+    def OnChar(self, event):        
+        if event.GetKeyCode() == 1:
+            #crtl-a
+            self.SelectAll(event.GetEventObject())#self.lc_playlist)
+                
+    def SelectAll(self, list_control):
+        for x in range(0, list_control.GetItemCount()):
+            list_control.Select(x)
                 
     def OnDeleteClick(self, event=None):
         #check which listctrl is visable

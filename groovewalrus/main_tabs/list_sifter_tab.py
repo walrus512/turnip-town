@@ -50,6 +50,7 @@ class ListSifterTab(wx.ScrolledWindow):
         self.parent.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.OnSiftRightClick, self.lc_sift)
         # wxGTK
         self.lc_sift.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.OnSiftRightClick)
+        self.lc_sift.Bind(wx.EVT_CHAR, self.parent.OnChar)
         
         # list sifter: rss list control ----
         self.lc_sift_rss =          xrc.XRCCTRL(self.parent, 'm_lc_sift_rss')

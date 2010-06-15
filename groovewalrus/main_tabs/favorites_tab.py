@@ -64,9 +64,11 @@ class FavoritesTab(wx.ScrolledWindow):
         self.lc_faves.Bind(wx.EVT_RIGHT_UP, self.OnFavesRightClick)
         #self.lc_faves.Bind(wx.EVT_KEY_UP, self.OnDeleteClick)
         self.lc_faves.Bind(wx.EVT_LIST_COL_CLICK, self.OnFavesColClick)
+                
         self.faves_sorter = [0,1,0,0,0,0]
         
         self.lc_faves.Bind(wx.EVT_KEY_DOWN, self.OnKeyPress)
+        self.lc_faves.Bind(wx.EVT_CHAR, self.parent.OnChar)
         
         self.lc_faves.AssignImageList(self.parent.RateImageList(), wx.IMAGE_LIST_SMALL)        
         
@@ -100,7 +102,8 @@ class FavoritesTab(wx.ScrolledWindow):
                     break
                 list_item = list_item + 1
             self.lc_faves.Focus(list_item)
-
+        event.Skip() #handle event Char too
+            
     def OnFavesClick(self, event):
         # get current song and add to favourites list
         # this is not the same as clicking from the playlist
