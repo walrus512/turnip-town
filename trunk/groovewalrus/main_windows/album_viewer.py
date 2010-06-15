@@ -33,6 +33,13 @@ class AlbumViewer(wx.Frame):
         self.SetSizer(sizer)
         self.SetAutoLayout(True)
         
+        # Double-click to hide
+        # wxMSW 
+        self.Bind(wx.EVT_LEFT_DCLICK, self.ToggleShow)
+        self.bitmap_cover.Bind(wx.EVT_LEFT_DCLICK, self.ToggleShow)
+        # wxGTK ???
+   
+        
         self.Bind(wx.EVT_LEFT_DOWN, self.OnMouseLeftDown)
         self.Bind(wx.EVT_MOTION, self.OnMouseMotion)
         self.Bind(wx.EVT_LEFT_UP, self.OnMouseLeftUp)
