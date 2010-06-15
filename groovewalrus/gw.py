@@ -97,7 +97,10 @@ PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.gr
 PLAY_SONG_ALTERNATE_URL ="http://listen.grooveshark.com/main.swf?hostname=cowbell.grooveshark.com&p=1&songID="
 SONG_SENDER_URL = "http://gwp.turnip-town.net/?"
 
-SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0])) #os.getcwd()
+SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0]))
+if os.path.isfile(SYSLOC + os.sep + "layout.xml") == False:
+    SYSLOC = os.path.abspath(os.getcwd())
+    
 GRAPHICS_LOCATION = os.path.join(SYSLOC, 'graphics') + os.sep
 
 RESFILE = SYSLOC + os.sep + "layout.xml"
@@ -483,6 +486,8 @@ class MainPanel(wx.Panel):
                 self.tab_song_collection.ScolFileAdd(file_name)
                 self.SavePlaylist(self.main_playlist_location)
                 self.autoplay = True
+            else:
+                self.ReadPlaylist(self.main_playlist_location)
         elif len(sys.argv) == 3:
             #::C:\Users\[username]\Desktop\GrooveWalrus\gw.exe
             #::-url
@@ -494,6 +499,8 @@ class MainPanel(wx.Panel):
                     artist = meat[1].split(':')[0].replace('%20', ' ')
                     self.SetPlaylistItem(0, artist, song)
                     self.autoplay = True
+            else:
+                self.ReadPlaylist(self.main_playlist_location)
         else:
             self.ReadPlaylist(self.main_playlist_location)
             
@@ -528,7 +535,7 @@ class MainPanel(wx.Panel):
         self.gobbled_track = 0
         
         self.bb_update.Show(False)
-        
+        self.update_event = False
 
         # set focus to search text control
         self.tc_search.SetFocus()
@@ -1065,11 +1072,12 @@ class MainPanel(wx.Panel):
         #pass
 
     def OnExit(self, event):
-        self.SavePlaylist(self.main_playlist_location)
-        self.SaveOptions(event)
+        if self.update_event == False:
+            self.SavePlaylist(self.main_playlist_location)
+            self.SaveOptions(event)
         self.parent.Destroy()
-        sys.exit()#1
-        os._exit()#2
+        #sys.exit()#1
+        #os._exit()#2
         
     def OnSaveOptionsClick(self, event):
         # hide the notebook, or show it
@@ -1215,12 +1223,14 @@ class MainPanel(wx.Panel):
     def OnUpdateClick(self, event):
         # open website
         #version_check.VersionCheck(self, PROGRAM_VERSION).DisplayNewVersionMessage()
+        self.update_event = True
         dlg = wx.MessageDialog(self, 'Launch Version Update?',
                                'Launcher', wx.YES_NO | wx.ICON_INFORMATION )
         if (dlg.ShowModal() == wx.ID_YES):        
             sys.stdout.flush()
             if os.path.isfile (SYSLOC + os.sep + "version_update.exe"):
-                program = "version_update.exe"
+                #program = "version_update.exe"
+                program = SYSLOC + os.sep + "version_update.exe"
                 arguments = ["v=" + PROGRAM_VERSION]
                 os.execvp(program, (program,) +  tuple(arguments))
 
@@ -1242,8 +1252,9 @@ class MainPanel(wx.Panel):
         dlg.Destroy()
         
     def KillCurrent(self):
-        sys.exit()#1
-        os._exit()#2
+        #sys.exit()#1
+        #os._exit()#2
+        pass
         
 # --------------------------------------------------------- 
 # play click events---------------------------------------- 

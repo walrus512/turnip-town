@@ -27,8 +27,10 @@ from main_utils import local_songs
 
 import sys, os
 SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0]))
+if os.path.isfile(SYSLOC + os.sep + "layout.xml") == False:
+    SYSLOC = os.path.abspath(os.getcwd())
 
-SEARCH_RESFILE = SYSLOC + '\\layout_search.xml'
+SEARCH_RESFILE = SYSLOC + os.sep + 'layout_search.xml'
 
 class SearchWindow(wx.Dialog):
     """Search Window for searching"""

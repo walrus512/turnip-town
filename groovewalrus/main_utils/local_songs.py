@@ -28,7 +28,9 @@ from main_thirdp import mp3tag
 from main_utils import system_files
 
 import sys
-SYSLOC = os.getcwd()
+SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0]))
+if os.path.isfile(SYSLOC + os.sep + "layout.xml") == False:
+    SYSLOC = os.path.abspath(os.getcwd())
 
 #queries
 

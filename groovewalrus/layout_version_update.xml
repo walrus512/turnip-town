@@ -12,9 +12,8 @@
 					<option>1</option>
 					<flag>wxEXPAND | wxALL</flag>
 					<border>5</border>
-					<object class="wxListbook" name="m_lb_main">
-						<style>wxLB_DEFAULT|wxNO_BORDER</style>
-						<object class="listbookpage">
+					<object class="wxNotebook" name="m_notebook1">
+						<object class="notebookpage">
 							<label>Update</label>
 							<selected>1</selected>
 							<object class="wxPanel" name="m_panel7">
@@ -48,8 +47,10 @@
 										<option>1</option>
 										<flag>wxALL|wxEXPAND</flag>
 										<border>5</border>
-										<object class="wxHtmlWindow" name="m_hl_news">
-											<style>wxHW_SCROLLBAR_AUTO</style>
+										<object class="wxTextCtrl" name="m_tc_news_text">
+											<style>wxTE_MULTILINE|wxTE_READONLY</style>
+											<value></value>
+											<maxlength>0</maxlength>
 										</object>
 									</object>
 									<object class="sizeritem">
@@ -88,7 +89,7 @@
 								</object>
 							</object>
 						</object>
-						<object class="listbookpage">
+						<object class="notebookpage">
 							<label>Settings</label>
 							<selected>0</selected>
 							<object class="wxPanel" name="m_panel8">
