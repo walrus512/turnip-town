@@ -230,7 +230,7 @@ class MainPanel(wx.Panel):
         xrc.XRCCTRL(self, 'm_pa_options_plugins').SetScrollRate(20,20)
         
         #list sifter tab        
-        list_sifter = list_sifter_tab.ListSifterTab(self)
+        self.list_sifter = list_sifter_tab.ListSifterTab(self)
         
         #favorites tab        
         self.favorites = favorites_tab.FavoritesTab(self)
@@ -729,7 +729,7 @@ class MainPanel(wx.Panel):
         file_cache.CheckCache(temp_dir)
         
         # load rss feeds --------
-        list_sifter.LoadRSSFeeds()
+        self.list_sifter.LoadRSSFeeds()
         
         # load favorites --------
         # might not need this try:
@@ -1479,12 +1479,9 @@ class MainPanel(wx.Panel):
                         #cylce through results to see if we can get and exact match
                         #otherwise use the first result
                         found_it = False
-                        for x in range(1, len(query_results) - 1):
-                            y = x #query_results[x].split('; ')
-                            print y
-                            print track
-                            if (y['SongName'].upper() == track.upper()) & (found_it != True):
-                                song_id = y['SongID']
+                        for x in range(1, len(query_results) - 1):                            
+                            if (query_results[x]['SongName'].upper() == track.upper()) & (found_it != True):
+                                song_id = query_results[x]['SongID']
                                 self.lc_playlist.SetStringItem(playlist_number, 3, song_id)
                                 self.SavePlaylist(self.main_playlist_location)
                                 found_it = True                           
@@ -1493,11 +1490,9 @@ class MainPanel(wx.Panel):
                     if artist.upper() != query_results[0]['ArtistName'].upper():
                         # cycle through till will hit the right artist
                         found_it = False
-                        for x in range(1, len(query_results) - 1):
-                            y = x #query_results[x].split('; ')
-                            #print y
-                            if (y['ArtistName'].upper() == artist.upper()) & (found_it != True):
-                                song_id = y['SongID']
+                        for x in range(1, len(query_results) - 1):                            
+                            if (query_results[x]['ArtistName'].upper() == artist.upper()) & (found_it != True):
+                                song_id = query_results[x]['SongID']
                                 self.lc_playlist.SetStringItem(playlist_number, 3, song_id)
                                 self.SavePlaylist(self.main_playlist_location)
                                 found_it = True
@@ -1923,6 +1918,40 @@ class MainPanel(wx.Panel):
         # clear all the album values on the playlist
         for x in range(0, self.lc_playlist.GetItemCount()):
             self.lc_playlist.SetStringItem(x, 2, '')
+            
+    def GenericAddToPlaylist(self, from_list_control, add_album=False):
+        #adds selected list items from one list control to another
+        
+        #backup playlist
+        self.BackupList()
+        
+        val = from_list_control.GetFirstSelected()
+        total = from_list_control.GetSelectedItemCount()
+        current_count = self.lc_playlist.GetItemCount()
+        #print val
+        if (val >= 0):            
+            artist =    from_list_control.GetItem(val, 0).GetText()
+            song =      from_list_control.GetItem(val, 1).GetText()
+            if add_album == True:
+                album = from_list_control.GetItem(val, 2).GetText()
+                self.SetPlaylistItem(current_count, artist, song, album, '')
+            else:
+                self.SetPlaylistItem(current_count, artist, song, '', '')
+            current_select = val
+            if total > 1:
+                for x in range(1, from_list_control.GetSelectedItemCount()):
+                    current_select =    from_list_control.GetNextSelected(current_select)
+                    artist =            from_list_control.GetItem(current_select, 0).GetText()
+                    song =              from_list_control.GetItem(current_select, 1).GetText()
+                    if add_album == True:
+                        album = from_list_control.GetItem(current_select, 2).GetText()
+                        self.SetPlaylistItem(current_count + x, artist, song, album, '')                        
+                    else:
+                        self.SetPlaylistItem(current_count + x, artist, song, '', '')
+
+        #save the playlist
+        self.SavePlaylist(self.main_playlist_location)
+        
         
 # --------------------------------------------------------- 
 # edit menu  ----------------------------------------------
@@ -1930,9 +1959,17 @@ class MainPanel(wx.Panel):
     def GetSelectedList(self):
         #figure out which list is selected, playslist or favourites
         if self.lc_playlist.IsShownOnScreen():
-            return self.lc_playlist
-        if self.lc_faves.IsShownOnScreen():
-            return self.lc_faves
+            return (self.lc_playlist, 0, 5)
+        if self.favorites.lc_faves.IsShownOnScreen():
+            return (self.favorites.lc_faves, 1, 6)
+        if self.lc_album.IsShownOnScreen():
+            return (self.lc_album, 0, 3)
+        if self.lc_lastfm.IsShownOnScreen():
+            return (self.lc_lastfm, 0, 3)
+        if self.lc_mylast.IsShownOnScreen():
+            return (self.lc_mylast, 0, 2)
+        if self.list_sifter.lc_sift.IsShownOnScreen():
+            return (self.list_sifter.lc_sift, 0, 2)
 
     def OnKeyPress(self, event=None):
         #check which listctrl is visable
@@ -1969,7 +2006,7 @@ class MainPanel(wx.Panel):
             
     def OnCopyClick(self, event=None):
         # copy list items
-        sel_list = self.GetSelectedList()
+        (sel_list, start_col, total_col) = self.GetSelectedList()
         if sel_list != None:
             val = sel_list.GetFirstSelected()
             next_val = val
@@ -1977,7 +2014,7 @@ class MainPanel(wx.Panel):
             self.copy_array = []
             for x in range(val, val + sel_list.GetSelectedItemCount()):
                 list_arr = []
-                for y in range(0, sel_list.GetColumnCount()):
+                for y in range(start_col, total_col): #sel_list.GetColumnCount()):
                     list_arr.append(sel_list.GetItem(next_val, y).GetText())
                 next_val = sel_list.GetNextSelected(next_val)
                 self.copy_array.append(list_arr)
@@ -1990,11 +2027,14 @@ class MainPanel(wx.Panel):
     def OnPasteClick(self, event):
         #get the list to paste to
         self.BackupList()
-        sel_list = self.GetSelectedList()
-        if sel_list == self.lc_playlist:
+        #(sel_list, start_col, total_col) = self.GetSelectedList()
+        # always paste to playlist
+        #if 
+        sel_list = self.lc_playlist
             #cycle through copied items and paste
-            for x in range(0, len(self.copy_array)):
-                cur_item = sel_list.GetItemCount()
+        for x in range(0, len(self.copy_array)):
+            cur_item = sel_list.GetItemCount()
+            if len(self.copy_array[x][0]) > 0:
                 index = sel_list.InsertStringItem(cur_item, self.copy_array[x][0])
                 for y in range(1, len(self.copy_array[0])):                
                     sel_list.SetStringItem(cur_item, y, self.copy_array[x][y])
@@ -2168,29 +2208,9 @@ class MainPanel(wx.Panel):
                 wx.EVT_MENU(self, ID_CLEAR, self.OnClearPlaylistClick)       
                 self.PopupMenu(menu)
                 menu.Destroy()
-  
-    def MyLastAddPlaylist(self, event):
-        self.BackupList()
-        val = self.lc_mylast.GetFirstSelected()
-        total = self.lc_mylast.GetSelectedItemCount()
-        current_count = self.lc_playlist.GetItemCount()
-        #print val
-        if (val >= 0):            
-            artist =    self.lc_mylast.GetItem(val, 0).GetText()
-            song =      self.lc_mylast.GetItem(val, 1).GetText()
-            self.SetPlaylistItem(current_count, artist, song, '', '')
-            current_select = val
-            if total > 1:
-                for x in range(1, self.lc_mylast.GetSelectedItemCount()):
-                    current_select =    self.lc_mylast.GetNextSelected(current_select)
-                    artist =            self.lc_mylast.GetItem(current_select, 0).GetText()
-                    song =              self.lc_mylast.GetItem(current_select, 1).GetText()                    
-                    self.SetPlaylistItem(current_count + x, artist, song, '', '')
-
-        #save the playlist
-        self.SavePlaylist(self.main_playlist_location)
-        # switch tabs
-        #self.nb_main.SetSelection(NB_PLAYLIST)
+                
+    def MyLastAddPlaylist(self, event):        
+        self.GenericAddToPlaylist(self.lc_mylast)
         
 # --------------------------------------------------------- 
 # last.fm ------------------------------------------------- 
@@ -2443,28 +2463,9 @@ class MainPanel(wx.Panel):
                 self.PopupMenu(menu)
                 menu.Destroy()
   
-    def LastfmAddPlaylist(self, event):
-        self.BackupList()
-        val = self.lc_lastfm.GetFirstSelected()
-        total = self.lc_lastfm.GetSelectedItemCount()
-        current_count = self.lc_playlist.GetItemCount()
-        #print val
-        if (val >= 0):            
-            artist =    self.lc_lastfm.GetItem(val, 0).GetText()
-            song =      self.lc_lastfm.GetItem(val, 1).GetText()
-            self.SetPlaylistItem(current_count, artist, song, '', '')
-            current_select = val
-            if total > 1:
-                for x in range(1, self.lc_lastfm.GetSelectedItemCount()):
-                    current_select =    self.lc_lastfm.GetNextSelected(current_select)
-                    artist =            self.lc_lastfm.GetItem(current_select, 0).GetText()
-                    song =              self.lc_lastfm.GetItem(current_select, 1).GetText()                    
-                    self.SetPlaylistItem(current_count + x, artist, song, '', '')
-
-        #save the playlist
-        self.SavePlaylist(self.main_playlist_location)
-        # switch tabs
-        #self.nb_main.SetSelection(NB_PLAYLIST)
+    def LastfmAddPlaylist(self, event):    
+        self.GenericAddToPlaylist(self.lc_lastfm)
+        
 # --------------------------------------------------------- 
 # album page ----------------------------------------------  
          
@@ -2599,32 +2600,52 @@ class MainPanel(wx.Panel):
                 wx.EVT_MENU(self, ID_CLEAR, self.OnClearPlaylistClick)       
                 self.PopupMenu(menu)
                 menu.Destroy()
-  
-    def AlbumAddPlaylist(self, event):
-        self.BackupList()
-        val = self.lc_album.GetFirstSelected()
-        total = self.lc_album.GetSelectedItemCount()
-        current_count = self.lc_playlist.GetItemCount()
-        #print val
-        if (val >= 0):            
-            artist =    self.lc_album.GetItem(val, 0).GetText()
-            song =      self.lc_album.GetItem(val, 1).GetText()
-            album =      self.lc_album.GetItem(val, 2).GetText()
-            self.SetPlaylistItem(current_count, artist, song, album, '')
-            current_select = val
-            if total > 1:
-                for x in range(1, self.lc_album.GetSelectedItemCount()):
-                    current_select =    self.lc_album.GetNextSelected(current_select)
-                    artist =            self.lc_album.GetItem(current_select, 0).GetText()
-                    song =              self.lc_album.GetItem(current_select, 1).GetText()
-                    album =             self.lc_album.GetItem(current_select, 2).GetText()
-                    self.SetPlaylistItem(current_count + x, artist, song, album, '')
-
-        #save the playlist
-        self.SavePlaylist(self.main_playlist_location)
-        # switch tabs
-        #self.nb_main.SetSelection(NB_PLAYLIST)
                 
+    def AlbumAddPlaylist(self, event):    
+        self.GenericAddToPlaylist(self.lc_album, add_album=True)
+                
+# --------------------------------------------------------- 
+# musicbrainz----------------------------------------------  
+            
+    def GetSongAlbumInfo(self, artist, track):
+        # get song's album from musicbrainz
+        track_stuff = musicbrainz.Brainz().get_song_info(artist, track)
+        # musicbrainz album id
+        #album_mid = track_stuff[0]
+        #album_title = track_stuff[1]
+        return track_stuff
+        
+    def GetAlbumAlbumInfo(self, artist, album):
+        # get song's album from musicbrainz
+        track_stuff = musicbrainz.Brainz().get_album_info(artist, album)
+        # musicbrainz album id
+        #album_mid = track_stuff[0]
+        #album_title = track_stuff[1]
+        return track_stuff
+        
+    def GetAlbumInfo(self, mid):
+        # get album info from musicbrainz
+        track_list = musicbrainz.Brainz().get_track_list(mid)
+        return track_list
+        
+# ---------------------------------------------------------
+# cover/bio pic cache  ------------------------------------
+
+#store album art as md5 album name
+#store bio pic as md5 artist name
+
+#check for pic locally
+#grab from internet
+
+    def CheckImageCache(self, check_string):
+        file_types = ['.jpg', '.png', 'gif']
+        existing_file_name = None
+        for ext in file_types:
+            (file_name, is_file) = file_cache.CreateCachedImage(self.image_save_location, check_string, ext)
+            if is_file == True:
+                existing_file_name = file_name
+                break        
+        return existing_file_name
         
 # ---------------------------------------------------------
 # biography  ----------------------------------------------
@@ -2673,40 +2694,27 @@ class MainPanel(wx.Panel):
         return text
 
         
-# --------------------------------------------------------- 
-# musicbrainz----------------------------------------------  
-            
-    def GetSongAlbumInfo(self, artist, track):
-        # get song's album from musicbrainz
-        track_stuff = musicbrainz.Brainz().get_song_info(artist, track)
-        # musicbrainz album id
-        #album_mid = track_stuff[0]
-        #album_title = track_stuff[1]
-        return track_stuff
-        
-    def GetAlbumAlbumInfo(self, artist, album):
-        # get song's album from musicbrainz
-        track_stuff = musicbrainz.Brainz().get_album_info(artist, album)
-        # musicbrainz album id
-        #album_mid = track_stuff[0]
-        #album_title = track_stuff[1]
-        return track_stuff
-        
-    def GetAlbumInfo(self, mid):
-        # get album info from musicbrainz
-        track_list = musicbrainz.Brainz().get_track_list(mid)
-        return track_list
-        
+
        
 # --------------------------------------------------------- 
 # covers --------------------------------------------------  
     def GetSongArt(self, artist, album):
         # get albumcover for artist/song from last.fm
         
-        # THREAD
-        current = WebFetchThread(self, artist, 'song', album, 'COVERS')
-        #THREAD
-        current.start()
+        existing_file = None
+        
+        if (len(artist) > 0) & (len(album) > 0):
+            check_string = artist + '-' + album
+            existing_file = self.CheckImageCache(check_string)
+            
+        if existing_file == None:        
+            # THREAD
+            current = WebFetchThread(self, artist, 'song', album, 'COVERS')
+            #THREAD
+            current.start()
+        else:
+            self.SetImage(existing_file, self.image_save_location)
+            self.palbum_art_file = existing_file
         
             
     def SaveSongArt(self, art_url, file_name):
@@ -2803,9 +2811,13 @@ class WebFetchThread(Thread):
                 song_art_url = audioscrobbler_lite.Scrobb().get_album_art(self.artist, self.album)
             if len(str(song_art_url)) > 8:
                 file_name = song_art_url.rsplit('/', 1)[1]
-                self.panel.SaveSongArt(song_art_url, file_name)
-                self.panel.SetImage(file_name, self.panel.image_save_location)
-                self.panel.palbum_art_file = file_name
+                ext = '.' + file_name.rsplit('.', 1)[1]
+                art_alb = self.artist + '-' + self.album
+                (local_file_name, is_file) = file_cache.CreateCachedImage(self.panel.image_save_location, art_alb, ext)
+                
+                self.panel.SaveSongArt(song_art_url, local_file_name)
+                self.panel.SetImage(local_file_name, self.panel.image_save_location)
+                self.panel.palbum_art_file = local_file_name
             else:
                 self.panel.SetImage('no_cover.png', GRAPHICS_LOCATION)
                 self.panel.palbum_art_file =''
@@ -2820,12 +2832,15 @@ class WebFetchThread(Thread):
                 #print bio_url[0]
             if len(str(bio_url[0])) > 8:
                 file_name = bio_url[0].rsplit('/', 1)[1]
-                self.panel.SaveSongArt(bio_url[0], file_name)
-                self.panel.SetBioImage(file_name)
+                ext = '.' + file_name.rsplit('.', 1)[1]                
+                (local_file_name, is_file) = file_cache.CreateCachedImage(self.panel.image_save_location, self.artist, ext)                
+                if is_file == False:
+                    self.panel.SaveSongArt(bio_url[0], local_file_name)
+                self.panel.SetBioImage(local_file_name)
                 #if there's no album art set the bio image as the album cover
-                if self.panel.palbum_art_file =='':
-                    time.sleep(2)
-                    self.panel.SetImage(file_name, self.panel.image_save_location, resize=True)
+                time.sleep(3)
+                if self.panel.palbum_art_file =='':                    
+                    self.panel.SetImage(local_file_name, self.panel.image_save_location, resize=True)
             self.panel.SetBioText(bio_url[1], self.artist)
             
         if self.webfetchtype == 'PLAYLOCAL':
