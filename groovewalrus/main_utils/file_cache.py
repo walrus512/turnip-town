@@ -1,6 +1,6 @@
 """
 GrooveWalrus: File Cache
-Copyright (C) 2009
+Copyright (C) 2009, 2010
 11y3y3y3y43@gmail.com
 http://groove-walrus.turnip-town.net
 -----
@@ -65,3 +65,20 @@ def CheckCache(cache_path):
         os.remove(oldest_file)
         #print oldest_file
         file_list = os.listdir(file_path)
+
+        
+def CreateCachedImage(cache_path, file_string, extension):
+    """ Checks if file exists, returns new file name if it doesn't. """
+    
+    # lets make file names as hex strings for something to do
+    
+    charset = 'utf-8'
+    file_string = file_string.lower()
+    ufile_string = file_string.encode(charset)
+    
+    hex_file_name = hashlib.md5(ufile_string).hexdigest()
+    full_file_path = cache_path.replace("\\", os.sep) + hex_file_name + extension
+    if os.path.isfile(full_file_path):
+        return (hex_file_name + extension, True)
+    else:
+        return (hex_file_name + extension, False)
