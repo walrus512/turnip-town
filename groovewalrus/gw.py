@@ -95,7 +95,7 @@ from main_thirdp import grooveshark_old
 #sys.stderr = stdoutlog
 #8888888888
 
-PROGRAM_VERSION = "0.218"
+PROGRAM_VERSION = "0.219"
 PROGRAM_NAME = "GrooveWalrus"
 
 PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -133,7 +133,7 @@ BUFFER_SIZE = 224000
 
 class MainFrame(wx.Frame): 
     def __init__(self): 
-        wx.Frame.__init__(self, None, -1, PROGRAM_NAME + ' ' + PROGRAM_VERSION, size=(690, 530), pos=(200,200), style=wx.DEFAULT_FRAME_STYLE|wx.WANTS_CHARS) #^(wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX)) #, style=wx.STAY_ON_TOP) 
+        wx.Frame.__init__(self, None, -1, PROGRAM_NAME + ' ' + PROGRAM_VERSION, size=(695, 530), pos=(200,200), style=wx.DEFAULT_FRAME_STYLE|wx.WANTS_CHARS) #^(wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX)) #, style=wx.STAY_ON_TOP) 
         #panel = wx.Panel(self, -1, size=(400, 100)) 
         #self.SetTransparent(180)
         
@@ -246,6 +246,11 @@ class MainPanel(wx.Panel):
         self.tc_search = xrc.XRCCTRL(self, 'm_tc_search')        
         self.sl_volume = xrc.XRCCTRL(self, 'm_sl_volume')
         self.pa_playback = xrc.XRCCTRL(self, 'm_pa_playback')
+        
+        self.bb_playlist_options = xrc.XRCCTRL(self, 'm_bb_playlist_options')
+        self.sp_playlist = xrc.XRCCTRL(self, 'm_sp_playlist')
+        self.tr_playlist_history = xrc.XRCCTRL(self, 'm_tr_playlist_history')
+        self.tr_playlist_history_root = self.tr_playlist_history.AddRoot("rootie")
         
         ##self.sl_volume = res.LoadObject(self, "m_cc_volume_slider", "CustomSlider")
         ##self.sl_volume2 = xrc.XRCCTRL(self, 'm_cc_volume_slider')
@@ -409,13 +414,18 @@ class MainPanel(wx.Panel):
         self.parent.Bind(wx.EVT_MOVE, self.search_window.MoveMe)                
         
         #playlist
-        self.Bind(wx.EVT_BUTTON, self.OnSavePlaylistClick, id=xrc.XRCID('m_bb_save_playlist'))
+        self.Bind(wx.EVT_BUTTON, self.SavePlaylistToDatabase, id=xrc.XRCID('m_bb_save_playlist'))
         self.Bind(wx.EVT_BUTTON, self.FixPlaylistItem, id=xrc.XRCID('m_bb_fix_song'))
         self.Bind(wx.EVT_BUTTON, self.OnClearPlaylistClick, id=xrc.XRCID('m_bb_clear_playlist'))
         self.Bind(wx.EVT_BUTTON, self.RemovePlaylistItem, id=xrc.XRCID('m_bb_remove_playlist_item'))
         self.Bind(wx.EVT_BUTTON, self.OnLoadPlaylistClick, id=xrc.XRCID('m_bb_load_playlist'))
+        self.Bind(wx.EVT_BUTTON, self.OnPlaylistOptionsClick, id=xrc.XRCID('m_bb_playlist_options'))
         
-        
+        #playlist history     
+        self.Bind(wx.EVT_TREE_SEL_CHANGED, self.OnTreeSelChange, self.tr_playlist_history)
+        self.Bind(wx.EVT_TREE_BEGIN_LABEL_EDIT, self.OnTreeBeginEdit, self.tr_playlist_history)
+        self.Bind(wx.EVT_TREE_END_LABEL_EDIT, self.OnTreeEndEdit, self.tr_playlist_history) 
+           
         #playlistize        
         self.Bind(wx.EVT_BUTTON, self.OnAutoGenerateLastfmPlayist, id=xrc.XRCID('m_bu_last_plize'))
         self.Bind(wx.EVT_BUTTON, self.OnAutoGenerateMyLastPlayist, id=xrc.XRCID('m_bu_mylast_plize'))
@@ -496,6 +506,8 @@ class MainPanel(wx.Panel):
                 self.autoplay = True
             else:
                 self.ReadPlaylist(self.main_playlist_location)
+                #self.GetPlaylistFromDatabase()
+                
         elif len(sys.argv) == 3:
             #::C:\Users\[username]\Desktop\GrooveWalrus\gw.exe
             #::-url
@@ -509,8 +521,10 @@ class MainPanel(wx.Panel):
                     self.autoplay = True
             else:
                 self.ReadPlaylist(self.main_playlist_location)
+                #self.GetPlaylistFromDatabase()
         else:
             self.ReadPlaylist(self.main_playlist_location)
+            #self.GetPlaylistFromDatabase()
             
        
         
@@ -656,6 +670,7 @@ class MainPanel(wx.Panel):
         # menu items -----------
         # file menu
         self.parent.Bind(wx.EVT_MENU, self.OnLoadPlaylistClick, id=xrc.XRCID("m_mi_open"))
+        self.parent.Bind(wx.EVT_MENU, self.SavePlaylistToDatabase, id=xrc.XRCID("m_mi_save_playlist"))
         self.parent.Bind(wx.EVT_MENU, self.OnSavePlaylistClick, id=xrc.XRCID("m_mi_save_playlist_as"))
         self.parent.Bind(wx.EVT_MENU, self.OnExit, id=xrc.XRCID("m_mi_exit"))
         
@@ -742,6 +757,7 @@ class MainPanel(wx.Panel):
         # should be one of the last things loaded
         if self.autoplay == True:
             self.OnPlayClick(event=None)
+            
             
         # background image --------------------
 #        background = system_files.GetDirectories(self).DataDirectory() + os.sep + 'background.png'
@@ -1952,6 +1968,97 @@ class MainPanel(wx.Panel):
         #save the playlist
         self.SavePlaylist(self.main_playlist_location)
         
+    def OnPlaylistOptionsClick(self, event):
+        #toggle slider window back and forth displaying the
+        #playlist options
+        out_bmp = wx.Bitmap(GRAPHICS_LOCATION + "go-next.png", wx.BITMAP_TYPE_ANY)
+        in_bmp = wx.Bitmap(GRAPHICS_LOCATION + "go-previous.png", wx.BITMAP_TYPE_ANY)
+                
+        if self.sp_playlist.GetSashPosition() < 10:
+            #for x in range(self.sp_playlist.GetSashPosition(), 140):
+            #    self.sp_playlist.SetSashPosition(x)
+            self.sp_playlist.SetSashPosition(180)
+            self.bb_playlist_options.SetBitmapLabel(in_bmp)
+            self.FillPlaylistTree()
+        else:
+            self.sp_playlist.SetSashPosition(1)
+            self.bb_playlist_options.SetBitmapLabel(out_bmp)
+        
+    def SavePlaylistToDatabase(self, event):
+        #save the entire playlist to the database
+        #good idea? probably not
+        playlist_arr = []
+        date_time = time.strftime('%Y-%m-%d %H:%M:%S')
+        for x in range(0, self.lc_playlist.GetItemCount()):
+            playlist_arr.append((self.lc_playlist.GetItem(x, 0).GetText(), self.lc_playlist.GetItem(x, 1).GetText(), x, date_time))
+        local_songs.DbFuncs().InsertPlaylistData(playlist_arr)
+        self.OnPlaylistOptionsClick(event=None)
+        
+    def GetPlaylistFromDatabase(self, playlist_date=None):
+        #get a specfic playlist from the db
+        if playlist_date == None:
+            playlist_date_arr = self.GetDatabasePlaylist()
+            if len(playlist_date_arr) == 1:
+                playlist_date = playlist_date_arr[0][0]
+        if playlist_date != None:
+            query = "SELECT * FROM m_playlists WHERE playlist_date = '"+ playlist_date + "' ORDER BY playlist_position"
+            results_arr = local_songs.DbFuncs().GetGenericResults(query)            
+            #return results_arr
+        for x in results_arr:
+            #print x
+            self.SetPlaylistItem(x[3], x[1], x[2]) 
+                
+        
+    def GetDatabasePlaylist(self, q_limit=1, start_from=0):
+        #get a list of playlists
+        #SELECT DISTINCT playlist_date FROM m_playlists ORDER BY playlist_date DESC LIMIT 1
+        query = "SELECT DISTINCT m_playlists.playlist_date, playlist_label FROM m_playlists LEFT JOIN m_playlist_labels ON m_playlist_labels.playlist_date=m_playlists.playlist_date ORDER BY m_playlists.playlist_date DESC LIMIT " + str(q_limit) + " OFFSET " + str(start_from)
+        results_arr = local_songs.DbFuncs().GetGenericResults(query)
+        return results_arr
+        
+    def FillPlaylistTree(self, save_playlist=True):
+        if save_playlist:
+            self.SavePlaylist()
+        res_arr = self.GetDatabasePlaylist(q_limit=25)
+        self.tr_playlist_history.DeleteAllItems()
+        
+        child1 = self.tr_playlist_history.AppendItem(self.tr_playlist_history_root, 'Current Playlist')
+        self.tr_playlist_history.SetPyData(child1, 'Current Playlist')
+        #print res_arr
+        for x in res_arr:            
+            if (x[1] != '') & (x[1] != None):
+                label = x[1]
+            else:
+                label = x[0]
+            child = self.tr_playlist_history.AppendItem(self.tr_playlist_history_root, label)
+            self.tr_playlist_history.SetPyData(child, x[0])
+            
+    def OnTreeSelChange(self, event):
+        selected = event.GetItem()
+        if self.tr_playlist_history.GetSelection() >= 1:
+            #sel_value = self.tr_playlist_history.GetItemText(selected)
+            sel_value = self.tr_playlist_history.GetPyData(selected)
+            self.lc_playlist.DeleteAllItems()
+            if sel_value == 'Current Playlist':
+                self.ReadPlaylist(self.main_playlist_location)
+            else:
+                self.GetPlaylistFromDatabase(sel_value)
+        #event.Skip()
+        
+    def OnTreeBeginEdit(self, event):        
+        pass
+        
+    def OnTreeEndEdit(self, event):        
+        selected = event.GetItem()
+        sel_value = self.tr_playlist_history.GetPyData(selected)        
+        if self.tr_playlist_history.GetPyData(selected) == 'Current Playlist':
+            pass
+        else:            
+            if (event.GetLabel() != None) & (event.GetLabel() != ''):
+                local_songs.DbFuncs().InsertPlaylistLabelData(event.GetLabel(), sel_value)        
+        #self.FillPlaylistTree(False)
+        #event.Skip()
+
         
 # --------------------------------------------------------- 
 # edit menu  ----------------------------------------------
