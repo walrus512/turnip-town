@@ -55,7 +55,10 @@ class DbFuncs(object):
          "m_rating": "CREATE TABLE IF NOT EXISTS m_rating (rating_id INTEGER PRIMARY KEY, track_id INTEGER, rating_type_id INTEGER)",
          "m_settings": "CREATE TABLE IF NOT EXISTS m_settings (setting_id INTEGER PRIMARY KEY, setting_name TEXT, setting_value TEXT)",
          "m_folders": "CREATE TABLE IF NOT EXISTS m_folders (folder_id INTEGER PRIMARY KEY, folder_name TEXT, last_update DATE_TIME, primary_folder CHAR)",
-         "m_feeds": "CREATE TABLE IF NOT EXISTS m_feeds (feed_id INTEGER PRIMARY KEY, feed_name TEXT, feed_url TEXT, last_update DATE_TIME)"
+         "m_feeds": "CREATE TABLE IF NOT EXISTS m_feeds (feed_id INTEGER PRIMARY KEY, feed_name TEXT, feed_url TEXT, last_update DATE_TIME)",
+         "m_played": "CREATE TABLE IF NOT EXISTS m_played (played_id INTEGER PRIMARY KEY, played_type_id INTEGER, track_id INTEGER, played_date DATE_TIME)",
+         "m_playlists": "CREATE TABLE IF NOT EXISTS m_playlists (playlist_id INTEGER PRIMARY KEY, artist TEXT, song TEXT, playlist_position INTEGER, playlist_date DATE_TIME)",
+         "m_playlist_labels": "CREATE TABLE IF NOT EXISTS m_playlist_labels (playlist_label_id INTEGER PRIMARY KEY, playlist_label TEXT, playlist_date DATE_TIME)"
          }
     
         # Create table
@@ -444,6 +447,48 @@ class DbFuncs(object):
             conn.commit()
             c.close()
                     
+    def InsertPlaylistData(self, p_playlist_arr):
+        # add feed url
+        #check for existing
+        #update record or creat new        
+        conn = sqlite3.connect(self.FILEDB)
+        c = conn.cursor()
+        for x in p_playlist_arr:
+            #[(artist, song, pos, datetime)]
+            c.execute('INSERT INTO m_playlists (artist, song, playlist_position, playlist_date) VALUES (?,?,?,?)', x)
+        conn.commit()
+        c.close()
+        
+    def GetGenericResults(self, query):
+        r_arr = []        
+        conn = sqlite3.connect(self.FILEDB)
+        c = conn.cursor()
+        #print query
+        c.execute(query)
+        h = c.fetchall()
+        for x in h:
+            r_arr.append(x)
+        c.close()
+        return r_arr
+        
+    def InsertPlaylistLabelData(self, p_label, p_date_time):
+        # add feed url
+        #check for existing
+        #update record or creat new        
+        conn = sqlite3.connect(self.FILEDB)
+        c = conn.cursor()        
+        t = 'SELECT playlist_date FROM m_playlist_labels WHERE playlist_date="' + str(p_date_time) + '"'
+        c.execute(t)
+        h = c.fetchall()
+        #print h
+        if len(h) >= 1:                        
+            c.execute('UPDATE m_playlist_labels SET playlist_label= "' + str(p_label) + '" WHERE playlist_date ="' + str(p_date_time) + '"')
+            conn.commit()            
+        else:
+            c.execute('INSERT INTO m_playlist_labels (playlist_label, playlist_date) VALUES (?,?)', (p_label, p_date_time))
+            conn.commit()
+        c.close()
+            
 #if (os.path.isfile(self.FILEDB)):
 #    pass
 #else:
