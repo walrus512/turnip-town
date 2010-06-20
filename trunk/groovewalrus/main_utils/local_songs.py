@@ -488,6 +488,16 @@ class DbFuncs(object):
             c.execute('INSERT INTO m_playlist_labels (playlist_label, playlist_date) VALUES (?,?)', (p_label, p_date_time))
             conn.commit()
         c.close()
+        
+    def InsertPlayedData(self, track_id, played_type_id):
+        # add feed url
+        #check for existing
+        #update record or creat new        
+        conn = sqlite3.connect(self.FILEDB)
+        c = conn.cursor()
+        c.execute('INSERT INTO m_played (played_type_id, track_id, played_date) VALUES ( ?, ?,datetime("now","localtime"))', (played_type_id, track_id))
+        conn.commit()
+        c.close()
             
 #if (os.path.isfile(self.FILEDB)):
 #    pass

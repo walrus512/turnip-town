@@ -95,7 +95,7 @@ from main_thirdp import grooveshark_old
 #sys.stderr = stdoutlog
 #8888888888
 
-PROGRAM_VERSION = "0.219"
+PROGRAM_VERSION = "0.300"
 PROGRAM_NAME = "GrooveWalrus"
 
 PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -587,7 +587,8 @@ class MainPanel(wx.Panel):
         self.auth_attempts = 0
         self.scrobbed_track = 0
         self.session_key2 = None
-        #self.SetScrobb()                  
+        #self.SetScrobb()
+        self.db_submit_complete = False
         
         # album cover
         self.album_viewer = album_viewer.AlbumViewer(self, GRAPHICS_LOCATION)
@@ -912,6 +913,13 @@ class MainPanel(wx.Panel):
                 ti = WebFetchThread(self, self.partist, self.ptrack, self.palbum, 'SONGINFO')
                 #THREAD
                 ti.start()
+                
+            if (self.db_submit_complete == False) & (float(self.time_count) / float(self.current_play_time) > .98):
+                # add 'complete' to played table ==
+                q_track_id = local_songs.DbFuncs().GetTrackId(self.pgroove_id, self.pmusic_id, self.partist, self.ptrack)
+                local_songs.DbFuncs().InsertPlayedData(q_track_id, played_type_id=1)
+                self.db_submit_complete = True
+                #==================================
         
             if (float(self.time_count) / float(self.current_play_time) > .6) & (self.scrobbed_track != 1) & (self.scrobbed_active == 1) & (self.pstatus != "stopped"):
                 time_started = str(int(time.time()))
@@ -1348,10 +1356,18 @@ class MainPanel(wx.Panel):
         #flash
         self.StopFlashSong()
         
+        # add 'stopped' to played table ==
+        if self.pstatus == 'playing':
+            q_track_id = local_songs.DbFuncs().GetTrackId(self.pgroove_id, self.pmusic_id, self.partist, self.ptrack)
+            local_songs.DbFuncs().InsertPlayedData(q_track_id, played_type_id=2)
+        #=================================
+        
         self.pstatus = 'stopped'
         self.download_percent = 0
         
         self.SetPlayButtonGraphic('play')
+        
+
         
     def LoadFlashSong(self, url, artist, track):
         #
@@ -1370,6 +1386,13 @@ class MainPanel(wx.Panel):
         #pass
             
     def OnForwardClick(self, event):
+    
+        # add 'skipped' to played table ==
+        if self.pstatus == 'playing':
+            q_track_id = local_songs.DbFuncs().GetTrackId(self.pgroove_id, self.pmusic_id, self.partist, self.ptrack)
+            local_songs.DbFuncs().InsertPlayedData(q_track_id, played_type_id=3)
+        #=================================
+    
         # skip to the next rack on the playlist
         val = self.lc_playlist.GetFirstSelected()
         if (val >= 0) & (val < (self.lc_playlist.GetItemCount() - 1)):
@@ -1382,6 +1405,13 @@ class MainPanel(wx.Panel):
             self.PlaySong(0)
             
     def OnBackwardClick(self, event):
+    
+        #== add 'skipped' to played table ==
+        if self.pstatus == 'playing':
+            q_track_id = local_songs.DbFuncs().GetTrackId(self.pgroove_id, self.pmusic_id, self.partist, self.ptrack)
+            local_songs.DbFuncs().InsertPlayedData(q_track_id, played_type_id=4)
+        #===================================
+    
         # skip to the next rack on the playlist
         val = self.lc_playlist.GetFirstSelected()
         if (val > 0):
@@ -1657,7 +1687,12 @@ class MainPanel(wx.Panel):
             self.partist = artist
             self.palbum = album
             self.scrobbed_track = 0
-             
+            self.db_submit_complete = False
+            
+            # add 'start' to played table ==
+            q_track_id = local_songs.DbFuncs().GetTrackId(self.pgroove_id, self.pmusic_id, self.partist, self.ptrack)
+            local_songs.DbFuncs().InsertPlayedData(q_track_id, played_type_id=0)
+            #===============================
 
         
     def ConvertTimeFormated(self, seconds):
