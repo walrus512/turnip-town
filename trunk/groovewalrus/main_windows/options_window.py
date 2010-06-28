@@ -215,29 +215,31 @@ def ConvertTimeSeconds(formated_time):
     # convert mm:ss to seconds
     return (int(formated_time.split(':')[0]) * 60) + (int(formated_time.split(':')[1]))
     
-def GetSetting(setting_name):
+def GetSetting(setting_name, file_db):
     #get a value from the settings table
-    conn = sqlite3.connect(FILEDB)
+    conn = sqlite3.connect(file_db)
     c = conn.cursor()
     tq = "SELECT setting_value FROM m_settings WHERE setting_name = '%s'" % setting_name
     c.execute(tq)
     h = c.fetchall()
-    print h
-    return (h)
+    if len(h) == 1:
+        return (h[0][0])
+    else:
+        return False
 
-def SetSetting(setting_name, setting_value):
+def SetSetting(setting_name, setting_value, file_db):
     #set a value from the settings table        
-    conn = sqlite3.connect(FILEDB)
+    conn = sqlite3.connect(file_db)
     c = conn.cursor()    
     t = 'SELECT setting_id FROM m_settings WHERE setting_name= "%s"' % setting_name
     c.execute(t)
     h = c.fetchall()
-    print h
+    #print h
     if len(h) >= 1:
         g_setting_id = h[0][0]        
         c.execute('UPDATE m_settings SET setting_value="%s" WHERE setting_id =%i' % (setting_value, g_setting_id))
         conn.commit()
     else:
-        c.execute('INSERT INTO m_settings values (null,?,?)', (setting_name, setting_value))
+        c.execute('INSERT INTO m_settings (setting_name, setting_value) values (?,?)', (setting_name, setting_value))
         conn.commit()
     c.close()

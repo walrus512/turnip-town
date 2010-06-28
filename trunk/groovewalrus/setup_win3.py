@@ -19,7 +19,7 @@ class Target:
     def __init__(self, **kw):
         self.__dict__.update(kw)
         # for the versioninfo resources
-        self.version = "0.217"
+        self.version = "0.301"
         self.company_name = "Turnip-Town.net"
         self.copyright = "lots of copyright"
         self.name = "GrooveWalrus"
@@ -68,7 +68,7 @@ test_wx = Target(
     # what to build
     script = "gw.py",
     other_resources = [(RT_MANIFEST, 1, manifest_template % dict(prog="test_wx"))],
-    icon_resources = [(0, "gw.ico")],
+    icon_resources = [(0, "gw7.ico")],
     dest_base = "gw")
 
 ################################################################

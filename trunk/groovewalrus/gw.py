@@ -95,7 +95,7 @@ from main_thirdp import grooveshark_old
 #sys.stderr = stdoutlog
 #8888888888
 
-PROGRAM_VERSION = "0.300"
+PROGRAM_VERSION = "0.301"
 PROGRAM_NAME = "GrooveWalrus"
 
 PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -210,6 +210,7 @@ class MainPanel(wx.Panel):
         self.main_playlist_location = system_files.GetDirectories(self).DataDirectory() + os.sep + "playlist.xspf"
         self.main_playlist_location_bak = system_files.GetDirectories(self).DataDirectory() + os.sep + "playlist.bak"
         self.working_directory = SYSLOC
+        self.FILEDB = system_files.GetDirectories(None).DatabaseLocation()
         ##self.faves_playlist_location = system_files.GetDirectories(self).DataDirectory() + os.sep + "faves.xspf"
         ##self.faves_playlist_location_bak = system_files.GetDirectories(self).DataDirectory() + os.sep + "faves.bak"
         
@@ -738,7 +739,11 @@ class MainPanel(wx.Panel):
         if os.path.isfile('disable_set_volume.txt'):
             pass
         else:
-            self.SetVolume(self.GetVolume())
+            setting_volume = options_window.GetSetting('main-volume', self.FILEDB)
+            if setting_volume != False:
+                self.SetVolume(int(setting_volume))
+            else:
+                self.SetVolume(50)
         
         # clean cache dir -------
         temp_dir = system_files.GetDirectories(self).TempDirectory()
@@ -1108,6 +1113,7 @@ class MainPanel(wx.Panel):
         if self.update_event == False:
             self.SavePlaylist(self.main_playlist_location)
             self.SaveOptions(event)
+            options_window.SetSetting('main-volume', self.sl_volume.GetValue(), self.FILEDB)
         self.parent.Destroy()
         #sys.exit()#1
         #os._exit()#2
@@ -3088,46 +3094,59 @@ class FileThread(Thread):
         data_dir = system_files.GetDirectories(self).DataDirectory() + os.sep
         g_version = GetLocalGroovesharkVersion(data_dir)
         g_session = jsonrpcSession(None, g_version)
-        g_session.startSession()
-        g_data = {'SongID': self.song_id, 'Name': self.track, 'ArtistName': self.artist, 'AlbumName': self.album, 'AlbumID': '', 'ArtistID': ''}
-        g_song = song.songFromData(g_session, g_data)
-        g_song.getStreamDetails()
-        return (g_song._lastStreamKey, g_song._lastStreamServer)
+        try:
+            g_session.startSession()
+        except Exception, exp:
+            #print str(exp)
+            self.parent.pstatus = 'stopped'
+            dlg = wx.MessageDialog(self.parent, "Grooveshark error: " + str(exp), 'Alert', wx.OK | wx.ICON_WARNING)
+            if (dlg.ShowModal() == wx.ID_OK):
+                dlg.Destroy()
+            return None
+        else:
+            g_data = {'SongID': self.song_id, 'Name': self.track, 'ArtistName': self.artist, 'AlbumName': self.album, 'AlbumID': '', 'ArtistID': ''}
+            g_song = song.songFromData(g_session, g_data)
+            g_song.getStreamDetails()
+            return (g_song._lastStreamKey, g_song._lastStreamServer)
                         
     def run(self):
         
         ##self.parent.pstatus ='buffering'
-        #progress thread
-        #THREAD
-        current = ProgressThread(self.parent, self.temp_file, self.GetFileSize())
-        #THREAD
-        current.start()
         
-        keyandserver = self.GetStreamKeyAndServer()                
-        grooveshark_old.Grooveshark(self.parent).download(keyandserver[0], keyandserver[1], self.temp_file)
+        keyandserver = self.GetStreamKeyAndServer()
+        if keyandserver != None:
         
-        if self.prefetch == False:
-            track_time = local_songs.GetMp3Length(self.temp_file)
-            self.parent.current_play_time = track_time
+        
+            #progress thread
+            #THREAD
+            current = ProgressThread(self.parent, self.temp_file, self.GetFileSize())
+            #THREAD
+            current.start()
+
+            grooveshark_old.Grooveshark(self.parent).download(keyandserver[0], keyandserver[1], self.temp_file)
             
-        # check if recording or the save all new checkbox is checked
-        if (self.parent.record_toggle == True) or (self.parent.cb_options_autosave.GetValue() == True):
-            #copy and rname the file to teh record dir
-            record_dir = self.parent.bu_options_record_dir.GetLabel()
-            if (record_dir == None) | (record_dir == ''):
-                record_dir = system_files.GetDirectories(self.parent).Mp3DataDirectory()
-                self.parent.bu_options_record_dir.SetLabel(record_dir)            
-            complete_filename = system_files.GetDirectories(self.parent).CopyFile(self.temp_file, record_dir, self.artist + '-' + self.track + '.mp3')
-            # add file to database
-            if complete_filename != None:
-                #print complete_filename
-                song_collection.AddSingleFile(complete_filename)
-                self.parent.tab_song_collection.lc_scol_col.SetItemCount(song_collection.GetCount())
-                # clear id for this song on the playlist
-                # ASSUME that it's the current selection
-                val = self.parent.lc_playlist.GetFirstSelected()
-                self.parent.lc_playlist.SetStringItem(val, 3, '')
-          
+            if self.prefetch == False:
+                track_time = local_songs.GetMp3Length(self.temp_file)
+                self.parent.current_play_time = track_time
+                
+            # check if recording or the save all new checkbox is checked
+            if (self.parent.record_toggle == True) or (self.parent.cb_options_autosave.GetValue() == True):
+                #copy and rname the file to teh record dir
+                record_dir = self.parent.bu_options_record_dir.GetLabel()
+                if (record_dir == None) | (record_dir == ''):
+                    record_dir = system_files.GetDirectories(self.parent).Mp3DataDirectory()
+                    self.parent.bu_options_record_dir.SetLabel(record_dir)            
+                complete_filename = system_files.GetDirectories(self.parent).CopyFile(self.temp_file, record_dir, self.artist + '-' + self.track + '.mp3')
+                # add file to database
+                if complete_filename != None:
+                    #print complete_filename
+                    song_collection.AddSingleFile(complete_filename)
+                    self.parent.tab_song_collection.lc_scol_col.SetItemCount(song_collection.GetCount())
+                    # clear id for this song on the playlist
+                    # ASSUME that it's the current selection
+                    val = self.parent.lc_playlist.GetFirstSelected()
+                    self.parent.lc_playlist.SetStringItem(val, 3, '')
+              
                 
 def GetLocalGroovesharkVersion(data_dir):
     #gets the grooveshark version from the local grooveshark.xml file
