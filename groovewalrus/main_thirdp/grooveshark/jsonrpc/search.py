@@ -9,7 +9,7 @@ def searchResults(gsapi, query):
         "query": query,
         "type": "Songs"}
 
-    response = gsapi.request(parameters, "getSearchResults").send()
+    response = gsapi.request(parameters, "getSearchResultsEx").send()
 
     return SearchResults(gsapi, query, response["result"])
 

@@ -185,7 +185,7 @@ class JsonRPC:
             "query": query,
             "type": type}
 
-        response = Request(self, parameters, "getSearchResults").send()
+        response = Request(self, parameters, "getSearchResultsEx").send()
 
         return {
             "query": query,

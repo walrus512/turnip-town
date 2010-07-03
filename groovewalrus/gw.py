@@ -287,6 +287,7 @@ class MainPanel(wx.Panel):
         self.st_mylast_me = xrc.XRCCTRL(self, 'm_st_mylast_me')
         self.st_mylast_friends = xrc.XRCCTRL(self, 'm_st_mylast_friends')
         self.st_mylast_neigh = xrc.XRCCTRL(self, 'm_st_mylast_neigh')
+        self.st_mylast_loved = xrc.XRCCTRL(self, 'm_st_mylast_loved')
         ##self.st_mylast_recomm = xrc.XRCCTRL(self, 'm_st_mylast_recomm')
         self.rx_mylast_period = xrc.XRCCTRL(self, 'm_rx_mylast_period')       
         
@@ -457,7 +458,8 @@ class MainPanel(wx.Panel):
         self.Bind(wx.EVT_BUTTON, self.OnMyLastClearClick, id=xrc.XRCID('m_bb_mylast_clear'))
         self.Bind(wx.EVT_BUTTON, self.OnMyLastSearchClick, id=xrc.XRCID('m_bb_mylast_search'))
         self.Bind(wx.EVT_BUTTON, self.OnMyLastWebClick, id=xrc.XRCID('m_bb_mylast_goweb'))
-                
+        self.st_mylast_loved.Bind(wx.EVT_LEFT_UP, self.OnMyLastLovedClick)
+        
         #options
         self.Bind(wx.EVT_RADIOBOX, self.SaveOptions, id=xrc.XRCID('m_rx_options_double_click'))
         self.Bind(wx.EVT_RADIOBOX, self.SaveOptions, id=xrc.XRCID('m_rx_options_scrobble_port'))
@@ -2251,6 +2253,15 @@ class MainPanel(wx.Panel):
             top_tracks_list = audioscrobbler_lite.Scrobb().get_neighbours(user)
             self.GenerateScrobbList2(top_tracks_list)
             
+    def OnMyLastLovedClick(self, event):
+        #grab your loved tracks
+        user = self.tc_mylast_search_user.GetValue()
+        if user == '':
+            user = self.tc_options_username.GetValue()
+        if user != '':
+            top_tracks_list = audioscrobbler_lite.Scrobb().get_loved_songs(user)
+            self.GenerateScrobbList2(top_tracks_list)
+            
     def OnMyLastRecommenedArtistsClick(self, event):
         # search for user
         #self.session_key = self.song_scrobb._get_session_id()
@@ -2706,8 +2717,10 @@ class MainPanel(wx.Panel):
         self.lc_album.DeleteAllItems()
         counter = 0;
         for x in track_list:
+            if x[1] != '':
+                artist = x[1]
             self.lc_album.InsertStringItem(counter, artist)
-            self.lc_album.SetStringItem(counter, 1, x)
+            self.lc_album.SetStringItem(counter, 1, x[0])
             self.lc_album.SetStringItem(counter, 2, album)
             self.lc_album.SetStringItem(counter, 3, '')            
             counter = counter + 1

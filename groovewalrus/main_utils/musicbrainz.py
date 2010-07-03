@@ -56,8 +56,6 @@ class AudioScrobblerError(Exception):
 class Brainz(object):
     def __init__(self):
         self.last_file_name = ''
-        self.last_similar_file_name = ''        
-        self.last_country_name = ''
         
     def read_xml_tree(self, file_name):
         # reads in an xml file and returns a blob for you to work with
@@ -124,7 +122,7 @@ class Brainz(object):
         data_url = TRACK_GETINFO + "&artist=" + artist + "&title=" + track
         tree = self.read_xml_tree(data_url.replace(' ', '+'))
         # 
-        #print data_url
+        print data_url
         if tree !='':
             root = tree.getroot() # 
             sub_root = root.getchildren() #<metadata>
@@ -184,7 +182,7 @@ class Brainz(object):
                                 # print album_name
                                         
             except IndexError:
-                pass
+                print 'mbz:indexerror'
         
         return [release_id, album_name]
         
@@ -197,7 +195,7 @@ class Brainz(object):
         data_url = RELEASE_GETINFO + mbid + '?type=xml&inc=tracks'
         tree = self.read_xml_tree(data_url.replace(' ', '+'))
         # 
-        #print data_url
+        print data_url
         if tree !='':
             root = tree.getroot() # 
             sub_root = root.getchildren() #<metadata>
@@ -212,8 +210,15 @@ class Brainz(object):
                     #print x.tag
                     if (x.tag[-5:] == 'track'):
                         y = x.find('{http://musicbrainz.org/ns/mmd-1.0#}title')
-                        album_list.append(y.text)
+                        
                         counter = counter + 1
+                        ele_track_details = x.getchildren()
+                        artist_name = ''
+                        for g in ele_track_details:
+                            if (g.tag[-6:] == 'artist'):
+                                artist = g.find('{http://musicbrainz.org/ns/mmd-1.0#}name')
+                                artist_name = artist.text
+                        album_list.append((y.text, artist_name))
             except IndexError:
                 pass
                 
