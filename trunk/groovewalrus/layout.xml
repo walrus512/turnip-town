@@ -840,6 +840,21 @@
 																<label>My Neighbours</label>
 															</object>
 														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL|wxALIGN_CENTER_HORIZONTAL</flag>
+															<border>5</border>
+															<object class="wxStaticText" name="m_st_mylast_loved">
+																<style>wxALIGN_CENTRE</style>
+																<font>
+																	<family>default</family>
+																	<style>normal</style>
+																	<weight>normal</weight>
+																	<underlined>1</underlined>
+																</font>
+																<label>Loved Songs</label>
+															</object>
+														</object>
 														<object class="spacer">
 															<option>1</option>
 															<flag>wxEXPAND</flag>

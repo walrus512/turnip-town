@@ -61,6 +61,7 @@ USER_FRIENDS =      "http://ws.audioscrobbler.com/2.0/?method=user.getfriends" +
 USER_NEIGHBOURS =   "http://ws.audioscrobbler.com/2.0/?method=user.getneighbours" + API_KEY
 USER_RECENT_SONGS = "http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&limit=50" + API_KEY #&user=rj&api_key=b25b959554ed76058ac220b7b2e0a026"
 SONG_TOP_TAGS =     "http://ws.audioscrobbler.com/2.0/?method=track.gettoptags" + API_KEY #&artist=cher&track=believe&api_key=b25b959554ed76058ac220b7b2e0a026
+USER_LOVED_SONGS =  "http://ws.audioscrobbler.com/2.0/?method=user.getlovedtracks" + API_KEY #&user=rj&api_key=b25b959554ed76058ac220b7b2e0a026"
 
 PER_TIMES = ['recent', '7day', '3month', '6month', '12month', 'overall']
 
@@ -159,6 +160,12 @@ class Scrobb(object):
         user = url_quote(user)
         data_url = USER_NEIGHBOURS + "&user=" + user
         return self.genenric_song_list(data_url, 'name', 'match')
+        
+    def get_loved_songs(self, user):
+        # return a list of friends for user
+        user = url_quote(user)
+        data_url = USER_LOVED_SONGS + "&user=" + user
+        return self.genenric_song_list(data_url, 'name', 'date')
 
 # ===================================================================         
     def genenric_song_list(self, data_url, iterator_one, iterator_two):
