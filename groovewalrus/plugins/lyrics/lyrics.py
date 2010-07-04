@@ -23,11 +23,12 @@ import urllib
 
 import wx
 import wx.xrc as xrc
+from wx.lib.pubsub import Publisher as pub
 import os #, sys
 #import re
 
-#from main_utils.read_write_xml import xml_utils
-#from main_utils import system_files
+from main_utils.read_write_xml import xml_utils
+from main_utils import system_files
 
 #http://webservices.lyrdb.com/lookup.php?q=the%20shins|new%20slang&for=match&agent=agent
 #s00575423\New Slang\THE SHINS 
@@ -38,19 +39,18 @@ import os #, sys
 
 
 #SYSLOC = os.getcwd()
-#TWITTER_SETTINGS = os.path.join(os.getcwd(), 'plugins','lyrics') + os.sep + "settings_lyrics.xml"
+#LYRICS_SETTINGS = os.path.join(os.getcwd(), 'plugins','lyrics') + os.sep + "settings_lyrics.xml"
 LYRICS = os.path.join(os.getcwd(), 'plugins','lyrics') + os.sep
 RESFILE = os.path.join(os.getcwd(), 'plugins','lyrics') + os.sep + "layout_lyrics.xml"
 
 
 class MainPanel(wx.Dialog):
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, -1, "Lyrics", size=(375,460), style=wx.FRAME_SHAPED) #STAY_ON_TOP)        
+        wx.Dialog.__init__(self, parent, -1, "Lyrics", size=(375,460), style=wx.FRAME_SHAPED|wx.RESIZE_BORDER) #STAY_ON_TOP)        
         self.parent = parent
         
-        #self.TWITTER_SETTINGS = system_files.GetDirectories(self).MakeDataDirectory('plugins') + os.sep
-        
-        
+        self.LYRICS_SETTINGS = system_files.GetDirectories(self).MakeDataDirectory('plugins') + os.sep
+
         # XML Resources can be loaded from a file like this:
         res = xrc.XmlResource(RESFILE)
 
@@ -66,8 +66,11 @@ class MainPanel(wx.Dialog):
         #header for dragging and moving
         self.st_lyrics_header = xrc.XRCCTRL(self, 'm_st_lyrics_header')
         self.bm_lyrics_close = xrc.XRCCTRL(self, 'm_bm_lyrics_close')
-        self.st_lyrics_song = xrc.XRCCTRL(self, 'm_st_lyrics_song')
+        self.bm_lyrics_tab = xrc.XRCCTRL(self, 'm_bm_lyrics_tab')
+        self.bm_lyrics_tab.Show(False)
+        #self.st_lyrics_song = xrc.XRCCTRL(self, 'm_st_lyrics_song')
         self.rb_lyrics_lazy = xrc.XRCCTRL(self, 'm_rb_lyrics_lazy')
+        self.ch_lyrics_song_list = xrc.XRCCTRL(self, 'm_ch_lyrics_song_list')
         #self.hw_lyrics_at = xrc.XRCCTRL(self, 'm_hw_lyrics_at')
 
         # bindings ----------------
@@ -83,6 +86,7 @@ class MainPanel(wx.Dialog):
         
         #self.Bind(wx.EVT_TEXT, self.OnChars, self.tc_lyrics_text)
         self.bm_lyrics_close.Bind(wx.EVT_LEFT_UP, self.CloseMe)
+        self.bm_lyrics_tab.Bind(wx.EVT_LEFT_UP, self.OnMakeTabClick)
         
         self.Bind(wx.EVT_LEFT_DOWN, self.OnMouseLeftDown)
         self.Bind(wx.EVT_MOTION, self.OnMouseMotion)
@@ -92,7 +96,7 @@ class MainPanel(wx.Dialog):
         self.st_lyrics_header.Bind(wx.EVT_MOTION, self.OnMouseMotion)
         self.st_lyrics_header.Bind(wx.EVT_LEFT_UP, self.OnMouseLeftUp)
         self.st_lyrics_header.Bind(wx.EVT_RIGHT_UP, self.OnRightUp)       
-
+        self.Bind(wx.EVT_CHOICE, self.EvtChoice, self.ch_lyrics_song_list)
             
         #self.bu_update_restart.Enable(False)    
         # set layout --------------
@@ -100,51 +104,92 @@ class MainPanel(wx.Dialog):
         sizer.Add(panel, 1, wx.EXPAND|wx.ALL, 5)
         self.SetSizer(sizer)
         self.SetAutoLayout(True)
-        #self.LoadSettings()
+        self.LoadSettings()
         #self.CopyReplace()
         #self.OnChars()
         #xrc.XRCCTRL(self, 'm_notebook1').SetPageText(1, '@' + self.tc_lyrics_username.GetValue())
-            
+        
+        self.current_song = ''
+        
+        self.GetLyrics(None)
+        listener = self.parent.SetReceiver(self)
+        
+        # hotkeys ------------------
+        ctrlrID = 802
+         
+        self.aTable_values = [
+               (wx.ACCEL_CTRL, ord('R'), ctrlrID)
+                                ]
+        aTable = wx.AcceleratorTable(self.aTable_values)
+        #add to main program
+        self.SetAcceleratorTable(aTable) 
+        wx.EVT_MENU(self, ctrlrID, self.ResetPosition)
+        
+
+    def PlaybackReceiverAction(self, message):
+        #pubsub receiver actions
+        #print message.data
+        self.GetLyrics(None)
+        
+    def ResetPosition(self, event):
+        #resets the winodws position
+        self.SetSize((375,460))
+        self.SetPosition((50,50))
+        
+    def EvtChoice(self, event):
+        self.current_song = ''
         
     def GetLyrics(self, event):
         #get some lyrics for the playing song
         #http://webservices.lyrdb.com/lookup.php?q=the%20shins|new%20slang&for=match&agent=agent
+        use_selection = 0
+        if self.ch_lyrics_song_list.GetSelection() >= 0:
+            use_selection = self.ch_lyrics_song_list.GetSelection()            
         if self.parent.partist !='':
             query_string_value = self.parent.partist + ' - ' + self.parent.ptrack
-            self.st_lyrics_song.SetLabel(self.parent.partist + ' - ' + self.parent.ptrack)
-            if self.rb_lyrics_lazy.GetValue() == True:
-                query_string = 'http://webservices.lyrdb.com/lookup.php?q=' + query_string_value + '&for=fullt&agent=GrooveWalrus/0.2'
-            else:
-                query_string_value = self.parent.partist + '|' + self.parent.ptrack
-                query_string = 'http://webservices.lyrdb.com/lookup.php?q=' + query_string_value + '&for=match&agent=GrooveWalrus/0.2'
-            query_string = url_quote(query_string)
-            #print query_string
-            url_connection = urllib.urlopen(query_string.replace(' ', '+'))
-            raw_results = url_connection.read()
-        
-            results_array = raw_results.split('\n')        
-            #print results_array
-            lyrics_id = results_array[0].split('\\')[0]
-            #print lyrics_id
+            if self.current_song != query_string_value:
+                self.current_song = query_string_value
+                if self.rb_lyrics_lazy.GetValue() == True:
+                    query_string = 'http://webservices.lyrdb.com/lookup.php?q=' + query_string_value + '&for=fullt&agent=GrooveWalrus/0.2'
+                else:
+                    query_string_value = self.parent.partist + '|' + self.parent.ptrack
+                    query_string = 'http://webservices.lyrdb.com/lookup.php?q=' + query_string_value + '&for=match&agent=GrooveWalrus/0.2'
+                query_string = url_quote(query_string)
+                #print query_string
+                url_connection = urllib.urlopen(query_string.replace(' ', '+'))
+                raw_results = url_connection.read()                
+                
+                results_array = raw_results.split('\n')        
+                #print results_array
+                self.ch_lyrics_song_list.Clear()
+                for x in results_array:
+                    y = x.split('\\')[1]
+                    self.ch_lyrics_song_list.Append(y)
+                if len(results_array) >= 1:
+                    self.ch_lyrics_song_list.SetSelection(use_selection)
+                lyrics_id = results_array[use_selection].split('\\')[0]
+                                
+                #print lyrics_id
+                
+                #http://www.lyrdb.com/getlyr.php?q=id
+                lyrics_query = 'http://www.lyrdb.com/getlyr.php?q=' + lyrics_id
+                lyrics_query = url_quote(lyrics_query)
+                url_connection = urllib.urlopen(lyrics_query.replace(' ', '+'))
+                raw_results = url_connection.read()
+                #print raw_results                
+                #print raw_results
+                #raw_results = raw_results.replace('\n\n', '\n')
+                #raw_results = raw_results.replace('\r\n\r\n', '\r\n')
+                #get rid of double spacing
+                #print raw_results.split('\n\n\n\n')
+                if len(raw_results.split('\n\n\n\n')) > 1:
+                    raw_results = raw_results.replace('\n\n', '\n')
+                if len(raw_results.split('\r\r\n\r\r\n')) > 1:
+                    raw_results = raw_results.replace('\r\r\n', '\r\n')
+                if len(raw_results.split('\r\n\r\n\r\n\r\n')) > 1:
+                    raw_results = raw_results.replace('\r\n\r\n', '\r\n')              
+                self.tc_lyrics_text.SetValue(raw_results) # + '\r\n http://www.lyrdb.com')
             
-            #http://www.lyrdb.com/getlyr.php?q=id
-            lyrics_query = 'http://www.lyrdb.com/getlyr.php?q=' + lyrics_id
-            lyrics_query = url_quote(lyrics_query)
-            url_connection = urllib.urlopen(lyrics_query.replace(' ', '+'))
-            raw_results = url_connection.read()        
-            #print raw_results
-            #raw_results = raw_results.replace('\n\n', '\n')
-            #raw_results = raw_results.replace('\r\n\r\n', '\r\n')
-            #get rid of double spacing
-            #print raw_results.split('\n\n\n\n')
-            if len(raw_results.split('\n\n\n\n')) > 1:
-                raw_results = raw_results.replace('\n\n', '\n')
-            if len(raw_results.split('\r\r\n\r\r\n')) > 1:
-                raw_results = raw_results.replace('\r\r\n', '\r\n')
-            if len(raw_results.split('\r\n\r\n\r\n\r\n')) > 1:
-                raw_results = raw_results.replace('\r\n\r\n', '\r\n')              
-            self.tc_lyrics_text.SetValue(raw_results + '\r\n http://www.lyrdb.com')
-        
         
     def ErrorMessage(self):
             dlg = wx.MessageDialog(self, "Username/password not entered", 'Alert', wx.OK | wx.ICON_WARNING)
@@ -152,36 +197,36 @@ class MainPanel(wx.Dialog):
                 dlg.Destroy()
             
     def CloseMe(self, event=None):
+        self.SaveOptions()
         self.Destroy()
         
     def LoadSettings(self):
         #load the setting from settings_lyrics.xml if it exists
-        settings_dict = xml_utils().get_generic_settings(self.TWITTER_SETTINGS + "settings_lyrics.xml")
+        settings_dict = xml_utils().get_generic_settings(self.LYRICS_SETTINGS + "settings_lyrics.xml")
         #print settings_dict
         if len(settings_dict) >= 1:
-            username=''
-            if settings_dict.has_key('username'):
-                username = settings_dict['username']
-            password =''
-            if settings_dict.has_key('password'):
-                password = settings_dict['password']
-            default_text=''
-            if settings_dict.has_key('default_text'):
-                default_text = settings_dict['default_text']
+            if settings_dict.has_key('window_position'):
+                # not good, replace eval
+                self.SetPosition(eval(settings_dict['window_position']))
+            if settings_dict.has_key('window_size'):
+                self.SetSize(eval(settings_dict['window_size']))
 
-            self.tc_lyrics_username.SetValue(username)
-            self.tc_lyrics_password.SetValue(password)   
-            self.tc_lyrics_default.SetValue(default_text)
-
-    def SaveOptions(self, event):
+    def SaveOptions(self, event=None):
         # save value to options.xml
-        window_dict = {}        
-        window_dict['password'] = self.tc_lyrics_password.GetValue()
-        window_dict['username'] = self.tc_lyrics_username.GetValue()
-        window_dict['default_text'] = self.tc_lyrics_default.GetValue()
+        window_dict = {}
+        window_dict['window_position'] = str(self.GetScreenPosition())
+        window_dict['window_size'] = str(self.GetSize())#[0], self.GetSize()[1]))
         
-        xml_utils().save_generic_settings(self.TWITTER_SETTINGS, "settings_lyrics.xml", window_dict)
+        xml_utils().save_generic_settings(self.LYRICS_SETTINGS, "settings_lyrics.xml", window_dict)
 
+    def OnMakeTabClick(self, event=None):
+        # transfer plug-in to tab in main player
+        # make a new page                
+        page1 = PageOne(self.parent.nb_main, self.parent)
+        # add the pages to the notebook
+        self.parent.nb_main.AddPage(page1, "Lyrics")
+     
+        self.Destroy()        
             
 # --------------------------------------------------------- 
 # titlebar-like move and drag
@@ -194,10 +239,13 @@ class MainPanel(wx.Dialog):
 
     def OnMouseMotion(self, evt):
         if evt.Dragging() and evt.LeftIsDown():
-            dPos = evt.GetEventObject().ClientToScreen(evt.GetPosition())
-            #nPos = (self.wPos.x + (dPos.x - self.ldPos.x), -2)
-            nPos = (self.wPos.x + (dPos.x - self.ldPos.x), self.wPos.y + (dPos.y - self.ldPos.y))
-            self.Move(nPos)
+            try:            
+                dPos = evt.GetEventObject().ClientToScreen(evt.GetPosition())
+                #nPos = (self.wPos.x + (dPos.x - self.ldPos.x), -2)
+                nPos = (self.wPos.x + (dPos.x - self.ldPos.x), self.wPos.y + (dPos.y - self.ldPos.y))
+                self.Move(nPos)
+            except AttibuteError:
+                pass
 
     def OnMouseLeftUp(self, evt):
         try:
@@ -211,7 +259,12 @@ class MainPanel(wx.Dialog):
         
 # --------------------------------------------------------- 
             
-           
+class PageOne(wx.Panel):
+    def __init__(self, parent, grandparent):
+        wx.Panel.__init__(self, parent)
+        self.parent = grandparent
+        
+            
 # ===================================================================            
 
               

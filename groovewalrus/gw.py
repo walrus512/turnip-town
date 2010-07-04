@@ -23,6 +23,7 @@ import wx
 import wx.html
 import wx.xrc as xrc
 import wx.media
+from wx.lib.pubsub import Publisher as pub
 #import wx.aui
 #import  wx.gizmos as gizmos
 #from wx.lib.flashwin import FlashWindow
@@ -95,7 +96,7 @@ from main_thirdp import grooveshark_old
 #sys.stderr = stdoutlog
 #8888888888
 
-PROGRAM_VERSION = "0.301"
+PROGRAM_VERSION = "0.302"
 PROGRAM_NAME = "GrooveWalrus"
 
 PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -718,7 +719,7 @@ class MainPanel(wx.Panel):
         #-------------
         #plugins
         a = plugin_loader.PluginLoader(self)
-        
+                
         # options ---------------
         # load options from settings.xml
         options_window.Options(self).LoadOptions()
@@ -779,6 +780,10 @@ class MainPanel(wx.Panel):
 # ---------------------------------------------------------
 #-----------------------------------------------------------
 
+    def SetReceiver(self, target):
+        #set up a reciever for pub sub, work around for plugins
+        pub.subscribe(target.PlaybackReceiverAction, 'main.playback')
+    
     def SetBackend(self, event):
         #sets backend type, pymedia or wx.media
         self.SaveOptions(None)
@@ -1701,6 +1706,9 @@ class MainPanel(wx.Panel):
             q_track_id = local_songs.DbFuncs().GetTrackId(self.pgroove_id, self.pmusic_id, self.partist, self.ptrack)
             local_songs.DbFuncs().InsertPlayedData(q_track_id, played_type_id=0)
             #===============================
+            
+            # publish to pubsub
+            pub.sendMessage('main.playback', {'artist':self.partist, 'song':self.ptrack})            
 
         
     def ConvertTimeFormated(self, seconds):
@@ -3223,7 +3231,8 @@ class TreeListCtrlXmlHandler(xrc.XmlResourceHandler):
 
 #---------------------------------------------------------------------------
 #---------------------------------------------------------------------------
-        
+
+       
 if __name__ == '__main__':
 
     ###app = MyApp(0)
