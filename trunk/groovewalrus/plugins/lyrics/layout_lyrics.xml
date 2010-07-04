@@ -33,8 +33,6 @@
 						<border>5</border>
 						<object class="wxStaticBitmap" name="m_bm_lyrics_tab">
 							<size>22,22</size>
-							<enabled>0</enabled>
-							<hidden>1</hidden>
 							<bitmap>tab-new.png</bitmap>
 						</object>
 					</object>
@@ -113,13 +111,14 @@
 				<flag>wxEXPAND</flag>
 				<border>5</border>
 				<object class="wxBoxSizer">
-					<orient>wxHORIZONTAL</orient>
+					<orient>wxVERTICAL</orient>
 					<object class="sizeritem">
-						<option>1</option>
-						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+						<option>0</option>
+						<flag>wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND</flag>
 						<border>5</border>
-						<object class="wxStaticText" name="m_st_lyrics_song">
-							<label></label>
+						<object class="wxChoice" name="m_ch_lyrics_song_list">
+							<selection>0</selection>
+							<content />
 						</object>
 					</object>
 				</object>
@@ -138,6 +137,16 @@
 							<style>wxTE_MULTILINE</style>
 							<value></value>
 							<maxlength>0</maxlength>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL|wxALIGN_CENTER_HORIZONTAL</flag>
+						<border>5</border>
+						<object class="wxHyperlinkCtrl" name="m_hyperlink1">
+							<label>Lyrics from LyrDB: http://lyrdb.com</label>
+							<url>http://www.lyrdb.com</url>
+							<style>wxHL_DEFAULT_STYLE</style>
 						</object>
 					</object>
 				</object>
