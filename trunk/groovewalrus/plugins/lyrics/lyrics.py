@@ -112,18 +112,24 @@ class MainPanel(wx.Dialog):
         self.current_song = ''
         
         self.GetLyrics(None)
-        listener = self.parent.SetReceiver(self)
+        self.parent.SetReceiver(self)        
         
         # hotkeys ------------------
         ctrlrID = 802
-         
+        ctrleqID = 902
+        ctrlmiID = 901
+        
         self.aTable_values = [
-               (wx.ACCEL_CTRL, ord('R'), ctrlrID)
+               (wx.ACCEL_CTRL, ord('R'), ctrlrID),
+               (wx.ACCEL_CTRL, ord('='), ctrleqID),
+               (wx.ACCEL_CTRL, ord('-'), ctrlmiID)
                                 ]
         aTable = wx.AcceleratorTable(self.aTable_values)
         #add to main program
         self.SetAcceleratorTable(aTable) 
         wx.EVT_MENU(self, ctrlrID, self.ResetPosition)
+        wx.EVT_MENU(self, ctrleqID, self.IncreaseFontSize)
+        wx.EVT_MENU(self, ctrlmiID, self.DecreaseFontSize)
         
 
     def PlaybackReceiverAction(self, message):
@@ -135,6 +141,17 @@ class MainPanel(wx.Dialog):
         #resets the winodws position
         self.SetSize((375,460))
         self.SetPosition((50,50))
+        
+    def IncreaseFontSize(self, event):
+        font_size = self.tc_lyrics_text.GetFont().GetPointSize()        
+        self.tc_lyrics_text.SetFont( wx.Font(font_size + 1, wx.NORMAL, wx.NORMAL, wx.NORMAL) )
+        self.Refresh()
+        
+    def DecreaseFontSize(self, event):
+        font_size = self.tc_lyrics_text.GetFont().GetPointSize()
+        if font_size >= 4:
+            self.tc_lyrics_text.SetFont( wx.Font(font_size - 1, wx.NORMAL, wx.NORMAL, wx.NORMAL) )
+        self.Refresh()
         
     def EvtChoice(self, event):
         self.current_song = ''
@@ -198,6 +215,7 @@ class MainPanel(wx.Dialog):
             
     def CloseMe(self, event=None):
         self.SaveOptions()
+        self.parent.KillReceiver(self.PlaybackReceiverAction)
         self.Destroy()
         
     def LoadSettings(self):

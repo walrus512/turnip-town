@@ -782,7 +782,11 @@ class MainPanel(wx.Panel):
 
     def SetReceiver(self, target):
         #set up a reciever for pub sub, work around for plugins
-        pub.subscribe(target.PlaybackReceiverAction, 'main.playback')
+        listener = pub.subscribe(target.PlaybackReceiverAction, 'main.playback')        
+        return listener
+        
+    def KillReceiver(self, target):
+        pub.unsubscribe(target)
     
     def SetBackend(self, event):
         #sets backend type, pymedia or wx.media
