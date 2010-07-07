@@ -305,13 +305,21 @@
 														</object>
 														<object class="sizeritem">
 															<option>0</option>
-															<flag>wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL</flag>
+															<flag>wxEXPAND</flag>
 															<border>5</border>
-															<object class="wxBitmapButton" name="m_bb_save_playlist">
-																<style>wxBU_AUTODRAW</style>
-																<tooltip>Save Playlist</tooltip>
-																<bitmap>graphics/document-save.png</bitmap>
-																<default>0</default>
+															<object class="wxBoxSizer">
+																<orient>wxVERTICAL</orient>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
+																	<border>5</border>
+																	<object class="wxBitmapButton" name="m_bb_save_playlist">
+																		<style>wxBU_AUTODRAW</style>
+																		<tooltip>Save Playlist</tooltip>
+																		<bitmap>graphics/document-save.png</bitmap>
+																		<default>0</default>
+																	</object>
+																</object>
 															</object>
 														</object>
 														<object class="spacer">
@@ -361,7 +369,8 @@
 																<minsize>1</minsize>
 																<orientation>vertical</orientation>
 																<object class="wxPanel" name="m_panel6">
-																	<style>wxTAB_TRAVERSAL</style>
+																	<style>wxDOUBLE_BORDER</style>
+																	<bg>#f0f0f0</bg>
 																	<object class="wxBoxSizer">
 																		<orient>wxHORIZONTAL</orient>
 																		<object class="sizeritem">
@@ -369,7 +378,25 @@
 																			<flag>wxALL|wxEXPAND</flag>
 																			<border>5</border>
 																			<object class="wxTreeCtrl" name="m_tr_playlist_history">
-																				<style>wxTR_DEFAULT_STYLE|wxTR_EDIT_LABELS|wxTR_HIDE_ROOT|wxTR_SINGLE|wxNO_BORDER</style>
+																				<style>wxTR_DEFAULT_STYLE|wxTR_HIDE_ROOT|wxTR_SINGLE|wxNO_BORDER</style>
+																				<bg>#f0f0f0</bg>
+																			</object>
+																		</object>
+																		<object class="sizeritem">
+																			<option>0</option>
+																			<flag>wxEXPAND | wxALL</flag>
+																			<border>2</border>
+																			<object class="wxStaticLine" name="m_staticline10">
+																				<style>wxLI_VERTICAL</style>
+																			</object>
+																		</object>
+																		<object class="sizeritem">
+																			<option>1</option>
+																			<flag>wxALL|wxEXPAND</flag>
+																			<border>5</border>
+																			<object class="wxListCtrl" name="m_lc_playlist_history">
+																				<style>wxLC_NO_HEADER|wxLC_REPORT|wxNO_BORDER</style>
+																				<bg>#f0f0f0</bg>
 																			</object>
 																		</object>
 																	</object>
@@ -2616,6 +2643,10 @@
 				</object>
 				<object class="wxMenuItem" name="m_mi_save_playlist_as">
 					<label>Save Playlist As...\tF5</label>
+					<help></help>
+				</object>
+				<object class="wxMenuItem" name="m_mi_quick_save">
+					<label>Quick-Save Playlist\tCtrl-W</label>
 					<help></help>
 				</object>
 				<object class="separator" />
