@@ -48,6 +48,13 @@ class MainPanel(wx.Dialog):
     def __init__(self, parent):
         wx.Dialog.__init__(self, parent, -1, "Lyrics", size=(375,460), style=wx.FRAME_SHAPED|wx.RESIZE_BORDER) #STAY_ON_TOP)        
         self.parent = parent
+        x = MyPanel(self, parent)
+        
+class MyPanel(wx.Panel):
+    def __init__(self, dialog, parent):
+        wx.Panel.__init__(self, dialog, -1)
+        self.parent = parent
+        self.dialog = dialog
         
         self.LYRICS_SETTINGS = system_files.GetDirectories(self).MakeDataDirectory('plugins') + os.sep
 
@@ -97,7 +104,9 @@ class MainPanel(wx.Dialog):
         self.st_lyrics_header.Bind(wx.EVT_LEFT_UP, self.OnMouseLeftUp)
         self.st_lyrics_header.Bind(wx.EVT_RIGHT_UP, self.OnRightUp)       
         self.Bind(wx.EVT_CHOICE, self.EvtChoice, self.ch_lyrics_song_list)
-            
+        self.Bind(wx.EVT_RADIOBUTTON, self.EvtRadio, self.rb_lyrics_lazy)
+        self.Bind(wx.EVT_RADIOBUTTON, self.EvtRadio, id=xrc.XRCID('m_rb_lyrics_strict'))
+        
         #self.bu_update_restart.Enable(False)    
         # set layout --------------
         sizer = wx.BoxSizer(wx.VERTICAL)
@@ -130,7 +139,6 @@ class MainPanel(wx.Dialog):
         wx.EVT_MENU(self, ctrlrID, self.ResetPosition)
         wx.EVT_MENU(self, ctrleqID, self.IncreaseFontSize)
         wx.EVT_MENU(self, ctrlmiID, self.DecreaseFontSize)
-        
 
     def PlaybackReceiverAction(self, message):
         #pubsub receiver actions
@@ -139,8 +147,8 @@ class MainPanel(wx.Dialog):
         
     def ResetPosition(self, event):
         #resets the winodws position
-        self.SetSize((375,460))
-        self.SetPosition((50,50))
+        self.dialog.SetSize((375,460))
+        self.dialog.SetPosition((50,50))
         
     def IncreaseFontSize(self, event):
         font_size = self.tc_lyrics_text.GetFont().GetPointSize()        
@@ -156,12 +164,16 @@ class MainPanel(wx.Dialog):
     def EvtChoice(self, event):
         self.current_song = ''
         
+    def EvtRadio(self, event):
+        self.current_song = ''
+        
     def GetLyrics(self, event):
         #get some lyrics for the playing song
         #http://webservices.lyrdb.com/lookup.php?q=the%20shins|new%20slang&for=match&agent=agent
         use_selection = 0
         if self.ch_lyrics_song_list.GetSelection() >= 0:
-            use_selection = self.ch_lyrics_song_list.GetSelection()            
+            use_selection = self.ch_lyrics_song_list.GetSelection()
+           
         if self.parent.partist !='':
             query_string_value = self.parent.partist + ' - ' + self.parent.ptrack
             if self.current_song != query_string_value:
@@ -183,7 +195,9 @@ class MainPanel(wx.Dialog):
                     y = x.split('\\')[1]
                     self.ch_lyrics_song_list.Append(y)
                 if len(results_array) >= 1:
-                    self.ch_lyrics_song_list.SetSelection(use_selection)
+                    if use_selection > (len(results_array) - 1):
+                        use_selection = 0
+                    self.ch_lyrics_song_list.SetSelection(use_selection)                    
                 lyrics_id = results_array[use_selection].split('\\')[0]
                                 
                 #print lyrics_id
@@ -216,7 +230,7 @@ class MainPanel(wx.Dialog):
     def CloseMe(self, event=None):
         self.SaveOptions()
         self.parent.KillReceiver(self.PlaybackReceiverAction)
-        self.Destroy()
+        self.dialog.Destroy()
         
     def LoadSettings(self):
         #load the setting from settings_lyrics.xml if it exists
@@ -225,15 +239,15 @@ class MainPanel(wx.Dialog):
         if len(settings_dict) >= 1:
             if settings_dict.has_key('window_position'):
                 # not good, replace eval
-                self.SetPosition(eval(settings_dict['window_position']))
+                self.dialog.SetPosition(eval(settings_dict['window_position']))
             if settings_dict.has_key('window_size'):
-                self.SetSize(eval(settings_dict['window_size']))
+                self.dialog.SetSize(eval(settings_dict['window_size']))
 
     def SaveOptions(self, event=None):
         # save value to options.xml
         window_dict = {}
-        window_dict['window_position'] = str(self.GetScreenPosition())
-        window_dict['window_size'] = str(self.GetSize())#[0], self.GetSize()[1]))
+        window_dict['window_position'] = str(self.dialog.GetScreenPosition())
+        window_dict['window_size'] = str(self.dialog.GetSize())#[0], self.GetSize()[1]))
         
         xml_utils().save_generic_settings(self.LYRICS_SETTINGS, "settings_lyrics.xml", window_dict)
 
@@ -252,7 +266,7 @@ class MainPanel(wx.Dialog):
     def OnMouseLeftDown(self, evt):
         self.Refresh()
         self.ldPos = evt.GetEventObject().ClientToScreen(evt.GetPosition())
-        self.wPos = self.ClientToScreen((0,0))
+        self.wPos = self.dialog.ClientToScreen((0,0))
         self.CaptureMouse()
 
     def OnMouseMotion(self, evt):
@@ -261,8 +275,8 @@ class MainPanel(wx.Dialog):
                 dPos = evt.GetEventObject().ClientToScreen(evt.GetPosition())
                 #nPos = (self.wPos.x + (dPos.x - self.ldPos.x), -2)
                 nPos = (self.wPos.x + (dPos.x - self.ldPos.x), self.wPos.y + (dPos.y - self.ldPos.y))
-                self.Move(nPos)
-            except AttibuteError:
+                self.dialog.Move(nPos)
+            except AttributeError:
                 pass
 
     def OnMouseLeftUp(self, evt):
@@ -272,8 +286,9 @@ class MainPanel(wx.Dialog):
             pass
 
     def OnRightUp(self, evt):
-        self.hide_me()
+        #self.hide_me()
         #self..Destroy()
+        pass
         
 # --------------------------------------------------------- 
             
