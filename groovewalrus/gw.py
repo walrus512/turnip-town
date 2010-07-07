@@ -96,7 +96,7 @@ from main_thirdp import grooveshark_old
 #sys.stderr = stdoutlog
 #8888888888
 
-PROGRAM_VERSION = "0.302"
+PROGRAM_VERSION = "0.303"
 PROGRAM_NAME = "GrooveWalrus"
 
 PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -373,7 +373,16 @@ class MainPanel(wx.Panel):
         ##self.lc_playlist.Bind(wx.EVT_CHAR, self.OnPlaylistKeyPress)
         self.lc_playlist.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
         self.lc_playlist.Bind(wx.EVT_CHAR, self.OnChar)
-                
+        
+        #playlist history
+        self.lc_playlist_history = xrc.XRCCTRL(self, 'm_lc_playlist_history')
+        self.lc_playlist_history.InsertColumn(0,"Artist")
+        self.lc_playlist_history.InsertColumn(1,"Song")
+        
+        self.tr_playlist_history.Bind(wx.EVT_RIGHT_DOWN, self.OnPlaylistTreeRightClick)
+        self.tr_playlist_history.Bind(wx.EVT_RIGHT_UP, self.OnPlaylistTreeRightClick)
+        self.tr_playlist_history.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.OnPlaylistTreeActivate)
+        
         ##dynamic listctrl resize
         ##wx.EVT_SIZE(self.parent, self.ResizePlaylist)
         ##wx.EVT_MAXIMIZE(self.parent, self.ResizePlaylist)
@@ -422,7 +431,7 @@ class MainPanel(wx.Panel):
         self.Bind(wx.EVT_BUTTON, self.OnClearPlaylistClick, id=xrc.XRCID('m_bb_clear_playlist'))
         self.Bind(wx.EVT_BUTTON, self.RemovePlaylistItem, id=xrc.XRCID('m_bb_remove_playlist_item'))
         self.Bind(wx.EVT_BUTTON, self.OnLoadPlaylistClick, id=xrc.XRCID('m_bb_load_playlist'))
-        self.Bind(wx.EVT_BUTTON, self.OnPlaylistOptionsClick, id=xrc.XRCID('m_bb_playlist_options'))
+        self.Bind(wx.EVT_BUTTON, self.OnPlaylistHistoryClick, id=xrc.XRCID('m_bb_playlist_options'))
         
         #playlist history     
         self.Bind(wx.EVT_TREE_SEL_CHANGED, self.OnTreeSelChange, self.tr_playlist_history)
@@ -530,7 +539,8 @@ class MainPanel(wx.Panel):
             self.ReadPlaylist(self.main_playlist_location)
             #self.GetPlaylistFromDatabase()
             
-       
+        # load playlist history
+        self.FillPlaylistTree()            
         
         self.current_play_time = 0
         self.current_track = -1
@@ -676,6 +686,7 @@ class MainPanel(wx.Panel):
         # file menu
         self.parent.Bind(wx.EVT_MENU, self.OnLoadPlaylistClick, id=xrc.XRCID("m_mi_open"))
         self.parent.Bind(wx.EVT_MENU, self.SavePlaylistToDatabase, id=xrc.XRCID("m_mi_save_playlist"))
+        self.parent.Bind(wx.EVT_MENU, self.QuickSavePlaylist, id=xrc.XRCID("m_mi_quick_save"))
         self.parent.Bind(wx.EVT_MENU, self.OnSavePlaylistClick, id=xrc.XRCID("m_mi_save_playlist_as"))
         self.parent.Bind(wx.EVT_MENU, self.OnExit, id=xrc.XRCID("m_mi_exit"))
         
@@ -843,6 +854,19 @@ class MainPanel(wx.Panel):
             rate_images.Add(bmp)
         return rate_images
         
+    def PlaylistImageList(self):
+        # song rating imagelist
+        rate_images = wx.ImageList(16, 16, True)        
+        image_files = [
+            GRAPHICS_LOCATION + 'format-indent-more.png', 
+            GRAPHICS_LOCATION + 'format-justify-fill.png', 
+            GRAPHICS_LOCATION + 'format-justify-left.png'
+            ]
+        for file_name in image_files:
+            bmp = wx.Bitmap(file_name, wx.BITMAP_TYPE_PNG)
+            rate_images.Add(bmp)
+        return rate_images
+        
     def SetScrobb(self):
         # set up scrobbing
         # should only be called on loading or if you change your setttings
@@ -959,8 +983,10 @@ class MainPanel(wx.Panel):
                 self.prefetch = False
             if (float(self.time_count) / float(self.current_play_time) > .5) & (self.prefetch == True):
                 #let's fetch the next track if possible
+                print 'pre-fetching...'
                 self.prefetch = False                
                 pf_artistsong =  prefetch.PreFetch(self).GetNextSong()
+                print pf_artistsong
                 if pf_artistsong != None:
                     pf_artist = pf_artistsong[0]
                     pf_song = pf_artistsong[1]
@@ -1526,6 +1552,7 @@ class MainPanel(wx.Panel):
                 query_results = tinysong.Tsong().get_search_results(query_string, 32)
                 #split_array = query_results[0].split('; ')
                 #print query_results
+                #*** change this stuff, change it in prefetch.py too
                 if len(query_results) >= 1:                
                     # song id is at [1] - 4,2,6,1
                     #song_id = split_array[1]
@@ -2023,18 +2050,17 @@ class MainPanel(wx.Panel):
         #save the playlist
         self.SavePlaylist(self.main_playlist_location)
         
-    def OnPlaylistOptionsClick(self, event):
+# ---------------------------------------------------------  
+# playlist history ---------------------------------------- 
+        
+    def OnPlaylistHistoryClick(self, event):
         #toggle slider window back and forth displaying the
-        #playlist options
         out_bmp = wx.Bitmap(GRAPHICS_LOCATION + "go-next.png", wx.BITMAP_TYPE_ANY)
         in_bmp = wx.Bitmap(GRAPHICS_LOCATION + "go-previous.png", wx.BITMAP_TYPE_ANY)
                 
         if self.sp_playlist.GetSashPosition() < 10:
-            #for x in range(self.sp_playlist.GetSashPosition(), 140):
-            #    self.sp_playlist.SetSashPosition(x)
-            self.sp_playlist.SetSashPosition(180)
+            self.sp_playlist.SetSashPosition(360)
             self.bb_playlist_options.SetBitmapLabel(in_bmp)
-            self.FillPlaylistTree()
         else:
             self.sp_playlist.SetSashPosition(1)
             self.bb_playlist_options.SetBitmapLabel(out_bmp)
@@ -2042,12 +2068,48 @@ class MainPanel(wx.Panel):
     def SavePlaylistToDatabase(self, event):
         #save the entire playlist to the database
         #good idea? probably not
+        #dlg = wx.Dialog(self, -1, '', size=(195, 100), style=wx.FRAME_SHAPED)
+        dlg = wx.TextEntryDialog(self, 'Playlist Name', '')
+        dlg.SetWindowStyleFlag(wx.FRAME_SHAPED)
+        dlg.SetAutoLayout(True)
+        dlg.SetBackgroundColour((255, 210, 0, 255))
+        bpos = xrc.XRCCTRL(self, 'm_bb_save_playlist').GetScreenPosition()
+        dlg.SetPosition((bpos[0] + 40, bpos[1]))
+        dlg.SetSize((260, dlg.GetSize()[1] - 30))
+        #b = wx.Button(dlg, wx.ID_OK, "Save", (100, 60))
+        #b = wx.Button(dlg, wx.ID_CANCEL, "Cancel", (5, 60))
+        #wx.StaticText(dlg, -1, "Playlist Name:", size=(180, -1), pos=(5,5))
+        #c = wx.TextCtrl(dlg, -1, size=(180, -1), pos=(5, 28))
+        val = dlg.ShowModal()
+        
+        
+        if val == wx.ID_OK:
+            playlist_arr = []
+            playlist_name = dlg.GetValue()
+            date_time = time.strftime('%Y-%m-%d %H:%M:%S')
+            for x in range(0, self.lc_playlist.GetItemCount()):
+                playlist_arr.append((self.lc_playlist.GetItem(x, 0).GetText(), self.lc_playlist.GetItem(x, 1).GetText(), x, date_time))
+            #save to db
+            local_songs.DbFuncs().InsertPlaylistData(playlist_arr)
+            #add label
+            if (playlist_name != None) & (playlist_name != None):
+                local_songs.DbFuncs().InsertPlaylistLabelData(playlist_name, date_time)        
+            self.FillPlaylistTree()
+
+        dlg.Destroy()
+        
+
+        
+    def QuickSavePlaylist(self, event):
+        #save the entire playlist to the database
+        #good idea? probably not
         playlist_arr = []
         date_time = time.strftime('%Y-%m-%d %H:%M:%S')
         for x in range(0, self.lc_playlist.GetItemCount()):
             playlist_arr.append((self.lc_playlist.GetItem(x, 0).GetText(), self.lc_playlist.GetItem(x, 1).GetText(), x, date_time))
         local_songs.DbFuncs().InsertPlaylistData(playlist_arr)
-        self.OnPlaylistOptionsClick(event=None)
+        #self.OnPlaylistHistoryClick(event=None)
+        self.FillPlaylistTree()
         
     def GetPlaylistFromDatabase(self, playlist_date=None):
         #get a specfic playlist from the db
@@ -2059,10 +2121,11 @@ class MainPanel(wx.Panel):
             query = "SELECT * FROM m_playlists WHERE playlist_date = '"+ playlist_date + "' ORDER BY playlist_position"
             results_arr = local_songs.DbFuncs().GetGenericResults(query)            
             #return results_arr
-        for x in results_arr:
-            #print x
-            self.SetPlaylistItem(x[3], x[1], x[2]) 
-                
+        counter = 0
+        for x in results_arr:    
+            index = self.lc_playlist_history.InsertStringItem(counter, x[1])
+            self.lc_playlist_history.SetStringItem(counter, 1, x[2])
+            counter = counter + 1
         
     def GetDatabasePlaylist(self, q_limit=1, start_from=0):
         #get a list of playlists
@@ -2072,36 +2135,112 @@ class MainPanel(wx.Panel):
         return results_arr
         
     def FillPlaylistTree(self, save_playlist=True):
-        if save_playlist:
-            self.SavePlaylist()
+        #if save_playlist:
+        #    self.SavePlaylist()
         res_arr = self.GetDatabasePlaylist(q_limit=25)
         self.tr_playlist_history.DeleteAllItems()
+        il = self.PlaylistImageList()
+        self.tr_playlist_history.SetImageList(il)
+        # you need the following, i don't know why:
+        self.il = il        
         
         child1 = self.tr_playlist_history.AppendItem(self.tr_playlist_history_root, 'Current Playlist')
-        self.tr_playlist_history.SetPyData(child1, 'Current Playlist')
+        self.tr_playlist_history.SetPyData(child1, 'Current Playlist')        
+        self.tr_playlist_history.SetItemImage(child1, 1)
+        self.tr_playlist_history.SelectItem(child1)
+        
         #print res_arr
         for x in res_arr:            
             if (x[1] != '') & (x[1] != None):
                 label = x[1]
-            else:
+                child3 = self.tr_playlist_history.AppendItem(self.tr_playlist_history_root, label)
+                self.tr_playlist_history.SetPyData(child3, x[0])
+                self.tr_playlist_history.SetItemImage(child3, 2)
+                
+        child2 = self.tr_playlist_history.AppendItem(self.tr_playlist_history_root, 'Quick-Saved')
+        self.tr_playlist_history.SetPyData(child2, 'Quick-Saved')
+        self.tr_playlist_history.SetItemImage(child2, 0)
+        for x in res_arr:
+            if(x[1] == '') | (x[1] == None):
                 label = x[0]
-            child = self.tr_playlist_history.AppendItem(self.tr_playlist_history_root, label)
-            self.tr_playlist_history.SetPyData(child, x[0])
+                child3 = self.tr_playlist_history.AppendItem(child2, label)
+                self.tr_playlist_history.SetPyData(child3, x[0])
+                self.tr_playlist_history.SetItemImage(child3, 2)
             
     def OnTreeSelChange(self, event):
         selected = event.GetItem()
         if self.tr_playlist_history.GetSelection() >= 1:
             #sel_value = self.tr_playlist_history.GetItemText(selected)
             sel_value = self.tr_playlist_history.GetPyData(selected)
-            self.lc_playlist.DeleteAllItems()
+            self.lc_playlist_history.DeleteAllItems()
             if sel_value == 'Current Playlist':
-                self.ReadPlaylist(self.main_playlist_location)
+                self.ReadPlaylist2(self.main_playlist_location)
             else:
                 self.GetPlaylistFromDatabase(sel_value)
         #event.Skip()
         
+    def ReadPlaylist2(self, filename):
+        # take current playlist and write to listcontrol
+        track_dict = read_write_xml.xml_utils().get_tracks(filename)
+        counter = 0
+        #print track_dict
+        for x in track_dict:
+            index = self.lc_playlist_history.InsertStringItem(counter, x['creator'])
+            self.lc_playlist_history.SetStringItem(counter, 1, x['title'])
+            counter = counter +1
+        
+    def OnPlaylistTreeActivate(self, event):
+        #add selected palylist to the main platlist
+        if  self.lc_playlist_history.GetItemCount() > 0:
+            self.BackupList()
+            self.lc_playlist.DeleteAllItems()            
+            for x in range (0, self.lc_playlist_history.GetItemCount()):
+                self.lc_playlist.InsertStringItem(x, self.lc_playlist_history.GetItem(x, 0).GetText())
+                self.lc_playlist.SetStringItem(x, 1, self.lc_playlist_history.GetItem(x, 1).GetText())
+            self.SavePlaylist(self.main_playlist_location)
+            
+    def OnPlaylistTreeRightClick(self, event):
+        #compensate for tricky right-click behaviour
+        pt = event.GetPosition()
+        item, flags = self.tr_playlist_history.HitTest(pt)
+        #print self.tr_playlist_history.GetSelection()
+        #print item
+        if self.tr_playlist_history.GetSelection() != item:
+            self.tr_playlist_history.SelectItem(item)
+
+        item_data = self.tr_playlist_history.GetPyData(item)
+        if (item_data != "Current Playlist") & (item_data != "Quick-Saved"):
+            # make a menu
+            ID_DELETE = 1
+            ID_PROPERTIES = 2
+            ID_RENAME = 3
+            ID_LOAD = 4
+            menu = wx.Menu()
+            menu.Append(ID_DELETE, "Delete")
+            menu.AppendSeparator()
+            menu.Append(ID_LOAD, "Load Playlist")
+            menu.Append(ID_PROPERTIES, "Properties")
+            wx.EVT_MENU(self, ID_DELETE, self.DeletePlaylistFromDb)
+            wx.EVT_MENU(self, ID_LOAD, self.OnPlaylistTreeActivate)
+            wx.EVT_MENU(self, ID_PROPERTIES, self.DisplayPlaylistProperties)
+            self.PopupMenu(menu)
+            menu.Destroy()
+            #event.Skip()
+        
+    def DeletePlaylistFromDb(self, event):
+        #delete selected playlist
+        p_date = self.tr_playlist_history.GetPyData(self.tr_playlist_history.GetSelection())
+        if len(p_date) > 5:
+            query = "DELETE FROM m_playlists WHERE playlist_date='" + p_date + "'"
+            local_songs.DbFuncs().DeleteQuery(query)
+            self.FillPlaylistTree()
+            
+    def DisplayPlaylistProperties(self, event):
+        self.PlaylistProperties()
+        
     def OnTreeBeginEdit(self, event):        
         pass
+        #self.tr_playlist_history.EditLabel(self.tr_playlist_history.GetSelection())
         
     def OnTreeEndEdit(self, event):        
         selected = event.GetItem()
@@ -2111,9 +2250,21 @@ class MainPanel(wx.Panel):
         else:            
             if (event.GetLabel() != None) & (event.GetLabel() != ''):
                 local_songs.DbFuncs().InsertPlaylistLabelData(event.GetLabel(), sel_value)        
-        #self.FillPlaylistTree(False)
+        #self.FillPlaylistTree()
         #event.Skip()
-
+        
+    def PlaylistProperties(self):
+        #make a dialog with a listcontrol        
+        dlg = wx.TextEntryDialog(self, 'Playlist Name', 'Properties')
+        plid = self.tr_playlist_history.GetPyData(self.tr_playlist_history.GetSelection())
+        pllb = self.tr_playlist_history.GetItemText(self.tr_playlist_history.GetSelection())
+        dlg.SetValue(pllb)
+        if dlg.ShowModal() == wx.ID_OK:
+            if (dlg.GetValue() != None) & (dlg.GetValue() != ''):
+                local_songs.DbFuncs().InsertPlaylistLabelData(dlg.GetValue(), plid)
+                self.tr_playlist_history.SetItemText(self.tr_playlist_history.GetSelection(), dlg.GetValue())
+                self.FillPlaylistTree()
+        dlg.Destroy()
         
 # --------------------------------------------------------- 
 # edit menu  ----------------------------------------------

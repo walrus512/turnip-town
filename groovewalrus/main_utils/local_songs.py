@@ -471,6 +471,13 @@ class DbFuncs(object):
         c.close()
         return r_arr
         
+    def DeleteQuery(self, query):
+        conn = sqlite3.connect(self.FILEDB)
+        c = conn.cursor()
+        c.execute(query)
+        conn.commit()
+        c.close()
+        
     def InsertPlaylistLabelData(self, p_label, p_date_time):
         # add feed url
         #check for existing
