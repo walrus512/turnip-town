@@ -75,34 +75,30 @@ class PreFetch(object):
     # THIS SHOULD ALL BE SOMEWHERE ELSE, IT'S DUPLICATING STUFF IN gw.py
             
         query_results = tinysong.Tsong().get_search_results(artist + ' ' + track, 32)
-        split_array = query_results[0].split('; ')
-        song_id = None
         
-        if len(split_array) >= 2:                
+        if len(query_results) >= 1:                
             # song id is at [1] - 4,2,6,1
-            song_id = split_array[1]
+            song_id = query_results[0]['SongID']
             
             # check for song match
             song_id2 = None
-            if track.upper() != split_array[2].upper():
+            if track.upper() != query_results[0]['SongName'].upper():
                 #cylce through results to see if we can get and exact match
                 #otherwise use the first result
                 found_it = False
                 for x in range(1, len(query_results) - 1):
-                    y = query_results[x].split('; ')
-                    if (y[2].upper() == track.upper()) & (found_it != True):
-                        song_id2 = y[1]
+                    if (query_results[x]['SongName'].upper() == track.upper()) & (found_it != True):
+                        song_id2 = query_results[x]['SongID']
                         found_it = True
-                        break                           
-            
+                        break
+                        
             # check for artist match, if there's not a song match
-            if (artist.upper() != split_array[4].upper()) & (song_id2 == None):
+            if (artist.upper() != query_results[0]['ArtistName'].upper()) & (song_id2 == None):
                 # cycle through till will hit the right artist
                 found_it = False
                 for x in range(1, len(query_results) - 1):
-                    y = query_results[x].split('; ')
-                    if (y[4].upper() == artist.upper()) & (found_it != True):
-                        song_id = y[1]
+                    if (query_results[x]['ArtistName'].upper() == artist.upper()) & (found_it != True):
+                        song_id = query_results[x]['SongID']
                         found_it = True
                         break
             else:
