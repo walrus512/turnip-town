@@ -152,6 +152,7 @@ class DbFuncs(object):
         if folder_query > 2:
             t = t.replace(' music_id, file_name, folder_name, folder_path ', ' DISTINCT folder_name ')
             t = t.replace(' LIMIT ', ' ORDER BY folder_name LIMIT ')
+            t = t.replace('ORDER BY RANDOM()', '')
             #print t
         return t
         
@@ -178,10 +179,9 @@ class DbFuncs(object):
         c = conn.cursor()
            
         t = self.MakeQuery(query, qlimit, folder_query)#, with_count)
-        
+        #print t
         c.execute(t)
         h = c.fetchall()
-        #print t
         counter = 0
         for x in h:
             file_name = ''

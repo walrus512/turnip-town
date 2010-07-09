@@ -158,15 +158,15 @@ class MyPanel(wx.Panel):
         """Get some lyrics for the playing song"""
         #http://webservices.lyrdb.com/lookup.php?q=the%20shins|new%20slang&for=match&agent=agent
         
-        if self.parent.partist !='':
-            query_string_value = self.parent.partist + ' - ' + self.parent.ptrack
+        if self.parent.current_song.artist !='':
+            query_string_value = self.parent.current_song.artist + ' - ' + self.parent.current_song.song
             if self.current_song != query_string_value:
                 self.current_song = query_string_value
                 
             if self.rb_lyrics_lazy.GetValue() == True:
                 query_string = 'http://webservices.lyrdb.com/lookup.php?q=' + query_string_value + '&for=fullt&agent=GrooveWalrus/0.2'
             else:
-                query_string_value = self.parent.partist + '|' + self.parent.ptrack
+                query_string_value = self.parent.current_song.artist + '|' + self.parent.current_song.song
                 query_string = 'http://webservices.lyrdb.com/lookup.php?q=' + query_string_value + '&for=match&agent=GrooveWalrus/0.2'
             query_string = url_quote(query_string)
         
