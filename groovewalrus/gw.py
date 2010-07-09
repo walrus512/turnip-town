@@ -127,6 +127,9 @@ NB_OPTIONS = 8
 NB_ABOUT = 9
 WN_SEARCH = 99
 
+HICOLOR_1 = (110, 207, 106, 255)
+HICOLOR_2 = (200, 100, 150, 255)
+
 API_KEY = "13eceb51a4c2e0f825c492f04bf693c8"
 SECRET = ""
 LASTFM_CLIENT_ID = 'gws'
@@ -490,8 +493,6 @@ class MainPanel(wx.Panel):
         self.Bind(wx.EVT_RADIOBOX, self.SetBackend, id=xrc.XRCID('m_rx_options_backend'))
         self.Bind(wx.EVT_CHOICE, self.SetBackend, id=xrc.XRCID('m_ch_options_wxbackend'))
         
-
-        
         self.Bind(wx.EVT_BUTTON, self.OnUpdateClick, self.bb_update)
         wx.EVT_CLOSE(self.parent, self.OnExit)
            
@@ -540,20 +541,25 @@ class MainPanel(wx.Panel):
             #self.GetPlaylistFromDatabase()
             
         # load playlist history
-        self.FillPlaylistTree()            
+        self.FillPlaylistTree()
         
-        self.current_play_time = 0
-        self.current_track = -1
+        #initalize song class
+        self.current_song = CurrentSong(self)
+        #self.current_song.song_time_seconds = 0
+        #self.current_song.playlist_position = -1
+        
         # thread for playing a local track
         self.current_local = None
-        self.partist = ''
-        self.ptrack = ''
-        self.palbum = ''
+        
+        #self.current_song.artist = ''
+        #self.current_song.song = ''
+        #self.current_song.album = ''
         self.palbum_art_file =''
-        self.pmusic_id = 0
-        self.pgroove_id = 0
+        #self.current_song.track_id = 0
+        #self.current_song.groove_id = 0
+        
         self.download_percent = 0
-        self.pstatus = 'stopped'
+        #self.current_song.status = 'stopped'
         
         #temp for web types
         self.web_music_type = 'GrooveShark'
@@ -599,7 +605,7 @@ class MainPanel(wx.Panel):
         # scrobb ----------------
         self.scrobbed_active = 0
         self.auth_attempts = 0
-        self.scrobbed_track = 0
+        self.current_song.scrobble_song = 0
         self.session_key2 = None
         #self.SetScrobb()
         self.db_submit_complete = False
@@ -748,6 +754,9 @@ class MainPanel(wx.Panel):
             self.use_backend = 'wx.media'
         # ---------------------------------------------------------------
         
+        #pubsub receivers --------
+        self.LocalReceivers()
+        
         # volume control
         #check for txt, don't adjust volume if present
         if os.path.isfile('disable_set_volume.txt'):
@@ -798,6 +807,41 @@ class MainPanel(wx.Panel):
         
     def KillReceiver(self, target):
         pub.unsubscribe(target)
+        
+    def LocalReceivers(self):
+        pub.subscribe(self.AlbumReceiverAction, 'main.album')
+        pub.subscribe(self.SongIdReceiverAction, 'main.song_id')
+        pub.subscribe(self.TimeReceiverAction, 'main.song_time.text')
+        pub.subscribe(self.TimeSecondsReceiverAction, 'main.song_time.seconds')
+        
+    def AlbumReceiverAction(self, message):
+        # {'album':album, 'playlist_number':self.playlist_number}
+        # update playlist
+        self.lc_playlist.SetStringItem(message.data['playlist_number'], 2, message.data['album'])
+        self.current_song.album = message.data['album']
+        
+    def SongIdReceiverAction(self, message):        
+        # update playlist
+        self.lc_playlist.SetStringItem(message.data['playlist_number'], 3, message.data['song_id'])
+        #self.SavePlaylist(self.main_playlist_location)
+        
+    def TimeReceiverAction(self, message):        
+        # update playlist
+        t = message.data['time']
+        i = message.data['playlist_number']
+        #print message
+        #print message.data
+        if (t != '') & (i != -1):
+            self.lc_playlist.SetStringItem(i, 4, t)
+        #self.SavePlaylist(self.main_playlist_location)
+        
+    def TimeSecondsReceiverAction(self, message):        
+        # update playlist
+        self.lc_playlist.SetStringItem(message.data['playlist_number'], 4, self.ConvertTimeFormated(message.data['time_seconds']))
+        self.current_song.SetTimeSeconds(message.data['time_seconds'])
+        #self.SavePlaylist(self.main_playlist_location)
+
+    #------------------------      
     
     def SetBackend(self, event):
         #sets backend type, pymedia or wx.media
@@ -870,7 +914,7 @@ class MainPanel(wx.Panel):
     def SetScrobb(self):
         # set up scrobbing
         # should only be called on loading or if you change your setttings
-        self.scrobbed_track = 0
+        self.current_song.scrobble_song = 0
         self.scrobbed_active = 0
         username = self.tc_options_username.GetValue()
         password = self.tc_options_password.GetValue()
@@ -915,20 +959,20 @@ class MainPanel(wx.Panel):
         
     def OnTimer(self, event):
         # the heartbeat of the evil machine
-        #if (self.current_track >= 0) & (self.lc_playlist.GetItemCount() > 0) & (self.time_count < 2):            
-        #    self.ptrack = self.lc_playlist.GetItem(self.current_track, 1).GetText()
-        #    self.partist = self.lc_playlist.GetItem(self.current_track, 0).GetText()            
+        #if (self.current_song.playlist_position >= 0) & (self.lc_playlist.GetItemCount() > 0) & (self.time_count < 2):            
+        #    self.current_song.song = self.lc_playlist.GetItem(self.current_song.playlist_position, 1).GetText()
+        #    self.current_song.artist = self.lc_playlist.GetItem(self.current_song.playlist_position, 0).GetText()            
         
         self.pa_playback.Refresh()
         
-        if self.pstatus != 'paused':
+        if self.current_song.status != 'paused':
             self.time_count = self.time_count + 1
         
         # set time labels
         #if (self.st_status.GetLabelText() == 'playing'):
-        #    self.st_time.SetLabel(self.ConvertTimeFormated(self.current_play_time) + ' ' + self.ConvertTimeFormated(self.time_count))
+        #    self.st_time.SetLabel(self.ConvertTimeFormated(self.current_song.song_time_seconds) + ' ' + self.ConvertTimeFormated(self.time_count))
         #else:
-        #    self.st_time.SetLabel(self.ConvertTimeFormated(self.current_play_time))
+        #    self.st_time.SetLabel(self.ConvertTimeFormated(self.current_song.song_time_seconds))
             
         if self.time_count >= 12000:
             self.time_count = 0
@@ -939,49 +983,50 @@ class MainPanel(wx.Panel):
         # play time around 70%
         # don't try to autherize until you've started playing a track
             
-        if self.current_play_time != 0:
+        if self.current_song.song_time_seconds != 0:
         
-            if (self.auth_attempts == 0) & (self.scrobbed_active == 0) & (float(self.time_count) / float(self.current_play_time) > .4):
+            if (self.auth_attempts == 0) & (self.scrobbed_active == 0) & (float(self.time_count) / float(self.current_song.song_time_seconds) > .4):
                 self.auth_attempts = 1
                 self.SetScrobb()
                 
-            if (float(self.time_count) / float(self.current_play_time) > .7) & (self.gobbled_track != 1) & (self.pstatus != "stopped"):
+            if (float(self.time_count) / float(self.current_song.song_time_seconds) > .7) & (self.gobbled_track != 1) & (self.current_song.status != "stopped"):
                 #save stats for local db
                 self.gobbled_track = 1
                 #THREAD
                 #print song_id
-                ti = WebFetchThread(self, self.partist, self.ptrack, self.palbum, 'SONGINFO')
+                ti = WebFetchThread(self, self.current_song.artist, self.current_song.song, self.current_song.album, 'SONGINFO')
                 #THREAD
                 ti.start()
                 
-            if (self.db_submit_complete == False) & (float(self.time_count) / float(self.current_play_time) > .98):
+            if (self.db_submit_complete == False) & (float(self.time_count) / float(self.current_song.song_time_seconds) > .98):
                 # add 'complete' to played table ==
-                q_track_id = local_songs.DbFuncs().GetTrackId(self.pgroove_id, self.pmusic_id, self.partist, self.ptrack)
+                q_track_id = local_songs.DbFuncs().GetTrackId(self.current_song.groove_id, self.current_song.track_id, self.current_song.artist, self.current_song.song)
                 local_songs.DbFuncs().InsertPlayedData(q_track_id, played_type_id=1)
                 self.db_submit_complete = True
                 #==================================
         
-            if (float(self.time_count) / float(self.current_play_time) > .6) & (self.scrobbed_track != 1) & (self.scrobbed_active == 1) & (self.pstatus != "stopped"):
+            if (float(self.time_count) / float(self.current_song.song_time_seconds) > .6) & (self.current_song.scrobble_song != 1) & (self.scrobbed_active == 1) & (self.current_song.status != "stopped"):
                 time_started = str(int(time.time()))
-                self.scrobbed_track = 1
+                self.current_song.scrobble_song = 1
                 port = self.rx_options_scrobble_port.GetSelection()
                 s_album=''
                 if self.cb_options_scrobble_album.GetValue() == 1:
-                    s_album=self.palbum
+                    s_album=self.current_song.album
                 #check checkbox to see if we should scrobble
                 if self.cb_options_scrobble.GetValue() == 1:
                     try:
-                        self.song_scrobb.scrobble(self.partist, self.ptrack, time_started, 'P', 'L', self.current_play_time, s_album, "", "", port)
+                        self.song_scrobb.scrobble(self.current_song.artist, self.current_song.song, time_started, 'P', 'L', self.current_song.song_time_seconds, s_album, "", "", port)
                         print 'scobbled'
                         #album=""
                     except pylast.BadSession:
                         self.SetScrobb()
-                        self.song_scrobb.scrobble(self.partist, self.ptrack, time_started, 'P', 'L', self.current_play_time, s_album, "", "", port)
+                        self.song_scrobb.scrobble(self.current_song.artist, self.current_song.song, time_started, 'P', 'L', self.current_song.song_time_seconds, s_album, "", "", port)
                         #pylast.BadSession:
                         
             if self.cb_options_prefetch.GetValue() == False:
                 self.prefetch = False
-            if (float(self.time_count) / float(self.current_play_time) > .5) & (self.prefetch == True):
+
+            if (float(self.time_count) / float(self.current_song.song_time_seconds) > .5) & (self.prefetch == True):
                 #let's fetch the next track if possible
                 print 'pre-fetching...'
                 self.prefetch = False                
@@ -1002,7 +1047,7 @@ class MainPanel(wx.Panel):
                         current2.start()
             
         # check if we should go to the next track   
-        if (self.current_play_time > 0) & (self.time_count > self.current_play_time) & (self.pstatus != "stopped"):
+        if (self.current_song.song_time_seconds > 0) & (self.time_count > self.current_song.song_time_seconds) & (self.current_song.status != "stopped"):
             #print 'next-track'
             if self.current_local != None:
                 self.current_local.stop()
@@ -1012,17 +1057,17 @@ class MainPanel(wx.Panel):
                 #self.recording_status = False
             playlist_total = self.lc_playlist.GetItemCount()
             if (self.repeat_toggle == True) & (self.repeat_toggle_type == 'One'):
-                self.PlaySong(self.current_track)
-            elif  (playlist_total - 1) > self.current_track:
+                self.PlaySong(self.current_song.playlist_position)
+            elif  (playlist_total - 1) > self.current_song.playlist_position:
                 # play next track
-                self.PlaySong(self.current_track + 1)
+                self.PlaySong(self.current_song.playlist_position + 1)
             else:
                 # go back to the start, if repeat is set
                 if (self.repeat_toggle) | (self.random_toggle) == True:
                     self.PlaySong(0)
                 else:
                 #we've reached teh end, the end my friend
-                    self.pstatus = 'stopped'
+                    self.current_song.status = 'stopped'
                     self.SetPlayButtonGraphic('play')
         # check if we should start recording
         #print self.st_status.GetLabelText()
@@ -1034,7 +1079,7 @@ class MainPanel(wx.Panel):
             #80, 128, 192, 256, 320
             #bitrate = 1000 * int(self.ch_options_bitrate.GetStringSelection())
             #record_dir = self.bu_options_record_dir.GetLabel()
-            #self.recorder.record(self.partist, self.ptrack, record_dir, bitrate)
+            #self.recorder.record(self.current_song.artist, self.current_song.song, record_dir, bitrate)
             #self.recording_status = True
         
             
@@ -1175,7 +1220,7 @@ class MainPanel(wx.Panel):
         self.BackupList()
         if self.cb_options_list_clear.GetValue():
             self.lc_playlist.DeleteAllItems()
-            self.current_track = -1
+            self.current_song.playlist_position = -1
             
     def OnAboutClick(self, event):
         options_window.Options(self).ShowAbout(PROGRAM_NAME, PROGRAM_VERSION)
@@ -1337,13 +1382,13 @@ class MainPanel(wx.Panel):
     def OnPlayClick(self, event):
         #handles playing and pausing                
 
-        if self.pstatus == 'paused':
+        if self.current_song.status == 'paused':
             self.TogglePause()
-            self.pstatus = 'playing'
+            self.current_song.status = 'playing'
             self.SetPlayButtonGraphic('pause')            
-        elif (self.pstatus == 'playing'):
+        elif (self.current_song.status == 'playing'):
             self.TogglePause()
-            self.pstatus = 'paused'
+            self.current_song.status = 'paused'
             self.SetPlayButtonGraphic('play')
         else:
             val = self.lc_playlist.GetFirstSelected()
@@ -1380,7 +1425,7 @@ class MainPanel(wx.Panel):
             self.current_local.pause()
         #wx.media
         self.mediaPlayer.Pause()
-        if self.pstatus == 'paused':
+        if self.current_song.status == 'paused':
             self.mediaPlayer.Play()
             
     def OnPlayListPlayClick(self, event):
@@ -1392,25 +1437,18 @@ class MainPanel(wx.Panel):
             
     def OnStopClick(self, event):
         # pymedia stop local thread
-        if self.current_local != None:
-            self.current_local.stop()        
-        #wx.media
-        self.mediaPlayer.Stop()
-        #flash
-        self.StopFlashSong()
+        self.StopAll()
         
         # add 'stopped' to played table ==
-        if self.pstatus == 'playing':
-            q_track_id = local_songs.DbFuncs().GetTrackId(self.pgroove_id, self.pmusic_id, self.partist, self.ptrack)
+        if self.current_song.status == 'playing':
+            q_track_id = local_songs.DbFuncs().GetTrackId(self.current_song.groove_id, self.current_song.track_id, self.current_song.artist, self.current_song.song)
             local_songs.DbFuncs().InsertPlayedData(q_track_id, played_type_id=2)
         #=================================
         
-        self.pstatus = 'stopped'
+        self.current_song.status = 'stopped'
         self.download_percent = 0
         
         self.SetPlayButtonGraphic('play')
-        
-
         
     def LoadFlashSong(self, url, artist, track):
         #
@@ -1431,8 +1469,8 @@ class MainPanel(wx.Panel):
     def OnForwardClick(self, event):
     
         # add 'skipped' to played table ==
-        if self.pstatus == 'playing':
-            q_track_id = local_songs.DbFuncs().GetTrackId(self.pgroove_id, self.pmusic_id, self.partist, self.ptrack)
+        if self.current_song.status == 'playing':
+            q_track_id = local_songs.DbFuncs().GetTrackId(self.current_song.groove_id, self.current_song.track_id, self.current_song.artist, self.current_song.song)
             local_songs.DbFuncs().InsertPlayedData(q_track_id, played_type_id=3)
         #=================================
     
@@ -1450,8 +1488,8 @@ class MainPanel(wx.Panel):
     def OnBackwardClick(self, event):
     
         #== add 'skipped' to played table ==
-        if self.pstatus == 'playing':
-            q_track_id = local_songs.DbFuncs().GetTrackId(self.pgroove_id, self.pmusic_id, self.partist, self.ptrack)
+        if self.current_song.status == 'playing':
+            q_track_id = local_songs.DbFuncs().GetTrackId(self.current_song.groove_id, self.current_song.track_id, self.current_song.artist, self.current_song.song)
             local_songs.DbFuncs().InsertPlayedData(q_track_id, played_type_id=4)
         #===================================
     
@@ -1466,282 +1504,157 @@ class MainPanel(wx.Panel):
             #nothing is slected
             self.PlaySong(0)
             
-# --------------------------------------------------------- 
-# play functions------------------------------------------- 
-    def PlaySong(self, playlist_number, clicked=False):
-        # play passed song, clicked = True if user clicked to play
+    def StopAll(self):
+        #stop all playback
         if self.current_local != None:
             self.current_local.stop()
         if self.use_web_music == True:
             self.StopFlashSong()
         self.mediaPlayer.Stop()
+            
+# --------------------------------------------------------- 
+# play functions------------------------------------------- 
+    def PlaySong(self, playlist_number, clicked=False):
+        # play passed song, clicked = True if user clicked to play
         
+        # stop current song --------
+        self.StopAll()
+
+        #---------------------------------------
         self.gobbled_track = 0
-        #self.ga_download.SetValue(0)
         self.download_percent = 0
         self.prefetch = True
-
-                                 
+        self.current_song.status = 'loading'
+        
+        #---------------------------------------                         
         # check for random
         if (self.random_toggle == True) & (clicked == False):
             playlist_number = random.randint(0, (self.lc_playlist.GetItemCount() - 1))
             # picks the same song again doesn't reload the flash file
 
-        # verfiy that playlist number is valid:
+        # verify that playlist number is valid:
         if playlist_number > (self.lc_playlist.GetItemCount() -1):
             playlist_number = 0
+            
+        #--------------------------------------- 
+        cs = self.current_song
+        cs.playlist_position = playlist_number
+        cs.artist = self.lc_playlist.GetItem(playlist_number, 0).GetText()
+        cs.song = self.lc_playlist.GetItem(playlist_number, 1).GetText()
+        cs.album = self.lc_playlist.GetItem(playlist_number, 2).GetText()
+        cs.song_id = str(self.lc_playlist.GetItem(playlist_number, 3).GetText())
+        cs.song_time = self.lc_playlist.GetItem(playlist_number, 4).GetText()
+        
+        
+        #cs = CurrentSong(self, playlist_number, self.current_song.artist, self.current_song.song, self.current_song.album, song_id, duration)
+
+        #check the id
+        cs.CheckId(cs.song_id)
+        #check the album
+        cs.CheckAlbum(cs.album)
+        
+        #focus on the current song
         self.lc_playlist.Focus(playlist_number)
+        # unselect last played 
+        self.lc_playlist.Select(playlist_number, 0)
         
-        # lets check to see if there's a song id
-        # if not, search, and then play -> play on demand
-        # otherwise lets just play the song
-                
-        track = self.lc_playlist.GetItem(playlist_number, 1).GetText()
-        artist = self.lc_playlist.GetItem(playlist_number, 0).GetText()
-        album = self.lc_playlist.GetItem(playlist_number, 2).GetText()
-        duration = self.lc_playlist.GetItem(playlist_number, 4).GetText()
-        lolight = (110, 207, 106, 255)
-        medlight = (200, 100, 150, 255)        
-        song_id = str(self.lc_playlist.GetItem(playlist_number, 3).GetText())
-        #print song_id
-        #old_groove_id = ''
-        if os.path.isfile(song_id) == False:            
-            if song_id.isdigit() == True:
-                pass
-            #    old_groove_id = song_id
-            #check whether to keep the existing groveshark id
-            else:
-                song_id = ''
-        else:
-            query_string = artist + ' ' + track
-            query_results = local_songs.DbFuncs().GetResultsArray(query_string, 1, True)
-            if len(query_results) == 1:
-                self.pmusic_id = query_results[0][0]
-                self.pgroove_id = 0
-                        
-        if album=='':            
-            album_array = musicbrainz.Brainz().get_song_info(artist, track)
-            album = album_array[1]
-            self.lc_playlist.SetStringItem(playlist_number, 2, album)
-            self.SavePlaylist(self.main_playlist_location)
-        
-        if (song_id =='') & (len(artist) > 0) & (len(track) > 0):
-            # query for song id, so we can play the file
-            #print "no song id"
-            query_string = artist + ' ' + track
+        #-----------------------------------
+        if (cs.song_id.endswith('.mp3') == True):
+            sts = local_songs.GetMp3Length(cs.song_id)
+            cs.SetSongTimeSeconds(sts)
+            cs.SetSongTime(self.ConvertTimeFormated(sts))
             
-            # check locally for song
-            #query_results = local_songs.GetResults(query_string, 1)
-            query_results = local_songs.DbFuncs().GetSpecificResultArray(query_string, artist, track)
-            #GetResultsArray(query, qlimit, with_count=False, folder_query=1)
-            if len(query_results) >= 1:
-                #song_id = str(query_results[0])
-                song_id = str(query_results[0][4])
-                self.pmusic_id = query_results[0][0]
-                self.pgroove_id = 0
-            #check if file exists
-            if os.path.isfile(song_id):
-                self.lc_playlist.SetStringItem(playlist_number, 3, song_id)
-                loc_album = local_songs.GetMp3Album(song_id)
-                if len(loc_album) >= 1:
-                    album = loc_album
-                    self.lc_playlist.SetStringItem(playlist_number, 2, album)
-                self.SavePlaylist(self.main_playlist_location)
-            # try grooveshark
-            else:
-                query_results = tinysong.Tsong().get_search_results(query_string, 32)
-                #split_array = query_results[0].split('; ')
-                #print query_results
-                #*** change this stuff, change it in prefetch.py too
-                if len(query_results) >= 1:                
-                    # song id is at [1] - 4,2,6,1
-                    #song_id = split_array[1]
-                    song_id = query_results[0]['SongID']
-                    # let's check for album and update that too
-                    if (album =='') & (query_results[0]['AlbumName'] != ''):
-                        album = query_results[0]['AlbumName']
-                        self.lc_playlist.SetStringItem(playlist_number, 2, album)
-                    #print artist
-                    #print split_array[4]
-                    
-                    # check for song match
-                    if track.upper() != query_results[0]['SongName'].upper():
-                        #cylce through results to see if we can get and exact match
-                        #otherwise use the first result
-                        found_it = False
-                        for x in range(1, len(query_results) - 1):                            
-                            if (query_results[x]['SongName'].upper() == track.upper()) & (found_it != True):
-                                song_id = query_results[x]['SongID']
-                                self.lc_playlist.SetStringItem(playlist_number, 3, song_id)
-                                self.SavePlaylist(self.main_playlist_location)
-                                found_it = True                           
-                    
-                    # check for artist match
-                    if artist.upper() != query_results[0]['ArtistName'].upper():
-                        # cycle through till will hit the right artist
-                        found_it = False
-                        for x in range(1, len(query_results) - 1):                            
-                            if (query_results[x]['ArtistName'].upper() == artist.upper()) & (found_it != True):
-                                song_id = query_results[x]['SongID']
-                                self.lc_playlist.SetStringItem(playlist_number, 3, song_id)
-                                self.SavePlaylist(self.main_playlist_location)
-                                found_it = True
-                        if found_it == False:
-                            self.lc_playlist.SetItemBackgroundColour(playlist_number, lolight)                    
-                            # don't scrobb the wrong song
-                            self.scrobbed_track = 1
-                            self.lc_playlist.SetStringItem(playlist_number, 3, song_id)
-                    #update playlist
-                    else:
-                        self.lc_playlist.SetStringItem(playlist_number, 3, song_id)
-                        self.SavePlaylist(self.main_playlist_location)
-                else:
-                    # we fucked
-                    #print "no search results -- fucked"
-                    self.lc_playlist.SetItemBackgroundColour(playlist_number, medlight)
-                    self.pstatus = 'stopped'
-                    
-                    # *** skip to next track
-                    
-                # set negative so it has time to load
-        
-        # throw together a url      
-        url = PLAY_SONG_URL + song_id
-        ###if self.cb_options_alternate.GetValue():
-        ### disabled, no real need for this, i think?
-            #use the main page instead of the widget
-            # http://listen.grooveshark.com/#/song/One/21880276            
-            ###url = PLAY_SONG_ALTERNATE_URL + song_id
-        #print url    
-        
-        if (song_id.endswith('.mp3') == True):
-            track_time = local_songs.GetMp3Length(song_id)
-        
-        #get song time
-        if (duration =='') or (duration == '0:00'):
-            if (song_id.endswith('.mp3') == True):
-                track_time = local_songs.GetMp3Length(song_id)
-            else:
-                track_time = musicbrainz.Brainz().get_song_time(artist, track)
-                #print track_time
-                #print artist
-                #print track
-            self.lc_playlist.SetStringItem(playlist_number, 4, self.ConvertTimeFormated(track_time))
-            self.SavePlaylist(self.main_playlist_location)
-        else:           
-            track_time = self.ConvertTimeSeconds(duration)
-            
-        
-        self.current_play_time = track_time
-        if track_time == 0:
-            #guess that the song is about 200 seconds
-            #self.current_play_time = 200
+        if cs.song_time_seconds == 0:
+            #set a default time
             wminutes = self.sc_options_song_minutes.GetValue()
             wseconds = self.sc_options_song_seconds.GetValue()
-            wformated_time = str(wminutes) + ':' + str(wseconds)            
-            self.current_play_time = self.ConvertTimeSeconds(wformated_time)
-            #track_time = 200
-            # change the list item colour, so user can go fix the details later
-            ##highlight = (255, 210, 0, 255)            
-            ##self.lc_playlist.SetItemBackgroundColour(playlist_number, highlight)
+            wformated_time = str(wminutes) + ':' + str(wseconds)
+            cs.SetSongTime(wformated_time)            
+            cs.song_time_seconds = self.ConvertTimeSeconds(wformated_time)
             
-        # unselect last played 
-        self.lc_playlist.Select(self.current_track, 0)
-        
-        self.current_track = playlist_number
-        #print track_time
-        if (self.use_web_music == True) & ((len(song_id) >= 1) & (len(song_id.split('/')) < 2)):
-            print 'webmusic'
-            self.time_count = self.sc_options_gs_wait.GetValue() * -1
-            
-            self.LoadFlashSong(url, artist, track)            
+            #check the internet
+            FetchTimeThread(cs.playlist_position, cs.artist, cs.song)
 
-            #self.st_track_info.SetLabel(artist + ' - ' + track)
-            self.pstatus = 'playing'
-            self.pgroove_id = song_id
-            self.pmusic_id = 0
+        #-----------------------------------
+        if (self.use_web_music == True) & ((len(cs.song_id) >= 1) & (len(cs.song_id.split('/')) < 2)):
+            #use flash webmusic
+            print 'webmusic'
+            #add delay
+            self.time_count = self.sc_options_gs_wait.GetValue() * -1            
+            self.LoadFlashSong(cs.url, cs.artist, cs.song)
+            cs.status = 'playing'            
+            cs.groove_id = cs.song_id
+            cs.track_id = 0
             
-        elif (len(song_id) >= 1) & (len(song_id.split('/')) < 2):
-        #grooveshark song
-            self.time_count = -1            
-            
+        elif (len(cs.song_id) >= 1) & (len(cs.song_id.split('/')) < 2):
+            #grooveshark song
+            self.time_count = -1
             temp_dir = system_files.GetDirectories(self).TempDirectory()
-            file_name_plain = artist + '-' + track + '.mp3'
+            file_name_plain = cs.artist + '-' + cs.song + '.mp3'
             # clean cache dir
             file_cache.CheckCache(temp_dir)
             # check if file previously cached
             cached_file = file_cache.CreateCachedFilename(temp_dir, file_name_plain)
             cached_file_name = cached_file[0]
-            if cached_file[1] == False:
-                
+            if cached_file[1] == False:                
                 #download file
                 #THREAD
-                current = FileThread(self, cached_file_name, song_id, track, artist, album)
-                ##current = FileThread(self, g_song._lastStreamKey, g_song._lastStreamServer, cached_file_name, file_size)
-                #THREAD
+                current = FileThread(self, cached_file_name, cs.song_id, cs.song, cs.artist, cs.album)                
                 current.start()
             else:
-                self.current_play_time = local_songs.GetMp3Length(cached_file_name)
-                                
+                cs.SetSongTimeSeconds(local_songs.GetMp3Length(cached_file_name))            
+            
+            #-------------------------------------
             #play song
             if self.use_backend == 'pymedia':
                 # pymedia ------
                 #THREAD
-                #print song_id
                 self.current_local = WebFetchThread(self, '', cached_file_name, '', 'PLAYLOCAL')
-                #THREAD
                 self.current_local.start()
             else:
                 # wx.media ------
                 self.LoadWxMedia(cached_file_name)
-
-            #self.st_track_info.SetLabel(artist + ' - ' + track)
-            self.pstatus ='playing'
-            self.pgroove_id = song_id
-            self.pmusic_id = 0
-        elif os.path.isfile(song_id): #len(song_id) > 2 & (len(song_id.split('/')) > 1):
+            
+            cs.status ='playing'
+            cs.groove_id = cs.song_id
+            cs.music_id = 0
+        elif os.path.isfile(cs.song_id):
         # local file
             self.time_count = -2
             if self.use_backend == 'pymedia':
                 # pymedia ------
-                #THREAD
-                #print song_id
-                self.current_local = WebFetchThread(self, '', song_id, '', 'PLAYLOCAL')
-                #THREAD
+                #THREAD                
+                self.current_local = WebFetchThread(self, '', cs.song_id, '', 'PLAYLOCAL')
                 self.current_local.start()
-                #print self.current_local
-                #self.st_track_info.SetLabel(artist + ' - ' + track)
             else:
                 # wx.media -----
-                self.LoadWxMedia(song_id)
-            
-            self.pstatus = 'playing'
-
+                self.LoadWxMedia(cs.song_id)            
+            cs.status = 'playing'
         else:
-             self.scrobbed_track = 1
-             self.pstatus = 'stopped'
+             cs.scrobble_song = 1
+             cs.status = 'stopped'
              
-        if self.pstatus == 'playing':
-            self.parent.SetTitle(artist + '-' + track + ' - ' + PROGRAM_NAME + ' ' + PROGRAM_VERSION)
-            self.lc_playlist.Select(playlist_number)
+        if cs.status == 'playing':
+            self.parent.SetTitle(cs.artist + '-' + cs.song + ' - ' + PROGRAM_NAME + ' ' + PROGRAM_VERSION)
+            #self.lc_playlist.Select(playlist_number)
             if os.name == 'nt':
-                self.GetSongArt(artist, album)
-                self.GetArtistBio(artist)
-            self.ptrack = track
-            self.partist = artist
-            self.palbum = album
-            self.scrobbed_track = 0
+                self.GetSongArt(cs.artist, cs.album)
+                self.GetArtistBio(cs.artist)
+                
+            cs.scrobble_song = 0            
             self.db_submit_complete = False
             
             # add 'start' to played table ==
-            q_track_id = local_songs.DbFuncs().GetTrackId(self.pgroove_id, self.pmusic_id, self.partist, self.ptrack)
+            q_track_id = local_songs.DbFuncs().GetTrackId(cs.groove_id, cs.track_id, cs.artist, cs.song)
             local_songs.DbFuncs().InsertPlayedData(q_track_id, played_type_id=0)
             #===============================
-            
-            # publish to pubsub
-            pub.sendMessage('main.playback', {'artist':self.partist, 'song':self.ptrack})            
 
-        
+            # publish to pubsub
+            pub.sendMessage('main.playback', {'artist':cs.artist, 'song':cs.song})
+            self.SavePlaylist(self.main_playlist_location)
+            print cs
+# ---------------------------------------------------------  
+       
     def ConvertTimeFormated(self, seconds):
         # convert seconds to mm:ss
         return str(float(seconds) / float(60)).split('.')[0] + ':' + str(abs(seconds) % 60).zfill(2)
@@ -2541,11 +2454,11 @@ class MainPanel(wx.Panel):
         # figure out where we should get the artist/song/ablum info to search on
         artist = self.tc_last_search_artist.GetValue()        
         if len(artist) == 0:
-            artist = self.partist #st_track_info.GetLabel().split(' - ', 1)[0]
+            artist = self.current_song.artist #st_track_info.GetLabel().split(' - ', 1)[0]
             
         song = self.tc_last_search_song.GetValue()        
         if len(song) == 0:
-            song = self.ptrack #st_track_info.GetLabel().split(' - ', 1)
+            song = self.current_song.song #st_track_info.GetLabel().split(' - ', 1)
                 
         album = self.tc_last_search_album.GetValue()
         return artist, song, album
@@ -2860,8 +2773,8 @@ class MainPanel(wx.Panel):
         track_list = []
         # just get the current track playing, use artist/song to get album info
         
-        artist = self.partist
-        song = self.ptrack
+        artist = self.current_song.artist
+        song = self.current_song.song
         self.tc_album_search_artist.SetValue(artist)
         self.tc_album_search_song.SetValue(song)
         
@@ -3095,7 +3008,175 @@ class MainPanel(wx.Panel):
     
 
 # --------------------------------------------------------- 
+
+class CurrentSong():
+    """Nice things about the current song"""
+    def __init__(self, parent, playlist_position=-1, artist='', song='', album='', song_id='', song_time=''):
+        self.parent = parent
+        self.playlist_position = playlist_position
+        self.song = song
+        self.artist = artist
+        self.album = album
+        self.song_time = song_time
+        self.song_time_seconds = 0
+        self.song_id = song_id        
+        self.song_type = 'local'
+        self.song_url = ''
+        #self.album_graphic = ''
+        #self.artist_graphic = ''
+        self.status = 'stopped'
+        self.groove_id = 0
+        self.track_id = 0
+        self.scrobbed_song = 0
+        #self.CheckId(song_id)
         
+    def __str__(self):        
+        print '   artist:   ' + str(self.artist)
+        print '     song:   ' + str(self.song)
+        print '    album:   ' + str(self.album)
+        print '  song_id:   ' + str(self.song_id)
+        print ' track_id:   ' + str(self.track_id)
+        print 'groove_id:   ' + str(self.groove_id)
+        return '---end----'
+        
+    def SetAlbum(self, album, artist, song):
+        if (artist == self.artist) & (song == self.song):
+            self.album = album
+        
+    def SetSongTime(self, song_time):
+        self.song_time = song_time
+        pub.sendMessage('main.song_time.text', {'time':self.song_time, 'playlist_number':self.playlist_position})
+        
+    def SetSongTimeSeconds(self, song_time_seconds):
+        self.song_time_seconds = song_time_seconds        
+
+    def SetStatus(self, status):
+        self.status = status
+        
+    def CheckId(self, song_id):
+        #checks if song is local or not
+        if os.path.isfile(song_id) == False:
+            #digit is grooveshark id
+            if song_id.isdigit() == True:
+                self.groove_id = song_id
+            else:
+                self.song_id = ''
+        else:
+            #it's a local song
+            query_string = self.artist + ' ' + self.song
+            query_results = local_songs.DbFuncs().GetResultsArray(query_string, 1, True)
+            if len(query_results) == 1:
+                self.track_id = query_results[0][0]
+                self.groove_id = 0
+
+        if (self.song_id =='') & (len(self.artist) > 0) & (len(self.song) > 0):
+            # query for song id, so we can play the file            
+            query_string = self.artist + ' ' + self.song
+            # check locally for song
+            query_results = local_songs.DbFuncs().GetSpecificResultArray(query_string, self.artist, self.song)            
+            if len(query_results) >= 1:                
+                self.song_id = str(query_results[0][4])
+                self.track_id = query_results[0][0]
+                
+                #pub.sendMessage('main.song_id', {'song_id':self.song_id, 'playlist_number':self.playlist_position})
+                self.groove_id = 0
+                
+            #check if file exists
+            if os.path.isfile(self.song_id):                
+                pub.sendMessage('main.song_id', {'song_id':self.song_id, 'playlist_number':self.playlist_position})
+                album = local_songs.GetMp3Album(self.song_id)
+                if (len(album) >= 1) & (len(self.album) <1):
+                    self.album = album
+                    pub.sendMessage('main.album', {'album':self.album, 'playlist_number':self.playlist_position})
+            # try grooveshark
+            else:
+                #grab results from tinysong
+                query_results = tinysong.Tsong().get_search_results(query_string, 32)
+                #*** change this stuff, change it in prefetch.py too
+                if len(query_results) >= 1:                
+                    song_id = query_results[0]['SongID']
+                    # let's check for album and update that too
+                    if (self.album =='') & (query_results[0]['AlbumName'] != ''):
+                        self.album = query_results[0]['AlbumName']
+                        pub.sendMessage('main.album', {'album':self.album, 'playlist_number':self.playlist_position})
+                    
+                    # check for song match
+                    if self.song.upper() != query_results[0]['SongName'].upper():
+                        #cylce through results to see if we can get and exact match
+                        #otherwise use the first result
+                        found_it = False
+                        for x in range(1, len(query_results) - 1):                            
+                            if (query_results[x]['SongName'].upper() == self.song.upper()) & (found_it != True):
+                                self.song_id = query_results[x]['SongID']
+                                pub.sendMessage('main.song_id', {'song_id':self.song_id, 'playlist_number':self.playlist_position})                                
+                                found_it = True                           
+                    
+                    # check for artist match
+                    if self.artist.upper() != query_results[0]['ArtistName'].upper():
+                        # cycle through till will hit the right artist
+                        found_it = False
+                        for x in range(1, len(query_results) - 1):                            
+                            if (query_results[x]['ArtistName'].upper() == self.artist.upper()) & (found_it != True):
+                                song_id = query_results[x]['SongID']
+                                pub.sendMessage('main.song_id', {'song_id':self.song_id, 'playlist_number':self.playlist_position})
+                                found_it = True
+                        if found_it == False:
+                            self.parent.lc_playlist.SetItemBackgroundColour(self.playlist_position, HICOLOR_1)
+                            # don't scrobb the wrong song
+                            self.scrobbed_song = 1
+                            pub.sendMessage('main.song_id', {'song_id':self.song_id, 'playlist_number':self.playlist_position})
+                    #update playlist
+                    else:
+                        pub.sendMessage('main.song_id', {'song_id':self.song_id, 'playlist_number':self.playlist_position})
+                else:                    
+                    #no search results found
+                    self.parent.lc_playlist.SetItemBackgroundColour(self.playlist_position, HICOLOR_2)
+                    self.status = 'stopped'
+                    # ***skip to next track
+                    
+        self.song_url = PLAY_SONG_URL + self.song_id 
+                    
+    def CheckAlbum(self, album):
+        if album=='':
+            at = FetchAlbumThread(self.artist, self.song, self.playlist_position)
+            at.run()
+        #else:
+            # publish to pubsub
+            #pub.sendMessage('main.album', {'album':self.album, 'playlist_number':self.playlist_position})
+
+
+#---------------------------------------------------------------------------
+# ####################################
+class FetchAlbumThread(Thread):
+    #grab the album name
+    #check current track, verify that it still matches, update album name
+    #publish to pubsub when album is retrived, so it can grab album art
+    def __init__(self, artist, song, playlist_number):        
+        self.artist = artist
+        self.song = song
+        self.playlist_number = playlist_number
+        
+    def run(self):
+        album_array = musicbrainz.Brainz().get_song_info(self.artist, self.song)
+        album = album_array[1]
+        print '::album::' + album
+        pub.sendMessage('main.album', {'album':album, 'playlist_number':self.playlist_number})
+
+#---------------------------------------------------------------------------
+# ####################################
+class FetchTimeThread(Thread):
+    #grab the album name
+    #check current track, verify that it still matches, update album name
+    #publish to pubsub when album is retrived, so it can grab album art
+    def __init__(self, playlist_number, artist, song):        
+        self.artist = artist
+        self.song = song
+        self.playlist_number = playlist_number
+        
+    def run(self):
+        track_time = musicbrainz.Brainz().get_song_time(self.artist, self.song)        
+        pub.sendMessage('main.song_time.seconds', {'time_seconds':track_time, 'playlist_number':self.playlist_number})
+
 #---------------------------------------------------------------------------
 # ####################################
 class WebFetchThread(Thread): 
@@ -3235,9 +3316,9 @@ class WebFetchThread(Thread):
             if len(res[2]) >=1:
                 tag_id = local_songs.DbFuncs().InsertTagData(res[2])
             #print tag_id
-            grooveshark_id = self.panel.pgroove_id
-            music_id = self.panel.pmusic_id
-            track_time = self.panel.current_play_time
+            grooveshark_id = self.panel.current_song.groove_id
+            music_id = self.panel.current_song.track_id
+            track_time = self.panel.current_song.song_time_seconds
             #tag_id = ''            
             album_art_file = self.panel.palbum_art_file
             track_id = local_songs.DbFuncs().InsertTrackData(grooveshark_id, music_id, track_time, tag_id, self.artist, self.song, self.album, album_art_file)#p_grooveshark_id, p_music_id, p_track_time, p_tag_id, p_artist, p_song, p_album, p_album_art_file)
@@ -3358,7 +3439,6 @@ class ProgressThread(Thread):
             time.sleep(1)
 #---------------------------------------------------------------------------
 # ####################################
-
 class TreeListCtrlXmlHandler(xrc.XmlResourceHandler):
     def __init__(self):
         xrc.XmlResourceHandler.__init__(self)

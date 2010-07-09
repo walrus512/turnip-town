@@ -39,7 +39,7 @@ class PreFetch(object):
         #find next non-local, non-cached file
         #currently playing track
         #self.parent.current_track
-        for playlist_number in range(self.parent.current_track, self.parent.lc_playlist.GetItemCount(), 1):
+        for playlist_number in range(self.parent.current_song.playlist_position, self.parent.lc_playlist.GetItemCount(), 1):
             artist =    self.parent.lc_playlist.GetItem(playlist_number, 0).GetText()
             track =     self.parent.lc_playlist.GetItem(playlist_number, 1).GetText()
             album =     self.parent.lc_playlist.GetItem(playlist_number, 2).GetText()
