@@ -311,8 +311,11 @@ class FetchThread(Thread):
         #http://www.lyrdb.com/getlyr.php?q=id
         lyrics_query = 'http://www.lyrdb.com/getlyr.php?q=' + lyrics_id
         lyrics_query = url_quote(lyrics_query)
-        url_connection = urllib.urlopen(lyrics_query.replace(' ', '+'))
-        raw_results = url_connection.read()
+        try:
+            url_connection = urllib.urlopen(lyrics_query.replace(' ', '+'))
+            raw_results = url_connection.read()
+        except Exception, expt:
+            raw_results = str(Excpetion) + ' ' + str(expt)
         #print raw_results                
         #get rid of double spacing
         #print raw_results.split('\n\n\n\n')

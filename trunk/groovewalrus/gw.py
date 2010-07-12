@@ -891,7 +891,12 @@ class MainPanel(wx.Panel):
             GRAPHICS_LOCATION + 'weather-storm.png', 
             GRAPHICS_LOCATION + 'weather-overcast.png', 
             GRAPHICS_LOCATION + 'weather-few-clouds.png', 
-            GRAPHICS_LOCATION + 'weather-clear.png'
+            GRAPHICS_LOCATION + 'weather-clear.png',
+            GRAPHICS_LOCATION + 'arrow-down-table.png', 
+            GRAPHICS_LOCATION + 'arrow-up-table.png', 
+            GRAPHICS_LOCATION + 'arrow-right-table.png',
+            GRAPHICS_LOCATION + 'arrow-left-table.png',
+            GRAPHICS_LOCATION + 'arrow-empty-table.png'
             ]
         for file_name in image_files:
             bmp = wx.Bitmap(file_name, wx.BITMAP_TYPE_PNG)
@@ -905,6 +910,21 @@ class MainPanel(wx.Panel):
             GRAPHICS_LOCATION + 'format-indent-more.png', 
             GRAPHICS_LOCATION + 'format-justify-fill.png', 
             GRAPHICS_LOCATION + 'format-justify-left.png'
+            ]
+        for file_name in image_files:
+            bmp = wx.Bitmap(file_name, wx.BITMAP_TYPE_PNG)
+            rate_images.Add(bmp)
+        return rate_images
+        
+    def ColumnImageList(self):
+        # song rating imagelist
+        rate_images = wx.ImageList(16, 16, True)        
+        image_files = [
+            GRAPHICS_LOCATION + 'arrow-down-table.png', 
+            GRAPHICS_LOCATION + 'arrow-up-table.png', 
+            GRAPHICS_LOCATION + 'arrow-right-table.png',
+            GRAPHICS_LOCATION + 'arrow-left-table.png',
+            GRAPHICS_LOCATION + 'arrow-empty-table.png'
             ]
         for file_name in image_files:
             bmp = wx.Bitmap(file_name, wx.BITMAP_TYPE_PNG)
@@ -985,7 +1005,7 @@ class MainPanel(wx.Panel):
             
         if self.current_song.song_time_seconds != 0:
         
-            if (self.auth_attempts == 0) & (self.scrobbed_active == 0) & (float(self.time_count) / float(self.current_song.song_time_seconds) > .4):
+            if (self.scrobbed_active == 0) & (float(self.time_count) / float(self.current_song.song_time_seconds) > .4) & (self.auth_attempts == 0):
                 self.auth_attempts = 1
                 self.SetScrobb()
                 
@@ -998,7 +1018,7 @@ class MainPanel(wx.Panel):
                 #THREAD
                 ti.start()
                 
-            if (self.db_submit_complete == False) & (float(self.time_count) / float(self.current_song.song_time_seconds) > .98):
+            if (self.db_submit_complete == False) & (float(self.time_count) / float(self.current_song.song_time_seconds) > .95):
                 # add 'complete' to played table ==
                 q_track_id = local_songs.DbFuncs().GetTrackId(self.current_song.groove_id, self.current_song.track_id, self.current_song.artist, self.current_song.song)
                 local_songs.DbFuncs().InsertPlayedData(q_track_id, played_type_id=1)
@@ -1006,6 +1026,7 @@ class MainPanel(wx.Panel):
                 #==================================
         
             if (float(self.time_count) / float(self.current_song.song_time_seconds) > .6) & (self.current_song.scrobble_song != 1) & (self.scrobbed_active == 1) & (self.current_song.status != "stopped"):
+            
                 time_started = str(int(time.time()))
                 self.current_song.scrobble_song = 1
                 port = self.rx_options_scrobble_port.GetSelection()
@@ -1391,7 +1412,7 @@ class MainPanel(wx.Panel):
             self.current_song.status = 'paused'
             self.SetPlayButtonGraphic('play')
         else:
-            val = self.lc_playlist.GetFirstSelected()
+            val = self.current_song.playlist_position #self.lc_playlist.GetFirstSelected()
             if val >= 0:
                 #print val
                 self.PlaySong(val)
@@ -1475,7 +1496,7 @@ class MainPanel(wx.Panel):
         #=================================
     
         # skip to the next rack on the playlist
-        val = self.lc_playlist.GetFirstSelected()
+        val = self.current_song.playlist_position #self.lc_playlist.GetFirstSelected()
         if (val >= 0) & (val < (self.lc_playlist.GetItemCount() - 1)):
             # print val
             self.PlaySong(val + 1)
@@ -1494,7 +1515,7 @@ class MainPanel(wx.Panel):
         #===================================
     
         # skip to the next rack on the playlist
-        val = self.lc_playlist.GetFirstSelected()
+        val = self.current_song.playlist_position #self.lc_playlist.GetFirstSelected()
         if (val > 0):
             # print val
             self.PlaySong(val - 1)
@@ -1526,6 +1547,10 @@ class MainPanel(wx.Panel):
         self.prefetch = True
         self.current_song.status = 'loading'
         
+        # reset last.fm auth attmpts, to try and autherize each time
+        # a new song is played, if it hasn't successfully been autherized before
+        self.auth_attempts = 0
+        
         #---------------------------------------                         
         # check for random
         if (self.random_toggle == True) & (clicked == False):
@@ -1556,7 +1581,10 @@ class MainPanel(wx.Panel):
         #focus on the current song
         self.lc_playlist.Focus(playlist_number)
         # unselect last played 
-        self.lc_playlist.Select(playlist_number, 0)
+        self.lc_playlist.Select(cs.last_played, 0)
+        cs.last_played = playlist_number
+        # select current
+        self.lc_playlist.Select(playlist_number)
         
         #-----------------------------------
         if (cs.song_id.endswith('.mp3') == True):
@@ -3014,6 +3042,7 @@ class CurrentSong():
     def __init__(self, parent, playlist_position=-1, artist='', song='', album='', song_id='', song_time=''):
         self.parent = parent
         self.playlist_position = playlist_position
+        self.last_played = 0
         self.song = song
         self.artist = artist
         self.album = album

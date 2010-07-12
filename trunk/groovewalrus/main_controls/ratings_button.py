@@ -116,10 +116,10 @@ class RateEvents(object):
     def SongRate(self, event):        
         event_id = event.GetId()
         #print event_id
-        music_id = self.parent.pmusic_id
-        grooveshark_id = self.parent.pgroove_id
-        artist = self.parent.partist
-        song = self.parent.ptrack
+        music_id = self.parent.current_song.track_id
+        grooveshark_id = self.parent.current_song.groove_id
+        artist = self.parent.current_song.artist
+        song = self.parent.current_song.song
         track_id = GetTrackId(artist, song, grooveshark_id, music_id)
         AddRating(self.parent,track_id, event_id)
         if event_id == 4:
