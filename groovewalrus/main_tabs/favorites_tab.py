@@ -71,6 +71,7 @@ class FavoritesTab(wx.ScrolledWindow):
         self.lc_faves.Bind(wx.EVT_CHAR, self.parent.OnChar)
         
         self.lc_faves.AssignImageList(self.parent.RateImageList(), wx.IMAGE_LIST_SMALL)        
+        self.lc_faves.SetColumnImage(1, 5)
         
         #faves
         ##self.parent.Bind(wx.EVT_BUTTON, self.RemoveFavesItem, id=xrc.XRCID('m_bb_faves_remove'))        
@@ -108,10 +109,10 @@ class FavoritesTab(wx.ScrolledWindow):
         # get current song and add to favourites list
         # this is not the same as clicking from the playlist
         
-        music_id = self.parent.pmusic_id
-        grooveshark_id = self.parent.pgroove_id
-        artist = self.parent.partist
-        song = self.parent.ptrack
+        music_id = self.parent.current_song.track_id
+        grooveshark_id = self.parent.current_song.groove_id
+        artist = self.parent.current_song.artist
+        song = self.parent.current_song.song
         
         track_id = ratings_button.GetTrackId(artist, song, grooveshark_id, music_id)
         ratings_button.AddRating(self.parent, track_id, R_GREAT)
@@ -275,10 +276,10 @@ class FavoritesTab(wx.ScrolledWindow):
         
     def ResizeFaves(self):
         # 
-        self.lc_faves.SetColumnWidth(0, 20)
+        self.lc_faves.SetColumnWidth(0, 25)
         self.lc_faves.SetColumnWidth(1, 160)
         self.lc_faves.SetColumnWidth(2, 230)
-        self.lc_faves.SetColumnWidth(3, 145)
+        self.lc_faves.SetColumnWidth(3, 140)
         self.lc_faves.SetColumnWidth(4, 0)#wx.LIST_AUTOSIZE)
         self.lc_faves.SetColumnWidth(5, 50)#wx.LIST_AUTOSIZE_USEHEADER)
         
@@ -380,7 +381,6 @@ class FavoritesTab(wx.ScrolledWindow):
             no_inc = True        
         #self.faves_sorter = [0,0,0,0,0]
         toggle = self.faves_sorter[column]        
-        
         rating_string = self.SetRatingFilters()
         
         query = "SELECT artist, song, album, track_time, rating_type_id FROM m_rating INNER JOIN m_tracks ON m_rating.track_id = m_tracks.track_id " + rating_string #WHERE rating_type_id = 4 "
@@ -393,6 +393,13 @@ class FavoritesTab(wx.ScrolledWindow):
             ["ORDER BY track_time, song", "ORDER BY track_time DESC, song", "ORDER BY rating_id", "ORDER BY rating_id DESC"]
             ]
         complete_query = query + order_by_arr[column][toggle]
+        
+        #column header graphic
+        for x in range(0, 6):
+            self.lc_faves.SetColumnImage(x, 9)
+        self.lc_faves.SetColumnImage(column, toggle+5)
+        
+        
         
         if no_inc == False:
             self.faves_sorter[column] = toggle + 1

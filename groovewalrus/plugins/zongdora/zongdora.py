@@ -110,10 +110,10 @@ class MainPanel(wx.Dialog):
         if val >=0:
             pandora_url = self.lc_songdora_results.GetItem(val, 3).GetText()
         else:    
-            partist = self.parent.partist.replace(' ', '+')
-            ptrack = self.parent.ptrack.replace(' ', '+')
+            partist = self.parent.current_song.artist.replace(' ', '+')
+            ptrack = self.parent.current_song.song.replace(' ', '+')
             pandora_url = PANDORA_SONG_URL + partist + '/' + ptrack
-            self.st_songdora_song.SetLabel(self.parent.partist + ' - ' + self.parent.ptrack)
+            self.st_songdora_song.SetLabel(self.parent.current_song.artist + ' - ' + self.parent.current_song.song)
         
         page = urllib2.urlopen(pandora_url)
         
