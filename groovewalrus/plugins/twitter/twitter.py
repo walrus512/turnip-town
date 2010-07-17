@@ -1,6 +1,6 @@
 """
 GrooveWalrus: Twitter Plug-in 
-Copyright (C) 2009
+Copyright (C) 2009, 2010
 11y3y3y3y43@gmail.com
 http://groove-walrus.turnip-town.net
 -----
@@ -23,6 +23,7 @@ import urllib2
 
 import wx
 import wx.xrc as xrc
+##from wx.lib.pubsub import Publisher as pub
 import sys, os
 import re
 
@@ -41,7 +42,7 @@ RESFILE = os.path.join(os.getcwd(), 'plugins','twitter') + os.sep + "layout_twit
 
 class MainPanel(wx.Dialog):
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, -1, "Twitter", size=(475,510), style=wx.FRAME_SHAPED) #STAY_ON_TOP)        
+        wx.Dialog.__init__(self, parent, -1, "Twitter", size=(475,510), style=wx.FRAME_SHAPED|wx.RESIZE_BORDER) #STAY_ON_TOP)        
         self.parent = parent
         
         self.TWITTER_SETTINGS = system_files.GetDirectories(self).MakeDataDirectory('plugins') + os.sep
@@ -69,9 +70,9 @@ class MainPanel(wx.Dialog):
         self.Bind(wx.EVT_BUTTON, self.SaveOptions, id=xrc.XRCID('m_bu_twitter_save'))
         self.Bind(wx.EVT_BUTTON, self.Twat, id=xrc.XRCID('m_bu_twitter_tweet'))
         
-        self.Bind(wx.EVT_BUTTON, self.GetHomeTimeline, id=xrc.XRCID('m_bu_twitter_update_home'))
-        self.Bind(wx.EVT_BUTTON, self.GetMentions, id=xrc.XRCID('m_bu_twitter_update_at'))
-        self.Bind(wx.EVT_BUTTON, self.CopyReplace, id=xrc.XRCID('m_bu_twitter_update_default'))
+        self.Bind(wx.EVT_BUTTON, self.GetHomeTimeline, id=xrc.XRCID('m_bb_twitter_update_home'))
+        self.Bind(wx.EVT_BUTTON, self.GetMentions, id=xrc.XRCID('m_bb_twitter_update_at'))
+        self.Bind(wx.EVT_BUTTON, self.CopyReplace, id=xrc.XRCID('m_bb_twitter_update_default'))
         
         self.hw_twitter_home.Bind(wx.html.EVT_HTML_LINK_CLICKED, self.OnWebClick)
         self.hw_twitter_at.Bind(wx.html.EVT_HTML_LINK_CLICKED, self.OnWebClick)
@@ -99,7 +100,14 @@ class MainPanel(wx.Dialog):
         self.CopyReplace()
         self.OnChars()
         xrc.XRCCTRL(self, 'm_notebook1').SetPageText(1, '@' + self.tc_twitter_username.GetValue())
+        
+        #pubsub receiver
+        ##listener = self.parent.SetReceiver(self)
 
+    ##def PlaybackReceiverAction(self, message):
+        #pubsub receiver actions
+        ##print message.data
+        
     def GetHomeTimeline(self, event=None):
         username = self.tc_twitter_username.GetValue()
         password = self.tc_twitter_password.GetValue()
@@ -219,10 +227,10 @@ class MainPanel(wx.Dialog):
         #self..Destroy()
         
 # --------------------------------------------------------- 
-    def CopyReplace(self, event=None):        
+    def CopyReplace(self, event=None):     
         tt = self.tc_twitter_default.GetValue()
-        tt = tt.replace('[artist]', self.parent.partist)
-        tt = tt.replace('[song]', self.parent.ptrack)
+        tt = tt.replace('[artist]', self.parent.current_song.artist)
+        tt = tt.replace('[song]', self.parent.current_song.song)
         self.tc_twitter_text.SetValue(tt)
         
     def Reply(self, reply_to, prepend=False):
@@ -319,3 +327,15 @@ def url_quote(s, safe='/', want_unicode=False):
     return s
      
 # ===================================================================   
+class PubSubReceiver(object):
+  def __init__(self):
+    # here we connect to a signal called 'object.added'
+    # we use dotted notation for more specialized topics
+    # but you can use tuples too
+    pub.subscribe(self.__onObjectAdded, 'main.playback')
+
+  def __onObjectAdded(self, message):
+    # data passed with your message is put in message.data.
+    # Any object can be passed to subscribers this way.
+    print message.data
+    return message.data
