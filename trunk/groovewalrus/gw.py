@@ -96,7 +96,7 @@ from main_thirdp import grooveshark_old
 #sys.stderr = stdoutlog
 #8888888888
 
-PROGRAM_VERSION = "0.303"
+PROGRAM_VERSION = "0.304"
 PROGRAM_NAME = "GrooveWalrus"
 
 PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -326,6 +326,8 @@ class MainPanel(wx.Panel):
         self.bu_options_record_dir = xrc.XRCCTRL(self, 'm_bu_options_record_dir')
         self.rx_options_backend =  xrc.XRCCTRL(self, 'm_rx_options_backend')
         self.ch_options_wxbackend =  xrc.XRCCTRL(self, 'm_ch_options_wxbackend')
+        self.st_options_cache_location = xrc.XRCCTRL(self, 'm_st_options_cache_location')
+        self.sl_options_cache_size = xrc.XRCCTRL(self, 'm_sl_options_cache_size')
         
         self.st_options_i18n_default = xrc.XRCCTRL(self, 'm_st_options_i18n_default')
         self.st_options_i18n_default.SetLabel('Locale: ' + wx.Locale(wx.LANGUAGE_DEFAULT).GetCanonicalName())
@@ -490,6 +492,7 @@ class MainPanel(wx.Panel):
         ##self.Bind(wx.EVT_CHOICE, self.SaveOptions, id=xrc.XRCID('m_ch_options_bitrate'))
         self.Bind(wx.EVT_BUTTON, self.OnSaveOptionsClick, id=xrc.XRCID('m_bu_options_save'))        
         self.Bind(wx.EVT_BUTTON, self.OnSetRecordDirClick, id=xrc.XRCID('m_bu_options_record_dir'))
+        self.Bind(wx.EVT_BUTTON, self.SaveOptions, id=xrc.XRCID('m_bu_options_set_cache'))
         self.Bind(wx.EVT_RADIOBOX, self.SetBackend, id=xrc.XRCID('m_rx_options_backend'))
         self.Bind(wx.EVT_CHOICE, self.SetBackend, id=xrc.XRCID('m_ch_options_wxbackend'))
         
@@ -770,7 +773,9 @@ class MainPanel(wx.Panel):
         
         # clean cache dir -------
         temp_dir = system_files.GetDirectories(self).TempDirectory()
-        file_cache.CheckCache(temp_dir)
+        file_cache.CheckCache(temp_dir, self.sl_options_cache_size.GetValue())
+        
+        self.st_options_cache_location.SetLabel('Location: ' + temp_dir)
         
         # load rss feeds --------
         self.list_sifter.LoadRSSFeeds()
@@ -800,9 +805,9 @@ class MainPanel(wx.Panel):
 # ---------------------------------------------------------
 #-----------------------------------------------------------
 
-    def SetReceiver(self, target):
+    def SetReceiver(self, target, topic):
         #set up a reciever for pub sub, work around for plugins
-        listener = pub.subscribe(target.PlaybackReceiverAction, 'main.playback')        
+        listener = pub.subscribe(target.GenericReceiverAction, topic)        
         return listener
         
     def KillReceiver(self, target):
@@ -822,8 +827,9 @@ class MainPanel(wx.Panel):
         
     def SongIdReceiverAction(self, message):        
         # update playlist
+        #print message.data
         self.lc_playlist.SetStringItem(message.data['playlist_number'], 3, message.data['song_id'])
-        #self.SavePlaylist(self.main_playlist_location)
+        self.SavePlaylist(self.main_playlist_location)
         
     def TimeReceiverAction(self, message):        
         # update playlist
@@ -1005,13 +1011,17 @@ class MainPanel(wx.Panel):
             
         if self.current_song.song_time_seconds != 0:
         
+            if self.time_count == 45:
+                #send a pubsub event at 45 seconds
+                pub.sendMessage('main.playback.45_seconds', {'artist':self.current_song.artist, 'song':self.current_song.song})
+        
             if (self.scrobbed_active == 0) & (float(self.time_count) / float(self.current_song.song_time_seconds) > .4) & (self.auth_attempts == 0):
                 self.auth_attempts = 1
                 self.SetScrobb()
                 
             if (float(self.time_count) / float(self.current_song.song_time_seconds) > .7) & (self.gobbled_track != 1) & (self.current_song.status != "stopped"):
                 #save stats for local db
-                self.gobbled_track = 1
+                self.gobbled_track = 1                
                 #THREAD
                 #print song_id
                 ti = WebFetchThread(self, self.current_song.artist, self.current_song.song, self.current_song.album, 'SONGINFO')
@@ -1620,7 +1630,7 @@ class MainPanel(wx.Panel):
             temp_dir = system_files.GetDirectories(self).TempDirectory()
             file_name_plain = cs.artist + '-' + cs.song + '.mp3'
             # clean cache dir
-            file_cache.CheckCache(temp_dir)
+            file_cache.CheckCache(temp_dir, self.sl_options_cache_size.GetValue())
             # check if file previously cached
             cached_file = file_cache.CreateCachedFilename(temp_dir, file_name_plain)
             cached_file_name = cached_file[0]
@@ -1631,7 +1641,7 @@ class MainPanel(wx.Panel):
                 current.start()
             else:
                 cs.SetSongTimeSeconds(local_songs.GetMp3Length(cached_file_name))            
-            
+                cs.SetSongTime(self.ConvertTimeFormated(cs.song_time_seconds))
             #-------------------------------------
             #play song
             if self.use_backend == 'pymedia':
@@ -1807,7 +1817,9 @@ class MainPanel(wx.Panel):
         
     def ReadPlaylist(self, filename):
         # take current playlist and write to listcontrol
-        track_dict = read_write_xml.xml_utils().get_tracks(filename)
+        #track_dict = read_write_xml.xml_utils().get_tracks(filename)
+        track_dict = read_write_xml.xml_utils().GetTracksSoup(filename)
+                
         counter = 0
         #print track_dict
         for x in track_dict:
@@ -3048,14 +3060,14 @@ class CurrentSong():
         self.album = album
         self.song_time = song_time
         self.song_time_seconds = 0
-        self.song_id = song_id        
+        self.song_id = song_id          #song-id listed on the listctrl, either 'file location or gs id'
         self.song_type = 'local'
         self.song_url = ''
         #self.album_graphic = ''
         #self.artist_graphic = ''
         self.status = 'stopped'
-        self.groove_id = 0
-        self.track_id = 0
+        self.groove_id = 0              #gs' id
+        self.track_id = 0               #track id from local db
         self.scrobbed_song = 0
         #self.CheckId(song_id)
         
@@ -3121,9 +3133,10 @@ class CurrentSong():
             else:
                 #grab results from tinysong
                 query_results = tinysong.Tsong().get_search_results(query_string, 32)
-                #*** change this stuff, change it in prefetch.py too
+                   #*** change this stuff, change it in prefetch.py too
                 if len(query_results) >= 1:                
-                    song_id = query_results[0]['SongID']
+                    returned_song_id = query_results[0]['SongID']
+
                     # let's check for album and update that too
                     if (self.album =='') & (query_results[0]['AlbumName'] != ''):
                         self.album = query_results[0]['AlbumName']
@@ -3136,9 +3149,11 @@ class CurrentSong():
                         found_it = False
                         for x in range(1, len(query_results) - 1):                            
                             if (query_results[x]['SongName'].upper() == self.song.upper()) & (found_it != True):
-                                self.song_id = query_results[x]['SongID']
-                                pub.sendMessage('main.song_id', {'song_id':self.song_id, 'playlist_number':self.playlist_position})                                
-                                found_it = True                           
+                                xx = query_results[x]['SongID']
+                                pub.sendMessage('main.song_id', {'song_id':xx, 'playlist_number':self.playlist_position})
+                                self.song_id = xx
+                                found_it = True
+                                break                                
                     
                     # check for artist match
                     if self.artist.upper() != query_results[0]['ArtistName'].upper():
@@ -3146,17 +3161,21 @@ class CurrentSong():
                         found_it = False
                         for x in range(1, len(query_results) - 1):                            
                             if (query_results[x]['ArtistName'].upper() == self.artist.upper()) & (found_it != True):
-                                song_id = query_results[x]['SongID']
-                                pub.sendMessage('main.song_id', {'song_id':self.song_id, 'playlist_number':self.playlist_position})
+                                yy = query_results[x]['SongID']
+                                pub.sendMessage('main.song_id', {'song_id':yy, 'playlist_number':self.playlist_position})
+                                self.song_id = yy
                                 found_it = True
+                                break
                         if found_it == False:
                             self.parent.lc_playlist.SetItemBackgroundColour(self.playlist_position, HICOLOR_1)
                             # don't scrobb the wrong song
                             self.scrobbed_song = 1
-                            pub.sendMessage('main.song_id', {'song_id':self.song_id, 'playlist_number':self.playlist_position})
+                            pub.sendMessage('main.song_id', {'song_id':returned_song_id, 'playlist_number':self.playlist_position})
+                            self.song_id = returned_song_id
                     #update playlist
                     else:
-                        pub.sendMessage('main.song_id', {'song_id':self.song_id, 'playlist_number':self.playlist_position})
+                        pub.sendMessage('main.song_id', {'song_id':returned_song_id, 'playlist_number':self.playlist_position})
+                        self.song_id = returned_song_id
                 else:                    
                     #no search results found
                     self.parent.lc_playlist.SetItemBackgroundColour(self.playlist_position, HICOLOR_2)

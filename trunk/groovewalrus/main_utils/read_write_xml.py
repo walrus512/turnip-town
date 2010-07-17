@@ -20,6 +20,7 @@ Place, Suite 330, Boston, MA 02111-1307 USA
 
 import xml.etree.ElementTree as ET
 import os
+from main_thirdp.beautifulsoup import BeautifulStoneSoup
 
 class xml_utils():
     # xml file junk for hippies
@@ -66,6 +67,43 @@ class xml_utils():
                     # only add active feeds
                         track_list.append({x.tag.split('}')[-1]: x.text, y.tag.split('}')[-1]: y.text, z.tag.split('}')[-1]: z.text, c.tag.split('}')[-1]: c.text, d.tag.split('}')[-1]: d.text})
         return track_list
+        
+    def GetTracksSoup(self, file_name):
+        # oad an xspf file via beautiful soup
+        #<trackList>
+        #<track>
+        #<creator>Neil Young</creator>
+        #<title>Down By The River</title>
+        #<album />
+        #<location />
+        #<duration />
+        #</track>
+        track_list = []
+        
+        tree = self.ReadXmlSoup(file_name)
+        items = tree.findAll('track')
+        for elements in items:
+            creator = CleanText(elements.findAll('creator')[0].string)
+            title = CleanText(elements.findAll('title')[0].string)
+            album = CleanText(elements.findAll('album')[0].string)
+            location = CleanText(elements.findAll('location')[0].string)
+            duration = CleanText(elements.findAll('duration')[0].string)            
+            track_list.append({'creator':creator, 'title':title, 'album':album, 'location':location, 'duration':duration})
+            #text_out = CleanText(title[0].string)
+            #rss_list.append(text_out)
+        #print track_list
+        return track_list
+    
+    def ReadXmlSoup(self, file_name):
+        # reads in an xml file and returns a blob for you to work with
+        tree = ''
+        f = open(file_name)
+        try:        
+            tree = BeautifulStoneSoup(f.read())
+        except Exception, inst:
+             print 'Exception: rss: ' + str(inst)        
+        return tree
+        
         
     def save_tracks(self, file_name, feed_data):
         # make xml file with array with feed infomation, 3 values for each feed
@@ -148,3 +186,15 @@ class xml_utils():
 #  </trackList>
 #</playlist>
         
+#------------    
+def CleanText(text):
+    if text != None:
+        text = text.strip()
+        text = text.replace('\r\n', '')
+        text = text.replace('\n', '')
+        text = text.replace('  ', ' ')
+        text = text.replace('&amp;', '&')
+        #text = url_quote(text)
+    else:
+        text = ''
+    return text

@@ -105,7 +105,7 @@ class MyPanel(wx.Panel):
         self.GetLyrics(None)
         
         #set a reciever to catch new song events
-        self.parent.SetReceiver(self)        
+        self.parent.SetReceiver(self, 'main.playback')        
         
         # hotkeys ------------------
         ctrlrID = 802
@@ -124,7 +124,7 @@ class MyPanel(wx.Panel):
         wx.EVT_MENU(self, ctrleqID, self.IncreaseFontSize)
         wx.EVT_MENU(self, ctrlmiID, self.DecreaseFontSize)
 
-    def PlaybackReceiverAction(self, message):
+    def GenericReceiverAction(self, message):
         """Sets the pubsub receiver action."""
         self.GetLyrics(None)
         
@@ -183,7 +183,7 @@ class MyPanel(wx.Panel):
             
     def CloseMe(self, event=None):
         self.SaveOptions()
-        self.parent.KillReceiver(self.PlaybackReceiverAction)
+        self.parent.KillReceiver(self.GenericReceiverAction)
         self.dialog.Destroy()
         
     def LoadSettings(self):

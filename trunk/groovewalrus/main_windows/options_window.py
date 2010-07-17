@@ -99,7 +99,9 @@ class Options(object):
             if options_dict.has_key('scrobble'):
                 self.parent.cb_options_scrobble.SetValue(int(options_dict['scrobble']))
             if options_dict.has_key('prefetch'):
-                self.parent.cb_options_prefetch.SetValue(int(options_dict['prefetch']))
+                self.parent.cb_options_prefetch.SetValue(int(options_dict['prefetch']))                
+            if options_dict.has_key('cache_size'):
+                self.parent.sl_options_cache_size.SetValue(int(options_dict['cache_size']))                
             if options_dict.has_key('record_dir'):
                 if options_dict['record_dir'] != None:                    
                     self.parent.bu_options_record_dir.SetLabel(options_dict['record_dir'])
@@ -141,6 +143,7 @@ class Options(object):
         window_dict['prefetch'] = str(int(self.parent.cb_options_prefetch.GetValue()))
         #window_dict['bitrate'] = str(self.parent.ch_options_bitrate.GetStringSelection())
         window_dict['record_dir'] = str(self.parent.bu_options_record_dir.GetLabel())
+        window_dict['cache_size'] = str(self.parent.sl_options_cache_size.GetValue())
         
         minutes = self.parent.sc_options_song_minutes.GetValue()
         seconds = self.parent.sc_options_song_seconds.GetValue()

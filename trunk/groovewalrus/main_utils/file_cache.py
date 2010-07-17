@@ -41,13 +41,19 @@ def CreateCachedFilename(cache_path, file_string):
     else:
         return (full_file_path, False)
 
-def CheckCache(cache_path):
+def CheckCache(cache_path, cache_limit=CACHE_LIMIT):
     """ Checks if cache limit has been reached, removes oldest if it has. """
     
     file_path = cache_path.replace("\\", os.sep)
-    file_list = os.listdir(file_path)
+    orig_file_list = os.listdir(file_path)
     
-    while len(file_list) > CACHE_LIMIT:
+    file_list = []    
+    for x in orig_file_list:
+        #make sure it's an mp3 and the right length
+        if (x[-4:].upper() == '.MP3') & (len(x) == 36):
+            file_list.append(x)
+ 
+    while len(file_list) > cache_limit:
     # keep removing files until we're down to the cache limit
         oldest_file = ''
         first_modified = 2000000000
@@ -60,9 +66,10 @@ def CheckCache(cache_path):
             if modified < first_modified:
                     first_modified = modified
                     oldest_file = full_file_path
-        
-        # remove oldest file
-        os.remove(oldest_file)
+        try:
+            os.remove(oldest_file)
+        except Exception, expt:
+            print str(Exception)
         #print oldest_file
         file_list = os.listdir(file_path)
 
