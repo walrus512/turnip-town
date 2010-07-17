@@ -36,7 +36,7 @@ PANDORA_SONG_URL = "http://www.pandora.com/music/song/"
 
 class MainPanel(wx.Dialog):
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, -1, "zongdora", size=(475,450), style=wx.FRAME_SHAPED) #STAY_ON_TOP)        
+        wx.Dialog.__init__(self, parent, -1, "zongdora", size=(475,450), style=wx.FRAME_SHAPED|wx.RESIZE_BORDER) #STAY_ON_TOP)        
         self.parent = parent        
                
         # XML Resources can be loaded from a file like this:
@@ -90,8 +90,25 @@ class MainPanel(wx.Dialog):
         self.SetSizer(sizer)
         self.SetAutoLayout(True)
         #self.LoadSetings()
+        
+        #set a reciever to catch new song events
+        #self.parent.SetReceiver(self, 'main.playback.45_seconds')
+        
 
+    def GenericReceiverAction(self, message):
+        """Sets the pubsub receiver action."""
+        print '45 seconds'
+        #get current song
+        #append 6 songs to playlist
+        #self.Get6Songs(None)
+        
+    def ResetPosition(self, event):
+        """Resets the winodw size and position"""
+        self.dialog.SetSize((375,460))
+        self.dialog.SetPosition((50,50))
+                
     def CloseMe(self, event=None):
+        self.parent.KillReceiver(self.GenericReceiverAction)
         self.Destroy()
         
     def OnListClick(self, event):

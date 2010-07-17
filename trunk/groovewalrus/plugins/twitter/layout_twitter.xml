@@ -2,7 +2,7 @@
 <resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
 	<object class="wxPanel" name="m_pa_plugin_twitter">
 		<style>wxTAB_TRAVERSAL</style>
-		<size>672,518</size>
+		<size>547,518</size>
 		<object class="wxBoxSizer">
 			<orient>wxVERTICAL</orient>
 			<object class="sizeritem">
@@ -35,6 +35,7 @@
 							<size>22,22</size>
 							<enabled>0</enabled>
 							<hidden>1</hidden>
+							<tooltip>Move to tabs</tooltip>
 							<bitmap>tab-new.png</bitmap>
 						</object>
 					</object>
@@ -44,6 +45,7 @@
 						<border>5</border>
 						<object class="wxStaticBitmap" name="m_bm_twitter_close">
 							<size>22,22</size>
+							<tooltip>Exit</tooltip>
 							<bitmap>emblem-unreadable.png</bitmap>
 						</object>
 					</object>
@@ -84,10 +86,10 @@
 								<option>0</option>
 								<flag>wxALL</flag>
 								<border>5</border>
-								<object class="wxButton" name="m_bu_twitter_update_default">
-									<size>30,-1</size>
+								<object class="wxBitmapButton" name="m_bb_twitter_update_default">
+									<style>wxBU_AUTODRAW</style>
 									<tooltip>Update with default text</tooltip>
-									<label>U</label>
+									<bitmap>view-refresh.png</bitmap>
 									<default>0</default>
 								</object>
 							</object>
@@ -129,7 +131,6 @@
 						<flag>wxEXPAND | wxALL</flag>
 						<border>5</border>
 						<object class="wxNotebook" name="m_notebook1">
-							<style>wxNB_FIXEDWIDTH</style>
 							<object class="notebookpage">
 								<label>Home</label>
 								<selected>1</selected>
@@ -139,12 +140,12 @@
 										<orient>wxHORIZONTAL</orient>
 										<object class="sizeritem">
 											<option>0</option>
-											<flag>wxALL|wxALIGN_RIGHT</flag>
-											<border>3</border>
-											<object class="wxButton" name="m_bu_twitter_update_home">
-												<size>30,-1</size>
+											<flag>wxALL</flag>
+											<border>5</border>
+											<object class="wxBitmapButton" name="m_bb_twitter_update_home">
+												<style>wxBU_AUTODRAW</style>
 												<tooltip>Refresh</tooltip>
-												<label>R</label>
+												<bitmap>view-refresh.png</bitmap>
 												<default>0</default>
 											</object>
 										</object>
@@ -165,16 +166,17 @@
 								<selected>0</selected>
 								<object class="wxScrolledWindow" name="m_scrolledWindow3">
 									<style>wxHSCROLL|wxVSCROLL</style>
+									<tooltip>Refresh</tooltip>
 									<object class="wxBoxSizer">
 										<orient>wxHORIZONTAL</orient>
 										<object class="sizeritem">
 											<option>0</option>
-											<flag>wxALL|wxALIGN_RIGHT</flag>
-											<border>3</border>
-											<object class="wxButton" name="m_bu_twitter_update_at">
-												<size>30,-1</size>
+											<flag>wxALL</flag>
+											<border>5</border>
+											<object class="wxBitmapButton" name="m_bb_twitter_update_at">
+												<style>wxBU_AUTODRAW</style>
 												<tooltip>Refresh</tooltip>
-												<label>R</label>
+												<bitmap>view-refresh.png</bitmap>
 												<default>0</default>
 											</object>
 										</object>
@@ -215,7 +217,7 @@
 													<border>5</border>
 													<object class="wxStaticText" name="m_staticText3">
 														<style>wxALIGN_RIGHT</style>
-														<size>80,-1</size>
+														<size>100,-1</size>
 														<label>Username</label>
 													</object>
 												</object>
@@ -243,7 +245,7 @@
 													<border>5</border>
 													<object class="wxStaticText" name="m_staticText31">
 														<style>wxALIGN_RIGHT</style>
-														<size>80,-1</size>
+														<size>100,-1</size>
 														<label>Password</label>
 													</object>
 												</object>
@@ -272,7 +274,7 @@
 													<border>5</border>
 													<object class="wxStaticText" name="m_staticText32">
 														<style>wxALIGN_RIGHT</style>
-														<size>80,-1</size>
+														<size>100,-1</size>
 														<label>Default Text</label>
 													</object>
 												</object>
@@ -299,7 +301,7 @@
 													<option>0</option>
 													<flag>wxEXPAND</flag>
 													<border>5</border>
-													<size>10,0</size>
+													<size>120,0</size>
 												</object>
 												<object class="sizeritem">
 													<option>0</option>
@@ -309,15 +311,55 @@
 														<label>[song] for song title, [artist] for artist name</label>
 													</object>
 												</object>
-												<object class="spacer">
-													<option>1</option>
-													<flag>wxEXPAND</flag>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxBoxSizer">
+												<orient>wxHORIZONTAL</orient>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL</flag>
 													<border>5</border>
-													<size>0,0</size>
+													<object class="wxStaticText" name="m_staticText7">
+														<style>wxALIGN_RIGHT</style>
+														<size>100,-1</size>
+														<enabled>0</enabled>
+														<label>Feed Text Size</label>
+													</object>
 												</object>
 												<object class="sizeritem">
 													<option>0</option>
-													<flag>wxALL|wxALIGN_RIGHT</flag>
+													<flag>wxALL</flag>
+													<border>5</border>
+													<object class="wxSpinCtrl" name="m_spinCtrl1">
+														<style>wxSP_ARROW_KEYS</style>
+														<size>60,-1</size>
+														<enabled>0</enabled>
+														<value>10</value>
+														<min>8</min>
+														<max>14</max>
+													</object>
+												</object>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxBoxSizer">
+												<orient>wxHORIZONTAL</orient>
+												<object class="spacer">
+													<option>0</option>
+													<flag>wxEXPAND</flag>
+													<border>5</border>
+													<size>110,1</size>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALL</flag>
 													<border>5</border>
 													<object class="wxButton" name="m_bu_twitter_save">
 														<label>Save</label>
@@ -325,12 +367,6 @@
 													</object>
 												</object>
 											</object>
-										</object>
-										<object class="spacer">
-											<option>0</option>
-											<flag>wxEXPAND</flag>
-											<border>5</border>
-											<size>0,15</size>
 										</object>
 									</object>
 								</object>
