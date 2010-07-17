@@ -2513,12 +2513,29 @@
 																							<checked>1</checked>
 																						</object>
 																					</object>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxEXPAND</flag>
+																				<border>5</border>
+																				<object class="wxStaticBoxSizer">
+																					<orient>wxVERTICAL</orient>
+																					<label>Song Cache</label>
 																					<object class="sizeritem">
 																						<option>0</option>
-																						<flag>wxEXPAND | wxALL</flag>
+																						<flag>wxEXPAND</flag>
 																						<border>5</border>
-																						<object class="wxStaticLine" name="m_staticline91">
-																							<style>wxLI_HORIZONTAL</style>
+																						<object class="wxBoxSizer">
+																							<orient>wxHORIZONTAL</orient>
+																							<object class="sizeritem">
+																								<option>1</option>
+																								<flag>wxALL</flag>
+																								<border>5</border>
+																								<object class="wxStaticText" name="m_st_options_cache_location">
+																									<label>Location:</label>
+																								</object>
+																							</object>
 																						</object>
 																					</object>
 																					<object class="sizeritem">
@@ -2529,31 +2546,31 @@
 																							<orient>wxHORIZONTAL</orient>
 																							<object class="sizeritem">
 																								<option>0</option>
+																								<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																								<border>5</border>
+																								<object class="wxStaticText" name="m_staticText491">
+																									<label>Cache Size (in songs):</label>
+																								</object>
+																							</object>
+																							<object class="sizeritem">
+																								<option>0</option>
 																								<flag>wxALL</flag>
 																								<border>5</border>
-																								<object class="wxRadioBox" name="m_rx_options_backend">
-																									<style>wxRA_SPECIFY_COLS</style>
-																									<label>Backend</label>
-																									<selection>0</selection>
-																									<content>
-																										<item>pymedia</item>
-																										<item>wx.media</item>
-																									</content>
-																									<dimension>2</dimension>
+																								<object class="wxSlider" name="m_sl_options_cache_size">
+																									<style>wxSL_BOTH|wxSL_HORIZONTAL|wxSL_LABELS</style>
+																									<size>300,-1</size>
+																									<value>30</value>
+																									<min>10</min>
+																									<max>250</max>
 																								</object>
 																							</object>
 																							<object class="sizeritem">
 																								<option>0</option>
 																								<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
 																								<border>5</border>
-																								<object class="wxChoice" name="m_ch_options_wxbackend">
-																									<selection>0</selection>
-																									<content>
-																										<item>WMP10</item>
-																										<item>GSTREAMER</item>
-																										<item>QUICKTIME</item>
-																										<item>DIRECTSHOW</item>
-																									</content>
+																								<object class="wxButton" name="m_bu_options_set_cache">
+																									<label>Set Size</label>
+																									<default>0</default>
 																								</object>
 																							</object>
 																						</object>
@@ -2613,6 +2630,54 @@
 																		</object>
 																	</object>
 																</object>
+																<object class="notebookpage">
+																	<label>Test</label>
+																	<selected>0</selected>
+																	<object class="wxScrolledWindow" name="m_scrolledWindow15">
+																		<style>wxHSCROLL|wxVSCROLL</style>
+																		<object class="wxBoxSizer">
+																			<orient>wxVERTICAL</orient>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxEXPAND</flag>
+																				<border>5</border>
+																				<object class="wxStaticBoxSizer">
+																					<orient>wxVERTICAL</orient>
+																					<label>Backends</label>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALL</flag>
+																						<border>5</border>
+																						<object class="wxRadioBox" name="m_rx_options_backend">
+																							<style>wxRA_SPECIFY_COLS</style>
+																							<label>Backend</label>
+																							<selection>0</selection>
+																							<content>
+																								<item>pymedia</item>
+																								<item>wx.media</item>
+																							</content>
+																							<dimension>2</dimension>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																						<border>5</border>
+																						<object class="wxChoice" name="m_ch_options_wxbackend">
+																							<selection>0</selection>
+																							<content>
+																								<item>WMP10</item>
+																								<item>GSTREAMER</item>
+																								<item>QUICKTIME</item>
+																								<item>DIRECTSHOW</item>
+																							</content>
+																						</object>
+																					</object>
+																				</object>
+																			</object>
+																		</object>
+																	</object>
+																</object>
 															</object>
 														</object>
 													</object>
@@ -2641,12 +2706,12 @@
 					<label>Save Playlist\tCtrl-S</label>
 					<help></help>
 				</object>
-				<object class="wxMenuItem" name="m_mi_save_playlist_as">
-					<label>Save Playlist As...\tF5</label>
-					<help></help>
-				</object>
 				<object class="wxMenuItem" name="m_mi_quick_save">
 					<label>Quick-Save Playlist\tCtrl-W</label>
+					<help></help>
+				</object>
+				<object class="wxMenuItem" name="m_mi_save_playlist_as">
+					<label>Export Playlist As...\tF5</label>
 					<help></help>
 				</object>
 				<object class="separator" />
