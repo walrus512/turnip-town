@@ -105,7 +105,7 @@ class MyPanel(wx.Panel):
         self.GetLyrics(None)
         
         #set a reciever to catch new song events
-        self.parent.SetReceiver(self, 'main.playback')        
+        self.parent.SetReceiver(self, 'main.playback.new')        
         
         # hotkeys ------------------
         ctrlrID = 802

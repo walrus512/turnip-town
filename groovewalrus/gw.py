@@ -96,7 +96,7 @@ from main_thirdp import grooveshark_old
 #sys.stderr = stdoutlog
 #8888888888
 
-PROGRAM_VERSION = "0.304"
+PROGRAM_VERSION = "0.305"
 PROGRAM_NAME = "GrooveWalrus"
 
 PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -133,7 +133,7 @@ HICOLOR_2 = (200, 100, 150, 255)
 API_KEY = "13eceb51a4c2e0f825c492f04bf693c8"
 SECRET = ""
 LASTFM_CLIENT_ID = 'gws'
-BUFFER_SIZE = 224000
+BUFFER_SIZE = 320000
 
 class MainFrame(wx.Frame): 
     def __init__(self): 
@@ -496,6 +496,8 @@ class MainPanel(wx.Panel):
         self.Bind(wx.EVT_RADIOBOX, self.SetBackend, id=xrc.XRCID('m_rx_options_backend'))
         self.Bind(wx.EVT_CHOICE, self.SetBackend, id=xrc.XRCID('m_ch_options_wxbackend'))
         
+        self.Bind(wx.EVT_BUTTON, self.OnClearCacheClick, id=xrc.XRCID('m_bu_options_cache_clear'))
+        
         self.Bind(wx.EVT_BUTTON, self.OnUpdateClick, self.bb_update)
         wx.EVT_CLOSE(self.parent, self.OnExit)
            
@@ -818,12 +820,23 @@ class MainPanel(wx.Panel):
         pub.subscribe(self.SongIdReceiverAction, 'main.song_id')
         pub.subscribe(self.TimeReceiverAction, 'main.song_time.text')
         pub.subscribe(self.TimeSecondsReceiverAction, 'main.song_time.seconds')
+        pub.subscribe(self.SetCachedTimeReceiverAction, 'main.playback.45_seconds')
         
     def AlbumReceiverAction(self, message):
         # {'album':album, 'playlist_number':self.playlist_number}
         # update playlist
         self.lc_playlist.SetStringItem(message.data['playlist_number'], 2, message.data['album'])
         self.current_song.album = message.data['album']
+        
+    def SetCachedTimeReceiverAction(self, message):
+        # check if file previously cached
+        temp_dir = system_files.GetDirectories(self).TempDirectory()
+        file_name_plain = self.current_song.artist + '-' + self.current_song.song + '.mp3'
+        cached_file = file_cache.CreateCachedFilename(temp_dir, file_name_plain)
+        cached_file_name = cached_file[0]
+        if cached_file[1] == True:            
+            self.current_song.SetSongTimeSeconds(local_songs.GetMp3Length(cached_file_name))            
+            self.current_song.SetSongTime(self.ConvertTimeFormated(self.current_song.song_time_seconds))
         
     def SongIdReceiverAction(self, message):        
         # update playlist
@@ -864,6 +877,11 @@ class MainPanel(wx.Panel):
         else:
             self.use_backend = 'pymedia'
 
+    def OnClearCacheClick(self, event):
+        #clear the cache
+        temp_dir = system_files.GetDirectories(self).TempDirectory()
+        file_cache.CheckCache(temp_dir, 0)
+            
     def RandomBackgroundColour(self, event):        
         #colour_array = ('#ced1ff', '#f7b3f5', '#ff95ae', '#ffd074', '#e6ff3a', '#aaff99', '#e4e4e4')
         #rand_col = random.randint(0, (len(colour_array) - 1))
@@ -1573,13 +1591,16 @@ class MainPanel(wx.Panel):
             
         #--------------------------------------- 
         cs = self.current_song
+        #reset things that need to be reset
+        cs.SetDefaultValues()
         cs.playlist_position = playlist_number
         cs.artist = self.lc_playlist.GetItem(playlist_number, 0).GetText()
         cs.song = self.lc_playlist.GetItem(playlist_number, 1).GetText()
         cs.album = self.lc_playlist.GetItem(playlist_number, 2).GetText()
         cs.song_id = str(self.lc_playlist.GetItem(playlist_number, 3).GetText())
         cs.song_time = self.lc_playlist.GetItem(playlist_number, 4).GetText()
-        
+        #cs.track_id = 0
+        #cs.song_time_seconds = 0
         
         #cs = CurrentSong(self, playlist_number, self.current_song.artist, self.current_song.song, self.current_song.album, song_id, duration)
 
@@ -1601,12 +1622,15 @@ class MainPanel(wx.Panel):
             sts = local_songs.GetMp3Length(cs.song_id)
             cs.SetSongTimeSeconds(sts)
             cs.SetSongTime(self.ConvertTimeFormated(sts))
+        else:
+            if cs.song_time != '':                
+                cs.SetSongTimeSeconds(self.ConvertTimeSeconds(cs.song_time))
             
         if cs.song_time_seconds == 0:
             #set a default time
             wminutes = self.sc_options_song_minutes.GetValue()
             wseconds = self.sc_options_song_seconds.GetValue()
-            wformated_time = str(wminutes) + ':' + str(wseconds)
+            wformated_time = str(wminutes) + ':' + str(wseconds).zfill(2)
             cs.SetSongTime(wformated_time)            
             cs.song_time_seconds = self.ConvertTimeSeconds(wformated_time)
             
@@ -1639,9 +1663,11 @@ class MainPanel(wx.Panel):
                 #THREAD
                 current = FileThread(self, cached_file_name, cs.song_id, cs.song, cs.artist, cs.album)                
                 current.start()
-            else:
-                cs.SetSongTimeSeconds(local_songs.GetMp3Length(cached_file_name))            
-                cs.SetSongTime(self.ConvertTimeFormated(cs.song_time_seconds))
+            #else:
+                #wminutes = self.sc_options_song_minutes.GetValue()
+                #wseconds = self.sc_options_song_seconds.GetValue()                
+                #cs.SetSongTimeSeconds((wminutes * 60) + wseconds)            
+                #cs.SetSongTime(self.ConvertTimeFormated(cs.song_time_seconds))
             #-------------------------------------
             #play song
             if self.use_backend == 'pymedia':
@@ -1688,7 +1714,7 @@ class MainPanel(wx.Panel):
             #===============================
 
             # publish to pubsub
-            pub.sendMessage('main.playback', {'artist':cs.artist, 'song':cs.song})
+            pub.sendMessage('main.playback.new', {'artist':cs.artist, 'song':cs.song})
             self.SavePlaylist(self.main_playlist_location)
             print cs
 # ---------------------------------------------------------  
@@ -2050,8 +2076,6 @@ class MainPanel(wx.Panel):
             self.FillPlaylistTree()
 
         dlg.Destroy()
-        
-
         
     def QuickSavePlaylist(self, event):
         #save the entire playlist to the database
@@ -3058,17 +3082,12 @@ class CurrentSong():
         self.song = song
         self.artist = artist
         self.album = album
-        self.song_time = song_time
-        self.song_time_seconds = 0
+        self.song_time = song_time        
         self.song_id = song_id          #song-id listed on the listctrl, either 'file location or gs id'
-        self.song_type = 'local'
-        self.song_url = ''
         #self.album_graphic = ''
         #self.artist_graphic = ''
         self.status = 'stopped'
-        self.groove_id = 0              #gs' id
-        self.track_id = 0               #track id from local db
-        self.scrobbed_song = 0
+        self.SetDefaultValues()
         #self.CheckId(song_id)
         
     def __str__(self):        
@@ -3079,6 +3098,15 @@ class CurrentSong():
         print ' track_id:   ' + str(self.track_id)
         print 'groove_id:   ' + str(self.groove_id)
         return '---end----'
+        
+    def SetDefaultValues(self):
+        #reset to default values
+        self.groove_id = 0              #gs' id
+        self.track_id = 0               #track id from local db
+        self.scrobbed_song = 0
+        self.song_type = 'local'
+        self.song_url = ''
+        self.song_time_seconds = 0
         
     def SetAlbum(self, album, artist, song):
         if (artist == self.artist) & (song == self.song):

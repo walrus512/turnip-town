@@ -52,8 +52,8 @@ def CheckCache(cache_path, cache_limit=CACHE_LIMIT):
         #make sure it's an mp3 and the right length
         if (x[-4:].upper() == '.MP3') & (len(x) == 36):
             file_list.append(x)
- 
-    while len(file_list) > cache_limit:
+    delete_attempts = 0
+    while (len(file_list) > cache_limit) & (delete_attempts >= cache_limit):
     # keep removing files until we're down to the cache limit
         oldest_file = ''
         first_modified = 2000000000
@@ -66,13 +66,17 @@ def CheckCache(cache_path, cache_limit=CACHE_LIMIT):
             if modified < first_modified:
                     first_modified = modified
                     oldest_file = full_file_path
-        try:
+                    oldest_list_item = file_name
+        try:            
+            #only try to deltee 50 files, incase something is locking or something
+            delete_attempts = delete_attempts + 1
             os.remove(oldest_file)
         except Exception, expt:
-            print str(Exception)
+            print str(Exception) + str(expt)
         #print oldest_file
-        file_list = os.listdir(file_path)
-
+        #file_list = os.listdir(file_path)
+        file_list.remove(oldest_list_item)
+        #print file_list
         
 def CreateCachedImage(cache_path, file_string, extension):
     """ Checks if file exists, returns new file name if it doesn't. """
