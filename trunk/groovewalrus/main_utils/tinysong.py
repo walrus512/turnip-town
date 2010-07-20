@@ -73,17 +73,16 @@ class Tsong(object):
         raw_results = url_connection.read()
 
         results_array = json.loads(raw_results)
-                
+
         counter = 0
         # cycle through the results and string any integers
         for x in results_array:            
             #cycle through each dictionary
             for key, value in x.items():
                 if IsInteger(value):
-                    results_array[counter][key] = str(value)
+                     results_array[counter][key] = str(value)
             counter = counter + 1
-        #results_array = raw_results.split('\n')        
-
+        #results_array = raw_results.split('\n')
         return results_array
    
         

@@ -78,8 +78,10 @@ class Song:
         """function: Gets a stream key and host to get song content"""
         parameters = {
             "songID": self.id,
-            "prefetch": False, 
-            "country": {"CC3":"0","CC2":"0","ID":"1","CC1":"0","CC4":"0"}}
+            "prefetch": False,
+            "mobile": False, 
+            "country": {ID:223, CC1:"0", CC2:"0", CC3:"0", CC4:"2147483648"}
+            }
         response = self._gsapi.request(parameters,
                 "getStreamKeyFromSongIDEx").send()
         print response
