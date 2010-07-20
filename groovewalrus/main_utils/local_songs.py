@@ -647,6 +647,7 @@ class Player(object):
     def __init__(self):
         self.local_play_status = True
         self.paused = False
+        self.snd = None
                 
     def stop_play(self):
         #self.stop()
@@ -656,10 +657,11 @@ class Player(object):
         #self.stop()
             
     def toggle_pause(self):
-        if self.paused == False:
-            self.pause()
-        else:
-            self.unpause()
+        if self.snd:
+            if self.paused == False:
+                self.pause()
+            else:
+                self.unpause()
             
     def pause(self):
         """ Pause playing the current file """

@@ -43,6 +43,7 @@ import subprocess
 
 from main_utils import musicbrainz
 from main_utils import tinysong
+#from main_utils import jiwa
 from main_utils import read_write_xml
 from main_utils import audioscrobbler_lite
 from main_utils import default_app_open
@@ -96,11 +97,11 @@ from main_thirdp import grooveshark_old
 #sys.stderr = stdoutlog
 #8888888888
 
-PROGRAM_VERSION = "0.305"
+PROGRAM_VERSION = "0.306"
 PROGRAM_NAME = "GrooveWalrus"
 
-PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
-PLAY_SONG_ALTERNATE_URL ="http://listen.grooveshark.com/main.swf?hostname=cowbell.grooveshark.com&p=1&songID="
+#PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
+#PLAY_SONG_ALTERNATE_URL ="http://listen.grooveshark.com/main.swf?hostname=cowbell.grooveshark.com&p=1&songID="
 SONG_SENDER_URL = "http://gwp.turnip-town.net/?"
 
 SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0]))
@@ -1156,7 +1157,6 @@ class MainPanel(wx.Panel):
             track = self.lc_playlist.GetItem(val, 1).GetText()
             artist = self.lc_playlist.GetItem(val, 0).GetText()
             self.SearchIt(artist + ' ' + track)
-
             
     def ShowTab(self, location):
         # display a notebook tab or the search form
@@ -1499,15 +1499,16 @@ class MainPanel(wx.Panel):
         
         self.SetPlayButtonGraphic('play')
         
-    def LoadFlashSong(self, url, artist, track):
+    def LoadFlashSong(self):#, url, artist, track):
         #
         #print url
         #print self.web_music_type
-        if self.web_music_type != "GrooveShark":
+        #if self.web_music_type != "GrooveShark":
             #print self.web_music_url + artist + '-' + track
-            self.flash.movie = self.web_music_url + artist + '-' + track
-        else:
-            self.flash.movie = url
+        #    self.flash.movie = self.web_music_url + artist + '-' + track
+        #else:
+        print self.current_song.song_url
+        self.flash.movie = self.current_song.song_url #url
 
     def StopFlashSong(self):
         #
@@ -1601,7 +1602,7 @@ class MainPanel(wx.Panel):
         cs.song_time = self.lc_playlist.GetItem(playlist_number, 4).GetText()
         #cs.track_id = 0
         #cs.song_time_seconds = 0
-        
+               
         #cs = CurrentSong(self, playlist_number, self.current_song.artist, self.current_song.song, self.current_song.album, song_id, duration)
 
         #check the id
@@ -1642,8 +1643,13 @@ class MainPanel(wx.Panel):
             #use flash webmusic
             print 'webmusic'
             #add delay
-            self.time_count = self.sc_options_gs_wait.GetValue() * -1            
-            self.LoadFlashSong(cs.url, cs.artist, cs.song)
+            self.time_count = self.sc_options_gs_wait.GetValue() * -1
+            
+            # publish to pubsub
+            pub.sendMessage('main.playback.load', {'artist':cs.artist, 'song':cs.song})
+     
+            self.LoadFlashSong()#cs.song_url, cs.artist, cs.song)
+            #print cs.song_url
             cs.status = 'playing'            
             cs.groove_id = cs.song_id
             cs.track_id = 0
@@ -3210,7 +3216,7 @@ class CurrentSong():
                     self.status = 'stopped'
                     # ***skip to next track
                     
-        self.song_url = PLAY_SONG_URL + self.song_id 
+        #self.song_url = PLAY_SONG_URL + self.song_id 
                     
     def CheckAlbum(self, album):
         if album=='':
