@@ -142,7 +142,7 @@ class Options(object):
         window_dict['scrobble'] = str(int(self.parent.cb_options_scrobble.GetValue()))
         window_dict['prefetch'] = str(int(self.parent.cb_options_prefetch.GetValue()))
         #window_dict['bitrate'] = str(self.parent.ch_options_bitrate.GetStringSelection())
-        window_dict['record_dir'] = str(self.parent.bu_options_record_dir.GetLabel())
+        window_dict['record_dir'] = self.parent.bu_options_record_dir.GetLabel()
         window_dict['cache_size'] = str(self.parent.sl_options_cache_size.GetValue())
         
         minutes = self.parent.sc_options_song_minutes.GetValue()

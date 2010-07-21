@@ -1752,7 +1752,11 @@ class MainPanel(wx.Panel):
         
     def ConvertTimeSeconds(self, formated_time):
         # convert mm:ss to seconds
-        return (int(formated_time.split(':')[0]) * 60) + (int(formated_time.split(':')[1]))
+        if len(formated_time.split(':')) >= 2:
+            seconds = (int(formated_time.split(':')[0]) * 60) + (int(formated_time.split(':')[1]))
+            return seconds
+        else
+            return 240
 
     def ConvertTimeMilliSeconds(self, formated_time):
         # convert mm:ss to seconds
@@ -1844,65 +1848,67 @@ class MainPanel(wx.Panel):
         dlg.Destroy()
                 
     def ReadWinampPlaylist(self, filename):
-        # take current playlist and write to listcontrol        
-        f = open(filename)
-        #print filename
-        clean_path = filename.replace(os.sep, '/').rsplit('/', 1)[0]
-        counter = 0
-        try:
-            for line in f:
-                if line[0] != '#':
-                    filen = clean_path + '/' + line.strip()
-                    if os.path.isfile(filen):
-                        self.lc_playlist.InsertStringItem(counter, local_songs.GetMp3Artist(filen))
-                        self.lc_playlist.SetStringItem(counter, 1, local_songs.GetMp3Title(filen))
-                        self.lc_playlist.SetStringItem(counter, 2, local_songs.GetMp3Album(filen))
-                        self.lc_playlist.SetStringItem(counter, 3, filen)
-                        counter = counter + 1
-        finally:
-            f.close()
-        self.SavePlaylist(self.main_playlist_location)
-        self.ResizePlaylist()
+        # take current playlist and write to listcontrol
+        if os.path.isfile(filename):        
+            f = open(filename)
+            #print filename
+            clean_path = filename.replace(os.sep, '/').rsplit('/', 1)[0]
+            counter = 0
+            try:
+                for line in f:
+                    if line[0] != '#':
+                        filen = clean_path + '/' + line.strip()
+                        if os.path.isfile(filen):
+                            self.lc_playlist.InsertStringItem(counter, local_songs.GetMp3Artist(filen))
+                            self.lc_playlist.SetStringItem(counter, 1, local_songs.GetMp3Title(filen))
+                            self.lc_playlist.SetStringItem(counter, 2, local_songs.GetMp3Album(filen))
+                            self.lc_playlist.SetStringItem(counter, 3, filen)
+                            counter = counter + 1
+            finally:
+                f.close()
+            self.SavePlaylist(self.main_playlist_location)
+            self.ResizePlaylist()
         
     def ReadPlaylist(self, filename):
         # take current playlist and write to listcontrol
         #track_dict = read_write_xml.xml_utils().get_tracks(filename)
-        track_dict = read_write_xml.xml_utils().GetTracksSoup(filename)
-                
-        counter = 0
-        #print track_dict
-        for x in track_dict:
-            #print x
-            #set value
-            try:
-                index = self.lc_playlist.InsertStringItem(counter, x['creator'])
-                self.lc_playlist.SetStringItem(counter, 1, x['title'])
-                album = x['album']
-                if album == None:
-                    album = ''
-                self.lc_playlist.SetStringItem(counter, 2, album)
-                
-                song_id = x['location']
-                if song_id == None:
-                    song_id = ''
-                # *** this should be case insensitive File: <> file:
-                song_id = song_id.split('file:///')[-1]
-                song_id = song_id.split('http://grooveshark.com/')[-1]
-                song_id = song_id.replace('%20', ' ')
-                self.lc_playlist.SetStringItem(counter, 3, song_id)
-                
-                song_time = x['duration']
-                if song_time == None:
-                    song_time = ''
-                if song_time.isdigit():
-                    # convert milliseconds to formated time mm:ss
-                    song_time = self.ConvertMilliTimeFormated(song_time)
-                self.lc_playlist.SetStringItem(counter, 4, song_time)
-                counter = counter + 1
-            except TypeError:
-                print 'error:ReadPlaylist'
-                #pass
-        self.ResizePlaylist()
+        if os.path.isfile(filename):
+            track_dict = read_write_xml.xml_utils().GetTracksSoup(filename)
+                    
+            counter = 0
+            #print track_dict
+            for x in track_dict:
+                #print x
+                #set value
+                try:
+                    index = self.lc_playlist.InsertStringItem(counter, x['creator'])
+                    self.lc_playlist.SetStringItem(counter, 1, x['title'])
+                    album = x['album']
+                    if album == None:
+                        album = ''
+                    self.lc_playlist.SetStringItem(counter, 2, album)
+                    
+                    song_id = x['location']
+                    if song_id == None:
+                        song_id = ''
+                    # *** this should be case insensitive File: <> file:
+                    song_id = song_id.split('file:///')[-1]
+                    song_id = song_id.split('http://grooveshark.com/')[-1]
+                    song_id = song_id.replace('%20', ' ')
+                    self.lc_playlist.SetStringItem(counter, 3, song_id)
+                    
+                    song_time = x['duration']
+                    if song_time == None:
+                        song_time = ''
+                    if song_time.isdigit():
+                        # convert milliseconds to formated time mm:ss
+                        song_time = self.ConvertMilliTimeFormated(song_time)
+                    self.lc_playlist.SetStringItem(counter, 4, song_time)
+                    counter = counter + 1
+                except TypeError:
+                    print 'error:ReadPlaylist'
+                    #pass
+            self.ResizePlaylist()
         
     def OnPlaylistRightClick(self, event):        
         # make a menu
