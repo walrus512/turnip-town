@@ -31,7 +31,7 @@ DETAILS_RESFILE = SYSLOC + '\\layout_details.xml'
 class DetailsWindow(wx.Dialog):
     """Details Window for editing song info"""
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, -1, "Details", style=wx.FRAME_SHAPED) #STAY_ON_TOP)#wx.FRAME_SHAPED)
+        wx.Dialog.__init__(self, parent, -1, "Details", size=(400, 260), style=wx.FRAME_SHAPED) #STAY_ON_TOP)#wx.FRAME_SHAPED)
         self.parent = parent
         
         # XML Resources can be loaded from a file like this:

@@ -97,7 +97,7 @@ from main_thirdp import grooveshark_old
 #sys.stderr = stdoutlog
 #8888888888
 
-PROGRAM_VERSION = "0.306"
+PROGRAM_VERSION = "0.308"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -959,6 +959,7 @@ class MainPanel(wx.Panel):
     def SetScrobb(self):
         # set up scrobbing
         # should only be called on loading or if you change your setttings
+        # *** thread this sucka sometime
         self.current_song.scrobble_song = 0
         self.scrobbed_active = 0
         username = self.tc_options_username.GetValue()
@@ -972,7 +973,8 @@ class MainPanel(wx.Panel):
                 self.session_key = self.song_scrobb._get_session_id()
                 self.st_options_auth.SetLabel('Authorized: ' + time.asctime())  
                 self.scrobbed_active = 1
-            except:
+            except Exception, expt:
+                print str(Exception) + str(expt)
                 self.st_options_auth.SetLabel('Status: something failed. User/password?')
                 self.st_options_auth.SetBackgroundColour('Yellow')
                 #self.nb_main.SetSelection(NB_OPTIONS)
@@ -1605,6 +1607,16 @@ class MainPanel(wx.Panel):
                
         #cs = CurrentSong(self, playlist_number, self.current_song.artist, self.current_song.song, self.current_song.album, song_id, duration)
 
+        # check the file cache
+        cached_file = file_cache.CreateCachedFilename(system_files.GetDirectories(self).TempDirectory(),  cs.artist + '-' + cs.song + '.mp3')
+        if cached_file[1] == True:
+            if cs.song_id.isdigit():
+                cs.groove_id = cs.song_id
+            cs.song_id = cached_file[0]
+            #cs.groove_id = cs.song_id
+            #cs.music_id = 0
+        
+        
         #check the id
         cs.CheckId(cs.song_id)
         #check the album
@@ -1622,7 +1634,7 @@ class MainPanel(wx.Panel):
         if (cs.song_id.endswith('.mp3') == True):
             sts = local_songs.GetMp3Length(cs.song_id)
             cs.SetSongTimeSeconds(sts)
-            cs.SetSongTime(self.ConvertTimeFormated(sts))
+            cs.SetSongTime(self.ConvertTimeFormated(sts))            
         else:
             if cs.song_time != '':                
                 cs.SetSongTimeSeconds(self.ConvertTimeSeconds(cs.song_time))
@@ -1636,7 +1648,8 @@ class MainPanel(wx.Panel):
             cs.song_time_seconds = self.ConvertTimeSeconds(wformated_time)
             
             #check the internet
-            FetchTimeThread(cs.playlist_position, cs.artist, cs.song)
+            tx = FetchTimeThread(cs.playlist_position, cs.artist, cs.song)
+            tx.start()
 
         #-----------------------------------
         if (self.use_web_music == True) & ((len(cs.song_id) >= 1) & (len(cs.song_id.split('/')) < 2)):
@@ -1686,7 +1699,8 @@ class MainPanel(wx.Panel):
                 self.LoadWxMedia(cached_file_name)
             
             cs.status ='playing'
-            cs.groove_id = cs.song_id
+            if cs.song_id.isdigit():
+                cs.groove_id = cs.song_id
             cs.music_id = 0
         elif os.path.isfile(cs.song_id):
         # local file
@@ -1703,6 +1717,8 @@ class MainPanel(wx.Panel):
         else:
              cs.scrobble_song = 1
              cs.status = 'stopped'
+             #skip to next song
+             self.OnFowardClick(None)
              
         if cs.status == 'playing':
             self.parent.SetTitle(cs.artist + '-' + cs.song + ' - ' + PROGRAM_NAME + ' ' + PROGRAM_VERSION)
@@ -1715,9 +1731,10 @@ class MainPanel(wx.Panel):
             self.db_submit_complete = False
             
             # add 'start' to played table ==
-            q_track_id = local_songs.DbFuncs().GetTrackId(cs.groove_id, cs.track_id, cs.artist, cs.song)
+            q_track_id = local_songs.DbFuncs().GetTrackId(cs.groove_id, cs.music_id, cs.artist, cs.song)
             local_songs.DbFuncs().InsertPlayedData(q_track_id, played_type_id=0)
             #===============================
+            cs.track_id = q_track_id
 
             # publish to pubsub
             pub.sendMessage('main.playback.new', {'artist':cs.artist, 'song':cs.song})
@@ -3091,18 +3108,18 @@ class CurrentSong():
         self.song_time = song_time        
         self.song_id = song_id          #song-id listed on the listctrl, either 'file location or gs id'
         #self.album_graphic = ''
-        #self.artist_graphic = ''
-        self.status = 'stopped'
+        #self.artist_graphic = ''        
         self.SetDefaultValues()
         #self.CheckId(song_id)
         
     def __str__(self):        
-        print '   artist:   ' + str(self.artist)
-        print '     song:   ' + str(self.song)
-        print '    album:   ' + str(self.album)
-        print '  song_id:   ' + str(self.song_id)
-        print ' track_id:   ' + str(self.track_id)
-        print 'groove_id:   ' + str(self.groove_id)
+        print '            artist:   ' + str(self.artist)
+        print '              song:   ' + str(self.song)
+        print '             album:   ' + str(self.album)
+        print 'song_id (location):   ' + str(self.song_id)
+        print '          track_id:   ' + str(self.track_id)
+        print '         groove_id:   ' + str(self.groove_id)
+        print 'music_id (file_id):   ' + str(self.music_id)
         return '---end----'
         
     def SetDefaultValues(self):
@@ -3113,6 +3130,8 @@ class CurrentSong():
         self.song_type = 'local'
         self.song_url = ''
         self.song_time_seconds = 0
+        self.music_id = 0               #file_id~music_id
+        self.status = 'stopped'
         
     def SetAlbum(self, album, artist, song):
         if (artist == self.artist) & (song == self.song):
@@ -3141,7 +3160,8 @@ class CurrentSong():
             query_string = self.artist + ' ' + self.song
             query_results = local_songs.DbFuncs().GetResultsArray(query_string, 1, True)
             if len(query_results) == 1:
-                self.track_id = query_results[0][0]
+                #print query_results
+                self.music_id = query_results[0][0]
                 self.groove_id = 0
 
         if (self.song_id =='') & (len(self.artist) > 0) & (len(self.song) > 0):
@@ -3151,7 +3171,7 @@ class CurrentSong():
             query_results = local_songs.DbFuncs().GetSpecificResultArray(query_string, self.artist, self.song)            
             if len(query_results) >= 1:                
                 self.song_id = str(query_results[0][4])
-                self.track_id = query_results[0][0]
+                self.music_id = query_results[0][0]
                 
                 #pub.sendMessage('main.song_id', {'song_id':self.song_id, 'playlist_number':self.playlist_position})
                 self.groove_id = 0
@@ -3221,7 +3241,7 @@ class CurrentSong():
     def CheckAlbum(self, album):
         if album=='':
             at = FetchAlbumThread(self.artist, self.song, self.playlist_position)
-            at.run()
+            at.start()
         #else:
             # publish to pubsub
             #pub.sendMessage('main.album', {'album':self.album, 'playlist_number':self.playlist_position})
@@ -3233,16 +3253,19 @@ class FetchAlbumThread(Thread):
     #grab the album name
     #check current track, verify that it still matches, update album name
     #publish to pubsub when album is retrived, so it can grab album art
-    def __init__(self, artist, song, playlist_number):        
+    def __init__(self, artist, song, playlist_number):
+        Thread.__init__(self)        
         self.artist = artist
         self.song = song
         self.playlist_number = playlist_number
         
     def run(self):
-        album_array = musicbrainz.Brainz().get_song_info(self.artist, self.song)
-        album = album_array[1]
-        print '::album::' + album
-        pub.sendMessage('main.album', {'album':album, 'playlist_number':self.playlist_number})
+        try:
+            album_array = musicbrainz.Brainz().get_song_info(self.artist, self.song)
+            album = album_array[1]
+            pub.sendMessage('main.album', {'album':album, 'playlist_number':self.playlist_number})
+        except Exception, expt:
+            print str(Exception) + str(expt)
 
 #---------------------------------------------------------------------------
 # ####################################
@@ -3250,14 +3273,18 @@ class FetchTimeThread(Thread):
     #grab the album name
     #check current track, verify that it still matches, update album name
     #publish to pubsub when album is retrived, so it can grab album art
-    def __init__(self, playlist_number, artist, song):        
+    def __init__(self, playlist_number, artist, song):
+        Thread.__init__(self)
         self.artist = artist
         self.song = song
         self.playlist_number = playlist_number
         
     def run(self):
-        track_time = musicbrainz.Brainz().get_song_time(self.artist, self.song)        
-        pub.sendMessage('main.song_time.seconds', {'time_seconds':track_time, 'playlist_number':self.playlist_number})
+        try:
+            track_time = musicbrainz.Brainz().get_song_time(self.artist, self.song)        
+            pub.sendMessage('main.song_time.seconds', {'time_seconds':track_time, 'playlist_number':self.playlist_number})
+        except Exception, expt:
+            print str(Exception) + str(expt)
 
 #---------------------------------------------------------------------------
 # ####################################
@@ -3399,7 +3426,7 @@ class WebFetchThread(Thread):
                 tag_id = local_songs.DbFuncs().InsertTagData(res[2])
             #print tag_id
             grooveshark_id = self.panel.current_song.groove_id
-            music_id = self.panel.current_song.track_id
+            music_id = self.panel.current_song.music_id
             track_time = self.panel.current_song.song_time_seconds
             #tag_id = ''            
             album_art_file = self.panel.palbum_art_file
