@@ -1755,7 +1755,7 @@ class MainPanel(wx.Panel):
         if len(formated_time.split(':')) >= 2:
             seconds = (int(formated_time.split(':')[0]) * 60) + (int(formated_time.split(':')[1]))
             return seconds
-        else
+        else:
             return 240
 
     def ConvertTimeMilliSeconds(self, formated_time):
