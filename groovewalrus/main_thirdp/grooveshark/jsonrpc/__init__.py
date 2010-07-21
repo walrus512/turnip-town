@@ -57,7 +57,7 @@ class Request:
                 "clientRevision": clientVersion,
                 "uuid": api._uuid,
                 "session": api._session},
-                "country": {ID:223, CC1:"0", CC2:"0", CC3:"0", CC4:"2147483648"},
+                "country": {"ID":"223", "CC1":"0", "CC2":"0", "CC3":"0", "CC4":"2147483648"},
                 "privacy": 1,
             "parameters": parameters,
             "method": method}

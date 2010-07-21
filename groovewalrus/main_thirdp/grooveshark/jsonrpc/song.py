@@ -80,7 +80,7 @@ class Song:
             "songID": self.id,
             "prefetch": False,
             "mobile": False, 
-            "country": {ID:223, CC1:"0", CC2:"0", CC3:"0", CC4:"2147483648"}
+            "country": {"ID":"223", "CC1":"0", "CC2":"0", "CC3":"0", "CC4":"2147483648"}
             }
         response = self._gsapi.request(parameters,
                 "getStreamKeyFromSongIDEx").send()
