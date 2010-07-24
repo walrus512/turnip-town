@@ -22,7 +22,7 @@ Place, Suite 330, Boston, MA 02111-1307 USA
 import wx
 import wx.html
 import wx.xrc as xrc
-import wx.media
+#import wx.media
 from wx.lib.pubsub import Publisher as pub
 #import wx.aui
 #import  wx.gizmos as gizmos
@@ -54,7 +54,10 @@ from main_utils import system_files
 from main_utils import file_cache
 from main_utils import prefetch
 from main_utils import download_feed
-#from main_utils import player_wx
+#---
+from main_utils import player_wx
+from main_utils import player_pyglet
+from main_utils import player_pymedia
 
 from main_controls import drag_and_drop
 from main_controls import playback_panel
@@ -97,7 +100,7 @@ from main_thirdp import grooveshark_old
 #sys.stderr = stdoutlog
 #8888888888
 
-PROGRAM_VERSION = "0.308"
+PROGRAM_VERSION = "0.310"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -750,14 +753,14 @@ class MainPanel(wx.Panel):
             self.parent.UseTrayIcon()
             
         # ---------------------------------------------------------------
-        #setup wxmedia backend
-        backend = eval('wx.media.MEDIABACKEND_' + self.ch_options_wxbackend.GetStringSelection())
-        self.mediaPlayer = wx.media.MediaCtrl(self, style=wx.SIMPLE_BORDER, szBackend=backend) #wx.media.MEDIABACKEND_WMP10)
-        self.Bind(wx.media.EVT_MEDIA_LOADED, self.PlayWxMedia)
-        if self.rx_options_backend.GetSelection() == 0:#()'pymedia' #'wx.media' #or 'pymedia'
-            self.use_backend = 'pymedia'
-        else:
-            self.use_backend = 'wx.media'
+        ##setup wxmedia backend
+        ##backend = eval('wx.media.MEDIABACKEND_' + self.ch_options_wxbackend.GetStringSelection())
+        ##self.mediaPlayer = wx.media.MediaCtrl(self, style=wx.SIMPLE_BORDER, szBackend=backend) #wx.media.MEDIABACKEND_WMP10)
+        ##self.Bind(wx.media.EVT_MEDIA_LOADED, self.PlayWxMedia)        
+        #set backend
+        self.SetBackend(None)
+        #backend_types = ['pymedia', 'wx.media', 'pyglet']
+        #self.use_backend = backend_types[self.rx_options_backend.GetSelection()]
         # ---------------------------------------------------------------
         
         #pubsub receivers --------
@@ -831,6 +834,7 @@ class MainPanel(wx.Panel):
         
     def SetCachedTimeReceiverAction(self, message):
         # check if file previously cached
+        #print '45 seconds'
         temp_dir = system_files.GetDirectories(self).TempDirectory()
         file_name_plain = self.current_song.artist + '-' + self.current_song.song + '.mp3'
         cached_file = file_cache.CreateCachedFilename(temp_dir, file_name_plain)
@@ -838,6 +842,7 @@ class MainPanel(wx.Panel):
         if cached_file[1] == True:            
             self.current_song.SetSongTimeSeconds(local_songs.GetMp3Length(cached_file_name))            
             self.current_song.SetSongTime(self.ConvertTimeFormated(self.current_song.song_time_seconds))
+            self.lc_playlist.SetStringItem(self.current_song.playlist_position, 4, self.ConvertTimeFormated(self.current_song.song_time_seconds))
         
     def SongIdReceiverAction(self, message):        
         # update playlist
@@ -858,25 +863,39 @@ class MainPanel(wx.Panel):
     def TimeSecondsReceiverAction(self, message):        
         # update playlist
         self.lc_playlist.SetStringItem(message.data['playlist_number'], 4, self.ConvertTimeFormated(message.data['time_seconds']))
-        self.current_song.SetTimeSeconds(message.data['time_seconds'])
+        self.current_song.SetSongTimeSeconds(message.data['time_seconds'])
         #self.SavePlaylist(self.main_playlist_location)
 
     #------------------------      
     
     def SetBackend(self, event):
-        #sets backend type, pymedia or wx.media
-        self.SaveOptions(None)
-        self.OnStopClick(None)
-        backend_type = self.rx_options_backend.GetSelection()
-        if backend_type == 1:
-            backend = eval('wx.media.MEDIABACKEND_' + self.ch_options_wxbackend.GetStringSelection())
-            #self.mediaPlayer.Destroy()
-            print backend
-            self.mediaPlayer = wx.media.MediaCtrl(self, style=wx.SIMPLE_BORDER, szBackend=backend)
-            self.Bind(wx.media.EVT_MEDIA_LOADED, self.PlayWxMedia)
-            self.use_backend = 'wx.media'
+        #sets backend type, pymedia, wx.media, pyglet
+        if event != None:
+            self.SaveOptions(None)
+            self.OnStopClick(None)
+        
+        backend_types = ['pymedia', 'wx.media', 'pyglet']
+        self.use_backend = backend_types[self.rx_options_backend.GetSelection()]
+        
+        if self.use_backend == 'pymedia':
+            self.player = player_pymedia.Player(self)
+        elif self.use_backend == 'wx.media':
+            self.player = player_wx.Player(self)
         else:
-            self.use_backend = 'pymedia'
+            self.player = player_pyglet.Player(self)
+        
+#        backend_type = self.rx_options_backend.GetSelection()
+#        if backend_type == 1:
+#            backend = eval('wx.media.MEDIABACKEND_' + self.ch_options_wxbackend.GetStringSelection())
+#            #self.mediaPlayer.Destroy()
+#            print backend
+#            self.mediaPlayer = wx.media.MediaCtrl(self, style=wx.SIMPLE_BORDER, szBackend=backend)
+#            self.Bind(wx.media.EVT_MEDIA_LOADED, self.PlayWxMedia)
+#            self.use_backend = 'wx.media'
+#        elif backend_type == 0:
+#            self.use_backend = 'pymedia'
+#        else:
+#            self.use_backend = 'pyglet'
 
     def OnClearCacheClick(self, event):
         #clear the cache
@@ -1322,7 +1341,7 @@ class MainPanel(wx.Panel):
     def SetVolume(self, volume):
         soundmixer.SetMasterVolume(volume)
         #wx.media too
-        self.mediaPlayer.SetVolume(float(volume)/100)
+        self.player.SetVolume(volume)
         #print volume
         self.sl_volume.SetValue(volume)
         
@@ -1454,11 +1473,11 @@ class MainPanel(wx.Panel):
     #def OnPlayClick(self, event):
         #self.LoadWxMedia(song_id)
                 
-    def PlayWxMedia(self, event):
-        self.mediaPlayer.Play()   
+    #def PlayWxMedia(self, event):
+        #self.mediaPlayer.Play()   
     
-    def LoadWxMedia(self, file_name):
-        self.mediaPlayer.Load(file_name)                
+    #def LoadWxMedia(self, file_name):
+        #self.mediaPlayer.Load(file_name)                
                 
     def SetPlayButtonGraphic(self, playorpause):
         
@@ -1471,13 +1490,8 @@ class MainPanel(wx.Panel):
         play_button.SetBitmapLabel(bmp)
             
     def TogglePause(self):
-        #pymedia
-        if self.current_local != None:
-            self.current_local.pause()
-        #wx.media
-        self.mediaPlayer.Pause()
-        if self.current_song.status == 'paused':
-            self.mediaPlayer.Play()
+        """ toggles between pausing and playing """
+        self.player.TogglePause(self.current_song.status)
             
     def OnPlayListPlayClick(self, event):
         # get selected search relsult list item and add to playlist
@@ -1558,11 +1572,12 @@ class MainPanel(wx.Panel):
             
     def StopAll(self):
         #stop all playback
-        if self.current_local != None:
-            self.current_local.stop()
+        #if self.current_local != None:
+        #    self.current_local.stop()
+        self.player.Stop()
         if self.use_web_music == True:
             self.StopFlashSong()
-        self.mediaPlayer.Stop()
+        ##self.mediaPlayer.Stop()
             
 # --------------------------------------------------------- 
 # play functions------------------------------------------- 
@@ -1639,6 +1654,7 @@ class MainPanel(wx.Panel):
             if cs.song_time != '':                
                 cs.SetSongTimeSeconds(self.ConvertTimeSeconds(cs.song_time))
             
+        #print cs.song_time_seconds
         if cs.song_time_seconds == 0:
             #set a default time
             wminutes = self.sc_options_song_minutes.GetValue()
@@ -1667,13 +1683,14 @@ class MainPanel(wx.Panel):
             cs.groove_id = cs.song_id
             cs.track_id = 0
             
-        elif (len(cs.song_id) >= 1) & (len(cs.song_id.split('/')) < 2):
+        elif (len(cs.song_id) >= 1) & (len(cs.song_id.split('/')) < 2) & (cs.song_id.isdigit()):
             #grooveshark song
-            self.time_count = -1
             temp_dir = system_files.GetDirectories(self).TempDirectory()
             file_name_plain = cs.artist + '-' + cs.song + '.mp3'
+            
             # clean cache dir
             file_cache.CheckCache(temp_dir, self.sl_options_cache_size.GetValue())
+            
             # check if file previously cached
             cached_file = file_cache.CreateCachedFilename(temp_dir, file_name_plain)
             cached_file_name = cached_file[0]
@@ -1682,38 +1699,22 @@ class MainPanel(wx.Panel):
                 #THREAD
                 current = FileThread(self, cached_file_name, cs.song_id, cs.song, cs.artist, cs.album)                
                 current.start()
-            #else:
-                #wminutes = self.sc_options_song_minutes.GetValue()
-                #wseconds = self.sc_options_song_seconds.GetValue()                
-                #cs.SetSongTimeSeconds((wminutes * 60) + wseconds)            
-                #cs.SetSongTime(self.ConvertTimeFormated(cs.song_time_seconds))
-            #-------------------------------------
+                
             #play song
-            if self.use_backend == 'pymedia':
-                # pymedia ------
-                #THREAD
-                self.current_local = WebFetchThread(self, '', cached_file_name, '', 'PLAYLOCAL')
-                self.current_local.start()
-            else:
-                # wx.media ------
-                self.LoadWxMedia(cached_file_name)
+            self.time_count = -1
+            self.player.Play(cached_file_name)
+            cs.status = 'playing'
             
-            cs.status ='playing'
             if cs.song_id.isdigit():
                 cs.groove_id = cs.song_id
             cs.music_id = 0
+            
         elif os.path.isfile(cs.song_id):
         # local file
-            self.time_count = -2
-            if self.use_backend == 'pymedia':
-                # pymedia ------
-                #THREAD                
-                self.current_local = WebFetchThread(self, '', cs.song_id, '', 'PLAYLOCAL')
-                self.current_local.start()
-            else:
-                # wx.media -----
-                self.LoadWxMedia(cs.song_id)            
+            self.time_count = -1
+            self.player.Play(cs.song_id)
             cs.status = 'playing'
+            
         else:
              cs.scrobble_song = 1
              cs.status = 'stopped'
@@ -1721,6 +1722,7 @@ class MainPanel(wx.Panel):
              self.OnFowardClick(None)
              
         if cs.status == 'playing':
+            print self.use_backend
             self.parent.SetTitle(cs.artist + '-' + cs.song + ' - ' + PROGRAM_NAME + ' ' + PROGRAM_VERSION)
             #self.lc_playlist.Select(playlist_number)
             if os.name == 'nt':
@@ -3119,9 +3121,9 @@ class CurrentSong():
         #self.CheckId(song_id)
         
     def __str__(self):        
-        print '            artist:   ' + str(self.artist)
-        print '              song:   ' + str(self.song)
-        print '             album:   ' + str(self.album)
+        print '            artist:   ' + self.artist
+        print '              song:   ' + self.song
+        print '             album:   ' + self.album
         print 'song_id (location):   ' + str(self.song_id)
         print '          track_id:   ' + str(self.track_id)
         print '         groove_id:   ' + str(self.groove_id)
@@ -3287,8 +3289,9 @@ class FetchTimeThread(Thread):
         
     def run(self):
         try:
-            track_time = musicbrainz.Brainz().get_song_time(self.artist, self.song)        
-            pub.sendMessage('main.song_time.seconds', {'time_seconds':track_time, 'playlist_number':self.playlist_number})
+            track_time = musicbrainz.Brainz().get_song_time(self.artist, self.song)
+            if track_time != 0:
+                pub.sendMessage('main.song_time.seconds', {'time_seconds':track_time, 'playlist_number':self.playlist_number})
         except Exception, expt:
             print str(Exception) + str(expt)
 
@@ -3304,18 +3307,18 @@ class WebFetchThread(Thread):
         self.album = album
         self.webfetchtype = webfetchtype
         #self.lsp = local_songs.Player()
-        if webfetchtype == 'PLAYLOCAL':
-            if panel.use_backend == 'pymedia':
-                self.lsp = local_songs.Player()
+        #if webfetchtype == 'PLAYLOCAL':
+        #    if panel.use_backend == 'pymedia':
+        #        self.lsp = local_songs.Player()
             ##else:
             ##    self.lsp = player_wx.Player(panel)
                
-    def stop(self):
-        self.lsp.stop_play()
+    #def stop(self):
+    #    self.lsp.stop_play()
         #self.lsp.stop()
                 
-    def pause(self):
-        self.lsp.toggle_pause()
+    #def pause(self):
+    #    self.lsp.toggle_pause()
                  
     def run(self):
         if self.webfetchtype == 'COVERS':
@@ -3363,19 +3366,19 @@ class WebFetchThread(Thread):
                     self.panel.SetImage(local_file_name, self.panel.image_save_location, resize=True)
             self.panel.SetBioText(bio_url[1], self.artist)
             
-        if self.webfetchtype == 'PLAYLOCAL':
-            #local mp3 playback 
-            print 'local: ' + self.song
-            self.panel.pstatus = 'loading'
-            while os.path.isfile(self.song) != True:
-                time.sleep(1)               
-            while os.path.getsize(self.song) < BUFFER_SIZE:
-                time.sleep(2)
+#        if self.webfetchtype == 'PLAYLOCAL':
+#            #local mp3 playback 
+ #           print 'local: ' + self.song
+  #          self.panel.current_song.status = 'loading'
+  #          while os.path.isfile(self.song) != True:
+   #             time.sleep(1)               
+    #        while os.path.getsize(self.song) < BUFFER_SIZE:
+   #             time.sleep(2)
                 #print os.path.getsize(file_name)
-            self.panel.time_count = -1
-            self.panel.pstatus = 'playing'
+    #        self.panel.time_count = -1
+    #        self.panel.current_song.status = 'playing'
             
-            self.lsp.play(self.song)
+     #       self.lsp.play(self.song)
 
             
         if self.webfetchtype == 'VERSION':
@@ -3470,7 +3473,7 @@ class FileThread(Thread):
             g_session.startSession()
         except Exception, exp:
             #print str(exp)
-            self.parent.pstatus = 'stopped'
+            self.parent.current_song.status = 'stopped'
             dlg = wx.MessageDialog(self.parent, "Grooveshark error: " + str(exp), 'Alert', wx.OK | wx.ICON_WARNING)
             if (dlg.ShowModal() == wx.ID_OK):
                 dlg.Destroy()
@@ -3483,7 +3486,7 @@ class FileThread(Thread):
                         
     def run(self):
         
-        ##self.parent.pstatus ='buffering'
+        ##self.parent.current_song.status ='buffering'
         
         keyandserver = self.GetStreamKeyAndServer()
         if keyandserver != None:

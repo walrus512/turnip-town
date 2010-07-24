@@ -638,111 +638,111 @@ class SongDBWindow(wx.Dialog):
         
 # --------------------------------------------------------- 
 #================================================           
-EMULATE=0
+#EMULATE=0
 
-import pymedia.muxer as muxer, pymedia.audio.acodec as acodec, pymedia.audio.sound as sound
-import time
+#import pymedia.muxer as muxer, pymedia.audio.acodec as acodec, pymedia.audio.sound as sound
+#import time
 
-class Player(object): 
-    def __init__(self):
-        self.local_play_status = True
-        self.paused = False
-        self.snd = None
+#class Player(object): 
+#    def __init__(self):
+#        self.local_play_status = True
+#        self.paused = False
+#        self.snd = None
                 
-    def stop_play(self):
-        #self.stop()
-        self.local_play_status = False
-        if os.name != 'nt':
-            time.sleep(4)
+#    def stop_play(self):
+#        #self.stop()
+#        self.local_play_status = False
+#        if os.name != 'nt':
+#            time.sleep(4)
         #self.stop()
             
-    def toggle_pause(self):
-        if self.snd:
-            if self.paused == False:
-                self.pause()
-            else:
-                self.unpause()
+#    def toggle_pause(self):
+#        if self.snd:
+#            if self.paused == False:
+#                self.pause()
+#            else:
+#                self.unpause()
             
-    def pause(self):
-        """ Pause playing the current file """
-        if self.snd.isPlaying():
-            self.paused= True
-            if self.snd:
-                self.snd.pause()
+#    def pause(self):
+#        """ Pause playing the current file """
+ #       if self.snd.isPlaying():
+  #          self.paused= True
+   #         if self.snd:
+    #            self.snd.pause()
                 
-    def unpause(self):
-        """ Resume playing the current file """
-        if self.snd.isPlaying():
-            if self.snd:
-                self.snd.unpause()
-        self.paused= False
+#    def unpause(self):
+ #       """ Resume playing the current file """
+  #      if self.snd.isPlaying():
+   #         if self.snd:
+    #            self.snd.unpause()
+     #   self.paused= False
   
-    def isPaused( self ):
-        """ Returns whether playback is paused """
-        return self.paused
-        
-    def stop(self):
-        """ Stop playing the current file """
-        if self.snd.isPlaying():            
-            if self.snd:
-                self.snd.stop()
-
-    def play(self, name, card=0, rate=1, tt=-1):
-    
-        #dm= muxer.Demuxer( str.split( name, '.' )[ -1 ].lower() )
-        dm= muxer.Demuxer( 'mp3' )
-        snds= sound.getODevices()
-        if card not in range( len( snds ) ):
-            raise 'Cannot play sound to non existent device %d out of %d' % ( card+ 1, len( snds ) )
-        f= open( name, 'rb' )
-        self.snd= resampler= dec= None
-        s= f.read( 32000 )
-        t= 0
-        while (len( s )):
-            #print self.local_play_status
-            frames= dm.parse( s )
-            if frames:
-                for fr in frames:
-                # Assume for now only audio streams
-    
-                    if dec== None:
-                        #print dm.getHeaderInfo(), dm.streams
-                        dec= acodec.Decoder( dm.streams[ fr[ 0 ] ] )
-            
-                    r= dec.decode( fr[ 1 ] )
-                    if r and r.data:
-                        if self.snd== None:
-                            #print 'Opening sound with %d channels -> %s' % ( r.channels, snds[ card ][ 'name' ] )
-                            self.snd= sound.Output( int( r.sample_rate* rate ), r.channels, sound.AFMT_S16_LE, card )
+#    def isPaused( self ):
+ #       """ Returns whether playback is paused """
+  #      return self.paused
+   #     
+#    def stop(self):
+ #       """ Stop playing the current file """
+  #      if self.snd.isPlaying():            
+   #         if self.snd:
+    #            self.snd.stop()
+#
+#    def play(self, name, card=0, rate=1, tt=-1):
+ #   
+ #       #dm= muxer.Demuxer( str.split( name, '.' )[ -1 ].lower() )
+  #      dm= muxer.Demuxer( 'mp3' )
+   #     snds= sound.getODevices()
+    #    if card not in range( len( snds ) ):
+     #       raise 'Cannot play sound to non existent device %d out of %d' % ( card+ 1, len( snds ) )
+      #  f= open( name, 'rb' )
+#        self.snd= resampler= dec= None
+ #       s= f.read( 32000 )
+  #      t= 0
+   #     while (len( s )):
+    #        #print self.local_play_status
+     #       frames= dm.parse( s )
+      #      if frames:
+       #         for fr in frames:
+        #        # Assume for now only audio streams
+    #
+     #               if dec== None:
+      #                  #print dm.getHeaderInfo(), dm.streams
+       #                 dec= acodec.Decoder( dm.streams[ fr[ 0 ] ] )
+        #    
+         #           r= dec.decode( fr[ 1 ] )
+          #          if r and r.data:
+           #             if self.snd== None:
+            #                #print 'Opening sound with %d channels -> %s' % ( r.channels, snds[ card ][ 'name' ] )
+             #               self.snd= sound.Output( int( r.sample_rate* rate ), r.channels, sound.AFMT_S16_LE, card )
                             #print r.channels
-                            if rate< 1 or rate> 1:
-                                resampler= sound.Resampler( (r.sample_rate,r.channels), (int(r.sample_rate/rate),r.channels) )
-                                print 'Sound resampling %d->%d' % ( r.sample_rate, r.sample_rate/rate )
+              #              if rate< 1 or rate> 1:
+               #                 resampler= sound.Resampler( (r.sample_rate,r.channels), (int(r.sample_rate/rate),r.channels) )
+                #                print 'Sound resampling %d->%d' % ( r.sample_rate, r.sample_rate/rate )
               
-                        data= r.data
-                        if resampler:
-                            data= resampler.resample( data )
-                        if EMULATE:
-                            # Calc delay we should wait to emulate snd.play()
-    
-                            d= len( data )/ float( r.sample_rate* r.channels* 2 )
-                            time.sleep( d )
-                            if int( t+d )!= int( t ):
-                                print 'playing: %d sec\r' % ( t+d ),
-                            t+= d
-                        else:
-                            self.snd.play( data )
-                        #print snd.getPosition()
-            if tt> 0:
-                if self.snd and self.snd.getPosition()< tt:
-                    break
+                 #       data= r.data
+                  #      if resampler:
+                   #         data= resampler.resample( data )
+                    #    if EMULATE:
+                     #       # Calc delay we should wait to emulate snd.play()
+    #
+     #                       d= len( data )/ float( r.sample_rate* r.channels* 2 )
+      #                      time.sleep( d )
+       #                     if int( t+d )!= int( t ):
+        #                        print 'playing: %d sec\r' % ( t+d ),
+         #                   t+= d
+          #              else:
+           #                 self.snd.play( data )
+            #            #print snd.getPosition()
+  #          if tt> 0:
+   #             if self.snd and self.snd.getPosition()< tt:
+    #                break
 
-            s= f.read( 512 )
-            if self.local_play_status == False:               
-                break
+     #       s= f.read( 512 )
+      #      if self.local_play_status == False:               
+       #         break
                     
-        while self.snd.isPlaying():
-            time.sleep( 0.05 )
+ #       while self.snd.isPlaying():
+  #          time.sleep( 0.05 )
 
 #====================================================
 class VirtualList(wx.ListCtrl):

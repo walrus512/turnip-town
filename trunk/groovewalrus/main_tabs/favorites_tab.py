@@ -48,6 +48,7 @@ class FavoritesTab(wx.ScrolledWindow):
         self.cb_faves_good = xrc.XRCCTRL(self.parent, 'm_cb_faves_good')
         self.cb_faves_average = xrc.XRCCTRL(self.parent, 'm_cb_faves_average')
         self.cb_faves_poor = xrc.XRCCTRL(self.parent, 'm_cb_faves_poor')
+        self.st_faves_rating = xrc.XRCCTRL(self.parent, 'm_st_faves_rating')
         
         # faves list control
         self.lc_faves = xrc.XRCCTRL(self.parent, 'm_lc_faves')
@@ -73,10 +74,11 @@ class FavoritesTab(wx.ScrolledWindow):
         self.lc_faves.AssignImageList(self.parent.RateImageList(), wx.IMAGE_LIST_SMALL)        
         self.lc_faves.SetColumnImage(1, 5)
         
-        #faves
+        #bindings
         ##self.parent.Bind(wx.EVT_BUTTON, self.RemoveFavesItem, id=xrc.XRCID('m_bb_faves_remove'))        
         self.parent.Bind(wx.EVT_BUTTON, self.OnFavesClick, id=xrc.XRCID('m_bb_faves'))
         self.parent.Bind(wx.EVT_BUTTON, self.FavesAddPlaylist, id=xrc.XRCID('m_bb_faves_playlist'))
+        self.st_faves_rating.Bind(wx.EVT_LEFT_UP, self.OnFavesRatingLabelClick)
         
         self.parent.Bind(wx.EVT_BUTTON, self.OnAutoGenerateFavesPlayist, id=xrc.XRCID('m_bb_faves_plize'))
         
@@ -90,6 +92,23 @@ class FavoritesTab(wx.ScrolledWindow):
   
     def FilterFaves(self, event):
         self.OnFavesColClick()
+        
+    def OnFavesRatingLabelClick(self, event):
+        #toggle between selecting all, and none
+        if self.cb_faves_great.GetValue() == True:
+            #select none
+            self.cb_faves_great.SetValue(False)
+            self.cb_faves_good.SetValue(False)
+            self.cb_faves_average.SetValue(False)
+            self.cb_faves_poor.SetValue(False)
+            self.FilterFaves(None)
+        else:
+            self.cb_faves_great.SetValue(True)
+            self.cb_faves_good.SetValue(True)
+            self.cb_faves_average.SetValue(True)
+            self.cb_faves_poor.SetValue(True)
+            self.FilterFaves(None)
+        
         
     def OnKeyPress(self, event):
         #jump to next artist with that starting letter
