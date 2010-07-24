@@ -31,26 +31,36 @@ class Player(object):
        
         self.parent = parent
         #self.mediaPlayer = self.parent.mediaPlayer
+        backend = eval('wx.media.MEDIABACKEND_' + self.parent.ch_options_wxbackend.GetStringSelection())
         self.mediaPlayer = wx.media.MediaCtrl(self.parent, style=wx.SIMPLE_BORDER, szBackend=wx.media.MEDIABACKEND_WMP10)
         self.parent.Bind(wx.media.EVT_MEDIA_LOADED, self.PlayWxMedia)
         
-        self.paused = False
+        self.paused = False        
         
     #----------------------------------------------------------------------
                   
     def PlayWxMedia(self, event):
-        print 'foon'
         self.mediaPlayer.Play()
         
-    def play(self, file_name):
-        print file_name
+    def Play(self, file_name):
         self.mediaPlayer.Load(file_name)
+        self.SetParentVolume()
+        
+    def Stop(self):
+        self.mediaPlayer.Stop()
+    
+    def SetVolume(self, volume):
+        self.mediaPlayer.SetVolume(float(volume)/100)
+        
+    def SetParentVolume(self):
+        # get the current volume level
+        self.SetVolume(self.parent.GetVolume())
         
     def stop_play(self):
         self.mediaPlayer.Stop()
                 
-    def toggle_pause(self):
-        if self.paused == False:
+    def TogglePause(self, status):
+        if status == 'paused':
             self.mediaPlayer.Pause()
             self.paused = True
         else:
