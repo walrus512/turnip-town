@@ -1385,9 +1385,15 @@
 													<option>0</option>
 													<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
 													<border>5</border>
-													<object class="wxStaticText" name="m_staticText462">
+													<object class="wxStaticText" name="m_st_faves_rating">
 														<style>wxALIGN_RIGHT</style>
 														<size>100,-1</size>
+														<font>
+															<family>default</family>
+															<style>normal</style>
+															<weight>normal</weight>
+															<underlined>1</underlined>
+														</font>
 														<label>Rating:</label>
 													</object>
 												</object>
@@ -2657,7 +2663,7 @@
 																				<flag>wxEXPAND</flag>
 																				<border>5</border>
 																				<object class="wxStaticBoxSizer">
-																					<orient>wxVERTICAL</orient>
+																					<orient>wxHORIZONTAL</orient>
 																					<label>Backends</label>
 																					<object class="sizeritem">
 																						<option>0</option>
@@ -2670,22 +2676,32 @@
 																							<content>
 																								<item>pymedia</item>
 																								<item>wx.media</item>
+																								<item>pyglet</item>
 																							</content>
-																							<dimension>2</dimension>
+																							<dimension>3</dimension>
 																						</object>
 																					</object>
 																					<object class="sizeritem">
 																						<option>0</option>
-																						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																						<flag></flag>
 																						<border>5</border>
-																						<object class="wxChoice" name="m_ch_options_wxbackend">
-																							<selection>0</selection>
-																							<content>
-																								<item>WMP10</item>
-																								<item>GSTREAMER</item>
-																								<item>QUICKTIME</item>
-																								<item>DIRECTSHOW</item>
-																							</content>
+																						<object class="wxStaticBoxSizer">
+																							<orient>wxVERTICAL</orient>
+																							<label>wx.media type</label>
+																							<object class="sizeritem">
+																								<option>0</option>
+																								<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																								<border>5</border>
+																								<object class="wxChoice" name="m_ch_options_wxbackend">
+																									<selection>0</selection>
+																									<content>
+																										<item>WMP10</item>
+																										<item>GSTREAMER</item>
+																										<item>QUICKTIME</item>
+																										<item>DIRECTSHOW</item>
+																									</content>
+																								</object>
+																							</object>
 																						</object>
 																					</object>
 																				</object>
