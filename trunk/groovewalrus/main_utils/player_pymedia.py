@@ -28,6 +28,7 @@ import os
 from threading import Thread
 
 EMULATE=0
+BUFFER_SIZE = 320000
 
 ########################################################################
 class Player(object): 
@@ -36,12 +37,13 @@ class Player(object):
         self.paused = False
         #self.snd = None
         self.play_thread = None
+        self.parent = parent
                 
     def Play(self, file_name):
         #print file_name
         #source = pyglet.media.load(file_name)
         #self.mediaPlayer.queue(source)
-        self.play_thread = PlayThread(file_name)
+        self.play_thread = PlayThread(file_name, self.parent)
         #THREAD
         self.play_thread.start()
         
@@ -60,15 +62,29 @@ class Player(object):
             
 class PlayThread(Thread):
     """ makes a thread for pyglet playback """
-    def __init__(self, file_name):
+    def __init__(self, file_name, parent):
         Thread.__init__(self)
         self.paused = False
         self.file_name = file_name
         self.local_play_status = True
         self.snd = None
+        self.parent = parent
         
     def run(self):
         """ plays a god-damn song """
+        
+        #local mp3 playback 
+        print 'local: ' + self.file_name
+        self.parent.current_song.status = 'loading'
+        while os.path.isfile(self.file_name) != True:
+            time.sleep(1)               
+        while os.path.getsize(self.file_name) < BUFFER_SIZE:
+            time.sleep(2)
+            #print os.path.getsize(file_name)
+        self.parent.time_count = -1
+        self.parent.current_song.status = 'playing'
+            
+        
         card=0
         rate=1
         tt=-1    

@@ -23,11 +23,12 @@ Place, Suite 330, Boston, MA 02111-1307 USA
 
 import wx
 import wx.xrc as xrc
+import os
 from main_utils.read_write_xml import xml_utils
 from main_utils import system_files
 from main_utils import jiwa
-import os #,sys
-from wx.lib.flashwin import FlashWindow
+from main_utils import player_flash
+#from wx.lib.flashwin import FlashWindow
 
 #SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0]))
 #DIZZLER_SETTINGS = os.path.join(os.getcwd(), 'plugins','flash') + os.sep + "settings_flash.xml"
@@ -74,7 +75,7 @@ class MainPanel(wx.Dialog):
         self.Bind(wx.EVT_LEFT_DOWN, self.OnMouseLeftDown)
         self.Bind(wx.EVT_MOTION, self.OnMouseMotion)
         self.Bind(wx.EVT_LEFT_UP, self.OnMouseLeftUp)
-        self.Bind(wx.EVT_RIGHT_UP, self.OnRightUp)
+        self.Bind(wx.EVT_RIGHT_UP, self.OnRightUp)       
         self.st_flash_header.Bind(wx.EVT_LEFT_DOWN, self.OnMouseLeftDown)
         self.st_flash_header.Bind(wx.EVT_MOTION, self.OnMouseMotion)
         self.st_flash_header.Bind(wx.EVT_LEFT_UP, self.OnMouseLeftUp)
@@ -90,16 +91,21 @@ class MainPanel(wx.Dialog):
         self.SetAutoLayout(True)
         #self.LoadSetings()
         
+        self.parent.StopAll()
+        
         #flash windows
-        self.flash_window = FlashWindow(self.pa_flash_player, style=wx.NO_BORDER, size=wx.Size(500,140))#, size=(400, 120))        
+        self.flash_window = player_flash.Player(self) #.mediaPlayer #FlashWindow(self.pa_flash_player, style=wx.NO_BORDER, size=wx.Size(500,140))#, size=(400, 120))
+        self.parent.player = self.flash_window
+        
         #self.flash.Show(True)
         
         flash_sizer = wx.BoxSizer(wx.VERTICAL)
-        flash_sizer.Add(self.flash_window, 1, wx.EXPAND|wx.ALL, 5)
+        flash_sizer.Add(self.flash_window.mediaPlayer, 1, wx.EXPAND|wx.ALL, 5)
         self.pa_flash_player.SetSizer(flash_sizer)
-        
+               
         self.parent.use_web_music = True
         self.parent.flash = self.flash_window
+        self.parent.use_backend = 'flash'
         ##self.parent.web_music_url = DIZZLER_URL
         ##self.parent.web_music_type = "Dizzler"
         ##self.MakeModal(False)
@@ -118,6 +124,7 @@ class MainPanel(wx.Dialog):
         self.SaveOptions(None)
         self.parent.use_web_music = False
         self.parent.OnStopClick(None)
+        self.parent.SetBackend(None)
         self.Destroy()
         
     def OnMakeTabClick(self, event=None):
@@ -162,7 +169,7 @@ class MainPanel(wx.Dialog):
         
     def GetService(self, event):
         service = self.rx_flash_service.GetSelection()
-        print service
+        #print service
         if service == 0:
             #self.parent.web_music_url =''
             self.parent.current_song.song_url = GROOVESHARK_URL + str(self.parent.current_song.song_id)
@@ -182,6 +189,7 @@ class MainPanel(wx.Dialog):
             
     def SetService(self, event):
         self.SaveOptions(None)
+        #MouseClicker(25, 220)
         
     def LoadSettings(self):
         #load the setting from settings_falsh.xml if it exists
@@ -223,6 +231,9 @@ class MainPanel(wx.Dialog):
         self.CaptureMouse()
 
     def OnMouseMotion(self, evt):
+        #print evt.GetPosition()
+        #print self.GetScreenPosition() 
+        
         if evt.Dragging() and evt.LeftIsDown():
             dPos = evt.GetEventObject().ClientToScreen(evt.GetPosition())
             #nPos = (self.wPos.x + (dPos.x - self.ldPos.x), -2)
@@ -272,3 +283,17 @@ def url_quote(s, safe='/', want_unicode=False):
      
 # ===================================================================   
 
+#import win32api
+#import win32con
+#win32api.keybd_event(win32con.VK_F3, 0) # this will press F3 key
+
+#def MouseClicker(position_x, position_y):
+ #   print position_x
+ #   print win32api.GetFocus() # this will return you the handle of the window which has focus
+
+  #  win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, position_x, position_y, 0, 0) # this will press mouse left button
+    #win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 20, 20, 0, 0) # this will raise mouse left button
+    #win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTDOWN, 20, 20, 0, 0) # this will raise mouse left button
+    #win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, position_x, position_y) # this will press mouse left button
+    #win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, position_x, position_y) # this will press mouse left button
+  #  print "clicky"
