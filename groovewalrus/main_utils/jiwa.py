@@ -79,7 +79,7 @@ class JiwaMusic():
     def GetFlashUrlFirstResult(self, artist, song):
         #http://www.jiwa.fm/res/widget/monotitle.swf?trackId=369589&skin=round
         results_array = self.GetSearchResults(artist, song)
-        print results_array
+        #print results_array
         if len(results_array) > 1:
             track_id = results_array[0]['trackId']
         else:
@@ -97,7 +97,7 @@ class JiwaMusic():
         url_connection = urllib.urlopen(JIWA_TOKEN,
             data=urllib.urlencode({'s': track_id, 'r':'1'}))
         raw_results = url_connection.read()
-        print raw_results
+        #print raw_results
         results = raw_results.split('=')        
         return results
         
