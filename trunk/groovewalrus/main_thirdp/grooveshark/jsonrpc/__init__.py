@@ -34,7 +34,7 @@ SERVICE_URL = "http://cowbell." + DOMAIN + "/service.php"
 RANDOM_CHARS = "1234567890abcdef"
 
 CLIENT_NAME = "gslite"
-CLIENT_VERSION = "20100412.78"
+CLIENT_VERSION = "20100412.81"
 
 RE_SESSION = re.compile('sessionID:\s*?\'([A-z0-9]+)\',')
 
@@ -63,7 +63,10 @@ class Request:
             "method": method}
             
         headers = {
-            "Content-Type": "application/json"}
+            "Content-Type": "application/json",
+            "User-Agent": "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.2.8) Gecko/20100722 Firefox/3.6.8 (.NET CLR 3.5.30729)",
+            "Referer": "http://listen.grooveshark.com/main.swf?cowbell=fe87233106a6cef919a1294fb2c3c05f"
+            }
 
         if "token" == type:
             url = TOKEN_URL

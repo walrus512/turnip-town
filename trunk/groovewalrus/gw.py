@@ -103,7 +103,7 @@ from main_thirdp import grooveshark_old
 #sys.stderr = stdoutlog
 #8888888888
 
-PROGRAM_VERSION = "0.310"
+PROGRAM_VERSION = "0.311"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -394,9 +394,10 @@ class MainPanel(wx.Panel):
         # background image --------------------
         use_background = options_window.GetSetting('background-use-graphic', self.FILEDB)
         self.background_file = options_window.GetSetting('background-graphic', self.FILEDB)
-        if (use_background == '1') & (os.path.isfile(self.background_file)):            
-            self.panel.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
-            self.panel.Bind(wx.EVT_ERASE_BACKGROUND, self.OnEraseBackground)
+        if self.background_file != False:
+            if (use_background == '1') & (os.path.isfile(self.background_file)):            
+                self.panel.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
+                self.panel.Bind(wx.EVT_ERASE_BACKGROUND, self.OnEraseBackground)
         #self.sl_volume.Bind(wx.EVT_ERASE_BACKGROUND, self.OnEraseBackground)
         
         #self.panel.Bind(wx.EVT_SIZE, self.OnResize)
@@ -2960,7 +2961,7 @@ class CurrentSong():
         print '            artist:   ' + self.artist
         print '              song:   ' + self.song
         print '             album:   ' + self.album
-        print 'song_id (location):   ' + str(self.song_id)
+        print 'song_id (location):   ' + self.song_id
         print '          track_id:   ' + str(self.track_id)
         print '         groove_id:   ' + str(self.groove_id)
         print 'music_id (file_id):   ' + str(self.music_id)
