@@ -43,13 +43,13 @@ class MainPanel(wx.Dialog):
         wx.Dialog.__init__(self, parent, -1, "Lyrics", size=(375,460), style=wx.FRAME_SHAPED|wx.RESIZE_BORDER) #STAY_ON_TOP)        
         self.parent = parent
         #split the dialog and the dialog's panel, allows for reuse in non-dialogs
-        x = MyPanel(self, parent)
+#        x = MyPanel(self, parent)
         
-class MyPanel(wx.Panel):
-    def __init__(self, dialog, parent):
-        wx.Panel.__init__(self, dialog, -1)
-        self.parent = parent
-        self.dialog = dialog
+#class MyPanel(wx.Panel):
+#    def __init__(self, dialog, parent):
+#        wx.Panel.__init__(self, dialog, -1)
+#        self.parent = parent
+#        self.dialog = dialog
         
         # settings xml file
         self.LYRICS_SETTINGS = system_files.GetDirectories(self).MakeDataDirectory('plugins') + os.sep
@@ -130,8 +130,8 @@ class MyPanel(wx.Panel):
         
     def ResetPosition(self, event):
         """Resets the winodw size and position"""
-        self.dialog.SetSize((375,460))
-        self.dialog.SetPosition((50,50))
+        self.SetSize((375,460))
+        self.SetPosition((50,50))
         
     def IncreaseFontSize(self, event):
         """Increase the font size of the lyrics text."""
@@ -184,7 +184,7 @@ class MyPanel(wx.Panel):
     def CloseMe(self, event=None):
         self.SaveOptions()
         self.parent.KillReceiver(self.GenericReceiverAction)
-        self.dialog.Destroy()
+        self.Destroy()
         
     def LoadSettings(self):
         """Load the setting from settings_lyrics.xml if it exists."""
@@ -193,15 +193,15 @@ class MyPanel(wx.Panel):
         if len(settings_dict) >= 1:
             if settings_dict.has_key('window_position'):
                 # not good, replace eval
-                self.dialog.SetPosition(eval(settings_dict['window_position']))
+                self.SetPosition(eval(settings_dict['window_position']))
             if settings_dict.has_key('window_size'):
-                self.dialog.SetSize(eval(settings_dict['window_size']))
+                self.SetSize(eval(settings_dict['window_size']))
 
     def SaveOptions(self, event=None):
         """Save values to options.xml."""
         window_dict = {}
-        window_dict['window_position'] = str(self.dialog.GetScreenPosition())
-        window_dict['window_size'] = str(self.dialog.GetSize())#[0], self.GetSize()[1]))
+        window_dict['window_position'] = str(self.GetScreenPosition())
+        window_dict['window_size'] = str(self.GetSize())#[0], self.GetSize()[1]))
         
         xml_utils().save_generic_settings(self.LYRICS_SETTINGS, "settings_lyrics.xml", window_dict)
 
@@ -219,7 +219,7 @@ class MyPanel(wx.Panel):
     def OnMouseLeftDown(self, evt):
         self.Refresh()
         self.ldPos = evt.GetEventObject().ClientToScreen(evt.GetPosition())
-        self.wPos = self.dialog.ClientToScreen((0,0))
+        self.wPos = self.ClientToScreen((0,0))
         self.CaptureMouse()
 
     def OnMouseMotion(self, evt):
@@ -228,7 +228,7 @@ class MyPanel(wx.Panel):
                 dPos = evt.GetEventObject().ClientToScreen(evt.GetPosition())
                 #nPos = (self.wPos.x + (dPos.x - self.ldPos.x), -2)
                 nPos = (self.wPos.x + (dPos.x - self.ldPos.x), self.wPos.y + (dPos.y - self.ldPos.y))
-                self.dialog.Move(nPos)
+                self.Move(nPos)
             except AttributeError:
                 pass
 
