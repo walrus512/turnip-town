@@ -2,7 +2,7 @@
 <resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
 	<object class="wxPanel" name="m_pa_plugin_sync">
 		<style>wxTAB_TRAVERSAL</style>
-		<size>354,410</size>
+		<size>354,443</size>
 		<object class="wxBoxSizer">
 			<orient>wxVERTICAL</orient>
 			<object class="sizeritem">
@@ -167,7 +167,6 @@
 												<border>5</border>
 												<object class="wxStaticText" name="m_staticText4">
 													<style>wxALIGN_RIGHT</style>
-													<size>100,-1</size>
 													<label>Device</label>
 												</object>
 											</object>
@@ -192,7 +191,7 @@
 												<flag>wxALL|wxALIGN_RIGHT</flag>
 												<border>5</border>
 												<object class="wxStaticText" name="m_staticText81">
-													<label>ID3 Tag</label>
+													<label>Rename Album</label>
 												</object>
 											</object>
 										</object>
@@ -228,12 +227,34 @@
 												</object>
 											</object>
 											<object class="sizeritem">
-												<option>0</option>
-												<flag>wxALL</flag>
+												<option>1</option>
+												<flag>wxEXPAND</flag>
 												<border>5</border>
-												<object class="wxCheckBox" name="m_cb_sync_album">
-													<label>Rename album</label>
-													<checked>0</checked>
+												<object class="wxBoxSizer">
+													<orient>wxHORIZONTAL</orient>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+														<object class="wxCheckBox" name="m_cb_sync_album">
+															<label></label>
+															<checked>0</checked>
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+														<object class="wxComboBox" name="m_cm_sync_album_name">
+															<value>GrooveWalrus</value>
+															<content>
+																<item>GrooveWalrus</item>
+																<item>My Playlist 1</item>
+																<item>My Playlist 2</item>
+																<item>My Playlist 3</item>
+															</content>
+														</object>
+													</object>
 												</object>
 											</object>
 										</object>

@@ -41,7 +41,7 @@ RESFILE = os.path.join(os.getcwd(), 'plugins','sync') + os.sep + "layout_sync.xm
 
 class MainPanel(wx.Dialog):
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, -1, "Sync", size=(375,460), style=wx.FRAME_SHAPED) #STAY_ON_TOP)        
+        wx.Dialog.__init__(self, parent, -1, "Sync", size=(375,460), style=wx.FRAME_SHAPED|wx.RESIZE_BORDER) #STAY_ON_TOP)        
         self.parent = parent
         
         self.SYNC_SETTINGS = system_files.GetDirectories(self).MakeDataDirectory('plugins') + os.sep
@@ -60,6 +60,7 @@ class MainPanel(wx.Dialog):
         self.ga_sync_progress = xrc.XRCCTRL(self, 'm_ga_sync_progress')
         self.bu_sync_sync = xrc.XRCCTRL(self, 'm_bu_sync_sync')
         self.cb_sync_album = xrc.XRCCTRL(self, 'm_cb_sync_album')
+        self.cm_sync_album_name = xrc.XRCCTRL(self, 'm_cm_sync_album_name')
         
         #header for dragging and moving
         self.st_sync_header = xrc.XRCCTRL(self, 'm_st_sync_header')
@@ -203,7 +204,7 @@ class MainPanel(wx.Dialog):
         #gets drive free space
         #print path
         if os.path.isdir(path):
-            x = os.popen("dir " + path).readlines()        
+            x = os.popen(u'dir ' + path).readlines()        
             return x[-1].strip()
         else:
             return ' '
@@ -314,7 +315,7 @@ class CopyThread(Thread):
                 charset = 'utf-8'
                 ufile_string = file_name_plain.encode(charset)    
                 #hex_file_name = hashlib.md5(ufile_string).hexdigest()
-                destination_file = self.sync_dir + os.sep + ufile_string # + '.mp3'
+                destination_file = self.sync_dir.encode(charset) + os.sep.encode(charset) + ufile_string # + '.mp3'                
                 self.coparent.st_sync_file.SetLabel(ufile_string)
                 
 
@@ -323,10 +324,12 @@ class CopyThread(Thread):
                         shutil.copy (copy_file, destination_file)                                
                         #print destination_file
                     except e, error:
-                        self.ErrorMessage(error)
+                        self.coparent.ErrorMessage(error)
+                        break
                     if self.coparent.cb_sync_album.IsChecked():
                         #check if we want to rename the id3 tag for the album to something standard to help crappy mp3 players that don't list by folders
-                        local_songs.SetMp3Album(destination_file, 'GrooveWalrus')
+                        album_name = self.coparent.cm_sync_album_name.GetValue()
+                        local_songs.SetMp3Album(destination_file, album_name)
                         
         self.coparent.bu_sync_sync.Enable(True)
                     
@@ -338,7 +341,7 @@ class CopyThread(Thread):
         song_id = ''
         if len(query_results) >= 1:
             #song_id = str(query_results[0])
-            song_id = str(query_results[0][4])                        
+            song_id = str(query_results[0][4]).encode('utf-8')
         #check if file exists
         if os.path.isfile(song_id):            
             return song_id
