@@ -28,7 +28,7 @@
             <property name="id">wxID_ANY</property>
             <property name="maximum_size"></property>
             <property name="minimum_size"></property>
-            <property name="name">m_pa_plugin_dizzler</property>
+            <property name="name">m_pa_plugin_flash</property>
             <property name="pos"></property>
             <property name="size">487,307</property>
             <property name="subclass"></property>
@@ -89,7 +89,7 @@
                                 <property name="label">Flash Music Player</property>
                                 <property name="maximum_size"></property>
                                 <property name="minimum_size"></property>
-                                <property name="name">m_st_dizzler_header</property>
+                                <property name="name">m_st_flash_header</property>
                                 <property name="permission">protected</property>
                                 <property name="pos"></property>
                                 <property name="size"></property>
@@ -140,7 +140,7 @@
                                 <property name="id">wxID_ANY</property>
                                 <property name="maximum_size"></property>
                                 <property name="minimum_size"></property>
-                                <property name="name">m_bm_dizzler_tab</property>
+                                <property name="name">m_bm_flash_tab</property>
                                 <property name="permission">protected</property>
                                 <property name="pos"></property>
                                 <property name="size">22,22</property>
@@ -189,7 +189,7 @@
                                 <property name="id">wxID_ANY</property>
                                 <property name="maximum_size"></property>
                                 <property name="minimum_size"></property>
-                                <property name="name">m_bm_dizzler_close</property>
+                                <property name="name">m_bm_flash_close</property>
                                 <property name="permission">protected</property>
                                 <property name="pos"></property>
                                 <property name="size">22,22</property>
@@ -298,7 +298,7 @@
                                     <property name="proportion">0</property>
                                     <object class="wxRadioBox" expanded="1">
                                         <property name="bg"></property>
-                                        <property name="choices">&quot;Grooveshark&quot; &quot;Dizzler&quot;</property>
+                                        <property name="choices">&quot;Grooveshark&quot; &quot;Dizzler&quot; &quot;Jiwa&quot;</property>
                                         <property name="context_help"></property>
                                         <property name="enabled">1</property>
                                         <property name="fg"></property>
@@ -306,7 +306,7 @@
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
                                         <property name="label">Using:</property>
-                                        <property name="majorDimension">2</property>
+                                        <property name="majorDimension">3</property>
                                         <property name="maximum_size"></property>
                                         <property name="minimum_size"></property>
                                         <property name="name">m_rx_flash_service</property>
@@ -351,7 +351,7 @@
                         <object class="sizeritem" expanded="1">
                             <property name="border">5</property>
                             <property name="flag">wxEXPAND</property>
-                            <property name="proportion">1</property>
+                            <property name="proportion">0</property>
                             <object class="wxBoxSizer" expanded="1">
                                 <property name="minimum_size"></property>
                                 <property name="name">bSizer61</property>
@@ -436,7 +436,7 @@
                                 <property name="id">wxID_ANY</property>
                                 <property name="maximum_size"></property>
                                 <property name="minimum_size"></property>
-                                <property name="name">m_pa_dizzler_player</property>
+                                <property name="name">m_pa_flash_player</property>
                                 <property name="permission">protected</property>
                                 <property name="pos"></property>
                                 <property name="size"></property>
