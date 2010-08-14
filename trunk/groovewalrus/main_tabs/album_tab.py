@@ -69,7 +69,8 @@ class AlbumTab(wx.ScrolledWindow):
         self.parent.Bind(wx.EVT_BUTTON, self.OnClearAlbumSearchClick, id=xrc.XRCID('m_bb_album_clear_search'))
         self.parent.Bind(wx.EVT_BUTTON, self.OnAlbumSearchClick, id=xrc.XRCID('m_bb_album_search'))
         self.bm_cover_large.Bind(wx.EVT_LEFT_UP, self.parent.OnAlbumCoverClick)
-        self.parent.Bind(wx.EVT_BUTTON, self.OnAutoGenerateAlbumPlayist, id=xrc.XRCID('m_bu_album_plize'))
+        self.parent.Bind(wx.EVT_BUTTON, self.OnAutoGenerateAlbumPlayist, id=xrc.XRCID('m_bb_album_plize'))
+        self.parent.Bind(wx.EVT_BUTTON, self.AlbumAddPlaylist, id=xrc.XRCID('m_bb_album_add'))        
         
 # --------------------------------------------------------- 
 # album page ----------------------------------------------  

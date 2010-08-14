@@ -593,7 +593,7 @@
 																</object>
 																<object class="sizeritem">
 																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																	<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxALIGN_RIGHT</flag>
 																	<border>4</border>
 																	<object class="wxChoice" name="m_ch_last_country">
 																		<tooltip>Geographical Region</tooltip>
@@ -671,7 +671,7 @@
 																	<option>1</option>
 																	<flag>wxEXPAND</flag>
 																	<border>5</border>
-																	<size>0,0</size>
+																	<size>120,0</size>
 																</object>
 															</object>
 														</object>
@@ -719,46 +719,54 @@
 																					<border>5</border>
 																					<object class="wxBitmapButton" name="m_bb_last_add">
 																						<style>wxBU_AUTODRAW</style>
-																						<tooltip>Add sected to playlist</tooltip>
+																						<tooltip>Add selected to playlist</tooltip>
 																						<bitmap>graphics/list-add.png</bitmap>
 																						<default>0</default>
 																					</object>
 																				</object>
 																				<object class="sizeritem">
-																					<option>0</option>
-																					<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
-																					<border>5</border>
-																					<object class="wxStaticText" name="m_staticText19">
-																						<style>wxALIGN_RIGHT</style>
-																						<size>60,-1</size>
-																						<label>Artist</label>
-																					</object>
-																				</object>
-																				<object class="sizeritem">
 																					<option>1</option>
-																					<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
+																					<flag>wxEXPAND</flag>
 																					<border>5</border>
-																					<object class="wxTextCtrl" name="m_tc_last_search_artist">
-																						<style>wxTE_PROCESS_ENTER</style>
-																						<value></value>
-																						<maxlength>0</maxlength>
-																					</object>
-																				</object>
-																				<object class="sizeritem">
-																					<option>0</option>
-																					<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
-																					<border>5</border>
-																					<object class="wxBitmapButton" name="m_bb_last_clear_search">
-																						<style>wxBU_AUTODRAW</style>
-																						<tooltip>Clear</tooltip>
-																						<bitmap>graphics/edit-clear.png</bitmap>
-																						<default>0</default>
+																					<object class="wxBoxSizer">
+																						<orient>wxHORIZONTAL</orient>
+																						<object class="sizeritem">
+																							<option>0</option>
+																							<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																							<border>5</border>
+																							<object class="wxStaticText" name="m_staticText19">
+																								<style>wxALIGN_RIGHT</style>
+																								<size>60,-1</size>
+																								<label>Artist</label>
+																							</object>
+																						</object>
+																						<object class="sizeritem">
+																							<option>1</option>
+																							<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
+																							<border>5</border>
+																							<object class="wxTextCtrl" name="m_tc_last_search_artist">
+																								<style>wxTE_PROCESS_ENTER</style>
+																								<value></value>
+																								<maxlength>0</maxlength>
+																							</object>
+																						</object>
+																						<object class="sizeritem">
+																							<option>0</option>
+																							<flag>wxTOP|wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL|wxEXPAND</flag>
+																							<border>5</border>
+																							<object class="wxBitmapButton" name="m_bb_last_clear_search">
+																								<style>wxBU_AUTODRAW</style>
+																								<tooltip>Clear</tooltip>
+																								<bitmap>graphics/edit-clear.png</bitmap>
+																								<default>0</default>
+																							</object>
+																						</object>
 																					</object>
 																				</object>
 																			</object>
 																		</object>
 																		<object class="sizeritem">
-																			<option>0</option>
+																			<option>1</option>
 																			<flag>wxEXPAND</flag>
 																			<border>5</border>
 																			<object class="wxBoxSizer">
@@ -947,7 +955,7 @@
 																	<option>1</option>
 																	<flag>wxEXPAND</flag>
 																	<border>5</border>
-																	<size>0,0</size>
+																	<size>120,0</size>
 																</object>
 															</object>
 														</object>
@@ -989,7 +997,7 @@
 																			<border>5</border>
 																			<object class="wxBitmapButton" name="m_bb_mylast_add">
 																				<style>wxBU_AUTODRAW</style>
-																				<tooltip>Add sected to playlist</tooltip>
+																				<tooltip>Add selected to playlist</tooltip>
 																				<bitmap>graphics/list-add.png</bitmap>
 																				<default>0</default>
 																			</object>
@@ -1156,15 +1164,6 @@
 																	<border>5</border>
 																	<size>0,0</size>
 																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALL|wxEXPAND</flag>
-																	<border>5</border>
-																	<object class="wxButton" name="m_bu_album_plize">
-																		<label>Playlistize!</label>
-																		<default>0</default>
-																	</object>
-																</object>
 															</object>
 														</object>
 														<object class="sizeritem">
@@ -1187,6 +1186,78 @@
 																	<border>5</border>
 																	<object class="wxBoxSizer">
 																		<orient>wxVERTICAL</orient>
+																		<object class="sizeritem">
+																			<option>0</option>
+																			<flag>wxEXPAND</flag>
+																			<border>5</border>
+																			<object class="wxBoxSizer">
+																				<orient>wxHORIZONTAL</orient>
+																				<object class="sizeritem">
+																					<option>0</option>
+																					<flag>wxALL</flag>
+																					<border>5</border>
+																					<object class="wxBitmapButton" name="m_bb_album_plize">
+																						<style>wxBU_AUTODRAW</style>
+																						<size>100,-1</size>
+																						<tooltip>Add all to playlist</tooltip>
+																						<bitmap>graphics/list-add-all.png</bitmap>
+																						<default>0</default>
+																					</object>
+																				</object>
+																				<object class="sizeritem">
+																					<option>0</option>
+																					<flag>wxALL</flag>
+																					<border>5</border>
+																					<object class="wxBitmapButton" name="m_bb_album_add">
+																						<style>wxBU_AUTODRAW</style>
+																						<tooltip>Add selected to playlist</tooltip>
+																						<bitmap>graphics/list-add.png</bitmap>
+																						<default>0</default>
+																					</object>
+																				</object>
+																				<object class="sizeritem">
+																					<option>0</option>
+																					<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																					<border>5</border>
+																					<object class="wxStaticText" name="m_staticText13">
+																						<style>wxALIGN_RIGHT</style>
+																						<size>60,-1</size>
+																						<label>Album</label>
+																					</object>
+																				</object>
+																				<object class="sizeritem">
+																					<option>1</option>
+																					<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
+																					<border>5</border>
+																					<object class="wxTextCtrl" name="m_tc_album_search_album">
+																						<value></value>
+																						<maxlength>0</maxlength>
+																					</object>
+																				</object>
+																				<object class="sizeritem">
+																					<option>0</option>
+																					<flag>wxALL</flag>
+																					<border>5</border>
+																					<object class="wxBitmapButton" name="m_bb_album_search">
+																						<style>wxBU_AUTODRAW</style>
+																						<tooltip>Search</tooltip>
+																						<bitmap>graphics/system-search.png</bitmap>
+																						<default>0</default>
+																					</object>
+																				</object>
+																				<object class="sizeritem">
+																					<option>0</option>
+																					<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																					<border>5</border>
+																					<object class="wxBitmapButton" name="m_bb_album_clear_search">
+																						<style>wxBU_AUTODRAW</style>
+																						<tooltip>Clear</tooltip>
+																						<bitmap>graphics/edit-clear.png</bitmap>
+																						<default>0</default>
+																					</object>
+																				</object>
+																			</object>
+																		</object>
 																		<object class="sizeritem">
 																			<option>0</option>
 																			<flag>wxEXPAND</flag>
@@ -1231,55 +1302,6 @@
 																						<style>wxTE_PROCESS_ENTER</style>
 																						<value></value>
 																						<maxlength>0</maxlength>
-																					</object>
-																				</object>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxEXPAND</flag>
-																			<border>5</border>
-																			<object class="wxBoxSizer">
-																				<orient>wxHORIZONTAL</orient>
-																				<object class="sizeritem">
-																					<option>0</option>
-																					<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
-																					<border>5</border>
-																					<object class="wxStaticText" name="m_staticText13">
-																						<style>wxALIGN_RIGHT</style>
-																						<size>60,-1</size>
-																						<label>Album</label>
-																					</object>
-																				</object>
-																				<object class="sizeritem">
-																					<option>1</option>
-																					<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
-																					<border>5</border>
-																					<object class="wxTextCtrl" name="m_tc_album_search_album">
-																						<value></value>
-																						<maxlength>0</maxlength>
-																					</object>
-																				</object>
-																				<object class="sizeritem">
-																					<option>0</option>
-																					<flag>wxTOP|wxBOTTOM|wxRIGHT</flag>
-																					<border>5</border>
-																					<object class="wxBitmapButton" name="m_bb_album_search">
-																						<style>wxBU_AUTODRAW</style>
-																						<tooltip>Search</tooltip>
-																						<bitmap>graphics/system-search.png</bitmap>
-																						<default>0</default>
-																					</object>
-																				</object>
-																				<object class="sizeritem">
-																					<option>0</option>
-																					<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																					<border>5</border>
-																					<object class="wxBitmapButton" name="m_bb_album_clear_search">
-																						<style>wxBU_AUTODRAW</style>
-																						<tooltip>Clear</tooltip>
-																						<bitmap>graphics/edit-clear.png</bitmap>
-																						<default>0</default>
 																					</object>
 																				</object>
 																			</object>
