@@ -19,7 +19,7 @@ this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place, Suite 330, Boston, MA 02111-1307 USA
 """
 
-import urllib
+import urllib2
 try:
     import json
 except ImportError:
@@ -68,9 +68,12 @@ class Tsong(object):
         #print query_string
         data_url = TRACK_GETINFO + query_string + Q_LIMIT + str(limit)
         print data_url
-
-        url_connection = urllib.urlopen(data_url.replace(' ', '+'))
-        raw_results = url_connection.read()
+        
+        headers = { 'User-Agent' : "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.2.8) Gecko/20100722 Firefox/3.6.8 (.NET CLR 3.5.30729)" }
+        url_connection = urllib2.Request(data_url.replace(' ', '+'), {}, headers)
+        #raw_results = url_connection.read()
+        response = urllib2.urlopen(url_connection)
+        raw_results = response.read()
 
         results_array = json.loads(raw_results)
 
@@ -111,11 +114,9 @@ def url_quote(s, safe='/', want_unicode=False):
         s = s.encode(charset)
     elif not isinstance(s, str):
         s = str(s)
-    s = urllib.quote(s, safe)
+    s = urllib2.quote(s, safe)
     if want_unicode:
         s = s.decode(charset) # ascii would also work
     return s
      
 # ===================================================================            
-
- 
