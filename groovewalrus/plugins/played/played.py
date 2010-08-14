@@ -22,6 +22,7 @@ import wx
 import wx.xrc as xrc
 #from main_utils.read_write_xml import xml_utils
 from main_utils import system_files
+from main_utils import string_tools
 import sys, os
 import sqlite3
 
@@ -92,9 +93,9 @@ class MainPanel(wx.Dialog):
         h = c.fetchall()
         counter = 0
         for x in h:
-            self.lc_played_list.InsertStringItem(counter, x[0])
-            self.lc_played_list.SetStringItem(counter, 1, x[1])
-            self.lc_played_list.SetStringItem(counter, 2, x[2])
+            self.lc_played_list.InsertStringItem(counter, string_tools.unescape(x[0]))
+            self.lc_played_list.SetStringItem(counter, 1, string_tools.unescape(x[1]))
+            self.lc_played_list.SetStringItem(counter, 2, string_tools.unescape(x[2]))
             counter = counter + 1
             self.lc_played_list.SetColumnWidth(1, wx.LIST_AUTOSIZE)
             self.lc_played_list.SetColumnWidth(2, wx.LIST_AUTOSIZE)
@@ -109,9 +110,9 @@ class MainPanel(wx.Dialog):
         h = c.fetchall()
         counter = 0
         for x in h:
-            self.lc_played_list.InsertStringItem(counter, x[0])
-            self.lc_played_list.SetStringItem(counter, 1, x[1])
-            self.lc_played_list.SetStringItem(counter, 2, str(x[2]))
+            self.lc_played_list.InsertStringItem(counter, string_tools.unescape(x[0]))
+            self.lc_played_list.SetStringItem(counter, 1, string_tools.unescape(x[1]))
+            self.lc_played_list.SetStringItem(counter, 2, string_tools.unescape(str(x[2])))
             counter = counter + 1
             self.lc_played_list.SetColumnWidth(1, wx.LIST_AUTOSIZE)
             self.lc_played_list.SetColumnWidth(2, 80)
@@ -197,4 +198,3 @@ class MainPanel(wx.Dialog):
         self.hide_me()
         #self.Destroy()
           
-            

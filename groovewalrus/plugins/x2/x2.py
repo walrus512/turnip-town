@@ -457,7 +457,7 @@ def GetResultsArray(selected_array):
                 (0.5,0.1,0.0,TRANS)
                 ]    
     use_std = True
-    
+    print FILEDB 
     conn = sqlite3.connect(FILEDB)
     c = conn.cursor()
     #self.data = np.array([(0.1,0.8),(0.1,0.3), (0.3,0.1)])

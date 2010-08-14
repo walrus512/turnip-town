@@ -210,7 +210,7 @@ Updating
             if len(file_array) >= 1:
                 self.UpdateTC('update required for %s file(s)' % str(len(file_array)))
                 #THREAD
-                self.update_thread = UpdateThread(self, self.current_version, file_array, self.data_directory, self.update_data_directory)
+                self.update_thread = UpdateThread(self, self.frame, self.current_version, file_array, self.data_directory, self.update_data_directory)
                 #THREAD
                 self.update_thread.start()
             else:
@@ -241,20 +241,7 @@ Updating
         self.frame.tc_news_text.SetValue(out_text)
         #pass
         #self.tc_update_text.SetValue(self.tc_update_text.GetValue() + '\r\n...' + u_text)
-        
-    def GetUpdateFile(self, file_url, file_name, ver_dir, file_size):
-    # grab a file
-        local_file =  self.update_data_directory + ver_dir + file_name
-        #dlg = wx.ProgressDialog("File Download", file_name, maximum = file_size,
-        #               parent=self.frame, style = wx.PD_CAN_ABORT | wx.PD_APP_MODAL | wx.PD_ELAPSED_TIME )        
-        urllib.urlretrieve(file_url, local_file)
-        #sz = os.path.getsize(local_file)
-        #dlg.Update(sz)
-        #dlg.Destroy()
-        urllib.urlcleanup()
-        #print 'getting new'
-        return local_file
-        
+                
     def UpdateAndRestart(self):
     # restart main program
         sys.stdout.flush()
@@ -311,13 +298,15 @@ Tango Icons - http://tango.freedesktop.org
 
 class UpdateThread(Thread): 
     # update files, thread style  
-    def __init__(self, parent, current_version, file_array, data_directory, update_data_directory):
+    def __init__(self, parent, frame, current_version, file_array, data_directory, update_data_directory):
         Thread.__init__(self)
         self.parent = parent
+        self.frame = frame
         self.current_version = current_version 
         self.file_array = file_array
         self.data_directory = data_directory
         self.update_data_directory = update_data_directory
+        self.download_dlg = UpdateFeedsWindow(self.frame)
          
     def run(self):        
         #create dirs
@@ -372,7 +361,7 @@ class UpdateThread(Thread):
                 #Content-Disposition: attachment; filename="gw_0216_update.zip"
                 
                 self.parent.UpdateTC('downloading: %s' % file_name)                
-                local_file = self.parent.GetUpdateFile(x[0], file_name, version_dir, download_size)
+                local_file = self.GetUpdateFile(x[0], file_name, version_dir, download_size)
                 
                 #check sha1 of downloaded file
                 self.parent.UpdateTC('checking SHA1: %s' % file_name)
@@ -415,7 +404,7 @@ class UpdateThread(Thread):
             try:
                 shutil.copyfile(from_dir + file_name, to_dir + 'gw_upd.exe')                                        
             except:
-                dlg = wx.MessageDialog(self.parent, "Can't copy file\r\n %s" % file_name, 'Alert', wx.OK | wx.ICON_WARNING)
+                dlg = wx.MessageDialog(self.frame, "Can't copy file\r\n %s" % file_name, 'Alert', wx.OK | wx.ICON_WARNING)
                 if (dlg.ShowModal() == wx.ID_OK):
                     dlg.Destroy()
                     status = False
@@ -424,7 +413,7 @@ class UpdateThread(Thread):
             try:
                 shutil.copyfile(from_dir + file_name, to_dir + file_name)
             except:
-                dlg = wx.MessageDialog(self.parent, "Can't copy file\r\n %s" % file_name, 'Alert', wx.OK | wx.ICON_WARNING)
+                dlg = wx.MessageDialog(self.frame, "Can't copy file\r\n %s" % file_name, 'Alert', wx.OK | wx.ICON_WARNING)
                 if (dlg.ShowModal() == wx.ID_OK):
                     dlg.Destroy()
                     status = False
@@ -440,25 +429,29 @@ class UpdateThread(Thread):
             #check for somedir/subdir
             if len(directory.split('/')) > 1:            
                 #assume 2 levels for now
-                first_dir = directory.split('/')[0]
-                directory = directory.replace('/', os.sep)                
-                if os.path.isdir(base + first_dir) == False:
-                    try:
-                        os.mkdir(base + first_dir)
-                    except:
-                        dlg = wx.MessageDialog(self.parent, "Can't create directory\r\n %s" % (base + first_dir), 'Alert', wx.OK | wx.ICON_WARNING)
-                        if (dlg.ShowModal() == wx.ID_OK):
-                            dlg.Destroy()
-                            status = False
-                            self.parent.UpdateTC('error: creating directory: %s' % (base + first_dir))
-            try:
-                os.mkdir(base + directory)
-            except:
-                dlg = wx.MessageDialog(self.parent, "Can't create directory\r\n %s" % (base + directory), 'Alert', wx.OK | wx.ICON_WARNING)
-                if (dlg.ShowModal() == wx.ID_OK):
-                    dlg.Destroy()
-                    status = False
-                    self.parent.UpdateTC('error: creating directory: %s' % (base + directory))
+                #first_dir = directory.split('/')[0]
+                #directory = directory.replace('/', os.sep)
+                
+                for first_dir in directory.split('/'):                
+                    if os.path.isdir(base + first_dir) == False:
+                        try:
+                            os.mkdir(base + first_dir)
+                        except:
+                            dlg = wx.MessageDialog(self.frame, "Can't create directory\r\n %s" % (base + first_dir), 'Alert', wx.OK | wx.ICON_WARNING)
+                            if (dlg.ShowModal() == wx.ID_OK):
+                                dlg.Destroy()
+                                status = False
+                                self.parent.UpdateTC('error: creating directory: %s' % (base + first_dir))
+                                
+            if os.path.isdir(base + directory) == False:
+                try:
+                    os.mkdir(base + directory)
+                except:
+                    dlg = wx.MessageDialog(self.frame, "Can't create directory\r\n %s" % (base + directory), 'Alert', wx.OK | wx.ICON_WARNING)
+                    if (dlg.ShowModal() == wx.ID_OK):
+                        dlg.Destroy()
+                        status = False
+                        self.parent.UpdateTC('error: creating directory: %s' % (base + directory))
         return status
         
     def UnzipFile(self, zip_file_name, extract_to):
@@ -494,6 +487,35 @@ class UpdateThread(Thread):
         else:
             self.parent.UpdateTC('not zipfile: ' + zip_file_name)
 
+    def GetUpdateFile(self, file_url, file_name, ver_dir, file_size):
+    # grab a file
+        local_file =  self.update_data_directory + ver_dir + file_name        
+        self.download_dlg.Show()
+        self.download_dlg.SetGaugeMaxValue(file_size)
+    	if os.path.isfile(local_file):
+    	    if os.path.getsize(local_file) != file_size:    	       	        
+    	        #THREAD
+    	        download_thread = FetchThread(file_url, local_file)
+    	        #THREAD
+    	        download_thread.start()
+        else:
+	        #THREAD
+	        download_thread = FetchThread(file_url, local_file)
+	        #THREAD
+	        download_thread.start()
+    	
+        #keepGoing = True
+        count = 0
+        while count < file_size:
+            wx.MilliSleep(250)
+            if os.path.isfile(local_file):
+                count = os.path.getsize(local_file)
+                self.download_dlg.SetGaugeValue(count)
+                      
+        self.download_dlg.Show(False)        
+
+        return local_file            
+            
 # ----------------------------------------------------
 # ----------------------------------------------------
 
@@ -510,6 +532,46 @@ def CheckSha1(local_file, sha1_check):
         return(False)
 
 #---------------------------------------------------------------------------
+# ####################################
+#import wx.lib.delayedresult as delayedresult
+
+class UpdateFeedsWindow(wx.Dialog): 
+    # updates all the feeds, displays a nice dialog box, with a gauge and text box
+    
+    def __init__(self, parent):
+        wx.Dialog.__init__(self, parent, -1, 'Downloading Files', size=(300, 100), style=wx.CAPTION)
+        #self.tbox = wx.TextCtrl(self, -1, '', style=wx.TE_MULTILINE|wx.TE_READONLY)
+        self.parent = parent
+        #self.buttonAbort = wx.Button(self, -1, "Abort")
+        gauge_count = 2000000
+        self.pdlg = wx.Gauge(self, -1, gauge_count, (10, 10), (150, 25))
+        
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer.Add(self.pdlg, 0, wx.EXPAND|wx.ALL, 5)
+        #sizer.Add(self.tbox, 4, wx.EXPAND|wx.ALL, 5)
+        #sizer.Add(self.buttonAbort, 0, wx.ALIGN_CENTER|wx.ALL, 5)
+        self.SetSizer(sizer)
+        self.Layout()
+        
+    def SetGaugeValue(self, value):
+        self.pdlg.SetValue(value)
+        #self.Bind(wx.EVT_BUTTON, self.handleAbort, self.buttonAbort)
+        
+    def SetGaugeMaxValue(self, value):
+        self.pdlg.SetRange(value)
+        
+# ####################################
+class FetchThread(Thread): 
+    """Thread to grab data from the internets!"""
+    def __init__(self, file_url, local_file):
+        Thread.__init__(self)
+        self.file_url = file_url
+        self.local_file = local_file
+                        
+    def run(self):        
+        urllib.urlretrieve(self.file_url, self.local_file)
+        urllib.urlcleanup()     
+        
 #---------------------------------------------------------------------------
 
     #app = wx.PySimpleApp()
