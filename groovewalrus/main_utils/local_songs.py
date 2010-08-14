@@ -82,7 +82,8 @@ class DbFuncs(object):
         for x in h:        
             rcount = x[3]
             if x[1] != None:
-                filen = str(x[1]) + '/' + str(x[2])
+                #*** unicode errors/not used: filen = str(x[1]) + '/' + str(x[2])
+                filen = ''
         c.close()
         return (rcount, filen)
         
@@ -130,8 +131,8 @@ class DbFuncs(object):
             conn.commit()
             c.close()
             
-    def MakeQuery(self, query, qlimit, folder_query=1):
-        q_rep = query.replace("'","").replace("!","").replace("&"," ").replace(",","").replace("-"," ")
+    def MakeQuery(self, query, qlimit, folder_query=1):        
+        q_rep = query.replace("'","").replace("!","").replace("?","").replace("&"," ").replace(",","").replace("-"," ")
         q_split = q_rep.split(' ')
         s = ''
         the_and = ''
