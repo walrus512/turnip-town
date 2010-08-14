@@ -32,6 +32,7 @@ from main_utils.read_write_xml import xml_utils
 from main_utils import system_files
 from main_utils import local_songs
 from main_utils import file_cache
+from main_utils import string_tools
 
 #SYSLOC = os.getcwd()
 #TWITTER_SETTINGS = os.path.join(os.getcwd(), 'plugins','sync') + os.sep + "settings_sync.xml"
@@ -204,8 +205,13 @@ class MainPanel(wx.Dialog):
         #gets drive free space
         #print path
         if os.path.isdir(path):
-            x = os.popen(u'dir ' + path).readlines()        
-            return x[-1].strip()
+            path_cmd = string_tools.unescape('dir ' + path)
+            try:
+                x = os.popen(path_cmd, 'rb').readlines()
+                return x[-1].strip()
+            except Exception, expt:
+                print str(Exception) + str(expt)           
+                return ' '
         else:
             return ' '
 
@@ -253,35 +259,7 @@ class MainPanel(wx.Dialog):
         #self.hide_me()
         #self..Destroy()
         
-# --------------------------------------------------------- 
-            
-           
-# ===================================================================            
-
-       
-charset = 'utf-8'
-        
-def url_quote(s, safe='/', want_unicode=False):
-    """
-    Wrapper around urllib.quote doing the encoding/decoding as usually wanted:
-    
-    @param s: the string to quote (can be str or unicode, if it is unicode,
-              config.charset is used to encode it before calling urllib)
-    @param safe: just passed through to urllib
-    @param want_unicode: for the less usual case that you want to get back
-                         unicode and not str, set this to True
-                         Default is False.
-    """
-    if isinstance(s, unicode):
-        s = s.encode(charset)
-    elif not isinstance(s, str):
-        s = str(s)
-    #s = urllib.quote(s)#, safe)
-    if want_unicode:
-        s = s.decode(charset) # ascii would also work
-    return s
-     
-# ===================================================================   
+# ---------------------------------------------------------
 # ####################################
 class CopyThread(Thread): 
     # another thread to update download progress
@@ -312,10 +290,11 @@ class CopyThread(Thread):
                 #copy the file
                 file_name_plain = artist + '-' + track + '.mp3'
                 file_name_plain  = system_files.replace_all(file_name_plain)
-                charset = 'utf-8'
-                ufile_string = file_name_plain.encode(charset)    
+                #charset = 'utf-8'
+                ufile_string = string_tools.unescape(file_name_plain) #.encode(charset)    
                 #hex_file_name = hashlib.md5(ufile_string).hexdigest()
-                destination_file = self.sync_dir.encode(charset) + os.sep.encode(charset) + ufile_string # + '.mp3'                
+                #destination_file = self.sync_dir.encode(charset) + os.sep.encode(charset) + ufile_string # + '.mp3'                
+                destination_file = string_tools.unescape(self.sync_dir) + string_tools.unescape(os.sep) + ufile_string # + '.mp3'
                 self.coparent.st_sync_file.SetLabel(ufile_string)
                 
 
@@ -323,8 +302,8 @@ class CopyThread(Thread):
                     try:                                
                         shutil.copy (copy_file, destination_file)                                
                         #print destination_file
-                    except e, error:
-                        self.coparent.ErrorMessage(error)
+                    except Exception, expt:
+                        self.coparent.ErrorMessage(expt)
                         break
                     if self.coparent.cb_sync_album.IsChecked():
                         #check if we want to rename the id3 tag for the album to something standard to help crappy mp3 players that don't list by folders
@@ -341,7 +320,7 @@ class CopyThread(Thread):
         song_id = ''
         if len(query_results) >= 1:
             #song_id = str(query_results[0])
-            song_id = str(query_results[0][4]).encode('utf-8')
+            song_id = string_tools.unescape(query_results[0][4])#str(query_results[0][4]).encode('utf-8')
         #check if file exists
         if os.path.isfile(song_id):            
             return song_id

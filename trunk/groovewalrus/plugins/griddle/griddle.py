@@ -34,7 +34,7 @@ MAIN_PLAYLIST = system_files.GetDirectories(None).DataDirectory() + os.sep + "pl
 
 class MainPanel(wx.Dialog):
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, -1, "griddle", size=(650,400), style=wx.FRAME_SHAPED) #STAY_ON_TOP)        
+        wx.Dialog.__init__(self, parent, -1, "griddle", size=(650,400), style=wx.FRAME_SHAPED|wx.RESIZE_BORDER) #STAY_ON_TOP)        
         self.parent = parent
         
         # XML Resources can be loaded from a file like this:
@@ -233,6 +233,7 @@ class HugeTableGrid(gridlib.Grid):
         
     def GetPlayed(self):
         # get last songs played
+        #print FILEDB
         conn = sqlite3.connect(FILEDB)
         c = conn.cursor()
         t = "SELECT music_id, local_playcount FROM m_tracks INNER JOIN m_playcount ON m_playcount.track_id = m_tracks.track_id WHERE music_id <> 0 ORDER BY music_id"

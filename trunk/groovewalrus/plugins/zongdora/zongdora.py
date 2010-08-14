@@ -22,6 +22,7 @@ import wx
 import wx.xrc as xrc
 #from main_utils.read_write_xml import xml_utils
 from main_utils import system_files
+from main_utils import string_tools
 import sys, os
 from beautifulsoup import BeautifulSoup
 import urllib2
@@ -129,26 +130,27 @@ class MainPanel(wx.Dialog):
         else:    
             partist = self.parent.current_song.artist.replace(' ', '+')
             ptrack = self.parent.current_song.song.replace(' ', '+')
-            pandora_url = PANDORA_SONG_URL + partist + '/' + ptrack
+            pandora_url = PANDORA_SONG_URL + urllib2.quote(partist.encode('utf8') + '/' + ptrack.encode('utf8'))
             self.st_songdora_song.SetLabel(self.parent.current_song.artist + ' - ' + self.parent.current_song.song)
-        
+        #print string_tools.unescape(pandora_url)
+        #pandora_url = urllib2.quote(pandora_url.encode('utf8'))
         page = urllib2.urlopen(pandora_url)
         
-        #print pandora_url
+        print pandora_url
 
         soup = BeautifulSoup(page)
         counter = 0
         for songs in soup('span', id="similar_song"): #span id="similar_song"
             t = songs.contents[1]
-            track = str(t).split('"')[3].replace("&amp;", "&")
+            track = str(t).split('"')[3]
             link = PANDORA_SONG_URL + str(t).split('"')[1]
             a = songs.contents[6]           
             soupa = BeautifulSoup(str(a))
-            artist = soupa.a.string.replace("&amp;", "&")
+            artist = soupa.a.string
             
             b = songs.contents[11]
             soupb = BeautifulSoup(str(b))
-            album = soupb.a.string.replace("&amp;", "&")
+            album = soupb.a.string
             
             self.lc_songdora_results.InsertStringItem(counter, artist)
             self.lc_songdora_results.SetStringItem(counter, 1, track)
