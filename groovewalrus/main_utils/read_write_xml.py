@@ -21,6 +21,7 @@ Place, Suite 330, Boston, MA 02111-1307 USA
 import xml.etree.ElementTree as ET
 import os
 from main_thirdp.beautifulsoup import BeautifulStoneSoup
+from main_utils import string_tools
 
 class xml_utils():
     # xml file junk for hippies
@@ -193,7 +194,8 @@ def CleanText(text):
         text = text.replace('\r\n', '')
         text = text.replace('\n', '')
         text = text.replace('  ', ' ')
-        text = text.replace('&amp;', '&')
+        #text = text.replace('&amp;', '&')
+        text = string_tools.unescape(text)
         #text = url_quote(text)
     else:
         text = ''
