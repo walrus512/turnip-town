@@ -26,6 +26,8 @@ from main_utils import local_songs
 #from main_utils import drag_and_drop
 
 import sys, os
+from threading import Thread
+
 SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0]))
 if os.path.isfile(SYSLOC + os.sep + "layout.xml") == False:
     SYSLOC = os.path.abspath(os.getcwd())
@@ -104,7 +106,10 @@ class SearchWindow(wx.Dialog):
         xn = pp[0] + (ps[0] - ss[0])
         yn = pp[1] # + (ps[1] - ss[1])
         self.SetPosition((xn, yn))
-        self.SetSize((ss[0], ps[1]))
+        ssx = ss[0]
+        if ss[0] < 400:
+            ssx = 400
+        self.SetSize((ssx, ps[1]))
         
     def SetValue(self, query_string):
         # set search value
@@ -156,12 +161,12 @@ class SearchWindow(wx.Dialog):
     def SearchIt(self, query_string):
         # search field, then search
         if len(query_string) > 0:
-            if self.cb_search_local.GetValue() == True:
-                query_results = local_songs.DbFuncs().GetResultsArray(query_string, 40)
-                self.FillSearchListLocal(query_results, query_string);
-            else:
-                query_results = tinysong.Tsong().get_search_results(query_string)
-                self.FillSearchList(query_results);            
+        
+            #grab the data
+            #THREAD
+            current = FetchThread(self, query_string, self.cb_search_local.GetValue())
+            #THREAD
+            current.start()
             
     def FillSearchList(self, query_results):
         # search field, then search
@@ -271,3 +276,19 @@ class SearchWindow(wx.Dialog):
         #self..Destroy()
         
 # --------------------------------------------------------- 
+# ####################################
+class FetchThread(Thread): 
+    """Thread to grab data from the internets!"""
+    def __init__(self, parent, query, query_local):
+        Thread.__init__(self)
+        self.parent = parent
+        self.query_string = query
+        self.query_local = query_local
+                        
+    def run(self):
+        if self.query_local == True:
+            query_results = local_songs.DbFuncs().GetResultsArray(self.query_string, 40)
+            self.parent.FillSearchListLocal(query_results, self.query_string)
+        else:
+            query_results = tinysong.Tsong().get_search_results(self.query_string)
+            self.parent.FillSearchList(query_results)
