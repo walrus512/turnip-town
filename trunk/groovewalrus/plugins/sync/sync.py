@@ -38,7 +38,13 @@ from main_utils import string_tools
 #TWITTER_SETTINGS = os.path.join(os.getcwd(), 'plugins','sync') + os.sep + "settings_sync.xml"
 sync = os.path.join(os.getcwd(), 'plugins','sync') + os.sep
 RESFILE = os.path.join(os.getcwd(), 'plugins','sync') + os.sep + "layout_sync.xml"
-
+#columns
+C_RATING = 0
+C_ARTIST = 1
+C_SONG = 2
+C_ALBUM = 3
+C_ID = 4
+C_TIME = 5
 
 class MainPanel(wx.Dialog):
     def __init__(self, parent):
@@ -272,8 +278,8 @@ class CopyThread(Thread):
     def run(self):
         self.coparent.bu_sync_sync.Enable(False)
         for x in range(0, self.parent.lc_playlist.GetItemCount()):
-            artist = self.parent.lc_playlist.GetItem(x, 0).GetText()
-            track = self.parent.lc_playlist.GetItem(x, 1).GetText()                    
+            artist = self.parent.lc_playlist.GetItem(x, C_ARTIST).GetText()
+            track = self.parent.lc_playlist.GetItem(x, C_SONG).GetText()                    
             query_string = artist + ' ' + track
             #check for file locally
             local_file = self.SearchLocal(query_string, artist, track)

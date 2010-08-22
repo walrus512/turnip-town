@@ -121,7 +121,7 @@ class RateEvents(object):
         artist = self.parent.current_song.artist
         song = self.parent.current_song.song
         track_id = GetTrackId(artist, song, grooveshark_id, music_id)
-        AddRating(self.parent,track_id, event_id)
+        AddRating(self.parent, track_id, event_id)
         if event_id == 4:
             sk = self.parent.GenerateSessionKey2()
             LoveTrack(artist, song, sk)

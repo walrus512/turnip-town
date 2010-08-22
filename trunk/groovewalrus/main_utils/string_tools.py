@@ -1,7 +1,20 @@
 
 
 import xml.parsers.expat
-                
+
+
+charset = 'utf-8'        
+def unbork(s, safe='/', want_unicode=False):
+    if isinstance(s, unicode):
+        s = s.encode(charset)
+    elif not isinstance(s, str):
+        s = str(s)    
+    if want_unicode:
+        s = s.decode(charset) # ascii would also work
+    return s
+
+
+              
 def unescape(s):
     want_unicode = False
     if isinstance(s, unicode):

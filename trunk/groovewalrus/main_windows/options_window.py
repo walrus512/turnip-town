@@ -246,3 +246,15 @@ def SetSetting(setting_name, setting_value, file_db):
         c.execute('INSERT INTO m_settings (setting_name, setting_value) values (?,?)', (setting_name, setting_value))
         conn.commit()
     c.close()
+
+def GetAllSettings(file_db):
+    #get a value from the settings table
+    conn = sqlite3.connect(file_db)
+    c = conn.cursor()
+    tq = "SELECT * FROM m_settings"
+    c.execute(tq)
+    h = c.fetchall()
+    if len(h) >= 1:
+        return h
+    else:
+        return False
