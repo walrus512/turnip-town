@@ -142,6 +142,15 @@ class FavoritesTab(wx.ScrolledWindow):
         
         track_id = ratings_button.GetTrackId(artist, song, grooveshark_id, music_id)
         ratings_button.AddRating(self.parent, track_id, R_GREAT)
+        
+        #upadte playlist item to display the fave icon
+        list_num = self.parent.current_song.playlist_position
+        pl_artist = self.parent.lc_playlist.GetItem(list_num, CP_ARTIST).GetText()
+        pl_song = self.parent.lc_playlist.GetItem(list_num, CP_SONG).GetText()
+        #check that the playlist item we're updateing matches
+        if (pl_artist == artist) & (pl_song == song):
+            self.parent.GetSongRating(track_id, list_num) 
+        
         sk = self.parent.GenerateSessionKey2()
         ratings_button.LoveTrack(artist, song, sk)        
         
@@ -167,13 +176,18 @@ class FavoritesTab(wx.ScrolledWindow):
  
                 track_id = ratings_button.GetTrackId(artist, song, grooveshark_id, music_id)
                 ratings_button.AddRating(self.parent, track_id, R_GREAT)
+                
+                #upadte playlist item to display the fave icon
+                self.parent.GetSongRating(track_id, val)                
+                
                 # only love the first one, don't want to hammer last.fm
                 if need_love == True:
                     need_love = False
                     sk = self.parent.GenerateSessionKey2()
                     ratings_button.LoveTrack(artist, song, sk)
                 val = self.parent.lc_playlist.GetNextSelected(val)
-                     
+                
+
         
     def SetFavesItem(self, current_count, artist, song, album, url, duration):
         
