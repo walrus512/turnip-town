@@ -41,7 +41,13 @@ IMAGE_FILES = [
     (GRAPHICS_LOCATION + 'weather-overcast.png', 2, 'Average'), 
     (GRAPHICS_LOCATION + 'weather-storm.png', 1, 'Poor')
     ]
-
+#columns
+C_RATING = 0
+C_ARTIST = 1
+C_SONG = 2
+C_ALBUM = 3
+C_ID = 4
+C_TIME = 5
 
 class RatingsButton(wx.BitmapButton):
     _firstEventType = wx.EVT_SIZE
@@ -122,6 +128,15 @@ class RateEvents(object):
         song = self.parent.current_song.song
         track_id = GetTrackId(artist, song, grooveshark_id, music_id)
         AddRating(self.parent, track_id, event_id)
+        
+        #upadte playlist item to display the fave icon
+        list_num = self.parent.current_song.playlist_position
+        pl_artist = self.parent.lc_playlist.GetItem(list_num, C_ARTIST).GetText()
+        pl_song = self.parent.lc_playlist.GetItem(list_num, C_SONG).GetText()
+        #check that the playlist item we're updateing matches
+        if (pl_artist == artist) & (pl_song == song):
+            self.parent.GetSongRating(track_id, list_num)
+        
         if event_id == 4:
             sk = self.parent.GenerateSessionKey2()
             LoveTrack(artist, song, sk)
