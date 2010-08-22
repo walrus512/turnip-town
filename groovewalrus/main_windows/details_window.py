@@ -27,6 +27,13 @@ if os.path.isfile(SYSLOC + os.sep + "layout.xml") == False:
     SYSLOC = os.path.abspath(os.getcwd())
 
 DETAILS_RESFILE = SYSLOC + '\\layout_details.xml'
+#columns
+C_RATING = 0
+C_ARTIST = 1
+C_SONG = 2
+C_ALBUM = 3
+C_ID = 4
+C_TIME = 5
 
 class DetailsWindow(wx.Dialog):
     """Details Window for editing song info"""
@@ -64,11 +71,11 @@ class DetailsWindow(wx.Dialog):
         #self.st_details_header.Bind(wx.EVT_RIGHT_UP, self.OnRightUp)
         
         self.val = self.parent.lc_playlist.GetFirstSelected()
-        self.tc_details_artist.SetValue(self.parent.lc_playlist.GetItem(self.val, 0).GetText())
-        self.tc_details_song.SetValue(self.parent.lc_playlist.GetItem(self.val, 1).GetText())
-        self.tc_details_album.SetValue(self.parent.lc_playlist.GetItem(self.val, 2).GetText())
-        self.tc_details_id.SetValue(self.parent.lc_playlist.GetItem(self.val, 3).GetText())
-        self.tc_details_time.SetValue(self.parent.lc_playlist.GetItem(self.val, 4).GetText())
+        self.tc_details_artist.SetValue(self.parent.lc_playlist.GetItem(self.val, C_ARTIST).GetText())
+        self.tc_details_song.SetValue(self.parent.lc_playlist.GetItem(self.val, C_SONG).GetText())
+        self.tc_details_album.SetValue(self.parent.lc_playlist.GetItem(self.val, C_ALBUM).GetText())
+        self.tc_details_id.SetValue(self.parent.lc_playlist.GetItem(self.val, C_ID).GetText())
+        self.tc_details_time.SetValue(self.parent.lc_playlist.GetItem(self.val, C_TIME).GetText())
                 
         # set layout --------------
         sizer = wx.BoxSizer(wx.VERTICAL)

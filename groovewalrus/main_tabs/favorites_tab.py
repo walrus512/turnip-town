@@ -34,6 +34,13 @@ C_ALBUM = 3
 C_ID = 4
 C_TIME = 5
 
+CP_RATING = 0
+CP_ARTIST = 1
+CP_SONG = 2
+CP_ALBUM = 3
+CP_ID = 4
+CP_TIME = 5
+
 R_GREAT = 4
 R_GOOD = 3
 R_AVERAGE = 2
@@ -146,12 +153,12 @@ class FavoritesTab(wx.ScrolledWindow):
         if val >= 0:
         #    current_count = (self.lc_faves.GetItemCount())
             for x in range(0, self.parent.lc_playlist.GetSelectedItemCount()):
-                artist = self.parent.lc_playlist.GetItem(val, 0).GetText()
-                song = self.parent.lc_playlist.GetItem(val, 1).GetText()
+                artist = self.parent.lc_playlist.GetItem(val, CP_ARTIST).GetText()
+                song = self.parent.lc_playlist.GetItem(val, CP_SONG).GetText()
                 grooveshark_id = ''
                 music_id = ''
                 
-                the_id = self.parent.lc_playlist.GetItem(val, 3).GetText()
+                the_id = self.parent.lc_playlist.GetItem(val, CP_ID).GetText()
                 if os.path.isfile(the_id) == False:            
                     if the_id.isdigit() == True:
                         grooveshark_id = the_id
@@ -351,7 +358,7 @@ class FavoritesTab(wx.ScrolledWindow):
         artist = self.lc_faves.GetItem(val, C_ARTIST).GetText()
         song = self.lc_faves.GetItem(val, C_SONG).GetText()
         track_id = ratings_button.GetTrackId(artist, song, grooveshark_id, music_id)
-        ratings_button.AddRating(self, track_id, event_id)
+        ratings_button.AddRating(self.parent, track_id, event_id)
         if event_id == 4:
             sk = self.parent.GenerateSessionKey2()
             ratings_button.LoveTrack(artist, song, sk)

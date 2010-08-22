@@ -19,7 +19,7 @@ class Target:
     def __init__(self, **kw):
         self.__dict__.update(kw)
         # for the versioninfo resources
-        self.version = "0.313"
+        self.version = "0.314"
         self.company_name = "Turnip-Town.net"
         self.copyright = "lots of copyright"
         self.name = "GrooveWalrus"
@@ -86,7 +86,7 @@ setup(
                           "packages": ["encodings"],
                           "includes": includes,
                           "excludes": excludes, #matplot
-                          'dll_excludes': ['tk84.dll', 'tcl84.dll', 'libgdk-win32-2.0-0.dll', 'libgobject-2.0-0.dll'],
+                          'dll_excludes': ['tk84.dll', 'tcl84.dll', 'libgdk-win32-2.0-0.dll', 'libgobject-2.0-0.dll', 'libglib-2.0-0.dll', 'libgthread-2.0-0.dll'],
                           ###"bundle_files": 3
                           "skip_archive": 1 ###
                           }},                          

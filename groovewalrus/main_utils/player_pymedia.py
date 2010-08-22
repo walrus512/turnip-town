@@ -26,6 +26,7 @@ import time
 import os
 
 from threading import Thread
+from main_windows import options_window
 
 EMULATE=0
 BUFFER_SIZE = 320000
@@ -61,7 +62,7 @@ class Player(object):
             self.play_thread.toggle_pause()
             
 class PlayThread(Thread):
-    """ makes a thread for pyglet playback """
+    """ makes a thread for pymedia playback """
     def __init__(self, file_name, parent):
         Thread.__init__(self)
         self.paused = False
@@ -77,8 +78,14 @@ class PlayThread(Thread):
         print 'local: ' + self.file_name
         self.parent.current_song.status = 'loading'
         while os.path.isfile(self.file_name) != True:
-            time.sleep(1)               
-        while os.path.getsize(self.file_name) < BUFFER_SIZE:
+            time.sleep(1)
+            
+        get_buffer = options_window.GetSetting('buffer-size-bytes', self.parent.FILEDB)
+        if get_buffer != False:
+            buffer_sz = int(get_buffer)
+        else:
+            buffer_sz = BUFFER_SIZE
+        while os.path.getsize(self.file_name) < buffer_sz:
             time.sleep(2)
             #print os.path.getsize(file_name)
         self.parent.time_count = -1
