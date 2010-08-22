@@ -33,7 +33,7 @@ FILEDB = system_files.GetDirectories(None).DatabaseLocation()
 
 class MainPanel(wx.Dialog):
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, -1, "played", size=(475,450), style=wx.FRAME_SHAPED) #STAY_ON_TOP)        
+        wx.Dialog.__init__(self, parent, -1, "played", size=(475,450), style=wx.FRAME_SHAPED|wx.RESIZE_BORDER) #STAY_ON_TOP)        
         self.parent = parent        
                
         # XML Resources can be loaded from a file like this:
@@ -48,7 +48,9 @@ class MainPanel(wx.Dialog):
         self.lc_played_list = xrc.XRCCTRL(self, 'm_lc_played_list')
         self.bm_played_close = xrc.XRCCTRL(self, 'm_bm_played_close')
         self.rx_played_radio = xrc.XRCCTRL(self, 'm_rx_played_radio')
-        
+        self.sb_played_list = xrc.XRCCTRL(self, 'm_sb_played_list')
+        self.sb_played_list.Show(False)
+                
         self.lc_played_list.InsertColumn(0,"Artist")
         self.lc_played_list.InsertColumn(1,"Song")
         self.lc_played_list.InsertColumn(2,"Date/Count")
@@ -71,6 +73,8 @@ class MainPanel(wx.Dialog):
         self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.OnDoubleClick, self.lc_played_list)
         self.Bind(wx.EVT_RADIOBOX, self.OnRadioClick, self.rx_played_radio)
         self.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.OnRightClick, self.lc_played_list)
+        self.Bind(wx.EVT_BUTTON, self.OnAutoGeneratePlayist, id=xrc.XRCID('m_bb_played_add_all'))
+        self.Bind(wx.EVT_BUTTON, self.OnDoubleClick, id=xrc.XRCID('m_bb_played_add'))
         
         # set layout --------------        
         sizer = wx.BoxSizer(wx.VERTICAL)
@@ -93,9 +97,9 @@ class MainPanel(wx.Dialog):
         h = c.fetchall()
         counter = 0
         for x in h:
-            self.lc_played_list.InsertStringItem(counter, string_tools.unescape(x[0]))
-            self.lc_played_list.SetStringItem(counter, 1, string_tools.unescape(x[1]))
-            self.lc_played_list.SetStringItem(counter, 2, string_tools.unescape(x[2]))
+            self.lc_played_list.InsertStringItem(counter, string_tools.unbork(x[0]))#string_tools.unescape(
+            self.lc_played_list.SetStringItem(counter, 1, string_tools.unbork(x[1]))
+            self.lc_played_list.SetStringItem(counter, 2, string_tools.unbork(x[2]))
             counter = counter + 1
             self.lc_played_list.SetColumnWidth(1, wx.LIST_AUTOSIZE)
             self.lc_played_list.SetColumnWidth(2, wx.LIST_AUTOSIZE)
@@ -110,9 +114,9 @@ class MainPanel(wx.Dialog):
         h = c.fetchall()
         counter = 0
         for x in h:
-            self.lc_played_list.InsertStringItem(counter, string_tools.unescape(x[0]))
-            self.lc_played_list.SetStringItem(counter, 1, string_tools.unescape(x[1]))
-            self.lc_played_list.SetStringItem(counter, 2, string_tools.unescape(str(x[2])))
+            self.lc_played_list.InsertStringItem(counter, string_tools.unbork(x[0])) #string_tools.unescape(
+            self.lc_played_list.SetStringItem(counter, 1, string_tools.unbork(x[1]))
+            self.lc_played_list.SetStringItem(counter, 2, str(x[2]))
             counter = counter + 1
             self.lc_played_list.SetColumnWidth(1, wx.LIST_AUTOSIZE)
             self.lc_played_list.SetColumnWidth(2, 80)
@@ -168,6 +172,23 @@ class MainPanel(wx.Dialog):
 
         #save the playlist
         self.parent.SavePlaylist(MAIN_PLAYLIST)
+        # switch tabs
+        #self.nb_main.SetSelection(NB_PLAYLIST)
+        
+        
+    def OnAutoGeneratePlayist(self, event):
+        # lets just add all the items to your playlist
+        # search for song from groove shark on demand, ie, when you go to play it?
+        self.parent.CheckClear()       
+        insert_at = self.parent.lc_playlist.GetItemCount()
+        for x in range(self.lc_played_list.GetItemCount(), 0, -1):
+            artist = self.lc_played_list.GetItem(x-1, 0).GetText()
+            song = self.lc_played_list.GetItem(x-1, 1).GetText()
+            # skip if there's no song title
+            if song != '':
+                self.parent.SetPlaylistItem(insert_at, artist, song, '', '')
+        #save the playlist
+        self.parent.SavePlaylist(self.parent.main_playlist_location)
         # switch tabs
         #self.nb_main.SetSelection(NB_PLAYLIST)
                 
