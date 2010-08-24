@@ -78,6 +78,8 @@ from main_tabs import favorites_tab
 from main_tabs import song_collection_tab
 from main_tabs import biography_tab
 from main_tabs import album_tab
+from main_tabs import my_lastfm_tab
+from main_tabs import lastfm_tab
 
 from main_thirdp import pylast
 if os.name == 'nt':
@@ -98,7 +100,7 @@ from main_thirdp import grooveshark_old
 #from plugins.sync import sync
 #from plugins.zongdora import zongdora
 
-PROGRAM_VERSION = "0.314"
+PROGRAM_VERSION = "0.315"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -137,6 +139,8 @@ C_SONG = 2
 C_ALBUM = 3
 C_ID = 4
 C_TIME = 5
+
+PLAYLIST_COLUMNS = {'artist': C_ARTIST, 'rating': C_RATING, 'song': C_SONG, 'album': C_ALBUM, 'id': C_ID, 'time': C_TIME}
 
 HICOLOR_1 = (110, 207, 106, 255)
 HICOLOR_2 = (200, 100, 150, 255)
@@ -257,6 +261,10 @@ class MainPanel(wx.Panel):
         self.tab_biography = biography_tab.BiographyTab(self)
         #biography tab        
         self.tab_album = album_tab.AlbumTab(self)
+        #my_lastfm tab        
+        self.tab_my_lastfm = my_lastfm_tab.MyLastfmTab(self)
+        #lastfm tab        
+        self.tab_lastfm = lastfm_tab.LastfmTab(self)
                
         # control references ---------------
         # playback        
@@ -285,31 +293,6 @@ class MainPanel(wx.Panel):
         self.bm_cover = xrc.XRCCTRL(self, 'm_bm_cover_small')
         self.bm_cover.Bind(wx.EVT_LEFT_UP, self.OnAlbumCoverClick)       
         
-        # last fm
-        self.st_last_ts_artist = xrc.XRCCTRL(self, 'm_st_last_ts_artist')
-        self.st_last_ta_artist = xrc.XRCCTRL(self, 'm_st_last_ta_artist')
-        self.st_last_ts_geo = xrc.XRCCTRL(self, 'm_st_last_ts_geo')
-        self.st_last_ts_genre = xrc.XRCCTRL(self, 'm_st_last_ts_genre')
-        self.st_last_ts_album = xrc.XRCCTRL(self, 'm_st_last_ts_album')
-        self.st_last_ts_similar = xrc.XRCCTRL(self, 'm_st_last_ts_similar')
-        self.st_last_art_similar = xrc.XRCCTRL(self, 'm_st_last_art_similar')
-        self.st_last_tt_song = xrc.XRCCTRL(self, 'm_st_last_tt_song')
-        
-        self.tc_last_search_album = xrc.XRCCTRL(self, 'm_tc_last_search_album')
-        self.tc_last_search_artist = xrc.XRCCTRL(self, 'm_tc_last_search_artist')
-        self.tc_last_search_song = xrc.XRCCTRL(self, 'm_tc_last_search_song')
-        self.ch_last_country = xrc.XRCCTRL(self, 'm_ch_last_country')
-        self.co_last_tag = xrc.XRCCTRL(self, 'm_co_last_tag')
-        
-        # my last
-        self.tc_mylast_search_user = xrc.XRCCTRL(self, 'm_tc_mylast_search_user')
-        self.st_mylast_me = xrc.XRCCTRL(self, 'm_st_mylast_me')
-        self.st_mylast_friends = xrc.XRCCTRL(self, 'm_st_mylast_friends')
-        self.st_mylast_neigh = xrc.XRCCTRL(self, 'm_st_mylast_neigh')
-        self.st_mylast_loved = xrc.XRCCTRL(self, 'm_st_mylast_loved')
-        ##self.st_mylast_recomm = xrc.XRCCTRL(self, 'm_st_mylast_recomm')
-        self.rx_mylast_period = xrc.XRCCTRL(self, 'm_rx_mylast_period')
-               
         # options
         self.tc_options_username = xrc.XRCCTRL(self, 'm_tc_options_username')
         self.tc_options_password = xrc.XRCCTRL(self, 'm_tc_options_password')
@@ -338,35 +321,7 @@ class MainPanel(wx.Panel):
         self.st_options_i18n_default.SetLabel('Locale: ' + wx.Locale(wx.LANGUAGE_DEFAULT).GetCanonicalName())
               
         # list controls ------------
-        # last.fm
-        self.lc_lastfm = xrc.XRCCTRL(self, 'm_lc_lastfm')
-        self.lc_lastfm.InsertColumn(0,"Artist")
-        self.lc_lastfm.InsertColumn(1,"Song")
-        self.lc_lastfm.InsertColumn(2,"Album")
-        self.lc_lastfm.InsertColumn(3,"Count")
-        self.lc_lastfm.InsertColumn(4,"Tag")
-        self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnLastfmListClick, self.lc_lastfm)
-        self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.OnLastfmListDoubleClick, self.lc_lastfm)
-        # wxMSW
-        self.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.OnLastfmRightClick, self.lc_lastfm)
-        # wxGTK
-        self.lc_lastfm.Bind(wx.EVT_RIGHT_UP, self.OnLastfmRightClick)
-        self.lc_lastfm.Bind(wx.EVT_CHAR, self.OnChar)
-        
-        # my last.fm
-        self.lc_mylast = xrc.XRCCTRL(self, 'm_lc_mylast')
-        self.lc_mylast.InsertColumn(0,"Artist")
-        self.lc_mylast.InsertColumn(1,"Song")
-        self.lc_mylast.InsertColumn(2,"User")
-        self.lc_mylast.InsertColumn(3,"Count")        
-        self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnMyLastListClick, self.lc_mylast)
-        self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.OnMyLastListDoubleClick, self.lc_mylast)
-        # wxMSW
-        self.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.OnMyLastRightClick, self.lc_mylast)
-        # wxGTK
-        self.lc_mylast.Bind(wx.EVT_RIGHT_UP, self.OnMyLastRightClick)
-        self.lc_mylast.Bind(wx.EVT_CHAR, self.OnChar)
-        
+                
         # playlist
         # playlist is subclassed to draglist in the xrc
         self.lc_playlist = xrc.XRCCTRL(self,'m_lc_playlist')
@@ -390,8 +345,10 @@ class MainPanel(wx.Panel):
         
         #playlist history
         self.lc_playlist_history = xrc.XRCCTRL(self, 'm_lc_playlist_history')
-        self.lc_playlist_history.InsertColumn(0,"Artist")
-        self.lc_playlist_history.InsertColumn(1,"Song")
+        self.lc_playlist_history.InsertColumn(0,"Rating")
+        self.lc_playlist_history.InsertColumn(1,"Artist")
+        self.lc_playlist_history.InsertColumn(2,"Song")
+        self.lc_playlist_history.SetColumnWidth(C_RATING, 0)
         
         self.tr_playlist_history.Bind(wx.EVT_RIGHT_DOWN, self.OnPlaylistTreeRightClick)
         self.tr_playlist_history.Bind(wx.EVT_RIGHT_UP, self.OnPlaylistTreeRightClick)
@@ -448,33 +405,7 @@ class MainPanel(wx.Panel):
         self.Bind(wx.EVT_TREE_SEL_CHANGED, self.OnTreeSelChange, self.tr_playlist_history)
         self.Bind(wx.EVT_TREE_BEGIN_LABEL_EDIT, self.OnTreeBeginEdit, self.tr_playlist_history)
         self.Bind(wx.EVT_TREE_END_LABEL_EDIT, self.OnTreeEndEdit, self.tr_playlist_history) 
-           
-        #playlistize        
-        self.Bind(wx.EVT_BUTTON, self.OnAutoGenerateLastfmPlayist, id=xrc.XRCID('m_bb_last_plize'))        
-        self.Bind(wx.EVT_BUTTON, self.OnAutoGenerateMyLastPlayist, id=xrc.XRCID('m_bb_mylast_plize'))
-                
-        #last.fm        
-        self.st_last_ts_artist.Bind(wx.EVT_LEFT_UP, self.OnLastTSArtistClick)
-        self.st_last_ta_artist.Bind(wx.EVT_LEFT_UP, self.OnLastTAArtistClick)
-        self.st_last_ts_geo.Bind(wx.EVT_LEFT_UP, self.OnLastTSGeoClick)
-        self.st_last_ts_genre.Bind(wx.EVT_LEFT_UP, self.OnLastTSGenreClick)
-        self.st_last_ts_album.Bind(wx.EVT_LEFT_UP, self.OnLastTSAlbumClick)
-        self.st_last_ts_similar.Bind(wx.EVT_LEFT_UP, self.OnLastTSSimilarClick)
-        self.st_last_art_similar.Bind(wx.EVT_LEFT_UP, self.OnLastArtistSimilarClick)
-        self.st_last_tt_song.Bind(wx.EVT_LEFT_UP, self.OnLastTTSongClick)
-        self.Bind(wx.EVT_BUTTON, self.OnClearLastSearchClick, id=xrc.XRCID('m_bb_last_clear_search'))
-        self.Bind(wx.EVT_BUTTON, self.LastfmAddPlaylist, id=xrc.XRCID('m_bb_last_add'))
-               
-        #my last.fm
-        self.st_mylast_me.Bind(wx.EVT_LEFT_UP, self.OnMyLastMeClick)
-        self.st_mylast_friends.Bind(wx.EVT_LEFT_UP, self.OnMyLastFriendsClick)
-        self.st_mylast_neigh.Bind(wx.EVT_LEFT_UP, self.OnMyLastNeighClick)
-        self.Bind(wx.EVT_BUTTON, self.OnMyLastClearClick, id=xrc.XRCID('m_bb_mylast_clear'))
-        self.Bind(wx.EVT_BUTTON, self.OnMyLastSearchClick, id=xrc.XRCID('m_bb_mylast_search'))
-        self.Bind(wx.EVT_BUTTON, self.OnMyLastWebClick, id=xrc.XRCID('m_bb_mylast_goweb'))
-        self.Bind(wx.EVT_BUTTON, self.MyLastAddPlaylist, id=xrc.XRCID('m_bb_mylast_add'))
-        self.st_mylast_loved.Bind(wx.EVT_LEFT_UP, self.OnMyLastLovedClick)
-        
+                        
         #options
         self.Bind(wx.EVT_RADIOBOX, self.SaveOptions, id=xrc.XRCID('m_rx_options_double_click'))
         self.Bind(wx.EVT_RADIOBOX, self.SaveOptions, id=xrc.XRCID('m_rx_options_scrobble_port'))
@@ -743,6 +674,9 @@ class MainPanel(wx.Panel):
         self.parent.Bind(wx.EVT_MENU, self.OnAboutClick, id=xrc.XRCID("m_mi_about"))
         self.parent.Bind(wx.EVT_MENU, self.OpenWebsite, id=xrc.XRCID("m_mi_website"))        
         
+        #-------------
+        #set ratings for playlist items
+        self.GetAllSongRatings()
         
         #-------------
         #plugins
@@ -1030,6 +964,18 @@ class MainPanel(wx.Panel):
             self.lc_playlist.SetItemImage(int(playlist_number), rating)            
             #self.lc_playlist.SetStringItem(int(playlist_number), 5, str(rating))
   
+    def GetAllSongRatings(self, start_from=0):
+        #check all song on the playlist for ratings
+        #county = 25
+        #if self.lc_playlist.GetItemCount() < 25:
+        #    county = self.lc_playlist.GetItemCount()
+        for x in range(start_from, self.lc_playlist.GetItemCount()):#county):
+            artist = self.lc_playlist.GetItem(x, C_ARTIST).GetText()
+            song = self.lc_playlist.GetItem(x, C_SONG).GetText()
+            q_track_id = local_songs.DbFuncs().GetOnlyTrackId(artist, song)
+            if q_track_id != False:
+                self.GetSongRating(q_track_id, x)
+            
     def RateImageList(self):
         # song rating imagelist
         rate_images = wx.ImageList(16, 16, True)        
@@ -1140,7 +1086,7 @@ class MainPanel(wx.Panel):
                 
             if (self.db_submit_complete == False) & (float(self.time_count) / float(self.current_song.song_time_seconds) > .95):
                 # add 'complete' to played table ==
-                q_track_id = local_songs.DbFuncs().GetTrackId(self.current_song.groove_id, self.current_song.track_id, self.current_song.artist, self.current_song.song)
+                q_track_id = local_songs.DbFuncs().GetTrackId(self.current_song.groove_id, self.current_song.music_id, self.current_song.artist, self.current_song.song)
                 local_songs.DbFuncs().InsertPlayedData(q_track_id, played_type_id=1)
                 self.db_submit_complete = True
                 #==================================
@@ -1357,7 +1303,7 @@ class MainPanel(wx.Panel):
 
     def CheckClear(self):
         # determine if we should clear the playlist before adding
-        self.BackupList()
+        #self.BackupList()
         if self.cb_options_list_clear.GetValue():
             self.lc_playlist.DeleteAllItems()
             self.current_song.playlist_position = -1
@@ -1564,7 +1510,7 @@ class MainPanel(wx.Panel):
         
         # add 'stopped' to played table ==
         if self.current_song.status == 'playing':
-            q_track_id = local_songs.DbFuncs().GetTrackId(self.current_song.groove_id, self.current_song.track_id, self.current_song.artist, self.current_song.song)
+            q_track_id = local_songs.DbFuncs().GetTrackId(self.current_song.groove_id, self.current_song.music_id, self.current_song.artist, self.current_song.song)
             local_songs.DbFuncs().InsertPlayedData(q_track_id, played_type_id=2)
         #=================================
         
@@ -1594,7 +1540,7 @@ class MainPanel(wx.Panel):
     
         # add 'skipped' to played table ==
         if self.current_song.status == 'playing':
-            q_track_id = local_songs.DbFuncs().GetTrackId(self.current_song.groove_id, self.current_song.track_id, self.current_song.artist, self.current_song.song)
+            q_track_id = local_songs.DbFuncs().GetTrackId(self.current_song.groove_id, self.current_song.music_id, self.current_song.artist, self.current_song.song)
             local_songs.DbFuncs().InsertPlayedData(q_track_id, played_type_id=3)
         #=================================
     
@@ -1613,7 +1559,7 @@ class MainPanel(wx.Panel):
     
         #== add 'skipped' to played table ==
         if self.current_song.status == 'playing':
-            q_track_id = local_songs.DbFuncs().GetTrackId(self.current_song.groove_id, self.current_song.track_id, self.current_song.artist, self.current_song.song)
+            q_track_id = local_songs.DbFuncs().GetTrackId(self.current_song.groove_id, self.current_song.msuic_id, self.current_song.artist, self.current_song.song)
             local_songs.DbFuncs().InsertPlayedData(q_track_id, played_type_id=4)
         #===================================
     
@@ -1790,7 +1736,7 @@ class MainPanel(wx.Panel):
                  cs.scrobble_song = 1
                  cs.status = 'stopped'
                  #skip to next song
-                 self.OnForwardClick(None)
+                 #***self.OnForwardClick(None)
                  
             if cs.status == 'playing':
                 print self.use_backend
@@ -1861,7 +1807,9 @@ class MainPanel(wx.Panel):
                 song_time = str(self.ConvertTimeMilliSeconds(self.lc_playlist.GetItem(x, C_TIME).GetText()))
             track_dict.append({'creator': artist, 'title': title, 'album': album, 'location': song_id, 'duration': song_time})
             
-        read_write_xml.xml_utils().save_tracks(filename, track_dict)        
+        read_write_xml.xml_utils().save_tracks(filename, track_dict)
+        print 'save playlist'
+        #self.GetAllSongRatings()
         
     def OnClearPlaylistClick(self, event):
         # clear playlist
@@ -1989,16 +1937,23 @@ class MainPanel(wx.Panel):
         
     def OnPlaylistRightClick(self, event):        
         # make a menu
-        ID_DELETE = 1
-        ID_SEARCH = 2
-        ID_FAVES = 3
-        ID_FIX = 4
-        ID_FIX_ALBUM = 5
-        ID_CLEAR = 6
-        ID_SHARE = 7
+        ID_DELETE = 11
+        ID_SEARCH = 21
+        ID_FAVES = 31
+        ID_FIX = 41
+        ID_FIX_ALBUM = 51
+        ID_CLEAR = 61
+        ID_SHARE = 71
         
         menu = wx.Menu()
-        menu.Append(ID_FAVES, "Add to Favorites")
+        
+        # make a submenu
+        sm = wx.Menu()        
+        re = self.SongRate
+        ratings_button.MenuAppend(sm, self, re)
+        menu.AppendMenu(ID_FAVES, "Rate Song", sm)        
+        
+        #menu.Append(ID_FAVES, "Rate Song")
         menu.Append(ID_SHARE, "Clipboard Share Link")
         menu.AppendSeparator()
         menu.Append(ID_SEARCH, "Find Better Version")        
@@ -2006,11 +1961,12 @@ class MainPanel(wx.Panel):
         menu.Append(ID_FIX_ALBUM, "Auto-Fix Album")
         menu.AppendSeparator()
         menu.Append(ID_CLEAR, "Clear Id")
-        menu.Append(ID_DELETE, "Delete")
+        menu.Append(ID_DELETE, "Delete")        
+
         
         wx.EVT_MENU(self, ID_DELETE, self.RemovePlaylistItem)
         wx.EVT_MENU(self, ID_SEARCH, self.SearchAgain)
-        wx.EVT_MENU(self, ID_FAVES, self.favorites.OnPlaylistFavesClick)
+        wx.EVT_MENU(self, ID_FAVES, self.SongRate)
         wx.EVT_MENU(self, ID_FIX, self.FixPlaylistItem)
         wx.EVT_MENU(self, ID_FIX_ALBUM, self.FixAlbumName)
         wx.EVT_MENU(self, ID_CLEAR, self.ClearId)
@@ -2020,6 +1976,22 @@ class MainPanel(wx.Panel):
         # will be called before PopupMenu returns.
         self.PopupMenu(menu)
         menu.Destroy()
+        
+    def SongRate(self, event):
+        #re-rate selected favourite list item
+        event_id = event.GetId()
+        print event_id
+        val = self.lc_playlist.GetFirstSelected()
+        music_id = ''
+        grooveshark_id = ''
+        artist = self.lc_playlist.GetItem(val, C_ARTIST).GetText()
+        song = self.lc_playlist.GetItem(val, C_SONG).GetText()
+        track_id = ratings_button.GetTrackId(artist, song, grooveshark_id, music_id)
+        ratings_button.AddRating(self, track_id, event_id)
+        if event_id == 4:
+            sk = self.GenerateSessionKey2()
+            ratings_button.LoveTrack(artist, song, sk)
+        self.GetSongRating(track_id, val)
         
     def RemovePlaylistItem(self, event=None):
         self.BackupList()
@@ -2032,8 +2004,8 @@ class MainPanel(wx.Panel):
             #self.lc_playlist.DeleteItem(val)
             self.lc_playlist.DeleteItem(self.lc_playlist.GetFirstSelected())
         # save default playlist
-        self.SavePlaylist(self.main_playlist_location)
-        self.ResizePlaylist()
+        #self.SavePlaylist(self.main_playlist_location)
+        ##self.ResizePlaylist()
                 
     def FixPlaylistItem(self, event):
         # display the song steails window
@@ -2055,7 +2027,7 @@ class MainPanel(wx.Panel):
         self.lc_playlist.SetStringItem(val, C_ALBUM, album_array[1])
         #save playlist
         self.SavePlaylist(self.main_playlist_location)
-        self.ResizePlaylist()
+        ##self.ResizePlaylist()
         
     def UpdatePlaylistItem(self, current_count, artist, song, album, url, duration=''):
         #set value
@@ -2064,8 +2036,8 @@ class MainPanel(wx.Panel):
         self.lc_playlist.SetStringItem(current_count, C_ALBUM, album)
         self.lc_playlist.SetStringItem(current_count, C_URL, url)
         self.lc_playlist.SetStringItem(current_count, C_TIME, duration)
-        self.ResizePlaylist()
-        self.SavePlaylist(self.main_playlist_location)
+        ##self.ResizePlaylist()
+        ##self.SavePlaylist(self.main_playlist_location)
         
     def SetPlaylistItem(self, current_count, artist, song, album='', url='', duration=''):
         #set value
@@ -2075,7 +2047,7 @@ class MainPanel(wx.Panel):
         self.lc_playlist.SetStringItem(current_count, C_ALBUM, album)
         self.lc_playlist.SetStringItem(current_count, C_ID, url)
         self.lc_playlist.SetStringItem(current_count, C_TIME, duration)
-        self.ResizePlaylist()
+        ##self.ResizePlaylist()
         
     def ResizePlaylist(self, event=None):
         #x_size = self.lc_playlist.GetSize()[0] - 50
@@ -2135,7 +2107,63 @@ class MainPanel(wx.Panel):
                         self.SetPlaylistItem(current_count + x, artist, song, '', '')
 
         #save the playlist
-        self.SavePlaylist(self.main_playlist_location)
+        self.SavePlaylist(self.main_playlist_location)        
+        
+    def SuperAddToPlaylist(self, add_dict, plize=False):
+        #backup current db
+        #****self.SearchOrPlaylist(artist, song)
+        self.BackupList()
+        if plize == True:
+            self.CheckClear()
+            self.nb_main.SetSelection(NB_PLAYLIST)
+        #process dictionary
+        #[{'song': 'Some song name', 'artist': 'some artist',}, {...},]
+        first_last_row = self.lc_playlist.GetItemCount()
+        for x in add_dict:
+            row_num = self.lc_playlist.GetItemCount()
+            index = self.lc_playlist.InsertStringItem(row_num, '')
+            for k, v in x.iteritems():                
+                col_num = PLAYLIST_COLUMNS[k]                
+                self.lc_playlist.SetStringItem(row_num, col_num, v)
+        self.nb_main.SetPageText(NB_PLAYLIST, 'Playlist (' + str(self.lc_playlist.GetItemCount()) + ')')
+        
+        self.GetAllSongRatings(start_from=first_last_row)
+        
+    def AddAll(self, list_control, num_cols=2):
+        add_arr = []
+        for val in range(0, list_control.GetItemCount()):
+            add_dict = self.ItemToDict(val, list_control, num_cols)
+            add_arr.append(add_dict)            
+        self.SuperAddToPlaylist(add_arr, plize=True)
+        
+    def ItemToDict(self, val, list_control, num_cols=2):
+        add_dict = {}
+        artist = list_control.GetItem(val, C_ARTIST).GetText()
+        song = list_control.GetItem(val, C_SONG).GetText()
+        
+        add_dict['artist'] = artist
+        add_dict['song'] = song
+        if num_cols >= 3:
+            album = list_control.GetItem(val, C_ALBUM).GetText()
+            add_dict['album'] = album
+        if num_cols >= 4:
+            song_id = list_control.GetItem(val, C_ID).GetText()            
+            add_dict['id'] = song_id
+        if num_cols >= 5:
+            duration = list_control.GetItem(val, C_TIME).GetText()
+            add_dict['time'] = duration
+        return add_dict
+        
+    def AddSelected(self, list_control, num_cols=2):
+        # add from favourite list to the playlist
+        val = list_control.GetFirstSelected()
+        add_arr = []
+        if (val >= 0): 
+            for x in range(0, list_control.GetSelectedItemCount()):
+                add_dict = self.ItemToDict(val, list_control, num_cols)
+                add_arr.append(add_dict)
+                val = list_control.GetNextSelected(val)                
+            self.SuperAddToPlaylist(add_arr, plize=False)
         
 # ---------------------------------------------------------  
 # playlist history ---------------------------------------- 
@@ -2208,8 +2236,9 @@ class MainPanel(wx.Panel):
             #return results_arr
         counter = 0
         for x in results_arr:    
-            index = self.lc_playlist_history.InsertStringItem(counter, x[1])
-            self.lc_playlist_history.SetStringItem(counter, 1, x[2])
+            index = self.lc_playlist_history.InsertStringItem(counter, '')
+            self.lc_playlist_history.SetStringItem(counter, C_ARTIST, x[2])
+            self.lc_playlist_history.SetStringItem(counter, C_SONG, x[2])
             counter = counter + 1
         
     def GetDatabasePlaylist(self, q_limit=1, start_from=0):
@@ -2270,20 +2299,14 @@ class MainPanel(wx.Panel):
         counter = 0
         #print track_dict
         for x in track_dict:
-            index = self.lc_playlist_history.InsertStringItem(counter, x['creator'])
-            self.lc_playlist_history.SetStringItem(counter, 1, x['title'])
+            index = self.lc_playlist_history.InsertStringItem(counter, '')
+            self.lc_playlist_history.SetStringItem(counter, C_ARTIST, x['creator'])
+            self.lc_playlist_history.SetStringItem(counter, C_SONG, x['title'])
             counter = counter +1
         
     def OnPlaylistTreeActivate(self, event):
         #add selected palylist to the main platlist
-        if  self.lc_playlist_history.GetItemCount() > 0:
-            self.BackupList()
-            self.lc_playlist.DeleteAllItems()            
-            for x in range (0, self.lc_playlist_history.GetItemCount()):
-                self.lc_playlist.InsertStringItem(x, '')
-                self.lc_playlist.SetStringItem(x, C_ARTIST, self.lc_playlist_history.GetItem(x, 0).GetText())
-                self.lc_playlist.SetStringItem(x, C_SONG, self.lc_playlist_history.GetItem(x, 1).GetText())
-            self.SavePlaylist(self.main_playlist_location)
+        self.AddAll(self.lc_playlist_history)
             
     def OnPlaylistTreeRightClick(self, event):
         #compensate for tricky right-click behaviour
@@ -2453,439 +2476,27 @@ class MainPanel(wx.Panel):
     def OnUndoClick(self, event):
         #toggle between loading default playlist and backup playlist
         #load playlist backup file        
-        if self.lc_playlist.IsShownOnScreen():
-            self.lc_playlist.DeleteAllItems()
+        if self.lc_playlist.IsShownOnScreen():            
             if self.undo_toggle == 0:
+                if self.lc_playlist.GetItemCount() > 0:
+                    self.SavePlaylist(self.main_playlist_location)
+                self.lc_playlist.DeleteAllItems()
                 self.ReadPlaylist(self.main_playlist_location_bak)
                 self.undo_toggle = 1
             else:
+                self.lc_playlist.DeleteAllItems()
                 self.ReadPlaylist(self.main_playlist_location)
-                self.undo_toggle = 0
-        #if self.lc_faves.IsShownOnScreen():
-        #    self.lc_faves.DeleteAllItems()
-        #    if self.undo_toggle_faves == 0:
-        #        self.ReadFaves(self.faves_playlist_location_bak)
-        #        self.undo_toggle_faves = 1
-        #    else:
-        #        self.ReadFaves(self.faves_playlist_location)
-        #        self.undo_toggle_faves = 0        
+                self.undo_toggle = 0   
         
     def BackupList(self):
         #if self.lc_faves.IsShownOnScreen():
          #   self.SaveFaves(self.faves_playlist_location_bak)
         #    self.undo_toggle_faves = 0
         #else: # self.lc_playlist.IsShownOnScreen():
-        self.SavePlaylist(self.main_playlist_location_bak)
-        self.undo_toggle = 0
-        
-# --------------------------------------------------------- 
-# My last.fm ----------------------------------------------
-    def OnMyLastClearClick(self, event):
-        # clear lastfm search field
-        self.tc_mylast_search_user.Clear()
-
-    def OnMyLastSearchClick(self, event):
-        # search for user
-        user = self.tc_mylast_search_user.GetValue()
-        tperiod = self.rx_mylast_period.GetSelection()
-        if user != '':
-            top_tracks_list = audioscrobbler_lite.Scrobb().make_user_top_songs(user, tperiod)
-            self.GenerateScrobbList2(top_tracks_list)
-            
-    def OnMyLastMeClick(self, event):
-        # search for user
-        user = self.tc_options_username.GetValue()
-        tperiod = self.rx_mylast_period.GetSelection() 
-        if user != '':
-            top_tracks_list = audioscrobbler_lite.Scrobb().make_user_top_songs(user, tperiod)
-            self.GenerateScrobbList2(top_tracks_list)
-            
-    def OnMyLastFriendsClick(self, event):
-        # search for user
-        user = self.tc_options_username.GetValue()
-        if user != '':
-            top_tracks_list = audioscrobbler_lite.Scrobb().get_friends(user)
-            self.GenerateScrobbList2(top_tracks_list)
-            
-    def OnMyLastNeighClick(self, event):
-        # search for user
-        user = self.tc_options_username.GetValue()
-        if user != '':
-            top_tracks_list = audioscrobbler_lite.Scrobb().get_neighbours(user)
-            self.GenerateScrobbList2(top_tracks_list)
-            
-    def OnMyLastLovedClick(self, event):
-        #grab your loved tracks
-        user = self.tc_mylast_search_user.GetValue()
-        if user == '':
-            user = self.tc_options_username.GetValue()
-        if user != '':
-            top_tracks_list = audioscrobbler_lite.Scrobb().get_loved_songs(user)
-            self.GenerateScrobbList2(top_tracks_list)
-            
-    def OnMyLastRecommenedArtistsClick(self, event):
-        # search for user
-        #self.session_key = self.song_scrobb._get_session_id()
-        #if len(self.session_key) > 0:            
-        #    print self.session_key
-        #    auth_user = pylast.get_authenticated_user(API_KEY, SECRET, self.session_key)
-        #    print auth_user
-        #    while not auth_user.is_end_of_recommended_artists():
-        #       print auth_user.get_recommended_artists_page()
-        pass
-                       
-    def GenerateScrobbList2(self, top_list, albums=False, artists=False):
-        # put some data in a list control
-        counter = 0
-        self.lc_mylast.DeleteAllItems()
-        for x in top_list:
-            if len(x) == 3:
-                # just printing artist/song
-                self.lc_mylast.InsertStringItem(counter, x[1])
-                self.lc_mylast.SetStringItem(counter, 1, x[0])
-                self.lc_mylast.SetStringItem(counter, 2, '')
-                self.lc_mylast.SetStringItem(counter, 3, x[2])
-            if len(x) == 2:
-                self.lc_mylast.InsertStringItem(counter, '')
-                self.lc_mylast.SetStringItem(counter, 1, '')
-                self.lc_mylast.SetStringItem(counter, 2, x[0])
-                self.lc_mylast.SetStringItem(counter, 3, x[1])
-            #self.lc_lastfm.SetItemData(counter, x[1] + ':' + x[0])
-            counter = counter + 1
-               
-        self.lc_mylast.SetColumnWidth(0, wx.LIST_AUTOSIZE)
-        self.lc_mylast.SetColumnWidth(1, wx.LIST_AUTOSIZE)
-        self.lc_mylast.SetColumnWidth(2, wx.LIST_AUTOSIZE)
-        self.lc_mylast.SetColumnWidth(3, wx.LIST_AUTOSIZE_USEHEADER)
-        #self.nb_main.SetPageText(2, 'last.fm (' + str(counter) + ')')
-            
-        
-    def OnMyLastListClick(self, event):
-        # past the artist + track in the search field
-        val = self.lc_mylast.GetFirstSelected()
-        user = self.lc_mylast.GetItem(val, 2).GetText()
-        #set new value        
-        self.tc_mylast_search_user.SetValue(user)
-        
-    def OnMyLastListDoubleClick(self, event):
-        # past the artist + track in the search field
-        val = self.lc_mylast.GetFirstSelected()
-        artist = self.lc_mylast.GetItem(val, 0).GetText()
-        song = self.lc_mylast.GetItem(val, 1).GetText()
-        user = self.lc_mylast.GetItem(val, 2).GetText()
-        #search for selected song, or album if song is empty
-        if song != '':
-            # search for db-clicked song
-            self.SearchOrPlaylist(artist, song)            
-        if len(user) > 0:
-            # display the details for the clicked user
-            self.OnMyLastSearchClick(None)
-        if (len(song) == 0) & (len(artist) > 0):
-            # get the top songs for the selected artist
-            self.nb_main.SetSelection(NB_LAST)            
-            top_tracks_list = audioscrobbler_lite.Scrobb().make_artist_top_song_list(artist)
-            self.GenerateScrobbList(top_tracks_list)
-            
-    def OnAutoGenerateMyLastPlayist(self, event):
-        # lets just add all the items to your playlist
-        # search for song from groove shark on demand, ie, when you go to play it?
-        self.CheckClear()       
-        insert_at = self.lc_playlist.GetItemCount()
-        for x in range(self.lc_mylast.GetItemCount(), 0, -1):
-            artist = self.lc_mylast.GetItem(x-1, 0).GetText()
-            song = self.lc_mylast.GetItem(x-1, 1).GetText()
-            # skip if there's no song title
-            if song != '':
-                self.SetPlaylistItem(insert_at, artist, song, '', '')
-        #save the playlist
-        self.SavePlaylist(self.main_playlist_location)
-        # switch tabs
-        self.nb_main.SetSelection(NB_PLAYLIST)
-        
-    def OnMyLastWebClick(self, event):
-        # open website
-        lw = 'http://www.last.fm/user/'        
-        if len(self.tc_mylast_search_user.GetValue()) > 0:
-            address = lw + self.tc_mylast_search_user.GetValue()
-        elif len(self.tc_options_username.GetValue()) > 0:
-            address = lw + self.tc_options_username.GetValue()
-        else:
-            address = lw
-        default_app_open.dopen(address)
-        
-    def OnMyLastRightClick(self, event):
-        val = self.lc_mylast.GetFirstSelected()
-        if val != -1:
-            if (self.lc_mylast.GetItem(val, 0).GetText() != '') & (self.lc_mylast.GetItem(val, 1).GetText() != ''):    
-                # make a menu
-                ID_PLAYLIST = 1
-                ID_CLEAR = 2
-                menu = wx.Menu()
-                menu.Append(ID_PLAYLIST, "Add to Playlist")
-                menu.AppendSeparator()
-                menu.Append(ID_CLEAR, "Clear Playlist")
-                wx.EVT_MENU(self, ID_PLAYLIST, self.MyLastAddPlaylist)
-                wx.EVT_MENU(self, ID_CLEAR, self.OnClearPlaylistClick)       
-                self.PopupMenu(menu)
-                menu.Destroy()
-                
-    def MyLastAddPlaylist(self, event):        
-        self.GenericAddToPlaylist(self.lc_mylast)
-        
-# --------------------------------------------------------- 
-# last.fm ------------------------------------------------- 
-
-    def GetLastThree(self):
-        # figure out where we should get the artist/song/ablum info to search on
-        artist = self.tc_last_search_artist.GetValue()        
-        if len(artist) == 0:
-            artist = self.current_song.artist #st_track_info.GetLabel().split(' - ', 1)[0]
-            
-        song = self.tc_last_search_song.GetValue()        
-        if len(song) == 0:
-            song = self.current_song.song #st_track_info.GetLabel().split(' - ', 1)
-                
-        album = self.tc_last_search_album.GetValue()
-        return artist, song, album
-
-    def OnClearLastSearchClick(self, event):
-        # clear lastfm search field
-        self.tc_last_search_artist.Clear()
-        self.tc_last_search_album.Clear()
-        self.tc_last_search_song.Clear()
-
-    def OnLastfmListClick(self, event):
-        # past the artist + track in the search field
-        val = self.lc_lastfm.GetFirstSelected()
-        artist = self.lc_lastfm.GetItem(val, 0).GetText()
-        song = self.lc_lastfm.GetItem(val, 1).GetText()
-        album = self.lc_lastfm.GetItem(val, 2).GetText()
-        tag = self.lc_lastfm.GetItem(val, 4).GetText()
-        #set new value        
-        self.tc_last_search_artist.SetValue(artist)
-        self.tc_last_search_song.SetValue(song)
-        self.tc_last_search_album.SetValue(album)
-        self.co_last_tag.SetValue(tag)
-        
-    def OnLastfmListDoubleClick(self, event):
-        # past the artist + track in the search field
-        val = self.lc_lastfm.GetFirstSelected()
-        artist = self.lc_lastfm.GetItem(val, 0).GetText()
-        song = self.lc_lastfm.GetItem(val, 1).GetText()
-        album = self.lc_lastfm.GetItem(val, 2).GetText()
-        tag = self.lc_lastfm.GetItem(val, 4).GetText()
-        #search for selected song, or album if song is empty
-        if song != '':
-            # search for db-clicked song
-            #self.tc_search.SetValue(artist + ' ' + song)
-            #self.SearchIt(artist + ' ' + song)
-            self.SearchOrPlaylist(artist, song)
-            # display search page
-            #self.nb_main.SetSelection(NB_PLAYLIST)
-            #self.lc_search.SetFocus()
-            #self.search_window.lc_search.Select(0)
-        elif (len(song) == 0) & (len(album) != 0):
-            # display the details for the clicked album
-            # get all the tracks in teh album and display on the album page
-            track_stuff = self.GetAlbumAlbumInfo(artist, album)
-            #print track_stuff
-            self.tc_album_search_album.SetValue(track_stuff[1])
-            self.tc_album_search_artist.SetValue(artist)
-            self.tc_album_search_song.SetValue('')
-            if len(track_stuff) > 0:
-                track_list = self.GetAlbumInfo(track_stuff[0])
-                #print track_list
-                self.FillAlbumList(track_list, artist, track_stuff[1])
-                # display album page
-                self.nb_main.SetSelection(NB_ALBUM)
-        elif (len(song) == 0) & (len(album) == 0) & (len(tag) == 0):
-            # get the top songs for the selected artist            
-            if len(artist) > 0:
-                top_tracks_list = audioscrobbler_lite.Scrobb().make_artist_top_song_list(artist)
-                self.GenerateScrobbList(top_tracks_list)
-        elif (len(tag) != 0):
-            #doble-clik on a tag, get list of top songs for tag            
-            top_tracks_list = audioscrobbler_lite.Scrobb().make_genre_top_song_list(tag)
-            self.GenerateScrobbList(top_tracks_list)
-    
-    def OnLastTSSimilarClick(self, event):
-        # grab similar tracks from last fm
-        artist, song, album = self.GetLastThree()        
-        
-        if len(song) > 0:
-            top_tracks_list = audioscrobbler_lite.Scrobb().make_similar_song_list(artist, song)
-            self.GenerateScrobbList(top_tracks_list)
-        else:    
-            dlg = wx.MessageDialog(self, 'Song not entered / playing.', 'Problems...', wx.OK | wx.ICON_WARNING)
-            dlg.ShowModal()
-            dlg.Destroy()
-        
-    def OnLastArtistSimilarClick(self, event):
-        # grab similar tracks from last fm
-        # get artist from artist search box, if blank get from current playing song
-        artist, song, album = self.GetLastThree()        
-        if len(artist) > 0:
-            top_tracks_list = audioscrobbler_lite.Scrobb().make_similar_artist_list(artist)
-            #print top_tracks_list
-            self.GenerateScrobbList(top_tracks_list, False, True)
-        else:    
-            dlg = wx.MessageDialog(self, 'Artist not entered / song not playing.', 'Problems...', wx.OK | wx.ICON_WARNING)
-            dlg.ShowModal()
-            dlg.Destroy()
-        
-    def OnLastTSAlbumClick(self, event):
-        # get top tracks for a given album
-        artist, song, album = self.GetLastThree()
-        if (album == '') & (len(song) > 0):
-            # check for album of playing song
-            track_stuff = self.GetSongAlbumInfo(artist, song)
-            album = track_stuff[1]        
-        # get album id
-        # get top tracks
-        if len(album) > 0:
-            top_tracks_list = audioscrobbler_lite.Scrobb().make_album_top_song_list(artist, album)
-            #print top_tracks_list
-            # trhread the queries to get the plays for each song in teh album
-            # THREAD
-            current = WebFetchThread(self, '', '', top_tracks_list, 'PLAYCOUNT')
-            #THREAD
-            current.start()            
-            self.GenerateScrobbList(top_tracks_list, False, False)
-        else:
-            dlg = wx.MessageDialog(self, 'Artist not entered / album not entered.', 'Problems...', wx.OK | wx.ICON_WARNING)
-            dlg.ShowModal()
-            dlg.Destroy()
-        
-    def OnLastTSArtistClick(self, event):
-        # grab top tracks from last fm
-        artist, song, album = self.GetLastThree()
-        if len(artist) > 0:
-            top_tracks_list = audioscrobbler_lite.Scrobb().make_artist_top_song_list(artist)
-            self.GenerateScrobbList(top_tracks_list)
-        else:    
-            dlg = wx.MessageDialog(self, 'Artist not entered / song not playing.', 'Problems...', wx.OK | wx.ICON_WARNING)
-            dlg.ShowModal()
-            dlg.Destroy()
-        
-    def OnLastTAArtistClick(self, event):
-        # grab top albums from last fm
-        artist, song, album = self.GetLastThree()
-        if len(artist) > 0:
-            top_tracks_list = audioscrobbler_lite.Scrobb().make_artist_top_album_list(artist)
-            self.GenerateScrobbList(top_tracks_list, True)
-        else:    
-            dlg = wx.MessageDialog(self, 'Artist not entered / song not playing.', 'Problems...', wx.OK | wx.ICON_WARNING)
-            dlg.ShowModal()
-            dlg.Destroy()
-        
-    def OnLastTSGeoClick(self, event):
-        # grab top tracks from last fm per country
-        country = self.ch_last_country.GetStringSelection()
-        if len(country) > 0:
-            top_tracks_list = audioscrobbler_lite.Scrobb().make_geo_top_song_list(country)
-            self.GenerateScrobbList(top_tracks_list)
-        #print country
-        
-    def OnLastTSGenreClick(self, event):
-        # grab top tracks from last fm per country
-        genre = self.co_last_tag.GetValue() #(0)#Selection()
-        if len(genre) > 0:
-            top_tracks_list = audioscrobbler_lite.Scrobb().make_genre_top_song_list(genre)
-            self.GenerateScrobbList(top_tracks_list)
-        #print genre
-        
-    def OnLastTTSongClick(self, event):
-        # grab top tags per song
-        artist, song, album = self.GetLastThree()
-
-        if len(song) > 0:
-            top_tracks_list = audioscrobbler_lite.Scrobb().make_song_top_tags_list(artist, song)
-            self.GenerateScrobbList(top_tracks_list, False, False, True)
-        else:    
-            dlg = wx.MessageDialog(self, 'Song not entered / playing.', 'Problems...', wx.OK | wx.ICON_WARNING)
-            dlg.ShowModal()
-            dlg.Destroy()
-
-    def GenerateScrobbList(self, top_list, albums=False, artists=False, tags=False):
-        # put some data in a list control
-        counter = 0
-        self.lc_lastfm.DeleteAllItems()
-        for x in top_list:            
-            if albums == True:
-                # just printing artist/album
-                self.lc_lastfm.InsertStringItem(counter, x[1])
-                self.lc_lastfm.SetStringItem(counter, 1, '')
-                self.lc_lastfm.SetStringItem(counter, 2, x[0])
-                self.lc_lastfm.SetStringItem(counter, 3, x[2])
-                self.lc_lastfm.SetStringItem(counter, 4, '')
-            elif artists == True:
-                # just printing artist
-                self.lc_lastfm.InsertStringItem(counter, x[0])
-                self.lc_lastfm.SetStringItem(counter, 1, '')
-                self.lc_lastfm.SetStringItem(counter, 2, '')
-                self.lc_lastfm.SetStringItem(counter, 3, x[1])
-                self.lc_lastfm.SetStringItem(counter, 4, '')
-            elif tags == True:
-                # just printing artist
-                self.lc_lastfm.InsertStringItem(counter, '')
-                self.lc_lastfm.SetStringItem(counter, 1, '')
-                self.lc_lastfm.SetStringItem(counter, 2, '')
-                self.lc_lastfm.SetStringItem(counter, 3, x[1])
-                self.lc_lastfm.SetStringItem(counter, 4, x[0])
-            else:
-                # just printing artist/song
-                self.lc_lastfm.InsertStringItem(counter, x[1])
-                self.lc_lastfm.SetStringItem(counter, 1, x[0])
-                self.lc_lastfm.SetStringItem(counter, 2, '')
-                self.lc_lastfm.SetStringItem(counter, 3, x[2])
-                self.lc_lastfm.SetStringItem(counter, 4, '')
-
-            #self.lc_lastfm.SetItemData(counter, x[1] + ':' + x[0])
-            counter = counter + 1
-               
-        self.lc_lastfm.SetColumnWidth(0, wx.LIST_AUTOSIZE)
-        self.lc_lastfm.SetColumnWidth(1, wx.LIST_AUTOSIZE)
-        self.lc_lastfm.SetColumnWidth(2, wx.LIST_AUTOSIZE)
-        self.lc_lastfm.SetColumnWidth(3, wx.LIST_AUTOSIZE_USEHEADER)
-        self.lc_lastfm.SetColumnWidth(4, wx.LIST_AUTOSIZE)
-        #self.nb_main.SetPageText(2, 'last.fm (' + str(counter) + ')')  
-        
-    def OnAutoGenerateLastfmPlayist(self, event):
-        # lets just add all the items to your playlist
-        # search for song from groove shark on demand, ie, when you go to play it?
-        self.CheckClear()
-        insert_at = self.lc_playlist.GetItemCount()
-        
-        for x in range(self.lc_lastfm.GetItemCount(), 0, -1):
-            artist = self.lc_lastfm.GetItem(x-1, 0).GetText()
-            song = self.lc_lastfm.GetItem(x-1, 1).GetText()
-            # skip if there's no song title
-            if song != '':
-                self.SetPlaylistItem(insert_at, artist, song)
-        #save the playlist
-        self.SavePlaylist(self.main_playlist_location)
-        # switch tabs
-        self.nb_main.SetSelection(NB_PLAYLIST)
-        
-    def OnLastfmRightClick(self, event):
-        val = self.lc_lastfm.GetFirstSelected()
-        if val != -1:
-            if (self.lc_lastfm.GetItem(val, 0).GetText() != '') & (self.lc_lastfm.GetItem(val, 1).GetText() != ''):    
-                # make a menu
-                ID_PLAYLIST = 1
-                ID_CLEAR = 2
-                menu = wx.Menu()
-                menu.Append(ID_PLAYLIST, "Add to Playlist")
-                menu.AppendSeparator()
-                menu.Append(ID_CLEAR, "Clear Playlist")
-                wx.EVT_MENU(self, ID_PLAYLIST, self.LastfmAddPlaylist)
-                wx.EVT_MENU(self, ID_CLEAR, self.OnClearPlaylistClick)       
-                self.PopupMenu(menu)
-                menu.Destroy()
-  
-    def LastfmAddPlaylist(self, event):    
-        self.GenericAddToPlaylist(self.lc_lastfm)
-        
+        if self.lc_playlist.GetItemCount() > 0:
+            self.SavePlaylist(self.main_playlist_location_bak)
+            self.undo_toggle = 0
+            print 'backup list'
                 
 # --------------------------------------------------------- 
 # musicbrainz----------------------------------------------  
@@ -2910,6 +2521,12 @@ class MainPanel(wx.Panel):
         # get album info from musicbrainz
         track_list = musicbrainz.Brainz().get_track_list(mid)
         return track_list
+        
+    def TTA(self, top_tracks_list):
+        # THREAD
+        current = WebFetchThread(self, '', '', top_tracks_list, 'PLAYCOUNT')
+        #THREAD
+        current.start()
         
 # ---------------------------------------------------------
 # cover/bio pic cache  ------------------------------------
@@ -3324,9 +2941,9 @@ class WebFetchThread(Thread):
             for x in self.album:
                 playcount = audioscrobbler_lite.Scrobb().get_play_count(x[1], x[0])
                 #print playcount
-                self.panel.lc_lastfm.SetStringItem(counter, 3, playcount)
+                self.panel.tab_lastfm.lc_lastfm.SetStringItem(counter, 4, playcount)
                 if counter == 0:
-                    self.panel.lc_lastfm.SetColumnWidth(3, wx.LIST_AUTOSIZE)
+                    self.panel.tab_lastfm.lc_lastfm.SetColumnWidth(4, wx.LIST_AUTOSIZE)
                 counter = counter + 1
         
         if self.webfetchtype == 'SONGINFO':

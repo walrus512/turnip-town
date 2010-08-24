@@ -56,8 +56,6 @@ class SongCollectionTab(wx.ScrolledWindow):
         #self.tl_scol_folder.AddColumn("Column 2")
         #self.tl_scol_folder.SetMainColumn(0) # the one with the tree in it...
         #self.tl_scol_folder.SetColumnWidth(0, 575)
-
-        
         
         # list control
         self.lc_scol_col = xrc.XRCCTRL(self.parent, 'm_lc_scol_col')
@@ -136,12 +134,13 @@ class SongCollectionTab(wx.ScrolledWindow):
         menu.Destroy()
         
     def ScolAddPlaylist(self, event):
-        self.parent.BackupList()
+        #self.parent.BackupList()
         # cycle through selected
         val = self.lc_scol_col.GetFirstSelected()
         # iterate over all selected items and delete
-        #self.CheckClear()
         #check for file or folder
+        file_name_arr = []
+        
         if val != -1:
             if self.lc_scol_col.GetItem(val, 0).GetText() == ' ':
                 #it's just a folder, first item is ' '  not ''
@@ -149,33 +148,43 @@ class SongCollectionTab(wx.ScrolledWindow):
                 folder = self.lc_scol_col.GetItem(val, 2).GetText()
                 folder_arr = local_songs.DbFuncs().GetResultsArray(folder, 100, True, 2)
                 for x in range(0, len(folder_arr)):
-                    self.ScolFileAdd(folder_arr[x][4])
+                    file_name_arr.append(folder_arr[x][4])                    
             else:
                 # it's a file
-                for x in range(val, val + self.lc_scol_col.GetSelectedItemCount()):
-                    mfile = self.lc_scol_col.GetItem(x, 1).GetText()
-                    mfolder = self.lc_scol_col.GetItem(x, 2).GetText()
-                    mpath = self.lc_scol_col.GetItem(x, 3).GetText()
+                for x in range(0, self.lc_scol_col.GetSelectedItemCount()):
+                    mfile = self.lc_scol_col.GetItem(val, 1).GetText()
+                    mfolder = self.lc_scol_col.GetItem(val, 2).GetText()
+                    mpath = self.lc_scol_col.GetItem(val, 3).GetText()
                     if mfolder == ' ':
-                        self.ScolFileAdd(mpath + '/' + mfile)
+                        file_name_arr.append(mpath + '/' + mfile)
+                        #self.ScolFileAdd(mpath + '/' + mfile)
                     else:
-                        self.ScolFileAdd(mpath + '/' + mfolder + '/' + mfile)
-
+                        file_name_arr.append(mpath + '/' + mfolder + '/' + mfile)
+                        #self.ScolFileAdd(mpath + '/' + mfolder + '/' + mfile)
+                    val = self.lc_scol_col.GetNextSelected(val)
+        self.ScolFileAdd(file_name_arr)
             
-    def ScolFileAdd(self, file_name):
-        # copy the faves list to the playlist        
-        insert_at = self.parent.lc_playlist.GetItemCount()
+    def ScolFileAdd(self, file_name_arr):
+        # copy the faves list to the playlist
+        add_arr = []        
         
-        artist = local_songs.GetMp3Artist(file_name)
-        song = local_songs.GetMp3Title(file_name)
-        album = local_songs.GetMp3Album(file_name)
-        song_id = file_name.replace(os.sep, '/')
-        duration = self.parent.ConvertTimeFormated(local_songs.GetMp3Length(file_name))
-        self.parent.SetPlaylistItem(insert_at, artist, song, album, song_id, duration)
-        #save the playlist
-        self.parent.SavePlaylist(self.parent.main_playlist_location)
-        # switch tabs
-        #self.nb_main.SetSelection(NB_PLAYLIST)
+        for x in file_name_arr:
+            add_dict = {}
+            artist = local_songs.GetMp3Artist(x)
+            song = local_songs.GetMp3Title(x)
+            album = local_songs.GetMp3Album(x)
+            song_id = x.replace(os.sep, '/')
+            #duration = self.parent.ConvertTimeFormated(local_songs.GetMp3Length(x))
+            #self.parent.SetPlaylistItem(insert_at, artist, song, album, song_id, duration)
+            
+            add_dict['artist'] = artist
+            add_dict['song'] = song
+            add_dict['album'] = album
+            add_dict['id'] = song_id
+            #add_dict['time'] = duration
+            add_arr.append(add_dict)
+            
+        self.parent.SuperAddToPlaylist(add_arr)
         
     def OnSColClearClick(self, event):
         # clear album search field
@@ -278,8 +287,7 @@ class SongCollectionTab(wx.ScrolledWindow):
         
         c.execute(query)
         h = c.fetchall()
-        return h
-    
+        return h    
         
     def OnSColFolderText(self, event):
         # search local db for folder matches
@@ -313,11 +321,13 @@ class SongCollectionTab(wx.ScrolledWindow):
         if item:
             folder_name = self.tr_scol_folders.GetItemText(item)
             results = self.GetFiles(folder_name)
-            #add a complete folder from the treelist to the playlist
+            #add a complete folder from the treelist to the playlist            
+            file_name_arr = []
             for x in results:
-                print x[0]
-                self.ScolFileAdd(x[2] + '/' + x[1] + '/' + x[0])
-        
+                #print x[0]
+                file_name_arr.append(x[2] + '/' + x[1] + '/' + x[0])
+            self.ScolFileAdd(file_name_arr)
+            
     def OnSelChanged(self, event):
         pass #event.Skip()
         

@@ -33,6 +33,13 @@ if os.path.isfile(SYSLOC + os.sep + "layout.xml") == False:
     SYSLOC = os.path.abspath(os.getcwd())
 
 SEARCH_RESFILE = SYSLOC + os.sep + 'layout_search.xml'
+#columns
+C_RATING = 0
+C_ARTIST = 1
+C_SONG = 2
+C_ALBUM = 3
+C_ID = 4
+C_TIME = 5
 
 class SearchWindow(wx.Dialog):
     """Search Window for searching"""
@@ -59,10 +66,11 @@ class SearchWindow(wx.Dialog):
         # list control, column setup ------------
         # search is subclassed to draglist in the xrc
         self.lc_search = xrc.XRCCTRL(self, 'm_lc_search')
-        self.lc_search.InsertColumn(0,"Artist")
-        self.lc_search.InsertColumn(1,"Song")
-        self.lc_search.InsertColumn(2,"Album")
-        self.lc_search.InsertColumn(3,"Id")
+        self.lc_search.InsertColumn(C_RATING,"Rating")
+        self.lc_search.InsertColumn(C_ARTIST,"Artist")
+        self.lc_search.InsertColumn(C_SONG,"Song")
+        self.lc_search.InsertColumn(C_SONG,"Album")
+        self.lc_search.InsertColumn(C_ID,"Id")
         self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.OnSearchListClick, self.lc_search)
 
         # bindings ----------------
@@ -124,31 +132,10 @@ class SearchWindow(wx.Dialog):
         self.Show(False)
 
 #----------------------------------------------------------------------        
+ 
     def OnSearchListClick(self, event):
-        # get selected search relsult list item and add to playlist
-        #val = event.GetIndex()
-        val = self.lc_search.GetFirstSelected()
-        total = self.lc_search.GetSelectedItemCount()
-        current_count = self.parent.lc_playlist.GetItemCount()
-        #print val
-        if val >= 0:
-            artist = self.lc_search.GetItem(val, 0).GetText()
-            song = self.lc_search.GetItem(val, 1).GetText()
-            album = self.lc_search.GetItem(val, 2).GetText()
-            url = self.lc_search.GetItem(val, 3).GetText()
-            self.parent.SetPlaylistItem(current_count, artist, song, album, url)
-            current_select = val
-            if total > 1:
-                for x in range(1, self.lc_search.GetSelectedItemCount()):
-                    current_select = self.lc_search.GetNextSelected(current_select)
-                    artist = self.lc_search.GetItem(current_select, 0).GetText()
-                    song = self.lc_search.GetItem(current_select, 1).GetText()
-                    album = self.lc_search.GetItem(current_select, 2).GetText()
-                    url = self.lc_search.GetItem(current_select, 3).GetText()
-                    self.parent.SetPlaylistItem(current_count + x, artist, song, album, url)
-        
-            # save playlist file
-            self.parent.SavePlaylist()
+        """ add the selected list items to the playlist """
+        self.parent.AddSelected(self.lc_search, num_cols=4)
         
 #----------------------------------------------------------------------
     def OnSearchClick(self, event):
@@ -184,17 +171,18 @@ class SearchWindow(wx.Dialog):
                     # http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&songID=13721223&style=metal&p=0
 
                     # artist
-                    index = self.lc_search.InsertStringItem(counter, x['ArtistName'])
+                    index = self.lc_search.InsertStringItem(counter, '')
+                    self.lc_search.SetStringItem(counter, 1, x['ArtistName'])
                     # title
-                    self.lc_search.SetStringItem(counter, 1, x['SongName'])
+                    self.lc_search.SetStringItem(counter, 2, x['SongName'])
                     #album
-                    self.lc_search.SetStringItem(counter, 2, x['AlbumName'])
+                    self.lc_search.SetStringItem(counter, 3, x['AlbumName'])
                     if self.parent.cb_options_noid.GetValue() == False:
-                        self.lc_search.SetStringItem(counter, 3, play_url)
+                        self.lc_search.SetStringItem(counter, 4, play_url)
                 else:
-                    index = self.lc_search.InsertStringItem(counter, 'No Results')
+                    index = self.lc_search.InsertStringItem(counter, '')
                     # title
-                    self.lc_search.SetStringItem(counter, 1, 'Found')
+                    self.lc_search.SetStringItem(counter, 1, 'No Results Found')
 
                 counter = counter + 1
         self.ResizeColumns()
@@ -216,29 +204,32 @@ class SearchWindow(wx.Dialog):
                         
                 if found_exact_match == True:    
                     #add artist, song, album, path, add at top
-                    index = self.lc_search.InsertStringItem(0, x[0])
-                    self.lc_search.SetStringItem(0, 1, x[1])
-                    self.lc_search.SetStringItem(0, 2, x[2])
+                    index = self.lc_search.InsertStringItem(0, '')
+                    self.lc_search.SetStringItem(0, 1, x[0])
+                    self.lc_search.SetStringItem(0, 2, x[1])
+                    self.lc_search.SetStringItem(0, 3, x[2])
                     if self.parent.cb_options_noid.GetValue() == False:
-                        self.lc_search.SetStringItem(0, 3, x[3])
+                        self.lc_search.SetStringItem(0, 4, x[3])
 
                 else:
                     #add artist, song, album, path
-                    index = self.lc_search.InsertStringItem(counter, x[0])
-                    self.lc_search.SetStringItem(counter, 1, x[1])
-                    self.lc_search.SetStringItem(counter, 2, x[2])
+                    index = self.lc_search.InsertStringItem(counter, '')
+                    self.lc_search.SetStringItem(counter, 1, x[0])
+                    self.lc_search.SetStringItem(counter, 2, x[1])
+                    self.lc_search.SetStringItem(counter, 3, x[2])
                     if self.parent.cb_options_noid.GetValue() == False:
-                        self.lc_search.SetStringItem(counter, 3, x[3])
+                        self.lc_search.SetStringItem(counter, 4, x[3])
 
                 counter = counter + 1
         self.ResizeColumns()
                 
     def ResizeColumns(self):
         # resize columns
-        self.lc_search.SetColumnWidth(0, wx.LIST_AUTOSIZE)
+        self.lc_search.SetColumnWidth(0, 0)
         self.lc_search.SetColumnWidth(1, wx.LIST_AUTOSIZE)
         self.lc_search.SetColumnWidth(2, wx.LIST_AUTOSIZE)
         self.lc_search.SetColumnWidth(3, wx.LIST_AUTOSIZE)
+        self.lc_search.SetColumnWidth(4, wx.LIST_AUTOSIZE)
         
         
 # --------------------------------------------------------- 
