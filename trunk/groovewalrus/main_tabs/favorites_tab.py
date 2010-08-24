@@ -65,7 +65,7 @@ class FavoritesTab(wx.ScrolledWindow):
         self.lc_faves.InsertColumn(C_ALBUM,"Album")
         self.lc_faves.InsertColumn(C_ID,"Id")
         self.lc_faves.InsertColumn(C_TIME,"Time")        
-        self.parent.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.OnFavesDoubleClick, self.lc_faves)
+        self.parent.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.FavesAddPlaylist, self.lc_faves)
         # wxMSW
         self.parent.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.OnFavesRightClick, self.lc_faves)
         # wxGTK
@@ -81,8 +81,7 @@ class FavoritesTab(wx.ScrolledWindow):
         self.lc_faves.AssignImageList(self.parent.RateImageList(), wx.IMAGE_LIST_SMALL)        
         self.lc_faves.SetColumnImage(1, 5)
         
-        #bindings
-        ##self.parent.Bind(wx.EVT_BUTTON, self.RemoveFavesItem, id=xrc.XRCID('m_bb_faves_remove'))        
+        #bindings        
         self.parent.Bind(wx.EVT_BUTTON, self.OnFavesClick, id=xrc.XRCID('m_bb_faves'))
         self.parent.Bind(wx.EVT_BUTTON, self.FavesAddPlaylist, id=xrc.XRCID('m_bb_faves_playlist'))
         self.st_faves_rating.Bind(wx.EVT_LEFT_UP, self.OnFavesRatingLabelClick)
@@ -201,22 +200,7 @@ class FavoritesTab(wx.ScrolledWindow):
         self.lc_faves.SetStringItem(current_count, C_TIME, duration)
         
         self.ResizeFaves()
-        
-    #def SaveFaves(self, filename):
-        # take current playlist and save to xml file
-        #track_dict = []
-        #print self.lc_playlist.GetItemCount()
-        #for x in range(0, self.lc_faves.GetItemCount()):
-            #print x
-            #artist = self.lc_faves.GetItem(x, 0).GetText()
-            #title = self.lc_faves.GetItem(x, 1).GetText()
-            #album = self.lc_faves.GetItem(x, 2).GetText()
-            #song_id = self.lc_faves.GetItem(x, 3).GetText()
-            #duration = self.lc_faves.GetItem(x, 4).GetText()
-            #track_dict.append({'creator': artist, 'title': title, 'album': album, 'location': song_id, 'duration': duration})
-            
-        #read_write_xml.xml_utils().save_tracks(filename, track_dict)
-        
+              
     def SetRatingFilters(self):
         #create the where clause to filter based on ratings
         rating_string = ' WHERE '
@@ -282,38 +266,7 @@ class FavoritesTab(wx.ScrolledWindow):
                 pass
         c.close()
         self.ResizeFaves()
-        
-    def OnFavesDoubleClick(self, event):
-        # get selected search relsult list item and add to playlist
-        #val = event.GetIndex()
-        val = self.lc_faves.GetFirstSelected()
-        #items = self.lc_search.GetFirstSelected()
-        #print val
-        current_count = (self.parent.lc_playlist.GetItemCount())
-        artist = self.lc_faves.GetItem(val, C_ARTIST).GetText()
-        song = self.lc_faves.GetItem(val, C_SONG).GetText()
-        album = self.lc_faves.GetItem(val, C_ALBUM).GetText()
-        url = self.lc_faves.GetItem(val, C_ID).GetText()
-        duration = self.lc_faves.GetItem(val, C_TIME).GetText()
-        self.parent.SearchOrPlaylist(artist, song, album, url, duration)
-        #self.SetPlaylistItem(current_count, artist, song, album, url, duration)
-        
-        # save playlist file
-        self.parent.SavePlaylist(self.parent.main_playlist_location)
-        
-    def RemoveFavesItem(self, event=None):        
-        # remove slected list item
-        ##val = self.lc_faves.GetFirstSelected()
-        # iterate over all selected items and delete
-        ##for x in range(val, val + self.lc_faves.GetSelectedItemCount()):
-            #print 'dete - ' + str(val)
-            #self.lc_playlist.DeleteItem(val)
-        ##    self.lc_faves.DeleteItem(self.lc_faves.GetFirstSelected())
-        # save default playlist
-        ##self.SaveFaves(self.faves_playlist_location)
-        ##self.ResizeFaves()
-        pass
-        
+                
     def ResizeFaves(self):
         # 
         self.lc_faves.SetColumnWidth(0, 25)
@@ -323,27 +276,11 @@ class FavoritesTab(wx.ScrolledWindow):
         self.lc_faves.SetColumnWidth(4, 0)#wx.LIST_AUTOSIZE)
         self.lc_faves.SetColumnWidth(5, 50)#wx.LIST_AUTOSIZE_USEHEADER)
         
-    def OnAutoGenerateFavesPlayist(self, event):
-        # copy the faves list to the playlist
-        self.parent.CheckClear()
-        self.parent.BackupList()
-        insert_at = self.parent.lc_playlist.GetItemCount()
-        for x in range(self.lc_faves.GetItemCount(), 0, -1):
-            artist = self.lc_faves.GetItem(x-1, C_ARTIST).GetText()
-            song = self.lc_faves.GetItem(x-1, C_SONG).GetText()
-            album = self.lc_faves.GetItem(x-1, C_ALBUM).GetText()
-            song_id = self.lc_faves.GetItem(x-1, C_ID).GetText()
-            duration = self.lc_faves.GetItem(x-1, C_TIME).GetText()
-            self.parent.SetPlaylistItem(insert_at, artist, song, album, song_id, duration)
-        #save the playlist
-        self.parent.SavePlaylist(self.parent.main_playlist_location)
-        # switch tabs
-        self.parent.nb_main.SetSelection(0) #NB_PLAYLIST)
-        
+             
     def OnFavesRightClick(self, event):
         val = self.lc_faves.GetFirstSelected()
         if val != -1:
-            if (self.lc_faves.GetItem(val, 1).GetText() != '') & (self.lc_faves.GetItem(val, 2).GetText() != ''):    
+            if (self.lc_faves.GetItem(val, C_ARTIST).GetText() != '') & (self.lc_faves.GetItem(val, C_SONG).GetText() != ''):    
                 # make a menu
                 ID_PLAYLIST = 13
                 ID_CLEAR = 23
@@ -385,30 +322,6 @@ class FavoritesTab(wx.ScrolledWindow):
         song = self.lc_faves.GetItem(val, C_SONG).GetText()
         track_id = ratings_button.GetTrackId(artist, song, grooveshark_id, music_id)
         ratings_button.AddRating(self, track_id, 0)
-  
-    def FavesAddPlaylist(self, event):
-        # add from favourite list to the playlist
-        self.parent.BackupList()
-        val = self.lc_faves.GetFirstSelected()
-        total = self.lc_faves.GetSelectedItemCount()
-        current_count = self.parent.lc_playlist.GetItemCount()
-        #print val
-        if (val >= 0):            
-            artist =    self.lc_faves.GetItem(val, C_ARTIST).GetText()
-            song =      self.lc_faves.GetItem(val, C_SONG).GetText()
-            self.parent.SetPlaylistItem(current_count, artist, song, '', '')
-            current_select = val
-            if total > 1:
-                for x in range(1, self.lc_faves.GetSelectedItemCount()):
-                    current_select =    self.lc_faves.GetNextSelected(current_select)
-                    artist =            self.lc_faves.GetItem(current_select, C_ARTIST).GetText()
-                    song =              self.lc_faves.GetItem(current_select, C_SONG).GetText()                    
-                    self.parent.SetPlaylistItem(current_count + x, artist, song, '', '')
-
-        #save the playlist
-        #self.SavePlaylist(self.main_playlist_location)
-        # switch tabs
-        #self.nb_main.SetSelection(NB_PLAYLIST)
         
     def OnFavesColClick(self, event=None):
         #excepts listcrtl column header click events and toggles sorting
@@ -447,4 +360,14 @@ class FavoritesTab(wx.ScrolledWindow):
                 self.faves_sorter[column] = 0
         
         self.ReadFaves(complete_query)
+        
+    # playlist adding ---------------
+                
+    def OnAutoGenerateFavesPlayist(self, event):
+        """ add all the list items to the playlist """
+        self.parent.AddAll(self.lc_faves, num_cols=5)
+        
+    def FavesAddPlaylist(self, event):
+        """ add the selected list items to the playlist """
+        self.parent.AddSelected(self.lc_faves, num_cols=5)
         

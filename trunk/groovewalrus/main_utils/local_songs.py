@@ -323,6 +323,19 @@ class DbFuncs(object):
         c.close()
         return g_track_id
         
+    def GetOnlyTrackId(self, artist, song):
+        conn = sqlite3.connect(self.FILEDB)
+        c = conn.cursor()
+        t = 'SELECT track_id FROM m_tracks WHERE artist="' + artist + '" AND song="' + song + '"'
+        c.execute(t)
+        h = c.fetchall()
+        #print t
+        g_track_id = False
+        if len(h) >= 1:
+            g_track_id = h[0][0]
+        c.close()
+        return g_track_id
+        
     def InsertTagData(self, p_tag_label):
         #check for existing tag
         #if doesn't exit add a new one

@@ -39,6 +39,14 @@ NB_OPTIONS = 8
 NB_ABOUT = 9
 WN_SEARCH = 99
 
+#columns
+C_RATING = 0
+C_ARTIST = 1
+C_SONG = 2
+C_ALBUM = 3
+C_ID = 4
+C_TIME = 5
+
 class AlbumTab(wx.ScrolledWindow):
     def __init__(self, parent):
         self.parent = parent
@@ -52,9 +60,10 @@ class AlbumTab(wx.ScrolledWindow):
         
         # album list control -------------
         self.lc_album = xrc.XRCCTRL(self.parent, 'm_lc_album')
-        self.lc_album.InsertColumn(0,"Artist")
-        self.lc_album.InsertColumn(1,"Song")
-        self.lc_album.InsertColumn(2,"Album")
+        self.lc_album.InsertColumn(C_RATING,"Rating")
+        self.lc_album.InsertColumn(C_ARTIST,"Artist")
+        self.lc_album.InsertColumn(C_SONG,"Song")
+        self.lc_album.InsertColumn(C_ALBUM,"Album")
         #self.lc_album.InsertColumn(3,"Id")
         self.parent.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnAlbumListClick, self.lc_album)
         self.parent.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.OnAlbumDoubleClick, self.lc_album)
@@ -70,7 +79,7 @@ class AlbumTab(wx.ScrolledWindow):
         self.parent.Bind(wx.EVT_BUTTON, self.OnAlbumSearchClick, id=xrc.XRCID('m_bb_album_search'))
         self.bm_cover_large.Bind(wx.EVT_LEFT_UP, self.parent.OnAlbumCoverClick)
         self.parent.Bind(wx.EVT_BUTTON, self.OnAutoGenerateAlbumPlayist, id=xrc.XRCID('m_bb_album_plize'))
-        self.parent.Bind(wx.EVT_BUTTON, self.AlbumAddPlaylist, id=xrc.XRCID('m_bb_album_add'))        
+        self.parent.Bind(wx.EVT_BUTTON, self.OnAlbumDoubleClick, id=xrc.XRCID('m_bb_album_add'))        
         
 # --------------------------------------------------------- 
 # album page ----------------------------------------------  
@@ -116,27 +125,15 @@ class AlbumTab(wx.ScrolledWindow):
             dlg.Destroy()
         
     def OnAlbumListClick(self, event):
-        # past the artist + track in the search field
+        # paste the artist + track in the search field
         val = self.lc_album.GetFirstSelected()
-        artist = self.lc_album.GetItem(val, 0).GetText()
-        song = self.lc_album.GetItem(val, 1).GetText()
-        #clear
-        #self.tc_search.SetValue('')
-        #set new value
-        self.parent.tc_search.SetValue(artist + ' ' + song)        
-        
-    def OnAlbumDoubleClick(self, event):
-        # past the artist + track in the search field
-        val = self.lc_album.GetFirstSelected()
-        artist = self.lc_album.GetItem(val, 0).GetText()
-        song = self.lc_album.GetItem(val, 1).GetText()
-        #search for selected song
-        #self.SearchIt(artist + ' ' + song)
-        self.parent.SearchOrPlaylist(artist, song)
-        # display search page
-        #self.nb_main.SetSelection(NB_PLAYLIST)
-        #self.lc_search.SetFocus()
-        #self.lc_search.Select(0)
+        artist = self.lc_album.GetItem(val, C_ARTIST).GetText()
+        song = self.lc_album.GetItem(val, C_SONG).GetText()
+        #album = self.lc_album.GetItem(val, 2).GetText()
+        #set new values
+        self.tc_album_search_artist.SetValue(artist)
+        self.tc_album_search_song.SetValue(song)
+        self.tc_album_search_album.SetValue('')
         
     def OnAlbumGetTracks(self, event):
         # get album info from musicbrainz        
@@ -166,37 +163,23 @@ class AlbumTab(wx.ScrolledWindow):
         for x in track_list:
             if x[1] != '':
                 artist = x[1]
-            self.lc_album.InsertStringItem(counter, artist)
-            self.lc_album.SetStringItem(counter, 1, x[0])
-            self.lc_album.SetStringItem(counter, 2, album)
-            self.lc_album.SetStringItem(counter, 3, '')            
+            self.lc_album.InsertStringItem(counter, '')
+            self.lc_album.SetStringItem(counter, C_ARTIST, artist)
+            self.lc_album.SetStringItem(counter, C_SONG, x[0])
+            self.lc_album.SetStringItem(counter, C_ALBUM, album)
+            #self.lc_album.SetStringItem(counter, 3, '')            
             counter = counter + 1
-               
-        self.lc_album.SetColumnWidth(0, wx.LIST_AUTOSIZE)
-        self.lc_album.SetColumnWidth(1, wx.LIST_AUTOSIZE)
-        self.lc_album.SetColumnWidth(2, wx.LIST_AUTOSIZE)
+        
+        self.lc_album.SetColumnWidth(C_RATING, 0)       
+        self.lc_album.SetColumnWidth(C_ARTIST, wx.LIST_AUTOSIZE)
+        self.lc_album.SetColumnWidth(C_SONG, wx.LIST_AUTOSIZE)
+        self.lc_album.SetColumnWidth(C_ALBUM, wx.LIST_AUTOSIZE)
         #self.lc_lastfm.SetColumnWidth(3, wx.LIST_AUTOSIZE)
-           
-    def OnAutoGenerateAlbumPlayist(self, event):
-        # lets just add all the items to your playlist
-        # search for song from groove shark on demand, ie, when you go to play it?
-        # *** merge this the lastfm auto generate which does the same thing
-        self.parent.CheckClear()
-        insert_at = self.parent.lc_playlist.GetItemCount()
-        for x in range(self.lc_album.GetItemCount(), 0, -1):
-            artist = self.lc_album.GetItem(x-1, 0).GetText()
-            song = self.lc_album.GetItem(x-1, 1).GetText()
-            album = self.lc_album.GetItem(x-1, 2).GetText()
-            self.parent.SetPlaylistItem(insert_at, artist, song, album)
-        #save the playlist
-        self.parent.SavePlaylist(self.parent.main_playlist_location)
-        # switch tabs
-        self.parent.nb_main.SetSelection(NB_PLAYLIST) 
         
     def OnAlbumRightClick(self, event):
         val = self.lc_album.GetFirstSelected()
         if val != -1:
-            if (self.lc_album.GetItem(val, 0).GetText() != '') & (self.lc_album.GetItem(val, 1).GetText() != ''):    
+            if (self.lc_album.GetItem(val, C_ARTIST).GetText() != '') & (self.lc_album.GetItem(val, C_SONG).GetText() != ''):    
                 # make a menu
                 ID_PLAYLIST = 1
                 ID_CLEAR = 2
@@ -209,5 +192,12 @@ class AlbumTab(wx.ScrolledWindow):
                 self.parent.PopupMenu(menu)
                 menu.Destroy()
                 
-    def AlbumAddPlaylist(self, event):    
-        self.parent.GenericAddToPlaylist(self.lc_album, add_album=True)
+    # playlist adding ---------------
+                
+    def OnAutoGenerateAlbumPlayist(self, event):
+        """ add all the list items to the playlist """
+        self.parent.AddAll(self.lc_album, num_cols=3)
+        
+    def OnAlbumDoubleClick(self, event):
+        """ add the selected list items to the playlist """
+        self.parent.AddSelected(self.lc_album, num_cols=3)

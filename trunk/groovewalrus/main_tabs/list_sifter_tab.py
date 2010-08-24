@@ -25,6 +25,14 @@ from main_utils import system_files
 from main_utils import download_feed
 from main_utils import local_songs
 
+#columns
+C_RATING = 0
+C_ARTIST = 1
+C_SONG = 2
+C_ALBUM = 3
+C_ID = 4
+C_TIME = 5
+
 class ListSifterTab(wx.ScrolledWindow):
     def __init__(self, parent):
         self.parent = parent
@@ -43,8 +51,9 @@ class ListSifterTab(wx.ScrolledWindow):
         
         # list sifter: list control -------
         self.lc_sift =              xrc.XRCCTRL(self.parent, 'm_lc_sift')
-        self.lc_sift.InsertColumn(0,"Artist")
-        self.lc_sift.InsertColumn(1,"Song")
+        self.lc_sift.InsertColumn(0,"Rating")
+        self.lc_sift.InsertColumn(1,"Artist")
+        self.lc_sift.InsertColumn(2,"Song")
         self.parent.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.OnSiftDoubleClick, self.lc_sift)
         # wxMSW
         self.parent.Bind(wx.EVT_COMMAND_RIGHT_CLICK, self.OnSiftRightClick, self.lc_sift)
@@ -68,7 +77,8 @@ class ListSifterTab(wx.ScrolledWindow):
         self.parent.Bind(wx.EVT_BUTTON, self.OnSaveRSSClick, id=xrc.XRCID('m_bb_sift_rss_save'))
         self.parent.Bind(wx.EVT_BUTTON, self.OnSiftURLClear, id=xrc.XRCID('m_bb_sift_url_clear'))
         
-        self.parent.Bind(wx.EVT_BUTTON, self.OnAutoGenerateSiftPlayist, id=xrc.XRCID('m_bu_sift_plize'))
+        self.parent.Bind(wx.EVT_BUTTON, self.OnAutoGenerateSiftPlayist, id=xrc.XRCID('m_bb_sift_plize'))
+        self.parent.Bind(wx.EVT_BUTTON, self.OnSiftDoubleClick, id=xrc.XRCID('m_bb_sift_add'))
         
         
 # sifter  -------------------------------------------------- 
@@ -118,17 +128,20 @@ class ListSifterTab(wx.ScrolledWindow):
                 # add to list control
                 if s_choice == 0:
                     if (artist != '') & (song != ''):
-                        self.lc_sift.InsertStringItem(counter, artist.strip())
-                        self.lc_sift.SetStringItem(counter, 1, song.strip().replace('"', ''))
+                        self.lc_sift.InsertStringItem(counter, '')
+                        self.lc_sift.SetStringItem(counter, C_ARTIST, artist.strip())
+                        self.lc_sift.SetStringItem(counter, C_SONG, song.strip().replace('"', ''))
                         counter = counter + 1
                 else:
                     if (artist != '') & (song != ''):
-                        self.lc_sift.InsertStringItem(counter, song.strip().replace('"', ''))
-                        self.lc_sift.SetStringItem(counter, 1, artist.strip())          
+                        self.lc_sift.InsertStringItem(counter, '')
+                        self.lc_sift.SetStringItem(counter, C_ARTIST, song.strip().replace('"', ''))
+                        self.lc_sift.SetStringItem(counter, C_SONG, artist.strip())
                         counter = counter + 1
-               
-            self.lc_sift.SetColumnWidth(0, 120)
-            self.lc_sift.SetColumnWidth(1, wx.LIST_AUTOSIZE)
+            
+            self.lc_sift.SetColumnWidth(C_RATING, 0)   
+            self.lc_sift.SetColumnWidth(C_ARTIST, 120)
+            self.lc_sift.SetColumnWidth(C_SONG, wx.LIST_AUTOSIZE)
             #print self.lc_sift.GetItemCount()
             
     def OnRSSClick(self, event):
@@ -206,37 +219,11 @@ class ListSifterTab(wx.ScrolledWindow):
     def OnSiftURLClear(self, event):
         #clear the url field
         self.tc_sift_rss_url.SetValue('')
-            
-    def OnAutoGenerateSiftPlayist(self, event):
-        # copy the sifted list to the playlist
-        ### should be moved to parent
-        self.parent.CheckClear()
-        insert_at = self.parent.lc_playlist.GetItemCount()
-        for x in range(self.lc_sift.GetItemCount(), 0, -1):
-            artist = self.lc_sift.GetItem(x-1, 0).GetText()
-            song = self.lc_sift.GetItem(x-1, 1).GetText()
-            self.parent.SetPlaylistItem(insert_at, artist, song, '', '')
-        #save the playlist
-        self.parent.SavePlaylist(self.parent.main_playlist_location)
-        # switch tabs
-        self.parent.nb_main.SetSelection(0)#NB_PLAYLIST)
-        
-    def OnSiftDoubleClick(self, event):
-        # past the artist + track in the search field
-        val = self.lc_sift.GetFirstSelected()
-        artist = self.lc_sift.GetItem(val, 0).GetText()
-        song = self.lc_sift.GetItem(val, 1).GetText()
-        #search for selected song
-        self.parent.SearchOrPlaylist(artist, song)
-        # display search page
-        #self.nb_main.SetSelection(NB_PLAYLIST)
-        #self.lc_search.SetFocus()
-        #self.lc_search.Select(0)
-     
+             
     def OnSiftRightClick(self, event):
         val = self.lc_sift.GetFirstSelected()
         if val != -1:
-            if (self.lc_sift.GetItem(val, 0).GetText() != '') & (self.lc_sift.GetItem(val, 1).GetText() != ''):    
+            if (self.lc_sift.GetItem(val, C_ARTIST).GetText() != '') & (self.lc_sift.GetItem(val, C_SONG).GetText() != ''):    
                 # make a menu
                 ID_PLAYLIST = 1
                 ID_CLEAR = 2
@@ -248,29 +235,13 @@ class ListSifterTab(wx.ScrolledWindow):
                 wx.EVT_MENU(self.parent, ID_CLEAR, self.parent.OnClearPlaylistClick)       
                 self.parent.PopupMenu(menu)
                 menu.Destroy()
-  
-    def SiftAddPlaylist(self, event):
-        self.parent.BackupList()
-        val = self.lc_sift.GetFirstSelected()
-        total = self.lc_sift.GetSelectedItemCount()
-        current_count = self.parent.lc_playlist.GetItemCount()
-        #print val
-        if (val >= 0):            
-            artist =    self.lc_sift.GetItem(val, 0).GetText()
-            song =      self.lc_sift.GetItem(val, 1).GetText()
-            self.parent.SetPlaylistItem.SetPlaylistItem(current_count, artist, song, '', '')
-            current_select = val
-            if total > 1:
-                for x in range(1, self.lc_sift.GetSelectedItemCount()):
-                    current_select =    self.lc_sift.GetNextSelected(current_select)
-                    artist =            self.lc_sift.GetItem(current_select, 0).GetText()
-                    song =              self.lc_sift.GetItem(current_select, 1).GetText()                    
-                    self.parent.SetPlaylistItem(current_count + x, artist, song, '', '')
-
-        #save the playlist
-        self.parent.SavePlaylist(self.parent.main_playlist_location)
-        # switch tabs
-        #self.nb_main.SetSelection(NB_PLAYLIST)
         
+    # playlist adding ---------------
+                
+    def OnAutoGenerateSiftPlayist(self, event):
+        """ add all the list items to the playlist """
+        self.parent.AddAll(self.lc_sift)
         
-        
+    def OnSiftDoubleClick(self, event):
+        """ add the selected list items to the playlist """
+        self.parent.AddSelected(self.lc_sift)

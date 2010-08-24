@@ -31,6 +31,14 @@ from main_utils import tinysong
 # check if cached
 # not cached, download
 
+#columns
+C_RATING = 0
+C_ARTIST = 1
+C_SONG = 2
+C_ALBUM = 3
+C_ID = 4
+C_TIME = 5
+
 class PreFetch(object):
     def __init__(self, parent):
         self.parent = parent
@@ -40,10 +48,10 @@ class PreFetch(object):
         #currently playing track
         #self.parent.current_track
         for playlist_number in range(self.parent.current_song.playlist_position, self.parent.lc_playlist.GetItemCount(), 1):
-            artist =    self.parent.lc_playlist.GetItem(playlist_number, 0).GetText()
-            track =     self.parent.lc_playlist.GetItem(playlist_number, 1).GetText()
-            album =     self.parent.lc_playlist.GetItem(playlist_number, 2).GetText()
-            song_id =   self.parent.lc_playlist.GetItem(playlist_number, 3).GetText()
+            artist =    self.parent.lc_playlist.GetItem(playlist_number, C_ARTIST).GetText()
+            track =     self.parent.lc_playlist.GetItem(playlist_number, C_SONG).GetText()
+            album =     self.parent.lc_playlist.GetItem(playlist_number, C_ALBUM).GetText()
+            song_id =   self.parent.lc_playlist.GetItem(playlist_number, C_ID).GetText()
 
             # *** duplicating playsong()
             if (len(artist) > 0) & (len(track) > 0): #(song_id =='') & (len(artist) > 0) & (len(track) > 0):
