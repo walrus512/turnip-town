@@ -243,10 +243,13 @@ class SearchWindow(wx.Dialog):
 
     def OnMouseMotion(self, evt):
         if evt.Dragging() and evt.LeftIsDown():
-            dPos = evt.GetEventObject().ClientToScreen(evt.GetPosition())
-            #nPos = (self.wPos.x + (dPos.x - self.ldPos.x), -2)
-            nPos = (self.wPos.x + (dPos.x - self.ldPos.x), self.wPos.y + (dPos.y - self.ldPos.y))
-            self.Move(nPos)
+            try:
+                dPos = evt.GetEventObject().ClientToScreen(evt.GetPosition())
+                #nPos = (self.wPos.x + (dPos.x - self.ldPos.x), -2)
+                nPos = (self.wPos.x + (dPos.x - self.ldPos.x), self.wPos.y + (dPos.y - self.ldPos.y))
+                self.Move(nPos)
+            except AttributeError:
+                pass
             #try:
             #    self.popup.IsShown()
             #except AttributeError:
