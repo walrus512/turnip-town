@@ -55,6 +55,8 @@ from main_utils import system_files
 from main_utils import file_cache
 from main_utils import prefetch
 from main_utils import download_feed
+from main_utils import pyro_server
+
 #---
 from main_utils import player_wx
 from main_utils import player_pyglet
@@ -100,7 +102,7 @@ from main_thirdp import grooveshark_old
 #from plugins.sync import sync
 #from plugins.zongdora import zongdora
 
-PROGRAM_VERSION = "0.315"
+PROGRAM_VERSION = "0.316"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -151,6 +153,24 @@ LASTFM_CLIENT_ID = 'gws'
 
 CHARSET = 'utf-8'
 
+class GWApp(wx.App):
+    def OnInit(self):
+        self.name = "%s-%s" % (PROGRAM_NAME, wx.GetUserId())
+        self.instance = wx.SingleInstanceChecker(self.name)
+        if self.instance.IsAnotherRunning():
+            #wx.MessageBox("Another instance is running", "ERROR")
+            # send command line args to existing app
+            pyro_server.SendPyro(sys.argv)
+            #wx.Log.EnableLogging(False)
+            sys.exit()
+            #return False
+        else:
+            frame = MainFrame()
+            panel = MainPanel(frame)    
+            frame.Show(True)
+            pyro_server.StartPyro()        
+            return True
+
 class MainFrame(wx.Frame): 
     def __init__(self): 
         wx.Frame.__init__(self, None, -1, PROGRAM_NAME + ' ' + PROGRAM_VERSION, size=(695, 530), pos=(200,200), style=wx.DEFAULT_FRAME_STYLE|wx.WANTS_CHARS) #^(wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX)) #, style=wx.STAY_ON_TOP) 
@@ -190,10 +210,14 @@ class MainFrame(wx.Frame):
             # blah, using iconize to bring to foreground, "show"ing hides it behind other windows
             #self.Iconize(True)
             #self.Iconize(False)
-            self.Iconize(False)
-            self.SetWindowStyle(wx.STAY_ON_TOP)
-            self.SetWindowStyle(wx.DEFAULT_FRAME_STYLE|wx.WANTS_CHARS)
-            self.Show(True)
+            self.BringUpTop()
+            
+    def BringUpTop(self):
+        """ hacky way of bring the frame to the foreground """
+        self.Iconize(False)
+        self.SetWindowStyle(wx.STAY_ON_TOP)
+        self.SetWindowStyle(wx.DEFAULT_FRAME_STYLE|wx.WANTS_CHARS)
+        self.Show(True)
             
     def OnMinimize(self, event):
         if self.tray_icon: #.IsIconInstalled():
@@ -439,43 +463,9 @@ class MainPanel(wx.Panel):
         # ***self.flash.LoadMovie(0, 'http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&songID=13721223&style=metal&p=0')
         self.autoplay = False
         
-        #check for playlist
-        if len(sys.argv) == 2:
-            file_name = unicode(sys.argv[1], CHARSET)            
-            if file_name.endswith('.xspf'):
-                self.ReadPlaylist(file_name)
-                self.SavePlaylist(self.main_playlist_location)
-                self.autoplay = True
-            elif file_name.endswith('.m3u'):
-                self.ReadWinampPlaylist(file_name)
-                self.SavePlaylist(self.main_playlist_location)
-                self.autoplay = True
-            elif file_name.endswith('.mp3'):
-                self.tab_song_collection.ScolFileAdd(sys.argv[1])
-                self.SavePlaylist(self.main_playlist_location)
-                self.autoplay = True
-            else:
-                self.ReadPlaylist(self.main_playlist_location)
-                #self.GetPlaylistFromDatabase()
-                
-        elif len(sys.argv) == 3:
-            #::C:\Users\[username]\Desktop\GrooveWalrus\gw.exe
-            #::-url
-            #::gwp://u2:rattle%20and%20hum/
-            meat = sys.argv[2].split('gwp://')
-            if len(meat) == 2:                
-                if len(meat[1].split(':')) == 2:
-                    song = meat[1].split(':')[1].replace('%20', ' ').replace('/', '')
-                    artist = meat[1].split(':')[0].replace('%20', ' ')
-                    self.SetPlaylistItem(0, artist, song)
-                    self.autoplay = True
-            else:
-                self.ReadPlaylist(self.main_playlist_location)
-                #self.GetPlaylistFromDatabase()
-        else:
-            self.ReadPlaylist(self.main_playlist_location)
-            #self.GetPlaylistFromDatabase()
-            
+        #check for playlist and sysargs
+        self.CheckSysArgs(sys.argv)        
+
         # load playlist history
         self.FillPlaylistTree()
         
@@ -550,9 +540,7 @@ class MainPanel(wx.Panel):
         self.album_viewer = album_viewer.AlbumViewer(self, GRAPHICS_LOCATION)
         #cover_bmp = wx.Bitmap(self.image_save_location + 'no_cover.png', wx.BITMAP_TYPE_ANY) #wx.BITMAP_TYPE_JPEG)
         self.SetImage('no_cover.png', GRAPHICS_LOCATION)
-        
-
-               
+                       
         # hotkeys ------------------
         backID = 701
         playID = 702
@@ -736,6 +724,47 @@ class MainPanel(wx.Panel):
   
 # ---------------------------------------------------------
 #-----------------------------------------------------------
+    def CheckSysArgs(self, passed_sysarg, on_load=True):
+        if len(passed_sysarg) == 2:
+            file_name = unicode(passed_sysarg[1], CHARSET)            
+            if file_name.endswith('.xspf'):
+                self.ReadPlaylist(file_name)
+                self.SavePlaylist(self.main_playlist_location)
+                self.autoplay = True
+            elif file_name.endswith('.m3u'):
+                self.ReadWinampPlaylist(file_name)
+                self.SavePlaylist(self.main_playlist_location)
+                self.autoplay = True
+            elif file_name.endswith('.mp3'):
+                self.tab_song_collection.ScolFileAdd(passed_sysarg[1])
+                self.SavePlaylist(self.main_playlist_location)
+                self.autoplay = True
+            else:
+                if on_load == True:
+                    self.ReadPlaylist(self.main_playlist_location)
+                    #self.GetPlaylistFromDatabase()
+                
+        elif len(passed_sysarg) == 3:
+            #::C:\Users\[username]\Desktop\GrooveWalrus\gw.exe
+            #::-url
+            #::gwp://u2:rattle%20and%20hum/
+            meat = passed_sysarg[2].split('gwp://')
+            if len(meat) == 2:                
+                if len(meat[1].split(':')) == 2:
+                    song = meat[1].split(':')[1].replace('%20', ' ').replace('/', '')
+                    artist = meat[1].split(':')[0].replace('%20', ' ')
+                    self.SetPlaylistItem(self.lc_playlist.GetItemCount(), artist, song)
+                    self.autoplay = True
+            else:
+                if on_load == True:
+                    self.ReadPlaylist(self.main_playlist_location)
+                    #self.GetPlaylistFromDatabase()
+        else:
+            if on_load == True:
+                self.ReadPlaylist(self.main_playlist_location)
+                #self.GetPlaylistFromDatabase()
+            
+#-----------------------------------------------------------            
 
     def SetReceiver(self, target, topic):
         #set up a reciever for pub sub, work around for plugins
@@ -752,6 +781,15 @@ class MainPanel(wx.Panel):
         pub.subscribe(self.TimeSecondsReceiverAction, 'main.song_time.seconds')
         pub.subscribe(self.SetCachedTimeReceiverAction, 'main.playback.45_seconds')
         pub.subscribe(self.UpdateMessengerStatus, 'main.playback.new')
+        pub.subscribe(self.PyroMessage, 'main.pyro')
+        
+    def PyroMessage(self, message):
+        #pub.sendMessage('main.playback.45_seconds', {'artist':self.current_song.artist, 'song':self.current_song.song})
+        passed = message.data['sysarg']
+        print passed
+        self.CheckSysArgs(passed, on_load=False)
+        #bring existing player into focus
+        self.parent.BringUpTop()
         
     def AlbumReceiverAction(self, message):
         # {'album':album, 'playlist_number':self.playlist_number}
@@ -972,7 +1010,11 @@ class MainPanel(wx.Panel):
         for x in range(start_from, self.lc_playlist.GetItemCount()):#county):
             artist = self.lc_playlist.GetItem(x, C_ARTIST).GetText()
             song = self.lc_playlist.GetItem(x, C_SONG).GetText()
-            q_track_id = local_songs.DbFuncs().GetOnlyTrackId(artist, song)
+            try:
+                q_track_id = local_songs.DbFuncs().GetOnlyTrackId(artist, song)
+            except Exception, expt:
+                print str(Exception)+str(expt)
+                q_track_id = False
             if q_track_id != False:
                 self.GetSongRating(q_track_id, x)
             
@@ -1878,6 +1920,7 @@ class MainPanel(wx.Panel):
             clean_path = filename.replace(os.sep, '/').rsplit('/', 1)[0]
             counter = 0
             try:
+                self.CheckClear()
                 for line in f:
                     if line[0] != '#':
                         filen = clean_path + '/' + line.strip()
@@ -1890,8 +1933,9 @@ class MainPanel(wx.Panel):
                             counter = counter + 1
             finally:
                 f.close()
-            self.SavePlaylist(self.main_playlist_location)
+            #self.SavePlaylist(self.main_playlist_location)
             self.ResizePlaylist()
+            self.GetAllSongRatings()
         
     def ReadPlaylist(self, filename):
         # take current playlist and write to listcontrol
@@ -2497,6 +2541,7 @@ class MainPanel(wx.Panel):
             self.SavePlaylist(self.main_playlist_location_bak)
             self.undo_toggle = 0
             print 'backup list'
+            self.ResizePlaylist()
                 
 # --------------------------------------------------------- 
 # musicbrainz----------------------------------------------  
@@ -3112,15 +3157,14 @@ if __name__ == '__main__':
     #stdoutlog = file('c:\\gw.log', 'a+')
     #sys.stdout = stdoutlog
     #sys.stderr = stdoutlog
-    red = False
+    
+    redirect = False
+    
     for x in range(0, len(sys.argv)):
         if sys.argv[x] == '-r=true':
-            red = True
-    app = wx.PySimpleApp(redirect=red)
-    #app = wx.App()
-    frame = MainFrame()
-    panel = MainPanel(frame)    
-    frame.Show(True)
-    app.MainLoop()   
+            redirect = True
+    #app = wx.PySimpleApp(redirect=red)
+    app = GWApp(redirect=redirect)
+    app.MainLoop()
 
 
