@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 GrooveWalrus: Pyro Server
-Copyright (C) 2009
+Copyright (C) 2010
 11y3y3y3y43@gmail.com
 http://groove-walrus.turnip-town.net
 -----
@@ -26,9 +26,14 @@ from wx.lib.pubsub import Publisher as pub
 class PyroResponse(Pyro.core.ObjBase):
     def __init__(self):
         Pyro.core.ObjBase.__init__(self)
-    def MessageAction(self, message):
+        
+    def MessageOnLoad(self, message):
         #print message
         pub.sendMessage('main.pyro', {'sysarg': message})
+               
+    def MessagePlayback(self, message):
+        #print message
+        pub.sendMessage('main.pyro', {'playback': message})
 
 def StartPyro():
     #THREAD
@@ -56,5 +61,9 @@ class ServerThread(Thread):
 def SendPyro(message=None):
     # you have to change the URI below to match your own host/port.
     pysvr = Pyro.core.getProxyForURI("PYROLOC://localhost:7766/groovewalrus")
-    pysvr.MessageAction(message)
+    pysvr.MessageOnLoad(message)
 
+def SendPlaybackPyro(message=None):
+    # you have to change the URI below to match your own host/port.
+    pysvr = Pyro.core.getProxyForURI("PYROLOC://localhost:7766/groovewalrus")
+    pysvr.MessagePlayback(message)
