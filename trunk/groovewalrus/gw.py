@@ -101,6 +101,7 @@ from main_thirdp import grooveshark_old
 #from plugins.lyrics import lyrics
 #from plugins.sync import sync
 #from plugins.zongdora import zongdora
+#from plugins.web_remote import web_remote
 
 PROGRAM_VERSION = "0.316"
 PROGRAM_NAME = "GrooveWalrus"
@@ -298,6 +299,8 @@ class MainPanel(wx.Panel):
         self.tc_search = xrc.XRCCTRL(self, 'm_tc_search')        
         self.sl_volume = xrc.XRCCTRL(self, 'm_sl_volume')
         self.pa_playback = xrc.XRCCTRL(self, 'm_pa_playback')
+        self.bu_status_lf = xrc.XRCCTRL(self, 'm_bu_status_lf')
+        self.bu_status_gs = xrc.XRCCTRL(self, 'm_bu_status_gs')
         
         self.bb_playlist_options = xrc.XRCCTRL(self, 'm_bb_playlist_options')
         self.sp_playlist = xrc.XRCCTRL(self, 'm_sp_playlist')
@@ -720,8 +723,8 @@ class MainPanel(wx.Panel):
         #autoplay ---------------
         # should be one of the last things loaded
         if self.autoplay == True:
-            self.OnPlayClick(event=None) 
-  
+            self.OnPlayClick(event=None)
+
 # ---------------------------------------------------------
 #-----------------------------------------------------------
     def CheckSysArgs(self, passed_sysarg, on_load=True):
@@ -785,11 +788,40 @@ class MainPanel(wx.Panel):
         
     def PyroMessage(self, message):
         #pub.sendMessage('main.playback.45_seconds', {'artist':self.current_song.artist, 'song':self.current_song.song})
-        passed = message.data['sysarg']
-        print passed
-        self.CheckSysArgs(passed, on_load=False)
-        #bring existing player into focus
-        self.parent.BringUpTop()
+        passed = False
+        playback = False
+        if 'sysarg' in message.data:
+            passed = message.data['sysarg']
+        if 'playback' in message.data:
+            playback = message.data['playback']           
+
+        if passed:
+            #print passed
+            self.CheckSysArgs(passed, on_load=False)
+            #bring existing player into focus
+            self.parent.BringUpTop()
+        if playback == 'play':
+            self.OnPlayClick(event=None)            
+        elif playback == 'stop':
+            self.OnStopClick(event=None)
+        elif playback == 'previous':
+            self.OnBackwardClick(event=None)
+        elif playback == 'next':
+            self.OnForwardClick(event=None)
+        elif playback == 'mute':
+            self.OnMuteClick(event=None)
+        elif playback == 'volume_up':
+            self.OnVolumeUp(event=None)
+        elif playback == 'volume_down':
+            self.OnVolumeDown(event=None)
+        elif playback == 'random':
+            self.OnRandomClick(event=None)
+        elif playback == 'repeat':
+            self.OnRepeatClick(event=None)
+        elif playback.isdigit() == True:
+            self.PlaySong(int(playback))
+        else:
+            self.NiceOut()
         
     def AlbumReceiverAction(self, message):
         # {'album':album, 'playlist_number':self.playlist_number}
@@ -850,8 +882,37 @@ class MainPanel(wx.Panel):
                 filename= messenger_path + status_text
                 fs=os.popen3(filename,'b')
         
-    #------------------------      
-    
+    #------------------------
+    def NiceOut(self):
+        t_time = '0:00'
+        blk = 0
+        if self.current_song.status == 'playing':
+            t_time = self.ConvertTimeFormated(self.time_count)
+            percent = float(self.time_count) / float(self.current_song.song_time_seconds)
+            blk = int(percent * 40)
+        blk_s = ''
+        for x in range (0, 39):
+            if x < blk:
+                blk_s = blk_s + 'X'
+            else:
+                blk_s = blk_s + '_'
+                
+        print '<pre>     artist:   ' + self.current_song.artist
+        print '       song:   ' + self.current_song.song
+        print '      album:   ' + self.current_song.album        
+        print '       time:   ' + t_time + " / " + self.ConvertTimeFormated(self.current_song.song_time_seconds)        
+        print '               [' + blk_s + ']'
+        print '     status:   ' + self.current_song.status + '     rdm: ' + str(self.random_toggle) + '     rpt: ' + str(self.repeat_toggle) + ' ' + self.repeat_toggle_type
+        print ' '
+        print ' '
+        for x in range(0, self.lc_playlist.GetItemCount()):
+            if x == self.current_song.playlist_position:
+                print '   <span class="current">' + str(x).zfill(3) + '. ' + self.lc_playlist.GetItem(x, C_ARTIST).GetText() + ' - <a class="list_item" href="/' + str(x) + '">' + self.lc_playlist.GetItem(x, C_SONG).GetText() + '</a></span>'
+            else:            
+                print '   ' + str(x).zfill(3) + '. ' + self.lc_playlist.GetItem(x, C_ARTIST).GetText() + ' - <a class="list_item" href="/' + str(x) + '">' + self.lc_playlist.GetItem(x, C_SONG).GetText() + '</a>'
+            
+        print '</pre>'
+        
     def SetBackend(self, event):
         #sets backend type, pymedia, wx.media, pyglet
         if event != None:
@@ -956,8 +1017,9 @@ class MainPanel(wx.Panel):
         self.current_song.scrobble_song = 0
         self.scrobbed_active = 0
         username = self.tc_options_username.GetValue()
-        password = self.tc_options_password.GetValue()
+        password = self.tc_options_password.GetValue()        
         if (len(username) > 0) & (len(password) > 0):
+            self.SetNetworkStatus('lastfm', 1)
             md5_password = pylast.md5(password)
             client_id = LASTFM_CLIENT_ID
             client_version = PROGRAM_VERSION
@@ -966,10 +1028,12 @@ class MainPanel(wx.Panel):
                 self.session_key = self.song_scrobb._get_session_id()
                 self.st_options_auth.SetLabel('Authorized: ' + time.asctime())  
                 self.scrobbed_active = 1
+                self.SetNetworkStatus('lastfm', 0)
             except Exception, expt:
                 print str(Exception) + str(expt)
                 self.st_options_auth.SetLabel('Status: something failed. User/password?')
                 self.st_options_auth.SetBackgroundColour('Yellow')
+                self.SetNetworkStatus('lastfm', 2)
                 #self.nb_main.SetSelection(NB_OPTIONS)    
     
     def OpenWebsite(self, event):        
@@ -980,6 +1044,15 @@ class MainPanel(wx.Panel):
         song_db_window = advanced_options.AdvancedOptionsWindow(self.parent)
         song_db_window.ShowMe()
         
+    def SetNetworkStatus(self, site, status):
+        """ sets the color of the status buttons """
+        colors = [(0,192,0), (255,255,0), (255,0,0)]
+        if site=='lastfm':
+            self.bu_status_lf.SetBackgroundColour(colors[status])
+            pass
+        else:
+            self.bu_status_gs.SetBackgroundColour(colors[status])
+            pass
 #    def LoadingWindow(self):
  #       """ puts a window over the control that's loading something """
   #      dlg = wx.Dialog(self, -1, "Details", size=(100, 55), style=wx.FRAME_SHAPED)
@@ -1068,17 +1141,20 @@ class MainPanel(wx.Panel):
         
     def GenerateSessionKey2(self, regenerate=False):
         # generate a non-song scrobbling seesion key
-        self.session_key2 = None
+        self.session_key2 = None        
         #check if scrobbling is enabled, yes: get key, no: return None
         if self.cb_options_scrobble.IsChecked():        
             username = self.tc_options_username.GetValue()
             password = self.tc_options_password.GetValue()
-            if (password != '') & (username !='' ):        
+            if (password != '') & (username !='' ):
+                self.SetNetworkStatus('lastfm', 1)
                 if (self.session_key2 == None) or (regenerate == True):
                     last_sess = pylast.SessionKeyGenerator(API_KEY, '6a2eb503cff117001fac5d1b8e230211')
         
                     md5_password = pylast.md5(password)
                     self.session_key2 = last_sess.get_session_key(username, md5_password)
+                    if self.session_key2 != None:
+                        self.SetNetworkStatus('lastfm', 0)
         return self.session_key2            
                 
     def OnToggleScrobble(self, event):        
@@ -1144,10 +1220,13 @@ class MainPanel(wx.Panel):
                 #check checkbox to see if we should scrobble
                 if self.cb_options_scrobble.GetValue() == 1:
                     try:
+                        self.SetNetworkStatus('lastfm', 1)
                         self.song_scrobb.scrobble(self.current_song.artist, self.current_song.song, time_started, 'P', 'L', self.current_song.song_time_seconds, s_album, "", "", port)
                         print 'scobbled'
+                        self.SetNetworkStatus('lastfm', 0)
                         #album=""
                     except pylast.BadSession:
+                        self.SetNetworkStatus('lastfm', 2)
                         self.SetScrobb()
                         self.song_scrobb.scrobble(self.current_song.artist, self.current_song.song, time_started, 'P', 'L', self.current_song.song_time_seconds, s_album, "", "", port)
                         #pylast.BadSession:
@@ -1601,7 +1680,7 @@ class MainPanel(wx.Panel):
     
         #== add 'skipped' to played table ==
         if self.current_song.status == 'playing':
-            q_track_id = local_songs.DbFuncs().GetTrackId(self.current_song.groove_id, self.current_song.msuic_id, self.current_song.artist, self.current_song.song)
+            q_track_id = local_songs.DbFuncs().GetTrackId(self.current_song.groove_id, self.current_song.music_id, self.current_song.artist, self.current_song.song)
             local_songs.DbFuncs().InsertPlayedData(q_track_id, played_type_id=4)
         #===================================
     
@@ -1800,7 +1879,7 @@ class MainPanel(wx.Panel):
                 # publish to pubsub
                 pub.sendMessage('main.playback.new', {'artist':cs.artist, 'song':cs.song})
                 self.SavePlaylist(self.main_playlist_location)
-                print cs
+                #print cs
                 
             self.GetSongRating(cs.track_id, cs.playlist_position)
 # ---------------------------------------------------------  
@@ -2078,7 +2157,7 @@ class MainPanel(wx.Panel):
         self.lc_playlist.SetStringItem(current_count, C_ARTIST, artist)
         self.lc_playlist.SetStringItem(current_count, C_SONG, song)
         self.lc_playlist.SetStringItem(current_count, C_ALBUM, album)
-        self.lc_playlist.SetStringItem(current_count, C_URL, url)
+        self.lc_playlist.SetStringItem(current_count, C_ID, url)
         self.lc_playlist.SetStringItem(current_count, C_TIME, duration)
         ##self.ResizePlaylist()
         ##self.SavePlaylist(self.main_playlist_location)
@@ -2156,22 +2235,23 @@ class MainPanel(wx.Panel):
     def SuperAddToPlaylist(self, add_dict, plize=False):
         #backup current db
         #****self.SearchOrPlaylist(artist, song)
-        self.BackupList()
-        if plize == True:
-            self.CheckClear()
-            self.nb_main.SetSelection(NB_PLAYLIST)
-        #process dictionary
-        #[{'song': 'Some song name', 'artist': 'some artist',}, {...},]
-        first_last_row = self.lc_playlist.GetItemCount()
-        for x in add_dict:
-            row_num = self.lc_playlist.GetItemCount()
-            index = self.lc_playlist.InsertStringItem(row_num, '')
-            for k, v in x.iteritems():                
-                col_num = PLAYLIST_COLUMNS[k]                
-                self.lc_playlist.SetStringItem(row_num, col_num, v)
-        self.nb_main.SetPageText(NB_PLAYLIST, 'Playlist (' + str(self.lc_playlist.GetItemCount()) + ')')
-        
-        self.GetAllSongRatings(start_from=first_last_row)
+        if len(add_dict) > 0:
+            self.BackupList()
+            if plize == True:
+                self.CheckClear()
+                self.nb_main.SetSelection(NB_PLAYLIST)
+            #process dictionary
+            #[{'song': 'Some song name', 'artist': 'some artist',}, {...},]
+            first_last_row = self.lc_playlist.GetItemCount()
+            for x in add_dict:
+                row_num = self.lc_playlist.GetItemCount()
+                index = self.lc_playlist.InsertStringItem(row_num, '')
+                for k, v in x.iteritems():                
+                    col_num = PLAYLIST_COLUMNS[k]                
+                    self.lc_playlist.SetStringItem(row_num, col_num, v)
+            self.nb_main.SetPageText(NB_PLAYLIST, 'Playlist (' + str(self.lc_playlist.GetItemCount()) + ')')
+            
+            self.GetAllSongRatings(start_from=first_last_row)
         
     def AddAll(self, list_control, num_cols=2):
         add_arr = []
@@ -2760,9 +2840,11 @@ class CurrentSong():
             # try grooveshark
             else:
                 #grab results from tinysong
+                self.parent.SetNetworkStatus('grooveshark', 1)
                 query_results = tinysong.Tsong().get_search_results(query_string, 32)
                    #*** change this stuff, change it in prefetch.py too
-                if len(query_results) >= 1:                
+                if len(query_results) >= 1:
+                    self.parent.SetNetworkStatus('grooveshark', 0)
                     returned_song_id = query_results[0]['SongID']
 
                     # let's check for album and update that too
@@ -2967,9 +3049,11 @@ class WebFetchThread(Thread):
         if self.webfetchtype == 'SEARCH':
             #for searching
             query_string = self.artist + ' ' + self.song
+            self.panel.SetNetworkStatus('grooveshark', 1)
             query_results = tinysong.Tsong().get_search_results(query_string, 1)
             #print query_results
             if len(query_results) == 1:
+                self.panel.SetNetworkStatus('grooveshark', 0)
                 #add to playlist
                 #self.panel.SetPlaylistItem(0, artist, song, album, url)                
                 #split_array = query_results[0].split('; ')
@@ -3055,8 +3139,9 @@ class FileThread(Thread):
         ##self.parent.current_song.status ='buffering'
         
         keyandserver = self.GetStreamKeyAndServer()
+        self.parent.SetNetworkStatus('grooveshark', 1)
         if keyandserver != None:
-        
+            self.parent.SetNetworkStatus('grooveshark', 0)
         
             #progress thread
             #THREAD
@@ -3087,7 +3172,7 @@ class FileThread(Thread):
                     # ASSUME that it's the current selection
                     val = self.parent.lc_playlist.GetFirstSelected()
                     self.parent.lc_playlist.SetStringItem(val, 3, '')
-              
+        self.parent.SetNetworkStatus('grooveshark', 2)
                 
 def GetLocalGroovesharkVersion(data_dir):
     #gets the grooveshark version from the local grooveshark.xml file
