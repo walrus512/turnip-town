@@ -230,6 +230,42 @@
 															<default>0</default>
 														</object>
 													</object>
+													<object class="spacer">
+														<option>0</option>
+														<flag>wxEXPAND</flag>
+														<border>5</border>
+														<size>5,0</size>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALIGN_CENTER_VERTICAL</flag>
+														<border>0</border>
+														<object class="wxBoxSizer">
+															<orient>wxVERTICAL</orient>
+															<object class="sizeritem">
+																<option>0</option>
+																<flag>wxALL</flag>
+																<border>0</border>
+																<object class="wxButton" name="m_bu_status_gs">
+																	<size>20,12</size>
+																	<tooltip>Grooveshark Status</tooltip>
+																	<label></label>
+																	<default>0</default>
+																</object>
+															</object>
+															<object class="sizeritem">
+																<option>0</option>
+																<flag>wxALL</flag>
+																<border>0</border>
+																<object class="wxButton" name="m_bu_status_lf">
+																	<size>20,12</size>
+																	<tooltip>Last.fm Status</tooltip>
+																	<label></label>
+																	<default>0</default>
+																</object>
+															</object>
+														</object>
+													</object>
 												</object>
 											</object>
 										</object>
