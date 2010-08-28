@@ -22,6 +22,7 @@ import wx
 import wx.xrc as xrc
 import urllib
 import os
+import socket
 
 #from main_utils.read_write_xml import xml_utils
 from main_utils import system_files
@@ -87,14 +88,14 @@ class MainPanel(wx.Dialog):
         self.server = http_server.HttpControl()
         self.server.StartHttp()
         self.bu_web_remote_start_server.Enable(False)
-        self.bu_web_remote_stop_server.Enable(True)
-        self.tc_web_remote_status.SetValue('http://localhost:8723/')
+        self.bu_web_remote_stop_server.Enable(True)        
+        self.tc_web_remote_status.SetValue('http://' + socket.gethostbyname(socket.gethostname()) + ':8723/')
     
     def StopServer(self, event):
         self.server.StopHttp()
         self.bu_web_remote_stop_server.Enable(False)
         self.bu_web_remote_start_server.Enable(True)
-        self.tc_web_remote_status.SetValue('http://localhost:8723/')
+        #self.tc_web_remote_status.SetValue('http://localhost:8723/')
             
     def CloseMe(self, event=None):
         #self.SaveOptions()

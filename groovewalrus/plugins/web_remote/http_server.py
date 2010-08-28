@@ -65,13 +65,24 @@ class HandyTheHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             sys.stdout = s.wfile        
             DoStuff(s.path)
             sys.stdout = stdout
-            s.wfile.write(HTML_BOTTOM)        
+            s.wfile.write(HTML_BOTTOM)
+            
+    def log_request(self, code=None, size=None):
+        pass
+        #print('Request')
+
+    def log_message(self, format, *args):
+        #print('Message')
+        pass
+
          
 def DoStuff(path):
     play_func = ['play', 'stop', 'pause', 'next', 'previous', 'mute', 'volume_up', 'volume_down', 'refresh', 'random', 'repeat']
     p_set = set(play_func)
     if path[1:] in p_set:
         #print path[1:]
+        pyro_server.SendPlaybackPyro(path[1:])
+    if path[1:].isdigit():
         pyro_server.SendPlaybackPyro(path[1:])
     
 class HttpControl():
@@ -100,31 +111,25 @@ HTML_TOP = """
     .stats {padding:1px; margin:0px; border:3px solid #9de3b7; border-top:0px; width:500px; background-color:#c2eccb}
     .title {font-size:1.5em; padding:10px; line-height:0.9em;}
     .action {font-size:.75em;}
-    pre {
-        overflow-x: auto; /* Use horizontal scroller if needed; for Firefox 2, not needed in Firefox 3 */
-        white-space: pre-wrap; /* css-3 */
-        white-space: -moz-pre-wrap !important; /* Mozilla, since 1999 */
-        white-space: -pre-wrap; /* Opera 4-6 */
-        white-space: -o-pre-wrap; /* Opera 7 */
-        /* width: 99%; */
-        word-wrap: break-word; /* Internet Explorer 5.5+ */
-    }
+    pre {width:480px; Overflow:Hidden; Word-wrap:Break-word;}
+    pre a {color:#000}
     .controls { overflow:hidden; width:500px;
     padding:1px; background-color:#83bc8f; border:3px solid #9de3b7; border-top:0px;}
-    .controls a{ display:block; float:left; width:125px; height:45px; font-family:arial;
+    .controls a{ display:block; float:left; width:122px; height:45px; font-family:arial;
     font-size:11px; text-transform:uppercase; text-decoration:none; color:#444;
     line-height:45px; text-align:center; }
     .controls a:hover{background-color:#dcffe9;}
-    
+    .current{background-color:7c9481; color:#FFF;}
+    .current a {color:#FFF;}    
     .controls2 { overflow:hidden; width:500px;
     padding:1px; background-color:#70d685; border:3px solid #9de3b7; border-top:0px;}
-    .controls2 a{ display:block; float:left; width:100px; height:35px; font-family:arial;
+    .controls2 a{ display:block; float:left; width:98px; height:35px; font-family:arial;
     font-size:11px; text-transform:uppercase; text-decoration:none; color:#555;
     line-height:35px; text-align:center; }
     .controls2 a:hover{background-color:#eefff4;}                    
     </style>
     <script type="text/javascript">
-    var page = "http://localhost:8723/refresh";
+    var page = "/refresh";
     function ajax(url,target)
      {
         // native XMLHttpRequest object
@@ -169,24 +174,24 @@ HTML_TOP = """
 HTML_B1 = """
         </p>
     </div>
-    <div class="stats"><pre id="scriptoutput">
-"""
-
-HTML_BOTTOM = """
-    </pre></div>
+    <div class="controls2">       
+        <a href="/mute">mute</a>
+        <a href="/volume_up">volume up</a>
+        <a href="/volume_down">volume down</a>
+        <a href="/random">random</a>
+        <a href="/repeat">repeat</a>
+    </div>
     <div class="controls">       
         <a href="/previous">previous</a>
         <a href="/play">play / pause</a>
         <a href="/stop">stop</a>
         <a href="/next">next</a>
     </div>
-    <div class="controls2">       
-    <a href="/mute">mute</a>
-    <a href="/volume_up">volume up</a>
-    <a href="/volume_down">volume down</a>
-    <a href="/random">random</a>
-    <a href="/repeat">repeat</a>
-    </div>
+    <div class="stats"><pre id="scriptoutput">
+"""
+
+HTML_BOTTOM = """
+    </pre></div>
     </body>
 </html>
 """
