@@ -150,6 +150,8 @@ class SearchWindow(wx.Dialog):
         if len(query_string) > 0:
         
             #grab the data
+            if self.cb_search_local.GetValue() != True:
+                self.parent.SetNetworkStatus('grooveshark', 1)
             #THREAD
             current = FetchThread(self, query_string, self.cb_search_local.GetValue())
             #THREAD
@@ -163,6 +165,7 @@ class SearchWindow(wx.Dialog):
         #print times_to_run
         self.lc_search.DeleteAllItems()
         for x in query_results:
+            self.parent.SetNetworkStatus('grooveshark', 0)
             if len(x) > 0:
                 #print counter
                 #split_array = x.split('; ')
