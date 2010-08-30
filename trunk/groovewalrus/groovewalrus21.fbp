@@ -9510,7 +9510,7 @@
                                                                                                                 <property name="name">m_rx_options_double_click</property>
                                                                                                                 <property name="permission">protected</property>
                                                                                                                 <property name="pos"></property>
-                                                                                                                <property name="selection">1</property>
+                                                                                                                <property name="selection">0</property>
                                                                                                                 <property name="size"></property>
                                                                                                                 <property name="style">wxRA_SPECIFY_ROWS</property>
                                                                                                                 <property name="subclass"></property>
@@ -9619,7 +9619,7 @@
                                                                                                                 <property name="font"></property>
                                                                                                                 <property name="hidden">0</property>
                                                                                                                 <property name="id">wxID_ANY</property>
-                                                                                                                <property name="label">Playlistize! clears playlist before adding.</property>
+                                                                                                                <property name="label">&apos;Add All&apos; clears playlist before adding.</property>
                                                                                                                 <property name="maximum_size"></property>
                                                                                                                 <property name="minimum_size"></property>
                                                                                                                 <property name="name">m_cb_options_list_clear</property>
@@ -12083,7 +12083,7 @@
                 </object>
             </object>
         </object>
-        <object class="Frame" expanded="0">
+        <object class="Frame" expanded="1">
             <property name="bg"></property>
             <property name="center"></property>
             <property name="context_help"></property>
@@ -12544,6 +12544,21 @@
                         <property name="kind">wxITEM_NORMAL</property>
                         <property name="label">Song Collection Locations...</property>
                         <property name="name">m_mi_song_collection</property>
+                        <property name="permission">none</property>
+                        <property name="shortcut"></property>
+                        <property name="unchecked_bitmap"></property>
+                        <event name="OnMenuSelection"></event>
+                        <event name="OnUpdateUI"></event>
+                    </object>
+                    <object class="wxMenuItem" expanded="1">
+                        <property name="bitmap"></property>
+                        <property name="checked">0</property>
+                        <property name="enabled">1</property>
+                        <property name="help"></property>
+                        <property name="id">wxID_ANY</property>
+                        <property name="kind">wxITEM_NORMAL</property>
+                        <property name="label">Import Grooveshark Playlist</property>
+                        <property name="name">m_mi_import_grooveshark</property>
                         <property name="permission">none</property>
                         <property name="shortcut"></property>
                         <property name="unchecked_bitmap"></property>

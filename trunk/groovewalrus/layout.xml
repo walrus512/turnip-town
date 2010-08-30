@@ -2232,7 +2232,7 @@
 																										<object class="wxRadioBox" name="m_rx_options_double_click">
 																											<style>wxRA_SPECIFY_ROWS</style>
 																											<label>Double-clicking...</label>
-																											<selection>1</selection>
+																											<selection>0</selection>
 																											<content>
 																												<item>adds song to the playlist.</item>
 																												<item>searches for that song.</item>
@@ -2262,7 +2262,7 @@
 																										<flag>wxALL</flag>
 																										<border>7</border>
 																										<object class="wxCheckBox" name="m_cb_options_list_clear">
-																											<label>Playlistize! clears playlist before adding.</label>
+																											<label>&apos;Add All&apos; clears playlist before adding.</label>
 																											<checked>0</checked>
 																										</object>
 																									</object>
@@ -2997,6 +2997,10 @@
 				</object>
 				<object class="wxMenuItem" name="m_mi_song_collection">
 					<label>Song Collection Locations...</label>
+					<help></help>
+				</object>
+				<object class="wxMenuItem" name="m_mi_import_grooveshark">
+					<label>Import Grooveshark Playlist</label>
 					<help></help>
 				</object>
 			</object>

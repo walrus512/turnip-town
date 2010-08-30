@@ -103,7 +103,7 @@ from main_thirdp import grooveshark_old
 #from plugins.zongdora import zongdora
 #from plugins.web_remote import web_remote
 
-PROGRAM_VERSION = "0.316"
+PROGRAM_VERSION = "0.320"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -161,7 +161,10 @@ class GWApp(wx.App):
         if self.instance.IsAnotherRunning():
             #wx.MessageBox("Another instance is running", "ERROR")
             # send command line args to existing app
-            pyro_server.SendPyro(sys.argv)
+            try:
+                pyro_server.SendPyro(sys.argv)
+            except Exception, expt:
+                print str(Exception)+str(expt)
             #wx.Log.EnableLogging(False)
             sys.exit()
             #return False
@@ -562,6 +565,7 @@ class MainPanel(wx.Panel):
         ctrlrID = 802
         ctrlbID = 803
         ctrl9ID = 910
+        ctrl8ID = 911
         ctrlfID = 804
         ctrlmID = 805        
         ctrlgID = 806
@@ -584,6 +588,7 @@ class MainPanel(wx.Panel):
                                    (wx.ACCEL_CTRL, ord('R'), ctrlrID),
                                    (wx.ACCEL_CTRL, ord('B'), ctrlbID),
                                    (wx.ACCEL_CTRL, ord('9'), ctrl9ID),
+                                   (wx.ACCEL_CTRL, ord('8'), ctrl8ID),
                                    (wx.ACCEL_CTRL, ord('F'), ctrlfID),
                                    (wx.ACCEL_CTRL, ord('G'), ctrlgID),
                                    (wx.ACCEL_CTRL, ord('M'), ctrlmID),
@@ -616,6 +621,7 @@ class MainPanel(wx.Panel):
         wx.EVT_MENU(self, ctrlfID, self.OnSearchClick)
         
         wx.EVT_MENU(self, ctrl9ID, self.ClearAlbumValues)
+        wx.EVT_MENU(self, ctrl8ID, self.ClearIdValues)
         wx.EVT_MENU(self, ctrlmID, self.MiniMode)
         wx.EVT_MENU(self, ctrlgID, self.OnLoadBackgroundImage)
         wx.EVT_MENU(self, ctrlperiodID, self.OnLoadAdvancedOptions)
@@ -656,6 +662,7 @@ class MainPanel(wx.Panel):
         # tools menu        
         self.parent.Bind(wx.EVT_MENU, self.OnUpdateClick, id=xrc.XRCID("m_mi_version_update"))
         self.parent.Bind(wx.EVT_MENU, self.tab_song_collection.OnSColAddClick, id=xrc.XRCID("m_mi_song_collection"))
+        self.parent.Bind(wx.EVT_MENU, self.ImportGroovesharkPlaylist, id=xrc.XRCID("m_mi_import_grooveshark"))
         #
         self.lastfm_toggle = self.parent.menu_tools.Append(7666, "Last.fm Scrobbling", kind=wx.ITEM_CHECK)
         self.parent.Bind(wx.EVT_MENU, self.OnToggleScrobble, id=7666)        
@@ -732,15 +739,15 @@ class MainPanel(wx.Panel):
             file_name = unicode(passed_sysarg[1], CHARSET)            
             if file_name.endswith('.xspf'):
                 self.ReadPlaylist(file_name)
-                self.SavePlaylist(self.main_playlist_location)
+                #self.SavePlaylist(self.main_playlist_location)
                 self.autoplay = True
             elif file_name.endswith('.m3u'):
                 self.ReadWinampPlaylist(file_name)
-                self.SavePlaylist(self.main_playlist_location)
+                #self.SavePlaylist(self.main_playlist_location)
                 self.autoplay = True
-            elif file_name.endswith('.mp3'):
-                self.tab_song_collection.ScolFileAdd(passed_sysarg[1])
-                self.SavePlaylist(self.main_playlist_location)
+            elif file_name.endswith('.mp3'):                
+                self.tab_song_collection.ScolFileAdd([file_name])
+                #self.SavePlaylist(self.main_playlist_location)
                 self.autoplay = True
             else:
                 if on_load == True:
@@ -769,6 +776,7 @@ class MainPanel(wx.Panel):
             
 #-----------------------------------------------------------            
 
+    # pubsub receivers-----------------
     def SetReceiver(self, target, topic):
         #set up a reciever for pub sub, work around for plugins
         listener = pub.subscribe(target.GenericReceiverAction, topic)        
@@ -882,7 +890,7 @@ class MainPanel(wx.Panel):
                 filename= messenger_path + status_text
                 fs=os.popen3(filename,'b')
         
-    #------------------------
+    # ---------------------------------
     def NiceOut(self):
         t_time = '0:00'
         blk = 0
@@ -912,27 +920,6 @@ class MainPanel(wx.Panel):
                 print '   ' + str(x).zfill(3) + '. ' + self.lc_playlist.GetItem(x, C_ARTIST).GetText() + ' - <a class="list_item" href="/' + str(x) + '">' + self.lc_playlist.GetItem(x, C_SONG).GetText() + '</a>'
             
         print '</pre>'
-        
-    def SetBackend(self, event):
-        #sets backend type, pymedia, wx.media, pyglet
-        if event != None:
-            self.SaveOptions(None)
-            self.OnStopClick(None)
-        
-        backend_types = ['pymedia', 'wx.media', 'pyglet']
-        self.use_backend = backend_types[self.rx_options_backend.GetSelection()]
-        
-        if self.use_backend == 'pymedia':
-            self.player = player_pymedia.Player(self)
-        elif self.use_backend == 'wx.media':
-            self.player = player_wx.Player(self)
-        else:
-            self.player = player_pyglet.Player(self)
-            
-    def OnClearCacheClick(self, event):
-        #clear the cache
-        temp_dir = system_files.GetDirectories(self).TempDirectory()
-        file_cache.CheckCache(temp_dir, 0)
         
     # background colours / pictures --------------------
     def RandomBackgroundColour(self, event):        
@@ -1008,34 +995,30 @@ class MainPanel(wx.Panel):
                 self.Refresh()                
                 options_window.SetSetting('background-graphic', path, self.FILEDB)
         dlg.Destroy()
-        
-    # scobble --------------------------
-    def SetScrobb(self):
-        # set up scrobbing
-        # should only be called on loading or if you change your setttings
-        # *** thread this sucka sometime
-        self.current_song.scrobble_song = 0
-        self.scrobbed_active = 0
-        username = self.tc_options_username.GetValue()
-        password = self.tc_options_password.GetValue()        
-        if (len(username) > 0) & (len(password) > 0):
-            self.SetNetworkStatus('lastfm', 1)
-            md5_password = pylast.md5(password)
-            client_id = LASTFM_CLIENT_ID
-            client_version = PROGRAM_VERSION
-            try:
-                self.song_scrobb = pylast.Scrobbler(client_id, client_version, username, md5_password)                
-                self.session_key = self.song_scrobb._get_session_id()
-                self.st_options_auth.SetLabel('Authorized: ' + time.asctime())  
-                self.scrobbed_active = 1
-                self.SetNetworkStatus('lastfm', 0)
-            except Exception, expt:
-                print str(Exception) + str(expt)
-                self.st_options_auth.SetLabel('Status: something failed. User/password?')
-                self.st_options_auth.SetBackgroundColour('Yellow')
-                self.SetNetworkStatus('lastfm', 2)
-                #self.nb_main.SetSelection(NB_OPTIONS)    
     
+    # ---------------------------------
+    
+    def SetBackend(self, event):
+        #sets backend type, pymedia, wx.media, pyglet
+        if event != None:
+            self.SaveOptions(None)
+            self.OnStopClick(None)
+        
+        backend_types = ['pymedia', 'wx.media', 'pyglet']
+        self.use_backend = backend_types[self.rx_options_backend.GetSelection()]
+        
+        if self.use_backend == 'pymedia':
+            self.player = player_pymedia.Player(self)
+        elif self.use_backend == 'wx.media':
+            self.player = player_wx.Player(self)
+        else:
+            self.player = player_pyglet.Player(self)
+            
+    def OnClearCacheClick(self, event):
+        #clear the cache
+        temp_dir = system_files.GetDirectories(self).TempDirectory()
+        file_cache.CheckCache(temp_dir, 0)
+        
     def OpenWebsite(self, event):        
         default_app_open.dopen('http://groove-walrus.turnip-town.net')
         
@@ -1090,7 +1073,40 @@ class MainPanel(wx.Panel):
                 q_track_id = False
             if q_track_id != False:
                 self.GetSongRating(q_track_id, x)
-            
+                
+    def ImportGroovesharkPlaylist(self, event):
+        """ Javi S. 2010/08/29 imports GrooveShark playist"""
+        dlg = wx.TextEntryDialog(self, 'Insert the playlist URL or ID', 'Import GrooveShark playlist')
+        val = dlg.ShowModal()
+        if val == wx.ID_OK:
+            playlist_string = dlg.GetValue()
+            if (playlist_string != None) & (playlist_string != ""):
+                playlist_parts = playlist_string.split('/')
+                try:
+                    playlist_id = int(playlist_parts[len(playlist_parts)-1])
+                except:
+                    dlg = wx.MessageDialog(self.parent, "Invalid playlist URL or ID", 'Alert', wx.OK | wx.ICON_WARNING)
+                    if (dlg.ShowModal() == wx.ID_OK):
+                        dlg.Destroy()
+                    return
+                data_dir = system_files.GetDirectories(self).DataDirectory() + os.sep
+                g_version = GetLocalGroovesharkVersion(data_dir)
+                g_session = jsonrpcSession(None, g_version)
+                g_session.startSession()
+                mylist = playlist.playlistFromId(g_session, playlist_id)
+                               
+                add_arr = []
+                for x in range(0, len(mylist.songs)-1):
+                    add_dict = {}
+                    add_dict['artist'] = mylist.songs[x].artistName
+                    add_dict['song'] = mylist.songs[x].name
+                    add_dict['album'] = mylist.songs[x].albumName
+                    add_dict['id'] = mylist.songs[x].id
+                    add_arr.append(add_dict)
+                self.SuperAddToPlaylist(add_arr, plize=True)
+        dlg.Destroy()
+                
+    # image lists -----------------------------------
     def RateImageList(self):
         # song rating imagelist
         rate_images = wx.ImageList(16, 16, True)        
@@ -1139,6 +1155,33 @@ class MainPanel(wx.Panel):
             rate_images.Add(bmp)
         return rate_images
         
+    # scobble --------------------------
+    def SetScrobb(self):
+        # set up scrobbing
+        # should only be called on loading or if you change your setttings
+        # *** thread this sucka sometime
+        self.current_song.scrobble_song = 0
+        self.scrobbed_active = 0
+        username = self.tc_options_username.GetValue()
+        password = self.tc_options_password.GetValue()        
+        if (len(username) > 0) & (len(password) > 0):
+            self.SetNetworkStatus('lastfm', 1)
+            md5_password = pylast.md5(password)
+            client_id = LASTFM_CLIENT_ID
+            client_version = PROGRAM_VERSION
+            try:
+                self.song_scrobb = pylast.Scrobbler(client_id, client_version, username, md5_password)                
+                self.session_key = self.song_scrobb._get_session_id()
+                self.st_options_auth.SetLabel('Authorized: ' + time.asctime())  
+                self.scrobbed_active = 1
+                self.SetNetworkStatus('lastfm', 0)
+            except Exception, expt:
+                print str(Exception) + str(expt)
+                self.st_options_auth.SetLabel('Status: something failed. User/password?')
+                self.st_options_auth.SetBackgroundColour('Yellow')
+                self.SetNetworkStatus('lastfm', 2)
+                #self.nb_main.SetSelection(NB_OPTIONS)
+        
     def GenerateSessionKey2(self, regenerate=False):
         # generate a non-song scrobbling seesion key
         self.session_key2 = None        
@@ -1166,7 +1209,9 @@ class MainPanel(wx.Panel):
             self.lastfm_toggle.Check(True)
             self.cb_options_scrobble.SetValue(True)
             self.SaveOptions(None)
-        
+            
+            
+    #-------------------------------------
     def OnTimer(self, event):
         # the heartbeat of the evil machine
         
@@ -1291,7 +1336,8 @@ class MainPanel(wx.Panel):
             #self.recording_status = True
         
             
-# ---------------------------------------------------------             
+# --------------------------------------------------------- 
+    # search----------------------------            
     def OnSearchClick(self, event):
         # search field, then search
         query_string = self.tc_search.GetValue()        
@@ -1316,21 +1362,7 @@ class MainPanel(wx.Panel):
             artist = self.lc_playlist.GetItem(val, C_ARTIST).GetText()
             self.SearchIt(artist + ' ' + track)
             
-    def ShowTab(self, location):
-        # display a notebook tab or the search form
-        #NB_PLAYLIST = 0
-        #NB_LAST = 1
-        #NB_ALBUM = 2
-        #NB_FAVES = 3
-        #NB_SIFT = 4
-        #NB_ABOUT = 5
-        #WN_SEARCH = 99
-        if location < 99:
-            self.nb_main.SetSelection(location)
-        else:
-            self.nb_main.SetSelection(NB_PLAYLIST)
-            self.search_window.show_me()
-        
+    #-------------------------------------        
     def OnRandomClick(self, event):
         if self.random_toggle == True:
             self.random_toggle = False
@@ -1462,7 +1494,7 @@ class MainPanel(wx.Panel):
                 read_write_xml.xml_utils().save_generic_settings(data_dir, file_name, data_dict)
         dlg.Destroy()
         
-           
+    # volume ----------------------------
     def SetVolume(self, volume):
         soundmixer.SetMasterVolume(volume)
         #wx.media too
@@ -1506,6 +1538,17 @@ class MainPanel(wx.Panel):
         else:
             self.muted_volume = self.GetVolume()
             self.SetVolume(0)
+            
+    # tabs ------------------------
+    def ShowTab(self, location):
+        # display a notebook tab or the search form
+        #NB_PLAYLIST = 0  #NB_LAST = 1  #NB_ALBUM = 2  #NB_FAVES = 3
+        #NB_SIFT = 4  #NB_ABOUT = 5  #WN_SEARCH = 99
+        if location < 99:
+            self.nb_main.SetSelection(location)
+        else:
+            self.nb_main.SetSelection(NB_PLAYLIST)
+            self.search_window.show_me()
         
     def OnPreviousTab(self, event):
         cur_tab = self.nb_main.GetSelection()
@@ -1529,12 +1572,6 @@ class MainPanel(wx.Panel):
         
     def OnAlbumCoverClick(self, event):
         is_shown = self.album_viewer.ToggleShow()
-        # set check mark on main menu item
-        #if is_shown:
-        #    check_bmp = wx.Bitmap(GRAPHICS_LOCATION + 'checkmark.png', wx.BITMAP_TYPE_ANY)
-        #    self.parent.mi_album_cover.SetBitmap(check_bmp)
-        #else:
-        #    xrc.XRCCTRL(self.parent, 'm_mi_album_cover').SetBitmap(None)
 
     def OnUpdateClick(self, event):
         # open website
@@ -1595,17 +1632,7 @@ class MainPanel(wx.Panel):
                 self.PlaySong(0)
                 self.SetPlayButtonGraphic('pause')
                 
-    #def OnPlayClick(self, event):
-        #self.LoadWxMedia(song_id)
-                
-    #def PlayWxMedia(self, event):
-        #self.mediaPlayer.Play()   
-    
-    #def LoadWxMedia(self, file_name):
-        #self.mediaPlayer.Load(file_name)                
-                
-    def SetPlayButtonGraphic(self, playorpause):
-        
+    def SetPlayButtonGraphic(self, playorpause):        
         play_button = xrc.XRCCTRL(self, 'm_bb_play')
         pause_bmp = wx.Bitmap(GRAPHICS_LOCATION + "media-playback-pause.png", wx.BITMAP_TYPE_ANY)
         play_bmp = wx.Bitmap(GRAPHICS_LOCATION + "media-playback-start.png", wx.BITMAP_TYPE_ANY)
@@ -1633,32 +1660,12 @@ class MainPanel(wx.Panel):
         if self.current_song.status == 'playing':
             q_track_id = local_songs.DbFuncs().GetTrackId(self.current_song.groove_id, self.current_song.music_id, self.current_song.artist, self.current_song.song)
             local_songs.DbFuncs().InsertPlayedData(q_track_id, played_type_id=2)
-        #=================================
-        
+        #=================================        
         self.current_song.status = 'stopped'
-        self.download_percent = 0
-        
+        self.download_percent = 0        
         self.SetPlayButtonGraphic('play')
-        
-#    def LoadFlashSong(self):#, url, artist, track):
-        #
-        #print url
-        #print self.web_music_type
-        #if self.web_music_type != "GrooveShark":
-            #print self.web_music_url + artist + '-' + track
-        #    self.flash.movie = self.web_music_url + artist + '-' + track
-        #else:
-#        print self.current_song.song_url
- #       self.flash.movie = self.current_song.song_url #url
-
-  #  def StopFlashSong(self):
-        #
-  #      if self.use_web_music == True:
-   #         self.flash.movie = 'temp.swf'
-        #pass
             
-    def OnForwardClick(self, event):
-    
+    def OnForwardClick(self, event):    
         # add 'skipped' to played table ==
         if self.current_song.status == 'playing':
             q_track_id = local_songs.DbFuncs().GetTrackId(self.current_song.groove_id, self.current_song.music_id, self.current_song.artist, self.current_song.song)
@@ -1676,8 +1683,7 @@ class MainPanel(wx.Panel):
             #nothing is slected
             self.PlaySong(0)
             
-    def OnBackwardClick(self, event):
-    
+    def OnBackwardClick(self, event):    
         #== add 'skipped' to played table ==
         if self.current_song.status == 'playing':
             q_track_id = local_songs.DbFuncs().GetTrackId(self.current_song.groove_id, self.current_song.music_id, self.current_song.artist, self.current_song.song)
@@ -1696,13 +1702,8 @@ class MainPanel(wx.Panel):
             self.PlaySong(0)
             
     def StopAll(self):
-        #stop all playback
-        #if self.current_local != None:
-        #    self.current_local.stop()
+        """ stop all playback """
         self.player.Stop()
-#        if self.use_web_music == True:
-#            self.StopFlashSong()
-        ##self.mediaPlayer.Stop()
             
 # --------------------------------------------------------- 
 # play functions------------------------------------------- 
@@ -1883,7 +1884,7 @@ class MainPanel(wx.Panel):
                 
             self.GetSongRating(cs.track_id, cs.playlist_position)
 # ---------------------------------------------------------  
-       
+    # time functions
     def ConvertTimeFormated(self, seconds):
         # convert seconds to mm:ss
         return str(float(seconds) / float(60)).split('.')[0] + ':' + str(abs(seconds) % 60).zfill(2)
@@ -1966,13 +1967,6 @@ class MainPanel(wx.Panel):
                 else:
                     pass
         dlg.Destroy()
-        
-    #def list_dir(self, directory):
-        # grab file list
-        #pathlist = os.listdir(directory)
-        # Now filter out all but py and pyw
-        #filterlist = [x for x in pathlist if x.endswith('.xspf')]
-        #return filterlist
         
     def OnSavePlaylistClick(self, event):
         wildcard = "Playlist (*.xspf)|*.xspf|"
@@ -2199,6 +2193,11 @@ class MainPanel(wx.Panel):
         for x in range(0, self.lc_playlist.GetItemCount()):
             self.lc_playlist.SetStringItem(x, C_ALBUM, '')
             
+    def ClearIdValues(self, event):
+        # clear all the album values on the playlist
+        for x in range(0, self.lc_playlist.GetItemCount()):
+            self.lc_playlist.SetStringItem(x, C_ID, '')
+            
     def GenericAddToPlaylist(self, from_list_control, add_album=False):
         #adds selected list items from one list control to another
         
@@ -2235,6 +2234,7 @@ class MainPanel(wx.Panel):
     def SuperAddToPlaylist(self, add_dict, plize=False):
         #backup current db
         #****self.SearchOrPlaylist(artist, song)
+        self.ResizePlaylist()
         if len(add_dict) > 0:
             self.BackupList()
             if plize == True:
@@ -2251,7 +2251,7 @@ class MainPanel(wx.Panel):
                     self.lc_playlist.SetStringItem(row_num, col_num, v)
             self.nb_main.SetPageText(NB_PLAYLIST, 'Playlist (' + str(self.lc_playlist.GetItemCount()) + ')')
             
-            self.GetAllSongRatings(start_from=first_last_row)
+            self.GetAllSongRatings(start_from=first_last_row)            
         
     def AddAll(self, list_control, num_cols=2):
         add_arr = []
@@ -2699,40 +2699,44 @@ class MainPanel(wx.Panel):
         # check that file doesn't exist
         if os.path.exists(self.image_save_location + file_name) == False:
             #print art_url
-            urllib.urlretrieve(art_url, self.image_save_location + file_name)            
-            urllib.urlcleanup()
+            try:
+                urllib.urlretrieve(art_url, self.image_save_location + file_name)            
+                urllib.urlcleanup()                
+            except Exception, expt:
+                print str(Exception)+str(expt)
             #print 'getting new'
         
     def SetImage(self, file_name, dir_name, resize=False):
         # get albumcover for artist/song from last.fm
-        cover_bmp = wx.Bitmap(dir_name + file_name, wx.BITMAP_TYPE_ANY)
-        
-        foo = wx.Bitmap.ConvertToImage(cover_bmp)
-        sma_bm = self.bm_cover.GetSize()
-        if resize == True:
-            #for odd shaped bitmaps            
-            self.Resizer(foo, sma_bm)           
-        else:
-            foo.Rescale(sma_bm[0], sma_bm[1])
-        goo = wx.BitmapFromImage(foo)
-        self.bm_cover.SetBitmap(goo)
-        
-        # now the large one
-        hoo = wx.Bitmap.ConvertToImage(cover_bmp)
-        lar_bm = self.tab_album.bm_cover_large.GetSize()
-        if resize == True:
-            #for odd shaped bitmaps
-            #let's skip changing the album page's cover art to the bio pic
-            ##self.Resizer(hoo, lar_bm)
-            pass
-        else:
-            hoo.Rescale(lar_bm[0], lar_bm[1])
-            ##
-            ioo = wx.BitmapFromImage(hoo)
-            self.tab_album.bm_cover_large.SetBitmap(ioo)
-        #self.bm_cover.Refresh()
-        
-        self.album_viewer.SetImage(file_name, dir_name)
+        if os.path.isfile(dir_name + file_name):
+            cover_bmp = wx.Bitmap(dir_name + file_name, wx.BITMAP_TYPE_ANY)
+            
+            foo = wx.Bitmap.ConvertToImage(cover_bmp)
+            sma_bm = self.bm_cover.GetSize()
+            if resize == True:
+                #for odd shaped bitmaps            
+                self.Resizer(foo, sma_bm)           
+            else:
+                foo.Rescale(sma_bm[0], sma_bm[1])
+            goo = wx.BitmapFromImage(foo)
+            self.bm_cover.SetBitmap(goo)
+            
+            # now the large one
+            hoo = wx.Bitmap.ConvertToImage(cover_bmp)
+            lar_bm = self.tab_album.bm_cover_large.GetSize()
+            if resize == True:
+                #for odd shaped bitmaps
+                #let's skip changing the album page's cover art to the bio pic
+                ##self.Resizer(hoo, lar_bm)
+                pass
+            else:
+                hoo.Rescale(lar_bm[0], lar_bm[1])
+                ##
+                ioo = wx.BitmapFromImage(hoo)
+                self.tab_album.bm_cover_large.SetBitmap(ioo)
+            #self.bm_cover.Refresh()
+            
+            self.album_viewer.SetImage(file_name, dir_name)
         
     def Resizer(self, image, target_size):
         #scales a non-square image to make it look nice
@@ -2746,8 +2750,9 @@ class MainPanel(wx.Panel):
         offset = (target_size[1] - image_size[1]) / 2
         image.Resize((target_size[0], target_size[1]), (0,offset), 0, 0, 0)        
         return image        
-    
 
+# --------------------------------------------------------- 
+# ######################################################### 
 # --------------------------------------------------------- 
 
 class CurrentSong():
@@ -2902,9 +2907,10 @@ class CurrentSong():
             # publish to pubsub
             #pub.sendMessage('main.album', {'album':self.album, 'playlist_number':self.playlist_position})
 
+# --------------------------------------------------------- 
+# ######################################################### 
+# ---------------------------------------------------------
 
-#---------------------------------------------------------------------------
-# ####################################
 class FetchAlbumThread(Thread):
     #grab the album name
     #check current track, verify that it still matches, update album name
@@ -2923,8 +2929,10 @@ class FetchAlbumThread(Thread):
         except Exception, expt:
             print str(Exception) + str(expt)
 
-#---------------------------------------------------------------------------
-# ####################################
+# --------------------------------------------------------- 
+# ######################################################### 
+# --------------------------------------------------------- 
+
 class FetchTimeThread(Thread):
     #grab the album name
     #check current track, verify that it still matches, update album name
@@ -2943,8 +2951,10 @@ class FetchTimeThread(Thread):
         except Exception, expt:
             print str(Exception) + str(expt)
 
-#---------------------------------------------------------------------------
-# ####################################
+# --------------------------------------------------------- 
+# ######################################################### 
+# --------------------------------------------------------- 
+
 class WebFetchThread(Thread): 
     # grab rss feeds, thread style  
     def __init__(self, panel, artist, song, album, webfetchtype):
@@ -2986,48 +2996,13 @@ class WebFetchThread(Thread):
                 art_alb = self.artist + '-' + self.album
                 (local_file_name, is_file) = file_cache.CreateCachedImage(self.panel.image_save_location, art_alb, ext)
                 
-                self.panel.SaveSongArt(song_art_url, local_file_name)
+                self.panel.SaveSongArt(song_art_url, local_file_name)               
                 self.panel.SetImage(local_file_name, self.panel.image_save_location)
                 self.panel.palbum_art_file = local_file_name
             else:
                 self.panel.SetImage('no_cover.png', GRAPHICS_LOCATION)
                 self.panel.palbum_art_file =''
                 #print 'no-cover'
-                
-#        if self.webfetchtype == 'BIO':
-#            #for covers
- #           bio_url =''
-  #          if len(self.artist) > 0:
-   #             # try album art if nothing is listed for the song
-    #            bio_url = audioscrobbler_lite.Scrobb().get_artist_bio(self.artist)
-     #           #print bio_url[0]
-      #      if len(str(bio_url[0])) > 8:
-       #         file_name = bio_url[0].rsplit('/', 1)[1]
-        #        ext = '.' + file_name.rsplit('.', 1)[1]                
-         #       (local_file_name, is_file) = file_cache.CreateCachedImage(self.panel.image_save_location, self.artist, ext)                
-          #      if is_file == False:
-           #         self.panel.SaveSongArt(bio_url[0], local_file_name)
-            #    self.panel.SetBioImage(local_file_name)
-             #   #if there's no album art set the bio image as the album cover
-              #  time.sleep(3)
- #               if self.panel.palbum_art_file =='':                    
-  #                  self.panel.SetImage(local_file_name, self.panel.image_save_location, resize=True)
-   #         self.panel.SetBioText(bio_url[1], self.artist)
-            
-#        if self.webfetchtype == 'PLAYLOCAL':
-#            #local mp3 playback 
- #           print 'local: ' + self.song
-  #          self.panel.current_song.status = 'loading'
-  #          while os.path.isfile(self.song) != True:
-   #             time.sleep(1)               
-    #        while os.path.getsize(self.song) < BUFFER_SIZE:
-   #             time.sleep(2)
-                #print os.path.getsize(file_name)
-    #        self.panel.time_count = -1
-    #        self.panel.current_song.status = 'playing'
-            
-     #       self.lsp.play(self.song)
-
             
         if self.webfetchtype == 'VERSION':
             version_check.VersionCheck(self.panel, self.album).CheckVersion()
@@ -3094,9 +3069,10 @@ class WebFetchThread(Thread):
             if (res[1] != '') & (res[0] !=''):
                 local_songs.DbFuncs().InsertPopData(track_id, res[1], res[0])#p_track_id, p_listeners, p_playcount)
 
-            
-#---------------------------------------------------------------------------
-# ####################################
+# --------------------------------------------------------- 
+# ######################################################### 
+# --------------------------------------------------------- 
+
 class FileThread(Thread): 
     # grab file
     def __init__(self, parent, temp_file, song_id, track, artist, album, prefetch=False):
@@ -3172,8 +3148,13 @@ class FileThread(Thread):
                     # ASSUME that it's the current selection
                     val = self.parent.lc_playlist.GetFirstSelected()
                     self.parent.lc_playlist.SetStringItem(val, 3, '')
-        self.parent.SetNetworkStatus('grooveshark', 2)
+        else:        
+            self.parent.SetNetworkStatus('grooveshark', 2)
                 
+# --------------------------------------------------------- 
+# ######################################################### 
+# --------------------------------------------------------- 
+        
 def GetLocalGroovesharkVersion(data_dir):
     #gets the grooveshark version from the local grooveshark.xml file
     #check if file exists
@@ -3187,7 +3168,10 @@ def GetLocalGroovesharkVersion(data_dir):
                 g_version = xml_dict['version']
     return g_version     
             
-# ####################################
+# --------------------------------------------------------- 
+# ######################################################### 
+# --------------------------------------------------------- 
+
 class ProgressThread(Thread): 
     # another thread to update download progress
     def __init__(self, parent, temp_file, file_size):
@@ -3206,8 +3190,11 @@ class ProgressThread(Thread):
             if per_val == 100:
                 break
             time.sleep(1)
-#---------------------------------------------------------------------------
-# ####################################
+            
+# --------------------------------------------------------- 
+# ######################################################### 
+# ---------------------------------------------------------
+
 class TreeListCtrlXmlHandler(xrc.XmlResourceHandler):
     def __init__(self):
         xrc.XmlResourceHandler.__init__(self)
@@ -3234,22 +3221,19 @@ class TreeListCtrlXmlHandler(xrc.XmlResourceHandler):
         return w
 
 #---------------------------------------------------------------------------
+# --------------------------------------------------------- 
+# ######################################################### 
+# --------------------------------------------------------- 
 #---------------------------------------------------------------------------
 
        
 if __name__ == '__main__':
-
     #stdoutlog = file('c:\\gw.log', 'a+')
     #sys.stdout = stdoutlog
-    #sys.stderr = stdoutlog
-    
-    redirect = False
-    
+    #sys.stderr = stdoutlog    
+    redirect = False    
     for x in range(0, len(sys.argv)):
         if sys.argv[x] == '-r=true':
             redirect = True
-    #app = wx.PySimpleApp(redirect=red)
     app = GWApp(redirect=redirect)
     app.MainLoop()
-
-

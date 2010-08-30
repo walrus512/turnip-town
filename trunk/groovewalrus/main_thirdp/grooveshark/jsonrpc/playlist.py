@@ -5,6 +5,12 @@ import song as gssong
 def playlistFromData(gsapi, data):
     """function: Create a playlist from song list data"""
     return Playlist(gsapi, data)
+    
+def playlistFromId(gsapi, id_list):
+    """ Javi S. 2010/08/29 """
+    parameters = {"playlistID":id_list}
+    response = gsapi.request(parameters, "playlistGetSongs").send()
+    return Playlist(gsapi, response["result"]["Songs"])
 
 class Playlist:
     """class: Base class for items with multiple songs"""
