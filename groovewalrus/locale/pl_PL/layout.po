@@ -23,29 +23,26 @@ msgstr "Last.fm"
 msgid "Similar Songs"
 msgstr "Podobne utwory"
 
-msgid "Top Songs: Artist"
-msgstr "Top utwory: wykonawca"
-
-msgid "Top Songs: Geo"
-msgstr "Top utwory: geograficznie"
-
-msgid "Top Songs: Tag"
-msgstr "Top utwory: tag"
-
-msgid "Top Songs: Album"
-msgstr "Top utwory: album"
-
 msgid "Similar Artists"
 msgstr "Podobni wykonawcy"
+
+msgid "Top Songs: Artist"
+msgstr "Top utwory: wykonawca"
 
 msgid "Top Albums: Artist"
 msgstr "Top albumy: wykonawca"
 
+msgid "Top Songs: Album"
+msgstr "Top utwory: album"
+
+msgid "Top Songs: Geo"
+msgstr "Top utwory: geograficznie"
+
 msgid "Top Tags: Song"
 msgstr "Top tagi: utwór"
 
-msgid "Playlistize!"
-msgstr "Playlistize!"
+msgid "Top Songs: Tag"
+msgstr "Top utwory: tag"
 
 msgid "Artist"
 msgstr "Wykonawca"
@@ -55,9 +52,6 @@ msgstr "Tytuł"
 
 msgid "Album"
 msgstr "Album"
-
-msgid "Tag"
-msgstr "Tag"
 
 msgid "My Last.fm"
 msgstr "Mój Last.fm"
@@ -71,6 +65,9 @@ msgstr "Moi znajomi"
 msgid "My Neighbours"
 msgstr "Moi sąsiedzi"
 
+msgid "Loved Songs"
+msgstr ""
+
 msgid "User"
 msgstr "Użytkownik"
 
@@ -80,14 +77,23 @@ msgstr "Pobierz utwory"
 msgid "Biography"
 msgstr "Biografia"
 
+msgid "Favorites"
+msgstr "Ulubione"
+
+msgid "Rating:"
+msgstr ""
+
 msgid "Collection"
 msgstr "Kolekcja"
 
 msgid "Song Collection"
 msgstr "Kolekcja utworów"
 
-msgid "Filter Songs"
-msgstr "Filtruj utwory"
+msgid "Files"
+msgstr ""
+
+msgid "Search:"
+msgstr ""
 
 msgid "File"
 msgstr "Plik"
@@ -95,20 +101,38 @@ msgstr "Plik"
 msgid "Folder"
 msgstr "Folder"
 
-msgid "Favorites"
-msgstr "Ulubione"
+msgid "Starts with..."
+msgstr ""
+
+msgid "Folders"
+msgstr ""
 
 msgid "List Sifter"
 msgstr "Segregator listy"
 
-msgid "Pre-split:"
-msgstr "Podział:"
+msgid "Text PasteBox"
+msgstr ""
 
-msgid "Separator:"
-msgstr "Separator:"
+msgid "Pre:"
+msgstr ""
 
-msgid "Sift!"
-msgstr "Segreguj!"
+msgid "Sep:"
+msgstr ""
+
+msgid "Post:"
+msgstr ""
+
+msgid "Sift List"
+msgstr ""
+
+msgid "RSS Feeds"
+msgstr ""
+
+msgid "Feed URL:"
+msgstr ""
+
+msgid "Get RSS Feed"
+msgstr ""
 
 msgid "Options"
 msgstr "Opcje"
@@ -119,11 +143,11 @@ msgstr "Główne"
 msgid "Double-clicking..."
 msgstr "Podwójne kliknięcie"
 
-msgid "Playlistize! clears playlist before adding."
-msgstr "Playlistize! czyści playlistę przed dodaniem utworów."
+msgid "Locale:"
+msgstr ""
 
-msgid "Use alternate GrooveShark source."
-msgstr "Użyj alternatywnego źródła GrooveShark."
+msgid "'Add All' clears playlist before adding."
+msgstr ""
 
 msgid "Drop id from search results."
 msgstr "Pomiń ID przy wyszukiwaniu."
@@ -134,8 +158,8 @@ msgstr "Minimalizuj do traya."
 msgid "Save music to:"
 msgstr "Zapisz muzykę do:"
 
-msgid "About..."
-msgstr "O programie..."
+msgid "Automatically save new music to your collection."
+msgstr ""
 
 msgid "Last.fm Account"
 msgstr "Konto Last.fm"
@@ -179,8 +203,38 @@ msgstr "minut"
 msgid "seconds, if a time can't be found."
 msgstr "sekund, jeśli czas trwania jest nieznany."
 
+msgid "Pre-fetch songs (loads next song while current song is playing)."
+msgstr ""
+
+msgid "Song Cache"
+msgstr ""
+
+msgid "Location:"
+msgstr ""
+
+msgid "Cache Size (in songs):"
+msgstr ""
+
+msgid "Set Size"
+msgstr ""
+
+msgid "Clear Cache"
+msgstr ""
+
 msgid "Plug-ins"
 msgstr "Wtyczki"
+
+msgid "Test"
+msgstr ""
+
+msgid "Backends"
+msgstr ""
+
+msgid "Backend"
+msgstr ""
+
+msgid "wx.media type"
+msgstr ""
 
 msgid "MyMenuBar"
 msgstr "MyMenuBar"
@@ -188,11 +242,17 @@ msgstr "MyMenuBar"
 msgid "_File"
 msgstr "_Plik"
 
-msgid "Open..."
-msgstr "Otwórz..."
+msgid "Open...\tF6"
+msgstr ""
 
-msgid "Save Playlist As..."
-msgstr "Zapisz playlistę jako..."
+msgid "Save Playlist\tCtrl-S"
+msgstr ""
+
+msgid "Quick-Save Playlist\tCtrl-W"
+msgstr ""
+
+msgid "Export Playlist As...\tF5"
+msgstr ""
 
 msgid "Exit"
 msgstr "Wyjdź"
@@ -212,8 +272,8 @@ msgstr "Kopiuj\tCtrl-C"
 msgid "Paste\tCtrl-V"
 msgstr "Wklej\tCtrl-V"
 
-msgid "Delete\tDel"
-msgstr "Usuń\tDel"
+msgid "Delete"
+msgstr ""
 
 msgid "_View"
 msgstr "_Widok"
@@ -236,14 +296,77 @@ msgstr "Stop\tF3"
 msgid "Next\tF4"
 msgstr "Następny\tF4"
 
+msgid "Shuffle\tF7"
+msgstr ""
+
+msgid "Repeat\tF8"
+msgstr ""
+
+msgid "Volume"
+msgstr "Głośność"
+
+msgid "Volume Down\tF9"
+msgstr ""
+
+msgid "Volume Up\tF10"
+msgstr ""
+
+msgid "Mute Volume\tF11"
+msgstr ""
+
 msgid "_Tools"
 msgstr "_Narzędzia"
 
-msgid "Version Update"
-msgstr "Aktualizacja"
+msgid "Version Update..."
+msgstr ""
+
+msgid "Song Collection Locations..."
+msgstr ""
+
+msgid "Import Grooveshark Playlist"
+msgstr ""
+
+msgid "Plug-_ins"
+msgstr ""
 
 msgid "_Help"
 msgstr "Pomo_c"
+
+msgid "GrooveShark Version..."
+msgstr ""
+
+msgid "About..."
+msgstr "O programie..."
+
+msgid "GrooveWalrus Website"
+msgstr ""
+
+msgid "united states"
+msgstr "Stany Zjednoczone"
+
+msgid "canada"
+msgstr "Kanada"
+
+msgid "australia"
+msgstr "Australia"
+
+msgid "france"
+msgstr "Francja"
+
+msgid "germany"
+msgstr "Niemcy"
+
+msgid "japan"
+msgstr "Japonia"
+
+msgid "italy"
+msgstr "Włochy"
+
+msgid "spain"
+msgstr "Hiszpania"
+
+msgid "sweden"
+msgstr "Szwecja"
 
 msgid "alternative"
 msgstr "alternative"
@@ -274,33 +397,6 @@ msgstr "pop"
 
 msgid "rock"
 msgstr "rock"
-
-msgid "united states"
-msgstr "Stany Zjednoczone"
-
-msgid "canada"
-msgstr "Kanada"
-
-msgid "australia"
-msgstr "Australia"
-
-msgid "france"
-msgstr "Francja"
-
-msgid "germany"
-msgstr "Niemcy"
-
-msgid "japan"
-msgstr "Japonia"
-
-msgid "italy"
-msgstr "Włochy"
-
-msgid "spain"
-msgstr "Hiszpania"
-
-msgid "sweden"
-msgstr "Szwecja"
 
 msgid "Recent"
 msgstr "Ostatnie"
@@ -338,8 +434,26 @@ msgstr "Brak portu"
 msgid "Default Port"
 msgstr "Domyślny port"
 
-msgid "Volume"
-msgstr "Głośność"
+msgid "pymedia"
+msgstr ""
+
+msgid "wx.media"
+msgstr ""
+
+msgid "pyglet"
+msgstr ""
+
+msgid "WMP10"
+msgstr ""
+
+msgid "GSTREAMER"
+msgstr ""
+
+msgid "QUICKTIME"
+msgstr ""
+
+msgid "DIRECTSHOW"
+msgstr ""
 
 msgid "Add Favorite"
 msgstr "Dodaj ulubiony"
@@ -359,8 +473,17 @@ msgstr "Mieszaj"
 msgid "Repeat"
 msgstr "Powtarzaj"
 
+msgid "Grooveshark Status"
+msgstr ""
+
+msgid "Last.fm Status"
+msgstr ""
+
 msgid "New update available."
 msgstr "Dostępna nowa aktualizacja."
+
+msgid "Saved Playlists"
+msgstr ""
 
 msgid "Save Playlist"
 msgstr "Zapisz playlistę"
@@ -374,11 +497,35 @@ msgstr "Wyczyść playlistę"
 msgid "Geographical Region"
 msgstr "Region geograficzny"
 
+msgid "Add all to playlist"
+msgstr ""
+
+msgid "Add selected to playlist"
+msgstr ""
+
 msgid "Clear"
 msgstr "Czyść"
 
 msgid "Last.fm Webpage"
 msgstr "Strona Last.fm"
+
+msgid "Add all to Playlist"
+msgstr ""
+
+msgid "Add selected to Playlist"
+msgstr ""
+
+msgid "Great"
+msgstr ""
+
+msgid "Good"
+msgstr ""
+
+msgid "Average"
+msgstr ""
+
+msgid "Poor"
+msgstr ""
 
 msgid "Add Files to Collection"
 msgstr "Dodaj pliki do kolekcji"
@@ -391,4 +538,10 @@ msgstr "Usuń"
 
 msgid "Clear File Filter"
 msgstr "Wyczyść filtr plików"
+
+msgid "Clear Feed URL"
+msgstr ""
+
+msgid "Save RSS Feed"
+msgstr ""
 
