@@ -23,28 +23,25 @@ msgstr ""
 msgid "Similar Songs"
 msgstr ""
 
-msgid "Top Songs: Artist"
-msgstr ""
-
-msgid "Top Songs: Geo"
-msgstr ""
-
-msgid "Top Songs: Tag"
-msgstr ""
-
-msgid "Top Songs: Album"
-msgstr ""
-
 msgid "Similar Artists"
+msgstr ""
+
+msgid "Top Songs: Artist"
 msgstr ""
 
 msgid "Top Albums: Artist"
 msgstr ""
 
+msgid "Top Songs: Album"
+msgstr ""
+
+msgid "Top Songs: Geo"
+msgstr ""
+
 msgid "Top Tags: Song"
 msgstr ""
 
-msgid "Playlistize!"
+msgid "Top Songs: Tag"
 msgstr ""
 
 msgid "Artist"
@@ -54,9 +51,6 @@ msgid "Song"
 msgstr ""
 
 msgid "Album"
-msgstr ""
-
-msgid "Tag"
 msgstr ""
 
 msgid "My Last.fm"
@@ -71,6 +65,9 @@ msgstr ""
 msgid "My Neighbours"
 msgstr ""
 
+msgid "Loved Songs"
+msgstr ""
+
 msgid "User"
 msgstr ""
 
@@ -80,13 +77,22 @@ msgstr ""
 msgid "Biography"
 msgstr ""
 
+msgid "Favorites"
+msgstr ""
+
+msgid "Rating:"
+msgstr ""
+
 msgid "Collection"
 msgstr ""
 
 msgid "Song Collection"
 msgstr ""
 
-msgid "Filter Songs"
+msgid "Files"
+msgstr ""
+
+msgid "Search:"
 msgstr ""
 
 msgid "File"
@@ -95,19 +101,37 @@ msgstr ""
 msgid "Folder"
 msgstr ""
 
-msgid "Favorites"
+msgid "Starts with..."
+msgstr ""
+
+msgid "Folders"
 msgstr ""
 
 msgid "List Sifter"
 msgstr ""
 
-msgid "Pre-split:"
+msgid "Text PasteBox"
 msgstr ""
 
-msgid "Separator:"
+msgid "Pre:"
 msgstr ""
 
-msgid "Sift!"
+msgid "Sep:"
+msgstr ""
+
+msgid "Post:"
+msgstr ""
+
+msgid "Sift List"
+msgstr ""
+
+msgid "RSS Feeds"
+msgstr ""
+
+msgid "Feed URL:"
+msgstr ""
+
+msgid "Get RSS Feed"
 msgstr ""
 
 msgid "Options"
@@ -119,10 +143,10 @@ msgstr ""
 msgid "Double-clicking..."
 msgstr ""
 
-msgid "Playlistize! clears playlist before adding."
+msgid "Locale:"
 msgstr ""
 
-msgid "Use alternate GrooveShark source."
+msgid "'Add All' clears playlist before adding."
 msgstr ""
 
 msgid "Drop id from search results."
@@ -134,7 +158,7 @@ msgstr ""
 msgid "Save music to:"
 msgstr ""
 
-msgid "About..."
+msgid "Automatically save new music to your collection."
 msgstr ""
 
 msgid "Last.fm Account"
@@ -179,7 +203,37 @@ msgstr ""
 msgid "seconds, if a time can't be found."
 msgstr ""
 
+msgid "Pre-fetch songs (loads next song while current song is playing)."
+msgstr ""
+
+msgid "Song Cache"
+msgstr ""
+
+msgid "Location:"
+msgstr ""
+
+msgid "Cache Size (in songs):"
+msgstr ""
+
+msgid "Set Size"
+msgstr ""
+
+msgid "Clear Cache"
+msgstr ""
+
 msgid "Plug-ins"
+msgstr ""
+
+msgid "Test"
+msgstr ""
+
+msgid "Backends"
+msgstr ""
+
+msgid "Backend"
+msgstr ""
+
+msgid "wx.media type"
 msgstr ""
 
 msgid "MyMenuBar"
@@ -188,10 +242,16 @@ msgstr ""
 msgid "_File"
 msgstr ""
 
-msgid "Open..."
+msgid "Open...\tF6"
 msgstr ""
 
-msgid "Save Playlist As..."
+msgid "Save Playlist\tCtrl-S"
+msgstr ""
+
+msgid "Quick-Save Playlist\tCtrl-W"
+msgstr ""
+
+msgid "Export Playlist As...\tF5"
 msgstr ""
 
 msgid "Exit"
@@ -212,7 +272,7 @@ msgstr ""
 msgid "Paste\tCtrl-V"
 msgstr ""
 
-msgid "Delete\tDel"
+msgid "Delete"
 msgstr ""
 
 msgid "_View"
@@ -236,13 +296,76 @@ msgstr ""
 msgid "Next\tF4"
 msgstr ""
 
+msgid "Shuffle\tF7"
+msgstr ""
+
+msgid "Repeat\tF8"
+msgstr ""
+
+msgid "Volume"
+msgstr ""
+
+msgid "Volume Down\tF9"
+msgstr ""
+
+msgid "Volume Up\tF10"
+msgstr ""
+
+msgid "Mute Volume\tF11"
+msgstr ""
+
 msgid "_Tools"
 msgstr ""
 
-msgid "Version Update"
+msgid "Version Update..."
+msgstr ""
+
+msgid "Song Collection Locations..."
+msgstr ""
+
+msgid "Import Grooveshark Playlist"
+msgstr ""
+
+msgid "Plug-_ins"
 msgstr ""
 
 msgid "_Help"
+msgstr ""
+
+msgid "GrooveShark Version..."
+msgstr ""
+
+msgid "About..."
+msgstr ""
+
+msgid "GrooveWalrus Website"
+msgstr ""
+
+msgid "united states"
+msgstr ""
+
+msgid "canada"
+msgstr ""
+
+msgid "australia"
+msgstr ""
+
+msgid "france"
+msgstr ""
+
+msgid "germany"
+msgstr ""
+
+msgid "japan"
+msgstr ""
+
+msgid "italy"
+msgstr ""
+
+msgid "spain"
+msgstr ""
+
+msgid "sweden"
 msgstr ""
 
 msgid "alternative"
@@ -273,33 +396,6 @@ msgid "pop"
 msgstr ""
 
 msgid "rock"
-msgstr ""
-
-msgid "united states"
-msgstr ""
-
-msgid "canada"
-msgstr ""
-
-msgid "australia"
-msgstr ""
-
-msgid "france"
-msgstr ""
-
-msgid "germany"
-msgstr ""
-
-msgid "japan"
-msgstr ""
-
-msgid "italy"
-msgstr ""
-
-msgid "spain"
-msgstr ""
-
-msgid "sweden"
 msgstr ""
 
 msgid "Recent"
@@ -338,7 +434,25 @@ msgstr ""
 msgid "Default Port"
 msgstr ""
 
-msgid "Volume"
+msgid "pymedia"
+msgstr ""
+
+msgid "wx.media"
+msgstr ""
+
+msgid "pyglet"
+msgstr ""
+
+msgid "WMP10"
+msgstr ""
+
+msgid "GSTREAMER"
+msgstr ""
+
+msgid "QUICKTIME"
+msgstr ""
+
+msgid "DIRECTSHOW"
 msgstr ""
 
 msgid "Add Favorite"
@@ -359,7 +473,16 @@ msgstr ""
 msgid "Repeat"
 msgstr ""
 
+msgid "Grooveshark Status"
+msgstr ""
+
+msgid "Last.fm Status"
+msgstr ""
+
 msgid "New update available."
+msgstr ""
+
+msgid "Saved Playlists"
 msgstr ""
 
 msgid "Save Playlist"
@@ -374,10 +497,34 @@ msgstr ""
 msgid "Geographical Region"
 msgstr ""
 
+msgid "Add all to playlist"
+msgstr ""
+
+msgid "Add selected to playlist"
+msgstr ""
+
 msgid "Clear"
 msgstr ""
 
 msgid "Last.fm Webpage"
+msgstr ""
+
+msgid "Add all to Playlist"
+msgstr ""
+
+msgid "Add selected to Playlist"
+msgstr ""
+
+msgid "Great"
+msgstr ""
+
+msgid "Good"
+msgstr ""
+
+msgid "Average"
+msgstr ""
+
+msgid "Poor"
 msgstr ""
 
 msgid "Add Files to Collection"
@@ -390,5 +537,11 @@ msgid "Remove"
 msgstr ""
 
 msgid "Clear File Filter"
+msgstr ""
+
+msgid "Clear Feed URL"
+msgstr ""
+
+msgid "Save RSS Feed"
 msgstr ""
 
