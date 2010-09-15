@@ -96,14 +96,13 @@ from main_thirdp import grooveshark_old
 #from plugins.flash import flash
 #from plugins.played import played
 #from plugins.griddle import griddle
-
 #from plugins.minimode import minimode
 #from plugins.lyrics import lyrics
 #from plugins.sync import sync
 #from plugins.zongdora import zongdora
 #from plugins.web_remote import web_remote
 
-PROGRAM_VERSION = "0.320"
+PROGRAM_VERSION = "0.321"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -164,7 +163,7 @@ class GWApp(wx.App):
             try:
                 pyro_server.SendPyro(sys.argv)
             except Exception, expt:
-                print str(Exception)+str(expt)
+                print "GWApp: " + str(Exception)+str(expt)
             #wx.Log.EnableLogging(False)
             sys.exit()
             #return False
@@ -258,7 +257,7 @@ class MainPanel(wx.Panel):
         self.main_playlist_location = system_files.GetDirectories(self).DataDirectory() + os.sep + "playlist.xspf"
         self.main_playlist_location_bak = system_files.GetDirectories(self).DataDirectory() + os.sep + "playlist.bak"
         self.working_directory = SYSLOC
-        self.FILEDB = system_files.GetDirectories(None).DatabaseLocation()
+        self.FILEDB = system_files.GetDirectories(self).DatabaseLocation()
         ##self.faves_playlist_location = system_files.GetDirectories(self).DataDirectory() + os.sep + "faves.xspf"
         ##self.faves_playlist_location_bak = system_files.GetDirectories(self).DataDirectory() + os.sep + "faves.bak"
         
@@ -850,7 +849,7 @@ class MainPanel(wx.Panel):
             try:
                 self.lc_playlist.SetStringItem(self.current_song.playlist_position, C_TIME, self.ConvertTimeFormated(self.current_song.song_time_seconds))
             except Exception, expt:
-                print str(Exception) + str(expt)
+                print "SetCachedTimeReceiverAction: " + str(Exception) + str(expt)
         
     def SongIdReceiverAction(self, message):        
         # update playlist
@@ -868,7 +867,7 @@ class MainPanel(wx.Panel):
             try:
                 self.lc_playlist.SetStringItem(i, C_TIME, t)
             except Exception, expt:
-                print str(Exception) + str(expt)
+                print "TimeReceiverAction: " + str(Exception) + str(expt)
         #self.SavePlaylist(self.main_playlist_location)
         
     def TimeSecondsReceiverAction(self, message):        
@@ -883,7 +882,8 @@ class MainPanel(wx.Panel):
         messenger_path = options_window.GetSetting('messenger-path', self.FILEDB)
         
         if (messenger_enabled != False) & (messenger_path != False):
-            if (messenger_enabled == '1'): 
+            if (messenger_enabled == '1'):
+                song_link = self.GenerateShareLink(self.current_song.artist, self.current_song.song)
                 status_text = self.current_song.artist + " - " + self.current_song.song + " : " + PROGRAM_NAME
                 #print status_text
                 #"c:\\Progra~2\\xfire\\xfire.exe /url xfire:status?text="
@@ -1076,7 +1076,7 @@ class MainPanel(wx.Panel):
                 
     def ImportGroovesharkPlaylist(self, event):
         """ Javi S. 2010/08/29 imports GrooveShark playist"""
-        dlg = wx.TextEntryDialog(self, 'Insert the playlist URL or ID', 'Import GrooveShark playlist')
+        dlg = wx.TextEntryDialog(self, 'Insert the playlist URL or ID', 'Import GrooveShark Playlist')
         val = dlg.ShowModal()
         if val == wx.ID_OK:
             playlist_string = dlg.GetValue()
@@ -2181,12 +2181,18 @@ class MainPanel(wx.Panel):
     def MakeShareLink(self, event):
         # make link for current song/artist, copy to clippboard
         val = self.lc_playlist.GetFirstSelected()
-        artist = "a=" + self.lc_playlist.GetItem(val, C_ARTIST).GetText().replace(' ', '%20')
-        song = "&s=" + self.lc_playlist.GetItem(val, C_SONG).GetText().replace(' ', '%20')
-        song_link = SONG_SENDER_URL + artist + song
+        artist = self.lc_playlist.GetItem(val, C_ARTIST).GetText()
+        song = self.lc_playlist.GetItem(val, C_SONG).GetText()
+        song_link = self.GenerateShareLink(artist, song)
         wx.TheClipboard.Open()
         wx.TheClipboard.SetData(wx.TextDataObject(song_link))
         wx.TheClipboard.Close()
+        
+    def GenerateShareLink(self, artist, song):
+        artist = "a=" + artist.replace(' ', '_')
+        song = "&s=" + song.replace(' ', '_')
+        song_link = SONG_SENDER_URL + artist + song
+        return song_link
         
     def ClearAlbumValues(self, event):
         # clear all the album values on the playlist
@@ -2361,7 +2367,7 @@ class MainPanel(wx.Panel):
         counter = 0
         for x in results_arr:    
             index = self.lc_playlist_history.InsertStringItem(counter, '')
-            self.lc_playlist_history.SetStringItem(counter, C_ARTIST, x[2])
+            self.lc_playlist_history.SetStringItem(counter, C_ARTIST, x[1])
             self.lc_playlist_history.SetStringItem(counter, C_SONG, x[2])
             counter = counter + 1
         
@@ -2703,7 +2709,7 @@ class MainPanel(wx.Panel):
                 urllib.urlretrieve(art_url, self.image_save_location + file_name)            
                 urllib.urlcleanup()                
             except Exception, expt:
-                print str(Exception)+str(expt)
+                print "SaveSongArt: " + str(Exception)+str(expt)
             #print 'getting new'
         
     def SetImage(self, file_name, dir_name, resize=False):
@@ -2927,7 +2933,7 @@ class FetchAlbumThread(Thread):
             album = album_array[1]
             pub.sendMessage('main.album', {'album':album, 'playlist_number':self.playlist_number})
         except Exception, expt:
-            print str(Exception) + str(expt)
+            print "FetchAlbumThread: " + str(Exception) + str(expt)
 
 # --------------------------------------------------------- 
 # ######################################################### 
@@ -2949,7 +2955,7 @@ class FetchTimeThread(Thread):
             if track_time != 0:
                 pub.sendMessage('main.song_time.seconds', {'time_seconds':track_time, 'playlist_number':self.playlist_number})
         except Exception, expt:
-            print str(Exception) + str(expt)
+            print "FetchTimeThread: " + (Exception) + str(expt)
 
 # --------------------------------------------------------- 
 # ######################################################### 

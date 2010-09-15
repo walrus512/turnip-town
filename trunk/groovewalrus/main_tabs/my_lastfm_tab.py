@@ -21,6 +21,7 @@ Place, Suite 330, Boston, MA 02111-1307 USA
 import wx
 import wx.xrc as xrc
 from main_utils import audioscrobbler_lite
+from main_utils import default_app_open
 
 #columns
 C_RATING = 0

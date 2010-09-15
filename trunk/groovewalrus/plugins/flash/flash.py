@@ -98,7 +98,10 @@ class MainPanel(wx.Dialog):
         
         
         if FLASH_ENABLED:
-            self.parent.StopAll()
+            try:
+                self.parent.StopAll()
+            except Exception, expt:
+                print "Flash plug-in: " + str(Exception) + str(expt)
             
             #flash windows
             self.flash_window = player_flash.Player(self) #.mediaPlayer #FlashWindow(self.pa_flash_player, style=wx.NO_BORDER, size=wx.Size(500,140))#, size=(400, 120))

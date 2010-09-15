@@ -42,6 +42,9 @@ class xml_utils():
         except IOError:
             tree = ''
             print 'error:read_xml_tree: ' + file_name
+        except Exception, expt:
+            print "read_xml_tree: " + str(Exception) + str(expt)
+            tree = ''
         return tree
     
     def get_tracks(self, file_name):
@@ -80,8 +83,11 @@ class xml_utils():
         #<duration />
         #</track>
         track_list = []
-        
-        tree = self.ReadXmlSoup(file_name)
+        try:
+            tree = self.ReadXmlSoup(file_name)
+        except IOError:
+            print "GetTracksSoup: IOError"
+            return track_list
         items = tree.findAll('track')
         for elements in items:
             creator = CleanText(elements.findAll('creator')[0].string)
@@ -136,23 +142,24 @@ class xml_utils():
         window_dict = {}
         if (os.path.isfile(file_name)):
             tree = self.read_xml_tree(file_name)
-
-            # make a blob of settings info
-            root = tree.getroot()            
-
-            for x in root:
-                # makes a dictionary with xml tag / value pairs
-                sub_list = []
-                window_dict[x.tag] = x.text
-                #print ET.tostring(x)
             
-                # drill down another layer
-                sub_root = x.getchildren()
-                #print sub_root
-                for y in sub_root:
-            	    sub_list.append(y.text)
-            	    #print sub_list
-            	    window_dict[y.tag] = sub_list     
+            if tree != '':
+                # make a blob of settings info
+                root = tree.getroot()            
+    
+                for x in root:
+                    # makes a dictionary with xml tag / value pairs
+                    sub_list = []
+                    window_dict[x.tag] = x.text
+                    #print ET.tostring(x)
+                
+                    # drill down another layer
+                    sub_root = x.getchildren()
+                    #print sub_root
+                    for y in sub_root:
+                	    sub_list.append(y.text)
+                	    #print sub_list
+                	    window_dict[y.tag] = sub_list     
         
         else:
             pass
