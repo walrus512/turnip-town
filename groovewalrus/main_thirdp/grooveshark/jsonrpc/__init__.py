@@ -34,7 +34,7 @@ SERVICE_URL = "http://cowbell." + DOMAIN + "/service.php"
 RANDOM_CHARS = "1234567890abcdef"
 
 CLIENT_NAME = "gslite"
-CLIENT_VERSION = "20100412.85"
+CLIENT_VERSION = "20100831.14"
 
 RE_SESSION = re.compile('sessionID:\s*?\'([A-z0-9]+)\',')
 
@@ -57,7 +57,7 @@ class Request:
                 "clientRevision": clientVersion,
                 "uuid": api._uuid,
                 "session": api._session},
-                "country": {"ID":"223", "CC1":"0", "CC2":"0", "CC3":"0", "CC4":"2147483648"},
+                "country": {"IPR":"1021", "ID":"223", "CC1":"0", "CC2":"0", "CC3":"0", "CC4":"2147483648"},
                 "privacy": 1,
             "parameters": parameters,
             "method": method}

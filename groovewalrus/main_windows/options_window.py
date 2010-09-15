@@ -123,9 +123,12 @@ class Options(object):
         #print (self.search_settings_tree)
         
         window_dict = {}        
-        
-        window_dict['last_password'] = self.parent.tc_options_password.GetValue()
-        window_dict['last_user'] = self.parent.tc_options_username.GetValue()
+        # **
+        try:        
+            window_dict['last_password'] = self.parent.tc_options_password.GetValue().encode('utf8')
+            window_dict['last_user'] = self.parent.tc_options_username.GetValue().encode('utf8')
+        except Exception, expt:
+            print "SaveOptions: " + str(Exception) + str(expt)
         #str(int( to convert true/fales to 1/0
         window_dict['list_clear'] = str(int(self.parent.cb_options_list_clear.GetValue()))
         #window_dict['alternate_source'] = str(int(self.parent.cb_options_alternate.GetValue()))
@@ -142,7 +145,11 @@ class Options(object):
         window_dict['scrobble'] = str(int(self.parent.cb_options_scrobble.GetValue()))
         window_dict['prefetch'] = str(int(self.parent.cb_options_prefetch.GetValue()))
         #window_dict['bitrate'] = str(self.parent.ch_options_bitrate.GetStringSelection())
-        window_dict['record_dir'] = self.parent.bu_options_record_dir.GetLabel()
+        #**
+        try:
+            window_dict['record_dir'] = self.parent.bu_options_record_dir.GetLabel().encode('utf8')
+        except Exception, expt:
+            print "SaveOptions: " + str(Exception) + str(expt)
         window_dict['cache_size'] = str(self.parent.sl_options_cache_size.GetValue())
         
         minutes = self.parent.sc_options_song_minutes.GetValue()
