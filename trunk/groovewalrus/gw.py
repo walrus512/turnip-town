@@ -22,12 +22,7 @@ Place, Suite 330, Boston, MA 02111-1307 USA
 import wx
 import wx.html
 import wx.xrc as xrc
-#import wx.animate
-#import wx.media
 from wx.lib.pubsub import Publisher as pub
-#import wx.aui
-#import  wx.gizmos as gizmos
-#from wx.lib.flashwin import FlashWindow
 
 import os
 import sys
@@ -102,7 +97,7 @@ from main_thirdp import grooveshark_old
 #from plugins.zongdora import zongdora
 #from plugins.web_remote import web_remote
 
-PROGRAM_VERSION = "0.321"
+PROGRAM_VERSION = "0.322"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -114,10 +109,8 @@ if os.path.isfile(SYSLOC + os.sep + "layout.xml") == False:
     SYSLOC = os.path.abspath(os.getcwd())
 # set the working dir too
 os.chdir(SYSLOC)
-
     
 GRAPHICS_LOCATION = os.path.join(SYSLOC, 'graphics') + os.sep
-
 RESFILE = SYSLOC + os.sep + "layout.xml"
 P_ICON = SYSLOC + os.sep + "gw.ico"
 
@@ -152,6 +145,7 @@ SECRET = ""
 LASTFM_CLIENT_ID = 'gws'
 
 CHARSET = 'utf-8'
+FRAME_WIDTH = 695
 
 class GWApp(wx.App):
     def OnInit(self):
@@ -176,9 +170,7 @@ class GWApp(wx.App):
 
 class MainFrame(wx.Frame): 
     def __init__(self): 
-        wx.Frame.__init__(self, None, -1, PROGRAM_NAME + ' ' + PROGRAM_VERSION, size=(695, 530), pos=(200,200), style=wx.DEFAULT_FRAME_STYLE|wx.WANTS_CHARS) #^(wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX)) #, style=wx.STAY_ON_TOP) 
-        #panel = wx.Panel(self, -1, size=(400, 100)) 
-        #self.SetTransparent(180)
+        wx.Frame.__init__(self, None, -1, PROGRAM_NAME + ' ' + PROGRAM_VERSION, size=(FRAME_WIDTH, 530), pos=(200,200), style=wx.DEFAULT_FRAME_STYLE|wx.WANTS_CHARS) #^(wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX)) #, style=wx.STAY_ON_TOP) 
         
         # -- initialize i18n
         self.initI18n()
@@ -198,7 +190,7 @@ class MainFrame(wx.Frame):
         self.tray_icon = None
         
     def UseTrayIcon(self):
-        self.tray_icon =wx.TaskBarIcon()
+        self.tray_icon = wx.TaskBarIcon()
         icon = wx.Icon(P_ICON, wx.BITMAP_TYPE_ICO)
         self.tray_icon.SetIcon(icon, 'GrooveWalrus')
         wx.EVT_TASKBAR_LEFT_UP(self.tray_icon, self.OnTrayLeftClick)
@@ -230,9 +222,12 @@ class MainFrame(wx.Frame):
         #localization
         #http://wiki.wxpython.org/Internationalization
         #http://wiki.wxpython.org/XRCAndI18N
-        wx.Locale.AddCatalogLookupPathPrefix(os.path.join(os.getcwd(), 'locale'))
-        self.l18n = wx.Locale(wx.LANGUAGE_DEFAULT)
-        self.l18n.AddCatalog('layout')        
+        self.FILEDB = system_files.GetDirectories(self).DatabaseLocation()
+        ignore_locale = options_window.GetSetting('locale-ignore', self.FILEDB)
+        if (ignore_locale == False) | (ignore_locale != "1"):
+            wx.Locale.AddCatalogLookupPathPrefix(os.path.join(os.getcwd(), 'locale'))
+            self.l18n = wx.Locale(wx.LANGUAGE_DEFAULT)
+            self.l18n.AddCatalog('layout')
         #    u'en' : (wx.LANGUAGE_ENGLISH, u'en_US.UTF-8'),
         #    u'es' : (wx.LANGUAGE_SPANISH, u'es_ES.UTF-8'),
         #    u'fr' : (wx.LANGUAGE_FRENCH, u'fr_FR.UTF-8'),
@@ -258,8 +253,6 @@ class MainPanel(wx.Panel):
         self.main_playlist_location_bak = system_files.GetDirectories(self).DataDirectory() + os.sep + "playlist.bak"
         self.working_directory = SYSLOC
         self.FILEDB = system_files.GetDirectories(self).DatabaseLocation()
-        ##self.faves_playlist_location = system_files.GetDirectories(self).DataDirectory() + os.sep + "faves.xspf"
-        ##self.faves_playlist_location_bak = system_files.GetDirectories(self).DataDirectory() + os.sep + "faves.bak"
         
         # create/update database ----------
         local_songs.DbFuncs().create_tables() 
@@ -384,8 +377,8 @@ class MainPanel(wx.Panel):
         self.tr_playlist_history.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.OnPlaylistTreeActivate)
         
         ##dynamic listctrl resize
-        ##wx.EVT_SIZE(self.parent, self.ResizePlaylist)
-        ##wx.EVT_MAXIMIZE(self.parent, self.ResizePlaylist)
+        wx.EVT_SIZE(self.parent, self.DynamicResizePlaylist)
+        wx.EVT_MAXIMIZE(self.parent, self.DynamicResizePlaylist)
         
         # background image --------------------
         use_background = options_window.GetSetting('background-use-graphic', self.FILEDB)
@@ -2177,6 +2170,29 @@ class MainPanel(wx.Panel):
         self.nb_main.SetPageText(NB_PLAYLIST, 'Playlist (' + str(self.lc_playlist.GetItemCount()) + ')')
         #if event:
         #    event.Skip()
+        
+    def DynamicResizePlaylist(self, event=None):
+        #get frame size, if > minimum size, set default
+        #larger than, set dynamic
+        #print event.GetEventType()
+        # maximize event gets current size, not size after it's been maximized
+        # so we need to call after
+        wx.CallAfter(self.DyRes)
+        event.Skip()
+            
+    def DyRes(self):
+        if self.parent.GetSize()[0] > (FRAME_WIDTH + 100):
+            flex_max = self.lc_playlist.GetSize()[0] - (25 + 50)
+            #print self.lc_playlist.GetSize()[0]
+            self.lc_playlist.SetColumnWidth(C_RATING, 25)
+            self.lc_playlist.SetColumnWidth(C_ARTIST, flex_max*.28)
+            self.lc_playlist.SetColumnWidth(C_SONG, flex_max*.38)
+            self.lc_playlist.SetColumnWidth(C_ALBUM, flex_max*.28)
+            self.lc_playlist.SetColumnWidth(C_ID, 0)
+            self.lc_playlist.SetColumnWidth(C_TIME, 50)#wx.LIST_AUTOSIZE_USEHEADER)
+            #print 'resizer'
+        else:
+            self.ResizePlaylist()        
         
     def MakeShareLink(self, event):
         # make link for current song/artist, copy to clippboard
