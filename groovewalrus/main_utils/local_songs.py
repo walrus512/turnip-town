@@ -20,14 +20,17 @@ Place, Suite 330, Boston, MA 02111-1307 USA
 """
 
 import os
+import sys
 import sqlite3
 import time
+import wx
+
 from threading import Thread
 
 from main_thirdp import mp3tag
 from main_utils import system_files
 
-import sys
+
 SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0]))
 if os.path.isfile(SYSLOC + os.sep + "layout.xml") == False:
     SYSLOC = os.path.abspath(os.getcwd())
@@ -182,7 +185,11 @@ class DbFuncs(object):
         t = self.MakeQuery(query, qlimit, folder_query)#, with_count)
         #print t
         c.execute(t)
-        h = c.fetchall()
+        try:        
+            h = c.fetchall()
+        except Exception, expt:
+            print "GetResultsArray: " + str(Exception)+str(expt)
+            return r_arr
         counter = 0
         for x in h:
             file_name = ''
@@ -292,7 +299,7 @@ class DbFuncs(object):
         #print t
         if len(h) >= 1:
             g_track_id = h[0][0]        
-            c.execute('UPDATE m_tracks SET track_time= ' + str(p_track_time) + ', tag_id=' + str(p_tag_id) + ', artist="' + p_artist + '", song="' + p_song + '", album="' + p_album + '", album_art_file="' + p_album_art_file + '" WHERE track_id=' + str(g_track_id))
+            c.execute('UPDATE m_tracks SET track_time= ?, tag_id= ?, artist= ?, song= ?, album= ?, album_art_file= ? WHERE track_id= ?', (str(p_track_time), str(p_tag_id), p_artist, p_song, p_album, p_album_art_file, str(g_track_id)))
             conn.commit()
         else:
             c.execute('INSERT INTO m_tracks values (null,?,?,?,?,?,?,?,?)', (p_grooveshark_id, p_music_id, p_track_time, p_tag_id, p_artist, p_song, p_album, p_album_art_file))
@@ -351,7 +358,7 @@ class DbFuncs(object):
         if len(h) >= 1:
             tag_id = h[0][0]
         else:
-            c.execute('INSERT INTO m_tag (tag_label) VALUES ("' + p_tag_label + '")')
+            c.execute("INSERT INTO m_tag (tag_label) VALUES (?)", (p_tag_label,))
             conn.commit()
             t = 'SELECT tag_id FROM m_tag WHERE tag_label="' + p_tag_label + '"'
             c.execute(t)
@@ -375,10 +382,10 @@ class DbFuncs(object):
         #print h
         if len(h) >= 1:
             g_pop_id = h[0][0]
-            c.execute('UPDATE m_pop SET track_id= ' + str(p_track_id) + ', listeners=' + str(p_listeners) + ', playcount=' + str(p_playcount) + ' WHERE pop_id =' + str(g_pop_id))
+            c.execute("UPDATE m_pop SET track_id= ?, listeners= ?, playcount= ? WHERE pop_id = ?", (p_track_id, p_listeners, p_playcount, g_pop_id))
             conn.commit()
         else:
-            c.execute('INSERT INTO m_pop (track_id, listeners, playcount) VALUES (' + str(p_track_id) + ', ' + str(p_listeners) + ', ' + str(p_playcount) + ')')
+            c.execute("INSERT INTO m_pop (track_id, listeners, playcount) VALUES (?,?,?)", (p_track_id, p_listeners, p_playcount))
             conn.commit()
         c.close()
         
@@ -400,10 +407,10 @@ class DbFuncs(object):
         if len(h) >= 1:
             g_playcount_id = h[0][0]
             g_local_playcount = int(h[0][1]) + 1
-            c.execute('UPDATE m_playcount SET track_id= ' + str(p_track_id) + ', local_playcount=' + str(g_local_playcount) + ', last_play_date=datetime("now","localtime") WHERE playcount_id =' + str(g_playcount_id))
+            c.execute('UPDATE m_playcount SET track_id= ?, local_playcount= ?, last_play_date=datetime("now","localtime") WHERE playcount_id = ?',  (p_track_id, g_local_playcount, g_playcount_id))
             conn.commit()
         else:
-            c.execute('INSERT INTO m_playcount (track_id, local_playcount, last_play_date) VALUES (' + str(p_track_id) + ', 1, datetime("now","localtime"))')
+            c.execute('INSERT INTO m_playcount (track_id, local_playcount, last_play_date) VALUES (?, 1, datetime("now","localtime"))', (p_track_id,))
             conn.commit()
         c.close()
         
@@ -423,10 +430,10 @@ class DbFuncs(object):
         h = c.fetchall()
         #print h
         if len(h) >= 1:                        
-            c.execute('UPDATE m_rating SET rating_type_id= ' + str(p_rating_id) + ' WHERE track_id =' + str(p_track_id))
+            c.execute("UPDATE m_rating SET rating_type_id= ? WHERE track_id = ?", (p_rating_id, p_track_id))
             conn.commit()
         else:
-            c.execute('INSERT INTO m_rating (track_id, rating_type_id) VALUES (' + str(p_track_id) + ', ' + str(p_rating_id) +')')
+            c.execute('INSERT INTO m_rating (track_id, rating_type_id) VALUES (?,?)', (p_track_id, p_rating_id))
             conn.commit()
         c.close()
         
@@ -445,7 +452,7 @@ class DbFuncs(object):
             #conn.commit()
             pass
         else:
-            c.execute('INSERT INTO m_feeds (feed_url) VALUES ("' + str(p_feed_url) +'")')
+            c.execute("INSERT INTO m_feeds (feed_url) VALUES (?)", (p_feed_url,))
             conn.commit()
         c.close()
         
@@ -503,7 +510,7 @@ class DbFuncs(object):
         h = c.fetchall()
         #print h
         if len(h) >= 1:                        
-            c.execute('UPDATE m_playlist_labels SET playlist_label= "' + str(p_label) + '" WHERE playlist_date ="' + str(p_date_time) + '"')
+            c.execute("UPDATE m_playlist_labels SET playlist_label= ? WHERE playlist_date = ?", (p_label, str(p_date_time)))
             conn.commit()            
         else:
             c.execute('INSERT INTO m_playlist_labels (playlist_label, playlist_date) VALUES (?,?)', (p_label, p_date_time))
@@ -528,236 +535,6 @@ class DbFuncs(object):
 # **********************************
 #FillDb()
 
-#After adding directories which contain your mp3 files to your song collection (may take some time depending on number of files), the directories will be monitored and updated as new mp3's are added.
-
-import wx
-import wx.xrc as xrc
-
-SONGDB_RESFILE = SYSLOC + os.sep + 'layout_songdb.xml'
-
-class SongDBWindow(wx.Dialog):
-    """Song DB Window for adding songs"""
-    def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, -1, "Song Collection Locations", size=(600, 400), pos=(10,10))#, style=wx.FRAME_SHAPED) #STAY_ON_TOP)#wx.FRAME_SHAPED)
-        self.parent = parent
-        
-        # XML Resources can be loaded from a file like this:
-        res = xrc.XmlResource(SONGDB_RESFILE)
-
-        # Now create a panel from the resource data
-        panel = res.LoadPanel(self, "m_pa_song_db")
-
-        # control references --------------------
-        #self.st_songdb_total = xrc.XRCCTRL(self, 'm_st_songdb_total')
-        #self.st_songdb_last = xrc.XRCCTRL(self, 'm_st_songdb_last')
-        self.st_songdb_header = xrc.XRCCTRL(self, 'm_st_songdb_header')
-        #self.bm_search_close = xrc.XRCCTRL(self, 'm_bm_search_close')
-        #self.dp_songdb_dir = xrc.XRCCTRL(self, 'm_dp_songdb_dir')
-        
-        
-        # bindings ----------------
-        self.Bind(wx.EVT_BUTTON, self.OnAddClick, id=xrc.XRCID('m_bu_songdb_add'))
-        #self.Bind(wx.EVT_BUTTON, self.OnSearchListClick, id=xrc.XRCID('m_bb_search_add'))
-        #self.Bind(wx.EVT_BUTTON, self.OnSearchClear, id=xrc.XRCID('m_bb_search_clear'))
-        #self.Bind(wx.EVT_TEXT_ENTER, self.OnSearchClick, self.tc_search_text)
-        #self.bm_search_close.Bind(wx.EVT_LEFT_UP, self.hide_me)
-        
-        self.Bind(wx.EVT_LEFT_DOWN, self.OnMouseLeftDown)
-        self.Bind(wx.EVT_MOTION, self.OnMouseMotion)
-        self.Bind(wx.EVT_LEFT_UP, self.OnMouseLeftUp)
-        self.Bind(wx.EVT_RIGHT_UP, self.OnRightUp)
-        self.st_songdb_header.Bind(wx.EVT_LEFT_DOWN, self.OnMouseLeftDown)
-        self.st_songdb_header.Bind(wx.EVT_MOTION, self.OnMouseMotion)
-        self.st_songdb_header.Bind(wx.EVT_LEFT_UP, self.OnMouseLeftUp)
-        self.st_songdb_header.Bind(wx.EVT_RIGHT_UP, self.OnRightUp)
-                
-        # set layout --------------
-        sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(panel, 1, wx.EXPAND|wx.ALL, 5)
-        self.SetSizer(sizer)
-        self.SetAutoLayout(True)
-        
-        
-    def OnGetItemText(self, item, col):
-        return "Item %d, column %d" % (item, col)
-        
-#----------------------------------------------------------------------
-    def show_me(self):
-        # show the window
-        self.MoveMe()
-        self.Show(True) # Shows it
-        #totals = DbFuncs().GetCountAndLast()
-        #self.st_songdb_total.SetLabel(str(totals[0]))
-        #self.st_songdb_last.SetLabel(totals[1])
-        
-    def MoveMe(self, event=None):
-        # show the window        
-        ps = self.parent.GetSize()
-        pp = self.parent.GetScreenPosition()
-        ss = self.GetSize()        
-        xn = pp[0] + (ps[0] - ss[0])
-        yn = pp[1] + (ps[1] - ss[1])
-        #self.SetSize((450, 450))
-        self.SetPosition((xn, yn))        
-        
-    def hide_me(self, event=None):
-        # hide the window
-        self.Show(False)
-# --------------------------------------------------------- 
-    def OnAddClick(self, event):
-        # show the window
-        base_path = self.dp_songdb_dir.GetPath()
-        
-        maxlen = 150
-
-        dlg = wx.ProgressDialog("Adding Songs", " ", maximum = maxlen, parent=self, style = wx.PD_CAN_ABORT) # | wx.PD_APP_MODAL)
-        
-        #THREAD
-        current = FileThread(dlg, self.parent, self.dp_songdb_dir.GetPath(), maxlen)
-        #THREAD
-        current.start()
-        #dlg.Update(count)                
-        #dlg.Destroy()        
-
-# --------------------------------------------------------- 
-# titlebar-like move and drag
-    
-    def OnMouseLeftDown(self, evt):
-        self.Refresh()
-        self.ldPos = evt.GetEventObject().ClientToScreen(evt.GetPosition())
-        self.wPos = self.ClientToScreen((0,0))
-        self.CaptureMouse()
-
-    def OnMouseMotion(self, evt):
-        if evt.Dragging() and evt.LeftIsDown():
-            dPos = evt.GetEventObject().ClientToScreen(evt.GetPosition())
-            #nPos = (self.wPos.x + (dPos.x - self.ldPos.x), -2)
-            nPos = (self.wPos.x + (dPos.x - self.ldPos.x), self.wPos.y + (dPos.y - self.ldPos.y))
-            self.Move(nPos)
-            #try:
-            #    self.popup.IsShown()
-            #except AttributeError:
-            #    pass
-            #else:
-            #    if (self.popup.IsShown()):
-            #        pPos = (self.wPos.x + (dPos.x - self.ldPos.x),34)
-             #       self.popup.Move(pPos)
-
-    def OnMouseLeftUp(self, evt):
-        self.ReleaseMouse()
-
-    def OnRightUp(self, evt):
-        self.hide_me()
-        #self..Destroy()
-        
-# --------------------------------------------------------- 
-#================================================           
-#EMULATE=0
-
-#import pymedia.muxer as muxer, pymedia.audio.acodec as acodec, pymedia.audio.sound as sound
-#import time
-
-#class Player(object): 
-#    def __init__(self):
-#        self.local_play_status = True
-#        self.paused = False
-#        self.snd = None
-                
-#    def stop_play(self):
-#        #self.stop()
-#        self.local_play_status = False
-#        if os.name != 'nt':
-#            time.sleep(4)
-        #self.stop()
-            
-#    def toggle_pause(self):
-#        if self.snd:
-#            if self.paused == False:
-#                self.pause()
-#            else:
-#                self.unpause()
-            
-#    def pause(self):
-#        """ Pause playing the current file """
- #       if self.snd.isPlaying():
-  #          self.paused= True
-   #         if self.snd:
-    #            self.snd.pause()
-                
-#    def unpause(self):
- #       """ Resume playing the current file """
-  #      if self.snd.isPlaying():
-   #         if self.snd:
-    #            self.snd.unpause()
-     #   self.paused= False
-  
-#    def isPaused( self ):
- #       """ Returns whether playback is paused """
-  #      return self.paused
-   #     
-#    def stop(self):
- #       """ Stop playing the current file """
-  #      if self.snd.isPlaying():            
-   #         if self.snd:
-    #            self.snd.stop()
-#
-#    def play(self, name, card=0, rate=1, tt=-1):
- #   
- #       #dm= muxer.Demuxer( str.split( name, '.' )[ -1 ].lower() )
-  #      dm= muxer.Demuxer( 'mp3' )
-   #     snds= sound.getODevices()
-    #    if card not in range( len( snds ) ):
-     #       raise 'Cannot play sound to non existent device %d out of %d' % ( card+ 1, len( snds ) )
-      #  f= open( name, 'rb' )
-#        self.snd= resampler= dec= None
- #       s= f.read( 32000 )
-  #      t= 0
-   #     while (len( s )):
-    #        #print self.local_play_status
-     #       frames= dm.parse( s )
-      #      if frames:
-       #         for fr in frames:
-        #        # Assume for now only audio streams
-    #
-     #               if dec== None:
-      #                  #print dm.getHeaderInfo(), dm.streams
-       #                 dec= acodec.Decoder( dm.streams[ fr[ 0 ] ] )
-        #    
-         #           r= dec.decode( fr[ 1 ] )
-          #          if r and r.data:
-           #             if self.snd== None:
-            #                #print 'Opening sound with %d channels -> %s' % ( r.channels, snds[ card ][ 'name' ] )
-             #               self.snd= sound.Output( int( r.sample_rate* rate ), r.channels, sound.AFMT_S16_LE, card )
-                            #print r.channels
-              #              if rate< 1 or rate> 1:
-               #                 resampler= sound.Resampler( (r.sample_rate,r.channels), (int(r.sample_rate/rate),r.channels) )
-                #                print 'Sound resampling %d->%d' % ( r.sample_rate, r.sample_rate/rate )
-              
-                 #       data= r.data
-                  #      if resampler:
-                   #         data= resampler.resample( data )
-                    #    if EMULATE:
-                     #       # Calc delay we should wait to emulate snd.play()
-    #
-     #                       d= len( data )/ float( r.sample_rate* r.channels* 2 )
-      #                      time.sleep( d )
-       #                     if int( t+d )!= int( t ):
-        #                        print 'playing: %d sec\r' % ( t+d ),
-         #                   t+= d
-          #              else:
-           #                 self.snd.play( data )
-            #            #print snd.getPosition()
-  #          if tt> 0:
-   #             if self.snd and self.snd.getPosition()< tt:
-    #                break
-
-     #       s= f.read( 512 )
-      #      if self.local_play_status == False:               
-       #         break
-                    
- #       while self.snd.isPlaying():
-  #          time.sleep( 0.05 )
-
 #====================================================
 class VirtualList(wx.ListCtrl):
     def __init__(self):
@@ -765,7 +542,7 @@ class VirtualList(wx.ListCtrl):
         p = wx.PreListCtrl()
         # the Create step is done by XRC.
         self.PostCreate(p)
-        self.FILEDB = system_files.GetDirectories(None).DataDirectory() + os.sep + 'gravydb.sq3'
+        self.FILEDB = system_files.GetDirectories(None).DatabaseLocation()
     
     def OnGetItemText(self, item, col):
         ritem = self.GetRow(item, col)
@@ -781,7 +558,7 @@ class VirtualList(wx.ListCtrl):
         if self.query_flag == True:            
             conn = sqlite3.connect(self.FILEDB)
             # for unicode/crazy text errors
-            conn.text_factory = str
+            #***conn.text_factory = str
             c = conn.cursor()
             tq = "SELECT music_id, file_name, folder_name, folder_path FROM m_files WHERE music_id = " + str(row_num)            
             #tq = "SELECT music_id, file_name, folder_name, folder_path FROM m_files LIMIT 1 OFFSET " + str(row_num - 1)
@@ -822,59 +599,6 @@ class VirtualList(wx.ListCtrl):
             #print self.res_arr
             
             self.query_flag = False
-
-
-        
-        
-# ####################################
-class FileThread(Thread): 
-    # grab rss feeds, thread style  
-    def __init__(self, parent, grand_parent, base_path, maxlen):
-        Thread.__init__(self)
-        self.parent = parent
-        self.grand_parent = grand_parent
-        self.base_path = base_path
-        self.maxlen = maxlen
-        self.FILEDB = system_files.GetDirectories(self.grand_parent).DataDirectory() + os.sep + 'gravydb.sq3'
-                        
-    def run(self):
-        self.FillDb(self.base_path)
-
-# ---------------------------------------------------------
-    def FillDb(self, base_path):
-        #basePath = 'E:\\Music\\Albums\\Albums_01'
-        #basePath = 'E:\\Music'
-            
-        allfiles = []
-        subfiles = []
-        
-        conn = sqlite3.connect(self.FILEDB)
-        c = conn.cursor()
-        counter = 1
-        
-        for root, dirs, files in os.walk(base_path):
-            for f in files:
-                if f.endswith('.mp3'):
-                    #allfiles.append(os.path.join(root, f))
-                    #path = os.path.join(root, f).replace(os.sep, '/')
-                    path_n = root.rsplit(os.sep, 1)[0].replace(os.sep, '/')
-                    folder_n = root.rsplit(os.sep, 1)[1]
-                    file_n = f
-                    c.execute('INSERT INTO m_files values (null,?,?,?)', (path_n, folder_n, file_n))
-                    #CREATE TABLE m_files (file_id INTEGER PRIMARY KEY, folder_path TEXT, file_name TEXT, artist_name TEXT, song_name TEXT)
-                    conn.commit()
-                    #print file_n
-                    self.parent.Update(counter, file_n)
-                    #print path_n
-                    #print folder_n
-                    time.sleep(.05)
-                    counter = counter + 1
-                    if counter >= 90:
-                        counter = 10
-        c.close()
-        self.grand_parent.lc_scol_col.SetItemCount(GetCountAndLast()[0])
-        self.parent.Destroy()
-        
 
 #---------------------------------------------------------------------------
 # ####################################

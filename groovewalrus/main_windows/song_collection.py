@@ -25,6 +25,7 @@ import wx.xrc as xrc
 import os, sys
 import sqlite3
 from main_utils import system_files
+from main_utils import string_tools
 from threading import Thread
 import time
 
@@ -136,7 +137,7 @@ class SongDBWindow(wx.Dialog):
         if len(folder_path) > 0:
             conn = sqlite3.connect(self.FILEDB)
             c = conn.cursor()
-            c.execute('INSERT INTO m_folders (folder_name) VALUES ("' + str(folder_path) + '")')
+            c.execute("INSERT INTO m_folders (folder_name) VALUES (?)", (folder_path,))
             conn.commit()
             c.close()            
             self.GetLocations()
@@ -234,7 +235,7 @@ class FileThread(Thread):
         Thread.__init__(self)
         self.parent = parent
         self.base_path = base_path
-        self.FILEDB = system_files.GetDirectories(self.parent).DataDirectory() + os.sep + 'gravydb.sq3'
+        self.FILEDB = system_files.GetDirectories(self.parent).DatabaseLocation()
                         
     def run(self):
         self.FillDb(self.base_path)
@@ -253,28 +254,29 @@ class FileThread(Thread):
         c = conn.cursor()
         counter = 0
         first_dir = True
-        
+
         for root, dirs, files in os.walk(base_path):
+
             if first_dir == True:
                 self.parent.ga_songdb_index.SetRange(len(dirs) + 1)
                 first_dir = False
+
             for f in files:
                 if f.endswith('.mp3'):
-                    self.parent.st_songdb_file.SetLabel(f)
-                    path_n = root.rsplit(os.sep, 1)[0].replace(os.sep, '/')
-                    folder_n = root.rsplit(os.sep, 1)[1]
-                    file_n = f
+                    self.parent.st_songdb_file.SetLabel(f) #string_tools.unbork(f)
+                    path_n = string_tools.unbork(root.rsplit(os.sep, 1)[0].replace(os.sep, '/'))#, safe='/', want_unicode=True)
+                    folder_n = string_tools.unbork(root.rsplit(os.sep, 1)[1])#, safe='/', want_unicode=True)
+                    file_n = string_tools.unbork(f)#, safe='/', want_unicode=True)
                     
                     #check if file already exists in db
                     t = 'SELECT music_id FROM m_files WHERE folder_path = "' + path_n + '" AND folder_name = "' + folder_n + '" AND file_name = "' + file_n + '"'
                     c.execute(t)
                     h = c.fetchall()
-                    
                     #add if not found
                     if len(h) == 0:                    
                         self.parent.st_songdb_status.SetLabel("Adding")
                         c.execute('INSERT INTO m_files values (null,?,?,?)', (path_n, folder_n, file_n))                    
-                        conn.commit()                        
+                        conn.commit()
                     else:
                         self.parent.st_songdb_status.SetLabel("Skipping")
                     #print file_n
@@ -287,12 +289,16 @@ class FileThread(Thread):
         self.parent.st_songdb_status.SetLabel("Finished")
         self.parent.parent.tab_song_collection.lc_scol_col.SetItemCount(GetCount())
     
+    def messy(self, mess):
+        dlg = wx.MessageDialog(self.parent, mess, 'Alert', wx.OK | wx.ICON_WARNING)
+        if (dlg.ShowModal() == wx.ID_OK):
+            dlg.Destroy()
         
 #-----------------------------------------------------
 
 
 def GetCount():
-    FILEDB = system_files.GetDirectories(None).DataDirectory() + os.sep + 'gravydb.sq3'
+    FILEDB = system_files.GetDirectories(None).DatabaseLocation()
     # get row count
     rcount = 0    
     conn = sqlite3.connect(FILEDB)
@@ -307,7 +313,7 @@ def GetCount():
 
 def AddSingleFile(complete_filename):
     #add a single file to the database, files table
-    FILEDB = system_files.GetDirectories(None).DataDirectory() + os.sep + 'gravydb.sq3'
+    FILEDB = system_files.GetDirectories(None).DatabaseLocation()
         
     conn = sqlite3.connect(FILEDB)
     c = conn.cursor()

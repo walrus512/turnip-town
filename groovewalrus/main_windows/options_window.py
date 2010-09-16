@@ -24,6 +24,7 @@ import sqlite3
 
 from main_utils.read_write_xml import xml_utils
 from main_utils import system_files
+from main_utils import string_tools
 
 import sys, os
 
@@ -125,8 +126,8 @@ class Options(object):
         window_dict = {}        
         # **
         try:        
-            window_dict['last_password'] = self.parent.tc_options_password.GetValue().encode('utf8')
-            window_dict['last_user'] = self.parent.tc_options_username.GetValue().encode('utf8')
+            window_dict['last_password'] = string_tools.unescape(self.parent.tc_options_password.GetValue())
+            window_dict['last_user'] = string_tools.unescape(self.parent.tc_options_username.GetValue())
         except Exception, expt:
             print "SaveOptions: " + str(Exception) + str(expt)
         #str(int( to convert true/fales to 1/0
@@ -147,7 +148,7 @@ class Options(object):
         #window_dict['bitrate'] = str(self.parent.ch_options_bitrate.GetStringSelection())
         #**
         try:
-            window_dict['record_dir'] = self.parent.bu_options_record_dir.GetLabel().encode('utf8')
+            window_dict['record_dir'] = string_tools.unescape(self.parent.bu_options_record_dir.GetLabel())
         except Exception, expt:
             print "SaveOptions: " + str(Exception) + str(expt)
         window_dict['cache_size'] = str(self.parent.sl_options_cache_size.GetValue())
