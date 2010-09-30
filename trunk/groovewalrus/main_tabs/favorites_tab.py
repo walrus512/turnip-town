@@ -199,7 +199,7 @@ class FavoritesTab(wx.ScrolledWindow):
         self.lc_faves.SetStringItem(current_count, C_ID, url)
         self.lc_faves.SetStringItem(current_count, C_TIME, duration)
         
-        self.ResizeFaves()
+        #self.ResizeFaves()
               
     def SetRatingFilters(self):
         #create the where clause to filter based on ratings
@@ -265,17 +265,30 @@ class FavoritesTab(wx.ScrolledWindow):
             except TypeError:
                 pass
         c.close()
-        self.ResizeFaves()
+        #self.ResizeFaves()
                 
     def ResizeFaves(self):
         # 
-        self.lc_faves.SetColumnWidth(0, 25)
-        self.lc_faves.SetColumnWidth(1, 160)
-        self.lc_faves.SetColumnWidth(2, 230)
-        self.lc_faves.SetColumnWidth(3, 140)
-        self.lc_faves.SetColumnWidth(4, 0)#wx.LIST_AUTOSIZE)
-        self.lc_faves.SetColumnWidth(5, 50)#wx.LIST_AUTOSIZE_USEHEADER)
+        self.lc_faves.SetColumnWidth(C_RATING, 25)
+        self.lc_faves.SetColumnWidth(C_ARTIST, 160)
+        self.lc_faves.SetColumnWidth(C_SONG, 230)
+        self.lc_faves.SetColumnWidth(C_ALBUM, 140)
+        self.lc_faves.SetColumnWidth(C_ID, 0)#wx.LIST_AUTOSIZE)
+        self.lc_faves.SetColumnWidth(C_TIME, 50)#wx.LIST_AUTOSIZE_USEHEADER)
         
+    def DyRes(self):
+        """ Resizes the listcontrol dynamically """
+        flex_max = self.lc_faves.GetSize()[0] - (25 + 50)
+        #print self.lc_playlist.GetSize()[0]
+        if flex_max > 1000:
+            flex_max = 1000
+        self.lc_faves.SetColumnWidth(C_RATING, 25)
+        self.lc_faves.SetColumnWidth(C_ARTIST, flex_max*.28)
+        self.lc_faves.SetColumnWidth(C_SONG, flex_max*.38)
+        self.lc_faves.SetColumnWidth(C_ALBUM, flex_max*.28)
+        self.lc_faves.SetColumnWidth(C_ID, 0)
+        self.lc_faves.SetColumnWidth(C_TIME, 50)#wx.LIST_AUTOSIZE_USEHEADER)
+
              
     def OnFavesRightClick(self, event):
         val = self.lc_faves.GetFirstSelected()

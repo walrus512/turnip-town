@@ -27,12 +27,12 @@ import os
 from main_utils.read_write_xml import xml_utils
 from main_utils import system_files
 from main_utils import jiwa
-FLASH_ENABLED = True
+#FLASH_ENABLED = True
 try:
     from main_utils import player_flash
 except Exception, expt:
-    print str(Exception) + str(expt)
-    FLASH_ENABLED = False    
+    print "Flash plugin: "+ str(Exception) + str(expt)
+    #FLASH_ENABLED = False    
 #from wx.lib.flashwin import FlashWindow
 
 #SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0]))
@@ -97,13 +97,14 @@ class MainPanel(wx.Dialog):
         #self.LoadSetings()
         
         
-        if FLASH_ENABLED:
-            try:
-                self.parent.StopAll()
-            except Exception, expt:
-                print "Flash plug-in: " + str(Exception) + str(expt)
-            
-            #flash windows
+        #*** if FLASH_ENABLED:
+        try:
+            self.parent.StopAll()
+        except Exception, expt:
+            print "Flash plug-in: " + str(Exception) + str(expt)
+        
+        #flash windows
+        try:
             self.flash_window = player_flash.Player(self) #.mediaPlayer #FlashWindow(self.pa_flash_player, style=wx.NO_BORDER, size=wx.Size(500,140))#, size=(400, 120))
             self.parent.player = self.flash_window
             
@@ -116,19 +117,24 @@ class MainPanel(wx.Dialog):
             self.parent.use_web_music = True
             self.parent.flash = self.flash_window
             self.parent.use_backend = 'flash'
-            ##self.parent.web_music_url = DIZZLER_URL
-            ##self.parent.web_music_type = "Dizzler"
-            ##self.MakeModal(False)
-            
-            self.LoadSettings()
-            #self.SetService(None)
-            
-            #set a reciever to catch new song events
-            self.parent.SetReceiver(self, 'main.playback.load')
-        else:
+        except Exception, expt:
+            print "Flash plug-in: " + str(Exception) + str(expt)
             dlg = wx.MessageDialog(self, "Flash for Internet Explorer must be installed for this plug-in to work.", 'Alert', wx.OK | wx.ICON_WARNING)
             if (dlg.ShowModal() == wx.ID_OK):
-                dlg.Destroy()            
+                dlg.Destroy()
+        ##self.parent.web_music_url = DIZZLER_URL
+        ##self.parent.web_music_type = "Dizzler"
+        ##self.MakeModal(False)
+        
+        self.LoadSettings()
+        #self.SetService(None)
+        
+        #set a reciever to catch new song events
+        self.parent.SetReceiver(self, 'main.playback.load')
+        # ***else:
+        # ***    dlg = wx.MessageDialog(self, "Flash for Internet Explorer must be installed for this plug-in to work.", 'Alert', wx.OK | wx.ICON_WARNING)
+        # ***    if (dlg.ShowModal() == wx.ID_OK):
+        # ***        dlg.Destroy()            
         
     def GenericReceiverAction(self, message):
         """Sets the pubsub receiver action."""
@@ -251,8 +257,11 @@ class MainPanel(wx.Dialog):
         if evt.Dragging() and evt.LeftIsDown():
             dPos = evt.GetEventObject().ClientToScreen(evt.GetPosition())
             #nPos = (self.wPos.x + (dPos.x - self.ldPos.x), -2)
-            nPos = (self.wPos.x + (dPos.x - self.ldPos.x), self.wPos.y + (dPos.y - self.ldPos.y))
-            self.Move(nPos)
+            try:
+                nPos = (self.wPos.x + (dPos.x - self.ldPos.x), self.wPos.y + (dPos.y - self.ldPos.y))
+                self.Move(nPos)
+            except Exception, expt:
+                pass
 
     def OnMouseLeftUp(self, evt):
         try:

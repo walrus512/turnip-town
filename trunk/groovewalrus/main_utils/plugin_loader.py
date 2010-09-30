@@ -95,14 +95,16 @@ class PluginLoader():
                 id_counter = id_counter + 1
                 
                 #check for autoload
-                if self.AutoloadSetting(dir_name):
-                    z = self.LoadPluginWindow(None, dir_name)
-                    #check to see if it has the ability to add itself as a tab, and do so
-                    try:
-                        z.OnMakeTabClick()
-                    except AttributeError, msg:
-                        print msg
-                        pass
+                #*** if self.AutoloadSetting(dir_name):
+                #***     try:                   
+                #***         z = self.LoadPluginWindow(None, dir_name)
+                #***     except Exception, expt:
+                #***         print "LoadPlugins: " + str(Exception) + str(expt)
+                #***     #check to see if it has the ability to add itself as a tab, and do so
+                #***     try:
+                #***         z.OnMakeTabClick()
+                #***     except Exception, expt:
+                #***         "LoadPlugins: " + str(Exception) + str(expt)
                 
             counter = 0
             

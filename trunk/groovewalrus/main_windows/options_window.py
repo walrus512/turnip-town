@@ -183,40 +183,8 @@ class Options(object):
         else:
             self.parent.lastfm_toggle.Check(False)
             
-    def ShowAbout(self, program_name, program_version):
-        # First we create and fill the info object
-        info = wx.AboutDialogInfo()
-        info.Name = program_name
-        info.Version = program_version
-        info.Copyright = "(c) 1906 - 2018"
-        info.Description = """
-Products Used
-==========
-Groove Shark - http://grooveshark.com
-Last.fm - http://last.fm
-Music Brainz - http://musicbrainz.org
----
-Python - http://www.python.org
-wxpython - http://www.wxpython.org
-wxFormBuilder - http://wxformbuilder.org
-py2exe - http://www.py2exe.org
----
-pyMedia - http://pymedia.org
-Kaa Metadata - http://doc.freevo.org/2.0/Kaa
-EventGhost - http://sourceforge.net/projects/eventghost/
-GrooveShark.py - Zimmmer: http://hak5.org
-GrooveShark PyApi - http://github.com/Tim-Smart/grooveshack
-PyLast.py - http://code.google.com/p/pylast/
----
-Tango Icons - http://tango.freedesktop.org
-"Walrus" Photo - http://picasaweb.google.com/dschmitz
-"Gw" Icon - http://tinylab.deviantart.com/
-"""
-        info.WebSite = ("http://groove-walrus.turnip-town.net", "http://groove-walrus.turnip-town.net")
-
-        # Then we call wx.AboutBox giving it that info object
-        wx.AboutBox(info)
-        
+#-------------------------------------------------
+#-------------------------------------------------
         
 def ConvertTimeFormated(seconds):
     # convert seconds to mm:ss
