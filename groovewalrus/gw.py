@@ -69,6 +69,7 @@ from main_windows import options_window
 from main_windows import details_window
 from main_windows import song_collection
 from main_windows import advanced_options
+from main_windows import about_window
 
 from main_tabs import list_sifter_tab
 from main_tabs import favorites_tab
@@ -97,7 +98,7 @@ from main_thirdp import grooveshark_old
 #from plugins.zongdora import zongdora
 #from plugins.web_remote import web_remote
 
-PROGRAM_VERSION = "0.322"
+PROGRAM_VERSION = "0.323"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -172,6 +173,9 @@ class MainFrame(wx.Frame):
     def __init__(self): 
         wx.Frame.__init__(self, None, -1, PROGRAM_NAME + ' ' + PROGRAM_VERSION, size=(FRAME_WIDTH, 530), pos=(200,200), style=wx.DEFAULT_FRAME_STYLE|wx.WANTS_CHARS) #^(wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX)) #, style=wx.STAY_ON_TOP) 
         
+        # create/update database ----------
+        local_songs.DbFuncs().create_tables()
+        
         # -- initialize i18n
         self.initI18n()
         
@@ -244,18 +248,19 @@ class MainPanel(wx.Panel):
         self.parent = parent
         
         # set directories ------------
-        system_files.GetDirectories(self).DataDirectory()
-        self.image_save_location = system_files.GetDirectories(self).MakeDataDirectory('images') + os.sep
-        system_files.GetDirectories(self).MakeDataDirectory('updates') + os.sep
-        system_files.GetDirectories(self).MakeDataDirectory('plugins') + os.sep
-        self.playlist_save_location = system_files.GetDirectories(self).MakeDataDirectory('playlists') + os.sep
-        self.main_playlist_location = system_files.GetDirectories(self).DataDirectory() + os.sep + "playlist.xspf"
-        self.main_playlist_location_bak = system_files.GetDirectories(self).DataDirectory() + os.sep + "playlist.bak"
+        self.sys_files = system_files.GetDirectories(self)
+        self.sys_files.DataDirectory()
+        self.image_save_location = self.sys_files.MakeDataDirectory('images') + os.sep
+        self.sys_files.MakeDataDirectory('updates') + os.sep
+        self.sys_files.MakeDataDirectory('plugins') + os.sep
+        self.playlist_save_location = self.sys_files.MakeDataDirectory('playlists') + os.sep
+        self.main_playlist_location = self.sys_files.DataDirectory() + os.sep + "playlist.xspf"
+        self.main_playlist_location_bak = self.sys_files.DataDirectory() + os.sep + "playlist.bak"
         self.working_directory = SYSLOC
-        self.FILEDB = system_files.GetDirectories(self).DatabaseLocation()
+        self.FILEDB = self.sys_files.DatabaseLocation()
         
         # create/update database ----------
-        local_songs.DbFuncs().create_tables() 
+        #local_songs.DbFuncs().create_tables() 
         
         # xrc gui layout ------------------
         # XML Resources can be loaded from a file like this:
@@ -1455,7 +1460,7 @@ class MainPanel(wx.Panel):
             self.current_song.playlist_position = -1
             
     def OnAboutClick(self, event):
-        options_window.Options(self).ShowAbout(PROGRAM_NAME, PROGRAM_VERSION)
+        about_window.ShowAbout(PROGRAM_NAME, PROGRAM_VERSION)
 
     def MiniMode(self, event):
         if self.nb_main.IsShown():
@@ -2000,7 +2005,7 @@ class MainPanel(wx.Panel):
             finally:
                 f.close()
             #self.SavePlaylist(self.main_playlist_location)
-            self.ResizePlaylist()
+            #self.ResizePlaylist()
             self.GetAllSongRatings()
         
     def ReadPlaylist(self, filename):
@@ -2043,7 +2048,8 @@ class MainPanel(wx.Panel):
                 except TypeError:
                     print 'error:ReadPlaylist'
                     #pass
-            self.ResizePlaylist()
+            #self.ResizePlaylist()
+            self.GetAllSongRatings()
         
     def OnPlaylistRightClick(self, event):        
         # make a menu
@@ -2184,6 +2190,8 @@ class MainPanel(wx.Panel):
         if self.parent.GetSize()[0] > (FRAME_WIDTH + 100):
             flex_max = self.lc_playlist.GetSize()[0] - (25 + 50)
             #print self.lc_playlist.GetSize()[0]
+            if flex_max > 1000:
+                flex_max = 1000
             self.lc_playlist.SetColumnWidth(C_RATING, 25)
             self.lc_playlist.SetColumnWidth(C_ARTIST, flex_max*.28)
             self.lc_playlist.SetColumnWidth(C_SONG, flex_max*.38)
@@ -2191,8 +2199,11 @@ class MainPanel(wx.Panel):
             self.lc_playlist.SetColumnWidth(C_ID, 0)
             self.lc_playlist.SetColumnWidth(C_TIME, 50)#wx.LIST_AUTOSIZE_USEHEADER)
             #print 'resizer'
+            self.favorites.DyRes()
+            self.nb_main.SetPageText(NB_PLAYLIST, 'Playlist (' + str(self.lc_playlist.GetItemCount()) + ')')
         else:
-            self.ResizePlaylist()        
+            self.ResizePlaylist()
+            self.favorites.ResizeFaves()
         
     def MakeShareLink(self, event):
         # make link for current song/artist, copy to clippboard
@@ -2256,7 +2267,7 @@ class MainPanel(wx.Panel):
     def SuperAddToPlaylist(self, add_dict, plize=False):
         #backup current db
         #****self.SearchOrPlaylist(artist, song)
-        self.ResizePlaylist()
+        #self.ResizePlaylist()
         if len(add_dict) > 0:
             self.BackupList()
             if plize == True:
@@ -2643,7 +2654,7 @@ class MainPanel(wx.Panel):
             self.SavePlaylist(self.main_playlist_location_bak)
             self.undo_toggle = 0
             print 'backup list'
-            self.ResizePlaylist()
+            #self.ResizePlaylist()
                 
 # --------------------------------------------------------- 
 # musicbrainz----------------------------------------------  
@@ -2986,19 +2997,6 @@ class WebFetchThread(Thread):
         self.song = song
         self.album = album
         self.webfetchtype = webfetchtype
-        #self.lsp = local_songs.Player()
-        #if webfetchtype == 'PLAYLOCAL':
-        #    if panel.use_backend == 'pymedia':
-        #        self.lsp = local_songs.Player()
-            ##else:
-            ##    self.lsp = player_wx.Player(panel)
-               
-    #def stop(self):
-    #    self.lsp.stop_play()
-        #self.lsp.stop()
-                
-    #def pause(self):
-    #    self.lsp.toggle_pause()
                  
     def run(self):
         if self.webfetchtype == 'COVERS':
@@ -3253,9 +3251,9 @@ if __name__ == '__main__':
     #stdoutlog = file('c:\\gw.log', 'a+')
     #sys.stdout = stdoutlog
     #sys.stderr = stdoutlog    
-    redirect = False    
+    p_redirect = False
     for x in range(0, len(sys.argv)):
         if sys.argv[x] == '-r=true':
-            redirect = True
-    app = GWApp(redirect=redirect)
+            p_redirect = True
+    app = GWApp(redirect=p_redirect)
     app.MainLoop()

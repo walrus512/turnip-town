@@ -19,7 +19,6 @@ Place, Suite 330, Boston, MA 02111-1307 USA
 """
 
 import sys, os
-#import os.path
 import shutil
 import wx
 
@@ -35,10 +34,24 @@ class GetDirectories(object):
     def __init__(self, parent):
         self.sp = wx.StandardPaths.Get()        
         wx.GetApp().SetAppName("GrooveWalrus")
-        self.parent = parent
+        self.parent = parent        
+        
+    def IsPortable(self):
+        # check for portable mode
+        for x in range(0, len(sys.argv)):
+            if sys.argv[x] == '-p=true':
+                return True
+        return False
         
     def DataDirectory(self):
-        u_dir = string_wrap(self.sp.GetUserDataDir())
+  
+        if self.IsPortable:
+            u_dir = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), 'portable')
+            #if os.path.isfile(os.path.join(u_dir, "layout.xml")) == False:
+                #u_dir = os.path.join(os.path.abspath(os.getcwd()), 'portable')
+        else:        
+            u_dir = string_wrap(self.sp.GetUserDataDir())
+            
         if os.path.isdir(u_dir) == False:
             try:
                 os.mkdir(u_dir)
@@ -48,15 +61,34 @@ class GetDirectories(object):
                     dlg.Destroy()
         
         return u_dir
-        #return self.sp.GetUserDataDir()
+        
+    def TempDirectory(self):
+
+        if self.IsPortable:
+            p_name = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), 'portable')
+            #if os.path.isfile(os.path.join(p_name, "layout.xml")) == False:
+                #p_name = os.path.join(os.path.abspath(os.getcwd()), 'portable')
+        else:
+            p_name = string_wrap(self.sp.GetUserLocalDataDir())
+            
+        if os.path.isdir(p_name) == False:
+            try:
+                os.mkdir(p_name)
+            except:
+                dlg = wx.MessageDialog(self.parent, "Can't create directory\r\n %s" % (p_name), 'Alert', wx.OK | wx.ICON_WARNING)
+                if (dlg.ShowModal() == wx.ID_OK):
+                    dlg.Destroy()
+        return p_name
+        
+    # --------------------------------------------
         
     def DatabaseLocation(self):
         #sqlite requires utf-8
-        dbl = unicode(self.DataDirectory() + os.sep + 'gravydb.sq3').encode('utf-8')
+        dbl = unicode(os.path.join(self.DataDirectory(), 'gravydb.sq3')).encode('utf-8')
         return dbl
         
     def Mp3DataDirectory(self):
-        p_name = string_wrap(self.sp.GetUserDataDir() + self.Seperator() + 'mp3s')
+        p_name = string_wrap(os.path.join(self.DataDirectory(), 'mp3s'))
         if os.path.isdir(p_name) == False:
             try:
                 os.mkdir(p_name)
@@ -67,18 +99,7 @@ class GetDirectories(object):
         return p_name
         
     def MakeDataDirectory(self, dir_name):
-        p_name = string_wrap(self.sp.GetUserDataDir() + self.Seperator() + dir_name)
-        if os.path.isdir(p_name) == False:
-            try:
-                os.mkdir(p_name)
-            except:
-                dlg = wx.MessageDialog(self.parent, "Can't create directory\r\n %s" % (p_name), 'Alert', wx.OK | wx.ICON_WARNING)
-                if (dlg.ShowModal() == wx.ID_OK):
-                    dlg.Destroy()
-        return p_name
-        
-    def TempDirectory(self):
-        p_name = string_wrap(self.sp.GetUserLocalDataDir())
+        p_name = string_wrap(os.path.join(self.DataDirectory(), dir_name))
         if os.path.isdir(p_name) == False:
             try:
                 os.mkdir(p_name)
@@ -92,11 +113,11 @@ class GetDirectories(object):
         return os.sep
         
     def BuildTempFile(self, file_name):
-        return self.TempDirectory() + self.Seperator() + file_name
+        return os.path.join(self.TempDirectory(), file_name)
        
     def CopyFile(self, file_from, file_to_dir, file_to_name):
         file_name_scrubbed = replace_all(file_to_name)
-        file_to = file_to_dir + self.Seperator() + file_name_scrubbed
+        file_to = os.path.join(file_to_dir, file_name_scrubbed)
         #print file_from
         #print file_to
         try:

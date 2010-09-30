@@ -69,7 +69,7 @@ class SearchWindow(wx.Dialog):
         self.lc_search.InsertColumn(C_RATING,"Rating")
         self.lc_search.InsertColumn(C_ARTIST,"Artist")
         self.lc_search.InsertColumn(C_SONG,"Song")
-        self.lc_search.InsertColumn(C_SONG,"Album")
+        self.lc_search.InsertColumn(C_ALBUM,"Album")
         self.lc_search.InsertColumn(C_ID,"Id")
         self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.OnSearchListClick, self.lc_search)
 
