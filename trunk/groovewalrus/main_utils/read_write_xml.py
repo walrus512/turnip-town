@@ -90,12 +90,15 @@ class xml_utils():
             return track_list
         items = tree.findAll('track')
         for elements in items:
-            creator = CleanText(elements.findAll('creator')[0].string)
-            title = CleanText(elements.findAll('title')[0].string)
-            album = CleanText(elements.findAll('album')[0].string)
-            location = CleanText(elements.findAll('location')[0].string)
-            duration = CleanText(elements.findAll('duration')[0].string)            
-            track_list.append({'creator':creator, 'title':title, 'album':album, 'location':location, 'duration':duration})
+            try:
+                creator = CleanText(elements.findAll('creator')[0].string)
+                title = CleanText(elements.findAll('title')[0].string)
+                album = CleanText(elements.findAll('album')[0].string)
+                location = CleanText(elements.findAll('location')[0].string)
+                duration = CleanText(elements.findAll('duration')[0].string)            
+                track_list.append({'creator':creator, 'title':title, 'album':album, 'location':location, 'duration':duration})
+            except Exception, expt:
+                print "GetTracksSoup " + str(Exception) + str(expt)
             #text_out = CleanText(title[0].string)
             #rss_list.append(text_out)
         #print track_list
