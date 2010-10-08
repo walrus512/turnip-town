@@ -40,13 +40,35 @@ class GetDirectories(object):
         # check for portable mode
         for x in range(0, len(sys.argv)):
             if sys.argv[x] == '-p=true':
+                #print 'portable'
                 return True
         return False
         
+    def GetPortablePath(self):
+        # check for portable mode
+        for x in range(0, len(sys.argv)):
+              if sys.argv[x][0:4] == '-pp=':
+                #print sys.argv[x]
+                portable_path = sys.argv[x][4:]
+                return portable_path
+        return False
+        
+    def IsPortablePathCache(self):
+        # check for portable mode
+        for x in range(0, len(sys.argv)):
+            if sys.argv[x] == '-ppc=false':
+                #print 'portable'
+                return False
+        return True
+        
     def DataDirectory(self):
   
-        if self.IsPortable:
-            u_dir = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), 'portable')
+        if self.IsPortable():
+            if self.GetPortablePath() == False:
+                u_dir = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), 'portable')
+            else:
+                u_dir = self.GetPortablePath()
+            print u_dir
             #if os.path.isfile(os.path.join(u_dir, "layout.xml")) == False:
                 #u_dir = os.path.join(os.path.abspath(os.getcwd()), 'portable')
         else:        
@@ -64,8 +86,18 @@ class GetDirectories(object):
         
     def TempDirectory(self):
 
-        if self.IsPortable:
-            p_name = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), 'portable')
+        if self.IsPortable():
+            if self.GetPortablePath() == False:
+                #use regular portable path
+                p_name = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), 'portable')
+            else:
+                #use custom portable path
+                if self.IsPortablePathCache():
+                    #check if we want to use the custom portable path to cache files
+                    p_name = self.GetPortablePath()
+                else:
+                    #else use the regular portable path
+                    p_name = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), 'portable')
             #if os.path.isfile(os.path.join(p_name, "layout.xml")) == False:
                 #p_name = os.path.join(os.path.abspath(os.getcwd()), 'portable')
         else:
