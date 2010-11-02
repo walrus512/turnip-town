@@ -1,0 +1,554 @@
+# Spanish translation for groovewalrus
+# Copyright (c) 2010 Rosetta Contributors and Canonical Ltd 2010
+# This file is distributed under the same license as the groovewalrus package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: groovewalrus\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2005-02-18 16:51+0000\n"
+"PO-Revision-Date: 2010-10-18 01:05+0000\n"
+"Last-Translator: mrmillky <Unknown>\n"
+"Language-Team: Spanish <es@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2010-11-01 01:00+0000\n"
+"X-Generator: Launchpad (build Unknown)\n"
+
+msgid "None"
+msgstr "Ninguno"
+
+msgid "Playlist"
+msgstr "Lista de reproducción"
+
+msgid "Last.fm"
+msgstr "Last.fm"
+
+msgid "Similar Songs"
+msgstr "Canciones Similares"
+
+msgid "Similar Artists"
+msgstr "Artistas similares"
+
+msgid "Top Songs: Artist"
+msgstr "Top Canciones: Artista"
+
+msgid "Top Albums: Artist"
+msgstr "Top Álbumes: Artista"
+
+msgid "Top Songs: Album"
+msgstr "Top Canciones: Álbum"
+
+msgid "Top Songs: Geo"
+msgstr "Top Canciones: Por País"
+
+msgid "Top Tags: Song"
+msgstr "Top Etiquetas: Canciones"
+
+msgid "Top Songs: Tag"
+msgstr "Top Canciones: Etiquetas"
+
+msgid "Artist"
+msgstr "Artista"
+
+msgid "Song"
+msgstr "Canción"
+
+msgid "Album"
+msgstr "Álbum"
+
+msgid "My Last.fm"
+msgstr "Mi Last.fm"
+
+msgid "Me"
+msgstr "Yo"
+
+msgid "My Friends"
+msgstr "Amigos"
+
+msgid "My Neighbours"
+msgstr "Vecinos"
+
+msgid "Loved Songs"
+msgstr "Canciones favoritas"
+
+msgid "User"
+msgstr "Usuario"
+
+msgid "Get Tracks"
+msgstr "Obtener Pistas"
+
+msgid "Biography"
+msgstr "Biografía"
+
+msgid "Favorites"
+msgstr "Favoritos"
+
+msgid "Rating:"
+msgstr "Puntuación:"
+
+msgid "Collection"
+msgstr "Librería"
+
+msgid "Song Collection"
+msgstr "Librería de canciones"
+
+msgid "Files"
+msgstr "Archivos"
+
+msgid "Search:"
+msgstr "Buscar:"
+
+msgid "File"
+msgstr "Archivo"
+
+msgid "Folder"
+msgstr "Carpeta"
+
+msgid "Starts with..."
+msgstr "Empieza con..."
+
+msgid "Folders"
+msgstr "Carpetas"
+
+msgid "List Sifter"
+msgstr "Listas Personalizadas"
+
+msgid "Text PasteBox"
+msgstr "Pegue aquí las canciones"
+
+msgid "Pre:"
+msgstr "Pre"
+
+msgid "Sep:"
+msgstr "Entre"
+
+msgid "Post:"
+msgstr "Pos"
+
+msgid "Sift List"
+msgstr "¡Hazlo!"
+
+msgid "RSS Feeds"
+msgstr "Suscripciones RSS"
+
+msgid "Feed URL:"
+msgstr "URL del Feed:"
+
+msgid "Get RSS Feed"
+msgstr "Obtener Feed RSS"
+
+msgid "Options"
+msgstr "Ajustes"
+
+msgid "Main"
+msgstr "General"
+
+msgid "Double-clicking..."
+msgstr "Doble click"
+
+msgid "Locale:"
+msgstr "Localización:"
+
+msgid "'Add All' clears playlist before adding."
+msgstr "Limpia y añade todo"
+
+msgid "Drop id from search results."
+msgstr "No mostrar el ID en los resultados de la búsqueda."
+
+msgid "Minimize to tray."
+msgstr "Minimizar a la bandeja"
+
+msgid "Save music to:"
+msgstr "Guardar música en:"
+
+msgid "Automatically save new music to your collection."
+msgstr "Guardar música automaticamente a tu colección."
+
+msgid "Last.fm Account"
+msgstr "Cuenta de Last.fm"
+
+msgid "Username"
+msgstr "Usuario"
+
+msgid "Password"
+msgstr "Contraseña"
+
+msgid "Save"
+msgstr "Guardar"
+
+msgid "Status:"
+msgstr "Estado:"
+
+msgid "Enable Scrobbling"
+msgstr "Activar Scrobbling"
+
+msgid "Scrobble Port"
+msgstr "Scrobble Port"
+
+msgid "Scrobble Album"
+msgstr "Scrobble Album"
+
+msgid "Music Stream"
+msgstr "Reproducción"
+
+msgid "Wait"
+msgstr "Espere"
+
+msgid "seconds before playing a streamed song (it takes time to load)."
+msgstr "segundos antes de reproducir la canción"
+
+msgid "Play songs for"
+msgstr "Reproducir la canción por"
+
+msgid "minutes"
+msgstr "minutos"
+
+msgid "seconds, if a time can't be found."
+msgstr "segundos, si su duración no se encuentra"
+
+msgid "Pre-fetch songs (loads next song while current song is playing)."
+msgstr ""
+"Precargar canciones (carga la próxima canción mientras la actual se está "
+"reproduciendo)"
+
+msgid "Song Cache"
+msgstr "Caché de canciones"
+
+msgid "Location:"
+msgstr "Ubicación:"
+
+msgid "Cache Size (in songs):"
+msgstr "Tamaño de caché (canciones)"
+
+msgid "Set Size"
+msgstr "Ajustar tamaño"
+
+msgid "Clear Cache"
+msgstr "Limpiar caché"
+
+msgid "Plug-ins"
+msgstr "Extensiones"
+
+msgid "Test"
+msgstr "Prueba"
+
+msgid "Backends"
+msgstr "Backends"
+
+msgid "Backend"
+msgstr "Backend"
+
+msgid "wx.media type"
+msgstr "wx.media type"
+
+msgid "MyMenuBar"
+msgstr "MyMenuBar"
+
+msgid "_File"
+msgstr "_File"
+
+msgid "Open...\tF6"
+msgstr "Abrir...\tF6"
+
+msgid "Save Playlist\tCtrl-S"
+msgstr "Guardar lista de reproducción\tCtrl-S"
+
+msgid "Quick-Save Playlist\tCtrl-W"
+msgstr "Guardar rápido"
+
+msgid "Export Playlist As...\tF5"
+msgstr "Exportar lista de reproducción como...\tF5"
+
+msgid "Exit"
+msgstr "Salir"
+
+msgid "_Edit"
+msgstr "_Editar"
+
+msgid "Undo\tCtrl-Z"
+msgstr "Deshacer\tCtrl-Z"
+
+msgid "Cut\tCtrl-X"
+msgstr "Cortar\tCtrl-X"
+
+msgid "Copy\tCtrl-C"
+msgstr "Copiar\tCtrl-C"
+
+msgid "Paste\tCtrl-V"
+msgstr "Pegar\tCtrl-V"
+
+msgid "Delete"
+msgstr "Eliminar"
+
+msgid "_View"
+msgstr "_Ver"
+
+msgid "Album Cover"
+msgstr "Carátula"
+
+msgid "_Playback"
+msgstr "Reproducción"
+
+msgid "Previous\tF1"
+msgstr "Anterior"
+
+msgid "Play\tF2"
+msgstr "Reproducir\tF2"
+
+msgid "Stop\tF3"
+msgstr "Parar\tF3"
+
+msgid "Next\tF4"
+msgstr "Siguiente\tF4"
+
+msgid "Shuffle\tF7"
+msgstr "Aleatorio\tF7"
+
+msgid "Repeat\tF8"
+msgstr "Repetir\tF8"
+
+msgid "Volume"
+msgstr "Volumen"
+
+msgid "Volume Down\tF9"
+msgstr "Bajar volumen"
+
+msgid "Volume Up\tF10"
+msgstr "Subir volumen"
+
+msgid "Mute Volume\tF11"
+msgstr "Silenciar"
+
+msgid "_Tools"
+msgstr "_Herramientas"
+
+msgid "Version Update..."
+msgstr "Actualizar"
+
+msgid "Song Collection Locations..."
+msgstr "Localizar librería"
+
+msgid "Import Grooveshark Playlist"
+msgstr "Importar listas de Grooveshark"
+
+msgid "Plug-_ins"
+msgstr "Plug-ins"
+
+msgid "_Help"
+msgstr "Ayuda"
+
+msgid "GrooveShark Version..."
+msgstr "Versión"
+
+msgid "About..."
+msgstr "Acerca..."
+
+msgid "GrooveWalrus Website"
+msgstr "Web del autor"
+
+msgid "united states"
+msgstr "Estados Unidos"
+
+msgid "canada"
+msgstr "Canadá"
+
+msgid "australia"
+msgstr "Australia"
+
+msgid "france"
+msgstr "Francia"
+
+msgid "germany"
+msgstr "Alemania"
+
+msgid "japan"
+msgstr "Japón"
+
+msgid "italy"
+msgstr "Italia"
+
+msgid "spain"
+msgstr "España"
+
+msgid "sweden"
+msgstr "Suecia"
+
+msgid "alternative"
+msgstr "Alternativa"
+
+msgid "classical"
+msgstr "Clásica"
+
+msgid "country"
+msgstr "Country"
+
+msgid "electronic"
+msgstr "Electrónica"
+
+msgid "hip-hop"
+msgstr "Hip-Hop"
+
+msgid "indie"
+msgstr "Indie"
+
+msgid "jazz"
+msgstr "Jazz"
+
+msgid "metal"
+msgstr "Metal"
+
+msgid "pop"
+msgstr "Pop"
+
+msgid "rock"
+msgstr "Rock"
+
+msgid "Recent"
+msgstr "Recientes"
+
+msgid "7 Days"
+msgstr "7 días"
+
+msgid "3 Months"
+msgstr "3 meses"
+
+msgid "6 Months"
+msgstr "6 meses"
+
+msgid "12 Months"
+msgstr "1 Año"
+
+msgid "All-time"
+msgstr "General"
+
+msgid "artist"
+msgstr "Artista"
+
+msgid "song"
+msgstr "Canción"
+
+msgid "adds song to the playlist."
+msgstr "Añadir canciones a la lista"
+
+msgid "searches for that song."
+msgstr "búsquedas para esa canción"
+
+msgid "No Port"
+msgstr "Sin Puerto"
+
+msgid "Default Port"
+msgstr "Puerto por defecto"
+
+msgid "pymedia"
+msgstr "pymedia"
+
+msgid "wx.media"
+msgstr "wx.media"
+
+msgid "pyglet"
+msgstr "pyglet"
+
+msgid "WMP10"
+msgstr "WMP10"
+
+msgid "GSTREAMER"
+msgstr "GSTREAMER"
+
+msgid "QUICKTIME"
+msgstr "QUICKTIME"
+
+msgid "DIRECTSHOW"
+msgstr "DIRECTSHOW"
+
+msgid "Add Favorite"
+msgstr "Añadir a favoritos"
+
+msgid "Load Playlist"
+msgstr "Cargar lista de reproducción"
+
+msgid "Save Song"
+msgstr "Guardar canción"
+
+msgid "Search"
+msgstr "Buscar"
+
+msgid "Shuffle"
+msgstr "Aleatorio"
+
+msgid "Repeat"
+msgstr "Repetir"
+
+msgid "Grooveshark Status"
+msgstr "Estado de Grooveshark"
+
+msgid "Last.fm Status"
+msgstr "Estado de Last.fm"
+
+msgid "New update available."
+msgstr "Actualización disponible"
+
+msgid "Saved Playlists"
+msgstr "Mis Listas de reproducción"
+
+msgid "Save Playlist"
+msgstr "Guardar lista de reproducción"
+
+msgid "Remove Selected"
+msgstr "Eliminar seleccionados"
+
+msgid "Clear Playlist"
+msgstr "Limpiar Lista de Reproducción"
+
+msgid "Geographical Region"
+msgstr "Región geográfica"
+
+msgid "Add all to playlist"
+msgstr "Añadir todo a la lista de reproducción"
+
+msgid "Add selected to playlist"
+msgstr "Añadir seleccionados a la lista de reproducción"
+
+msgid "Clear"
+msgstr "Limpiar"
+
+msgid "Last.fm Webpage"
+msgstr "Web de Last.fm"
+
+msgid "Add all to Playlist"
+msgstr "Añadir todo a la lista de reproducción"
+
+msgid "Add selected to Playlist"
+msgstr "Añadir seleccionados a la lista de reproducción"
+
+msgid "Great"
+msgstr "Genial"
+
+msgid "Good"
+msgstr "Bueno"
+
+msgid "Average"
+msgstr "Regular"
+
+msgid "Poor"
+msgstr "Malo"
+
+msgid "Add Files to Collection"
+msgstr "Añadir archivos a la colección"
+
+msgid "Add to Playlist"
+msgstr "Añadir a la Lista de reproducción"
+
+msgid "Remove"
+msgstr "Remover"
+
+msgid "Clear File Filter"
+msgstr "Borrar filtro de archivos"
+
+msgid "Clear Feed URL"
+msgstr "Eliminar Feed URL"
+
+msgid "Save RSS Feed"
+msgstr "Guardar Feed URL"

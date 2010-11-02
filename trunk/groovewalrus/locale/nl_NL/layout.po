@@ -1,0 +1,556 @@
+# Dutch translation for groovewalrus
+# Copyright (c) 2010 Rosetta Contributors and Canonical Ltd 2010
+# This file is distributed under the same license as the groovewalrus package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: groovewalrus\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2005-02-18 16:51+0000\n"
+"PO-Revision-Date: 2010-10-13 14:06+0000\n"
+"Last-Translator: karelrosseel <Unknown>\n"
+"Language-Team: Dutch <nl@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2010-10-31 13:12+0000\n"
+"X-Generator: Launchpad (build Unknown)\n"
+
+msgid "None"
+msgstr "Geen"
+
+msgid "Playlist"
+msgstr "Afspeellijst"
+
+msgid "Last.fm"
+msgstr "Last.fm"
+
+msgid "Similar Songs"
+msgstr "Gelijksoortige Nummers"
+
+msgid "Similar Artists"
+msgstr "Vergelijkbare artiesten"
+
+msgid "Top Songs: Artist"
+msgstr "Top Liedjes: Artiest"
+
+msgid "Top Albums: Artist"
+msgstr "Top Album: Artiest"
+
+msgid "Top Songs: Album"
+msgstr "Top Liedjes: Album"
+
+msgid "Top Songs: Geo"
+msgstr "Top Liedjes: Land"
+
+msgid "Top Tags: Song"
+msgstr "Top Label: Liedje"
+
+msgid "Top Songs: Tag"
+msgstr "Top Liedjes: Label"
+
+msgid "Artist"
+msgstr "Artiest"
+
+msgid "Song"
+msgstr "Liedje"
+
+msgid "Album"
+msgstr "Album"
+
+msgid "My Last.fm"
+msgstr "My Last.fm"
+
+msgid "Me"
+msgstr "Ik"
+
+msgid "My Friends"
+msgstr "Mijn Vrienden"
+
+msgid "My Neighbours"
+msgstr "Mijn Buren"
+
+msgid "Loved Songs"
+msgstr "Lievelings Liedjes"
+
+msgid "User"
+msgstr "Gebruiker"
+
+msgid "Get Tracks"
+msgstr "Haal de nummers op"
+
+msgid "Biography"
+msgstr "Biografie"
+
+msgid "Favorites"
+msgstr "Favorieten"
+
+msgid "Rating:"
+msgstr "Waardering"
+
+msgid "Collection"
+msgstr "Verzameling"
+
+msgid "Song Collection"
+msgstr "Liedjes Verzameling"
+
+msgid "Files"
+msgstr "Bestanden"
+
+msgid "Search:"
+msgstr "Zoeken:"
+
+msgid "File"
+msgstr "Bestand"
+
+msgid "Folder"
+msgstr "Map"
+
+msgid "Starts with..."
+msgstr "Begint met..."
+
+msgid "Folders"
+msgstr "Mappen"
+
+msgid "List Sifter"
+msgstr "Hitlijst opzoekbaar maken"
+
+msgid "Text PasteBox"
+msgstr "Tekst Plakbord"
+
+msgid "Pre:"
+msgstr "Voor:"
+
+msgid "Sep:"
+msgstr "Tussen:"
+
+msgid "Post:"
+msgstr "Na:"
+
+msgid "Sift List"
+msgstr "tekst omvormen naar lijst met artiest en liedje"
+
+msgid "RSS Feeds"
+msgstr "RSS feeds"
+
+msgid "Feed URL:"
+msgstr "Feed-URL:"
+
+msgid "Get RSS Feed"
+msgstr "Haal de RSS Feed op als tekst lijst met artiest en liedje"
+
+msgid "Options"
+msgstr "Opties"
+
+msgid "Main"
+msgstr "Algemeen"
+
+msgid "Double-clicking..."
+msgstr "Dubbel klikken"
+
+msgid "Locale:"
+msgstr "Taal"
+
+msgid "'Add All' clears playlist before adding."
+msgstr "'Alles toevoegen' verwijderd de openstaande speellijst"
+
+msgid "Drop id from search results."
+msgstr "Plaats id van zoek resultaten."
+
+msgid "Minimize to tray."
+msgstr "Minimalizeer naar taakbalk"
+
+msgid "Save music to:"
+msgstr "Sla muziek op pad:"
+
+msgid "Automatically save new music to your collection."
+msgstr "Sla automatisch nieuwe muziek op in je verzameling"
+
+msgid "Last.fm Account"
+msgstr "Last.fm Account"
+
+msgid "Username"
+msgstr "Gebruikersnaam"
+
+msgid "Password"
+msgstr "Wachtwoord"
+
+msgid "Save"
+msgstr "Opslaan"
+
+msgid "Status:"
+msgstr "Status:"
+
+msgid "Enable Scrobbling"
+msgstr "Zet Scrobbling aan"
+
+msgid "Scrobble Port"
+msgstr "Scrobble Poort"
+
+msgid "Scrobble Album"
+msgstr "Scrobble Album"
+
+msgid "Music Stream"
+msgstr "Muziek Stream"
+
+msgid "Wait"
+msgstr "Wachten"
+
+msgid "seconds before playing a streamed song (it takes time to load)."
+msgstr ""
+"Seconden voor het afspelen is een streamed liedje aan het afspelen (neemt "
+"enkele laadtijd in beslag)"
+
+msgid "Play songs for"
+msgstr "Speel het liedje af"
+
+msgid "minutes"
+msgstr "minuten"
+
+msgid "seconds, if a time can't be found."
+msgstr "seconden, als na een tijd het liedje niet kan worden gevonden"
+
+msgid "Pre-fetch songs (loads next song while current song is playing)."
+msgstr ""
+"Pre-fetch liedjes (dit laad het volgende liedje terwijl het vorige liedje "
+"nog aan"
+
+msgid "Song Cache"
+msgstr "Cache hat liedje"
+
+msgid "Location:"
+msgstr "Locatie:"
+
+msgid "Cache Size (in songs):"
+msgstr "Cache grootte (in aantal liedjes)"
+
+msgid "Set Size"
+msgstr "Bevestig de grootte"
+
+msgid "Clear Cache"
+msgstr "Cache leegmaken"
+
+msgid "Plug-ins"
+msgstr "Invoegtoepassingen"
+
+msgid "Test"
+msgstr "Test"
+
+msgid "Backends"
+msgstr "Back-ends"
+
+msgid "Backend"
+msgstr "Back-end"
+
+msgid "wx.media type"
+msgstr "wx.media type"
+
+msgid "MyMenuBar"
+msgstr "MyMenuBar"
+
+msgid "_File"
+msgstr "_Bestand"
+
+msgid "Open...\tF6"
+msgstr "Opben...\tF6"
+
+msgid "Save Playlist\tCtrl-S"
+msgstr "Opslaan Speelijst\tCtrl-S"
+
+msgid "Quick-Save Playlist\tCtrl-W"
+msgstr "Snel-Opslaan Speelijst\tCtrl-W"
+
+msgid "Export Playlist As...\tF5"
+msgstr "Exporteer Speellijst...\tF5"
+
+msgid "Exit"
+msgstr "Afsluiten"
+
+msgid "_Edit"
+msgstr "Be_werken"
+
+msgid "Undo\tCtrl-Z"
+msgstr "Ongedaan maken\tCtrl-Z"
+
+msgid "Cut\tCtrl-X"
+msgstr "Knippen\tCtrl-X"
+
+msgid "Copy\tCtrl-C"
+msgstr "Kopieren\tCtrl-C"
+
+msgid "Paste\tCtrl-V"
+msgstr "Plakken\tCtrl-V"
+
+msgid "Delete"
+msgstr "Verwijderen"
+
+msgid "_View"
+msgstr "Beel_d"
+
+msgid "Album Cover"
+msgstr "Albumafbeelding"
+
+msgid "_Playback"
+msgstr "_Terugspoelen"
+
+msgid "Previous\tF1"
+msgstr "Vorige Liedje\tF1"
+
+msgid "Play\tF2"
+msgstr "Afspelen\tF2"
+
+msgid "Stop\tF3"
+msgstr "Stoppen\tF3"
+
+msgid "Next\tF4"
+msgstr "Volgende\tF3"
+
+msgid "Shuffle\tF7"
+msgstr "Door elkaar schudden\tF7"
+
+msgid "Repeat\tF8"
+msgstr "herhalen\tF8"
+
+msgid "Volume"
+msgstr "Volume"
+
+msgid "Volume Down\tF9"
+msgstr "Volume Lager\tF9"
+
+msgid "Volume Up\tF10"
+msgstr "Volume Hoger\tF10"
+
+msgid "Mute Volume\tF11"
+msgstr "Geluid uit\tF11"
+
+msgid "_Tools"
+msgstr "_Extra"
+
+msgid "Version Update..."
+msgstr "Versie Updaten"
+
+msgid "Song Collection Locations..."
+msgstr "Liedjes Verzameling Locaties"
+
+msgid "Import Grooveshark Playlist"
+msgstr "Importeer Grooveshark Speellijst"
+
+msgid "Plug-_ins"
+msgstr "Plug-_ins"
+
+msgid "_Help"
+msgstr "_Help"
+
+msgid "GrooveShark Version..."
+msgstr "GrooveShark Versie..."
+
+msgid "About..."
+msgstr "Info..."
+
+msgid "GrooveWalrus Website"
+msgstr "GrooveWalrus Website"
+
+msgid "united states"
+msgstr "Verenigde Staten"
+
+msgid "canada"
+msgstr "Canada"
+
+msgid "australia"
+msgstr "Australië"
+
+msgid "france"
+msgstr "Frankrijk"
+
+msgid "germany"
+msgstr "Duitsland"
+
+msgid "japan"
+msgstr "Japan"
+
+msgid "italy"
+msgstr "Italië"
+
+msgid "spain"
+msgstr "Spanje"
+
+msgid "sweden"
+msgstr "Zweden"
+
+msgid "alternative"
+msgstr "alternatief"
+
+msgid "classical"
+msgstr "Klassiek"
+
+msgid "country"
+msgstr "folk"
+
+msgid "electronic"
+msgstr "elektronisch"
+
+msgid "hip-hop"
+msgstr "hip-hop"
+
+msgid "indie"
+msgstr "indie"
+
+msgid "jazz"
+msgstr "jazz"
+
+msgid "metal"
+msgstr "metal"
+
+msgid "pop"
+msgstr "pop"
+
+msgid "rock"
+msgstr "rock"
+
+msgid "Recent"
+msgstr "Recent"
+
+msgid "7 Days"
+msgstr "7 Dagen"
+
+msgid "3 Months"
+msgstr "3 maanden"
+
+msgid "6 Months"
+msgstr "6 maanden"
+
+msgid "12 Months"
+msgstr "12 maanden"
+
+msgid "All-time"
+msgstr "Alle jaren"
+
+msgid "artist"
+msgstr "artiest"
+
+msgid "song"
+msgstr "lied"
+
+msgid "adds song to the playlist."
+msgstr "Voeg liedje toe aan speellijst"
+
+msgid "searches for that song."
+msgstr "zoek naar een liedje"
+
+msgid "No Port"
+msgstr "Geen Poort"
+
+msgid "Default Port"
+msgstr "Standaard Poort"
+
+msgid "pymedia"
+msgstr "pymedia"
+
+msgid "wx.media"
+msgstr "wx.media"
+
+msgid "pyglet"
+msgstr "pyglet"
+
+msgid "WMP10"
+msgstr "WMP10"
+
+msgid "GSTREAMER"
+msgstr "GSTREAMER"
+
+msgid "QUICKTIME"
+msgstr "QUICKTIME"
+
+msgid "DIRECTSHOW"
+msgstr "DIRECTSHOW"
+
+msgid "Add Favorite"
+msgstr "Favoriet toevoegen"
+
+msgid "Load Playlist"
+msgstr "Afspeellijst laden"
+
+msgid "Save Song"
+msgstr "Opslaan Liedje"
+
+msgid "Search"
+msgstr "Zoeken"
+
+msgid "Shuffle"
+msgstr "Willekeurig afspelen"
+
+msgid "Repeat"
+msgstr "Herhaal"
+
+msgid "Grooveshark Status"
+msgstr "Grooveshark Status"
+
+msgid "Last.fm Status"
+msgstr "Last.fm Status"
+
+msgid "New update available."
+msgstr "Nieuwe update beschikbaar"
+
+msgid "Saved Playlists"
+msgstr "Opgeslagen afspeellijsten"
+
+msgid "Save Playlist"
+msgstr "Afspeellijst opslaan"
+
+msgid "Remove Selected"
+msgstr "Geselecteerde verwijderen"
+
+msgid "Clear Playlist"
+msgstr "Afspeellijst leegmaken"
+
+msgid "Geographical Region"
+msgstr "Aardrijkskundige Regio"
+
+msgid "Add all to playlist"
+msgstr "Alles toevoegen aan afspeellijst"
+
+msgid "Add selected to playlist"
+msgstr "Voeg geselecteerde toe aan speellijst"
+
+msgid "Clear"
+msgstr "Wissen"
+
+msgid "Last.fm Webpage"
+msgstr "Last.fm Webpage"
+
+msgid "Add all to Playlist"
+msgstr "Voeg alles toe aan Speellijst"
+
+msgid "Add selected to Playlist"
+msgstr "Voeg geselecteerde toe aan Speellijst"
+
+msgid "Great"
+msgstr "Prachtig"
+
+msgid "Good"
+msgstr "Goed"
+
+msgid "Average"
+msgstr "Gemiddeld"
+
+msgid "Poor"
+msgstr "Slecht"
+
+msgid "Add Files to Collection"
+msgstr "Voeg Bestanden toe aan Verzameling"
+
+msgid "Add to Playlist"
+msgstr "Voeg toe aan Speellijst"
+
+msgid "Remove"
+msgstr "Verwijder"
+
+msgid "Clear File Filter"
+msgstr "Wis bestandsfilter"
+
+msgid "Clear Feed URL"
+msgstr "Wis Feed URL-link"
+
+msgid "Save RSS Feed"
+msgstr "Sla RSS Feed op"
