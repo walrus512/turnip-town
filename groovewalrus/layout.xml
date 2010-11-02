@@ -3003,6 +3003,10 @@
 					<label>Import Grooveshark Playlist</label>
 					<help></help>
 				</object>
+				<object class="wxMenuItem" name="m_mi_select_language">
+					<label>Select Language</label>
+					<help></help>
+				</object>
 			</object>
 			<object class="wxMenu" name="m_menu7">
 				<label>Plug-_ins</label>

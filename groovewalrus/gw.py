@@ -23,6 +23,7 @@ import wx
 import wx.html
 import wx.xrc as xrc
 from wx.lib.pubsub import Publisher as pub
+from wx.lib import langlistctrl
 
 import os
 import sys
@@ -98,7 +99,7 @@ from main_thirdp import grooveshark_old
 #from plugins.zongdora import zongdora
 #from plugins.web_remote import web_remote
 
-PROGRAM_VERSION = "0.323"
+PROGRAM_VERSION = "0.325"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -177,6 +178,7 @@ class MainFrame(wx.Frame):
         local_songs.DbFuncs().create_tables()
         
         # -- initialize i18n
+        self.l18n = None
         self.initI18n()
         
         # load menubar from xrc xml file
@@ -222,22 +224,40 @@ class MainFrame(wx.Frame):
         if self.tray_icon: #.IsIconInstalled():
             self.Show(False)
             
-    def initI18n(self):
+    def initI18n(self, lang=None):
         #localization
         #http://wiki.wxpython.org/Internationalization
         #http://wiki.wxpython.org/XRCAndI18N
+        
+        # Make *sure* any existing locale is deleted before the new
+        # one is created.  The old C++ object needs to be deleted
+        # before the new one is created, and if we just assign a new
+        # instance to the old Python variable, the old C++ locale will
+        # not be destroyed soon enough, likely causing a crash.
+        ##if self.l18n:
+          ##  assert sys.getrefcount(self.l18n) <= 2
+          ##  del self.l18n
+        
         self.FILEDB = system_files.GetDirectories(self).DatabaseLocation()
+        lang_set = options_window.GetSetting('language-selected', self.FILEDB)
+
+        if (lang_set != False): #& (lang != None):
+            lang = int(lang_set)
+        #if lang == None:
+        else:
+            lang = wx.LANGUAGE_DEFAULT
         ignore_locale = options_window.GetSetting('locale-ignore', self.FILEDB)
         if (ignore_locale == False) | (ignore_locale != "1"):
-            wx.Locale.AddCatalogLookupPathPrefix(os.path.join(os.getcwd(), 'locale'))
-            self.l18n = wx.Locale(wx.LANGUAGE_DEFAULT)
-            self.l18n.AddCatalog('layout')
+            wx.Locale.AddCatalogLookupPathPrefix(os.path.join(SYSLOC, 'locale'))
+            self.l18n = wx.Locale(lang)
+            self.l18n.AddCatalog('layout')            
+        #locales = {
         #    u'en' : (wx.LANGUAGE_ENGLISH, u'en_US.UTF-8'),
         #    u'es' : (wx.LANGUAGE_SPANISH, u'es_ES.UTF-8'),
         #    u'fr' : (wx.LANGUAGE_FRENCH, u'fr_FR.UTF-8'),
         #    u'it' : (wx.LANGUAGE_ITALIAN, u'it_IT.UTF-8'),
         #    u'nl' : (wx.LANGUAGE_DUTCH, u'nl_NL.UTF-8'),
-        #    u'pl' : (wx.LANGUAGE_POLISH, u'pl_PL.UTF-8'),
+         #   u'pl' : (wx.LANGUAGE_POLISH, u'pl_PL.UTF-8'),
         #wx.LANGUAGE_DEFAULT
         #wx.LANGUAGE_TURKISH
         
@@ -660,6 +680,7 @@ class MainPanel(wx.Panel):
         self.parent.Bind(wx.EVT_MENU, self.OnUpdateClick, id=xrc.XRCID("m_mi_version_update"))
         self.parent.Bind(wx.EVT_MENU, self.tab_song_collection.OnSColAddClick, id=xrc.XRCID("m_mi_song_collection"))
         self.parent.Bind(wx.EVT_MENU, self.ImportGroovesharkPlaylist, id=xrc.XRCID("m_mi_import_grooveshark"))
+        self.parent.Bind(wx.EVT_MENU, self.SetLanguage, id=xrc.XRCID("m_mi_select_language"))
         #
         self.lastfm_toggle = self.parent.menu_tools.Append(7666, "Last.fm Scrobbling", kind=wx.ITEM_CHECK)
         self.parent.Bind(wx.EVT_MENU, self.OnToggleScrobble, id=7666)        
@@ -1012,6 +1033,43 @@ class MainPanel(wx.Panel):
         else:
             self.player = player_pyglet.Player(self)
             
+    def SetLanguage(self, event):
+        dlg = wx.Dialog(self, -1, '', size=(230, 300))
+        l_dir = os.path.join(SYSLOC, 'locale')
+        langs_arr = []
+        for f in os.listdir(l_dir):
+            if os.path.isdir(os.path.join(l_dir, f)):
+                try:
+                    yy= wx.Locale.FindLanguageInfo(f)
+                    langs_arr.append(yy.Language)
+                except Exception, expt:
+                    pass
+        langs = tuple(langs_arr)
+        lang = wx.LANGUAGE_DEFAULT
+        
+        #controls
+        self.langCtrl = langlistctrl.LanguageListCtrl(dlg, -1, filter=langlistctrl.LC_ONLY, only=langs)#, select=lang)
+        but_ok = wx.Button(dlg, wx.ID_OK)
+        but_cancel = wx.Button(dlg, wx.ID_CANCEL)
+        
+        #sizers
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer2 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer.Add(self.langCtrl, 1, wx.EXPAND|wx.ALL, 5)
+        sizer2.Add(but_ok, 0, wx.EXPAND|wx.ALL, 5)
+        sizer2.Add(but_cancel, 0, wx.EXPAND|wx.ALL, 5)
+        sizer.Add(sizer2, 0, wx.EXPAND|wx.ALL, 5)
+        dlg.SetSizer(sizer)
+        
+        if dlg.ShowModal() == wx.ID_OK:
+            # get selected
+            lang = self.langCtrl.GetLanguage()
+            # save to database
+            options_window.SetSetting('language-selected', str(lang), self.FILEDB)
+            # update text
+            ##self.parent.initI18n(lang)
+        dlg.Destroy()
+                    
     def OnClearCacheClick(self, event):
         #clear the cache
         temp_dir = system_files.GetDirectories(self).TempDirectory()
