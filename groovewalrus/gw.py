@@ -2184,12 +2184,19 @@ class MainPanel(wx.Panel):
         self.BackupList()
         # remove slected list item
         val = self.lc_playlist.GetFirstSelected()
+        del_count = 0
+
         # iterate over all selected items and delete
-        #print self.lc_playlist.GetSelectedItemCount()
         for x in range(val, val + self.lc_playlist.GetSelectedItemCount()):
-            #print 'dete - ' + str(val)
-            #self.lc_playlist.DeleteItem(val)
+            # counter for songs deleted before current one
+            if self.lc_playlist.GetFirstSelected() < self.current_song.playlist_position:
+                del_count = del_count + 1
             self.lc_playlist.DeleteItem(self.lc_playlist.GetFirstSelected())
+
+        #update current song position
+        if del_count > 0:
+            self.current_song.playlist_position = self.current_song.playlist_position - del_count
+        
         # save default playlist
         #self.SavePlaylist(self.main_playlist_location)
         ##self.ResizePlaylist()
