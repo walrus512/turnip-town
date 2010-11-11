@@ -28,7 +28,7 @@ from wx.lib import langlistctrl
 import os
 import sys
 import shutil
-import time
+import time, datetime
 import random
 # comtypes?
 if os.name == 'nt':
@@ -52,6 +52,7 @@ from main_utils import file_cache
 from main_utils import prefetch
 from main_utils import download_feed
 from main_utils import pyro_server
+from main_utils import string_tools
 
 #---
 from main_utils import player_wx
@@ -99,7 +100,7 @@ from main_thirdp import grooveshark_old
 #from plugins.zongdora import zongdora
 #from plugins.web_remote import web_remote
 
-PROGRAM_VERSION = "0.325"
+PROGRAM_VERSION = "0.326"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -148,6 +149,13 @@ LASTFM_CLIENT_ID = 'gws'
 
 CHARSET = 'utf-8'
 FRAME_WIDTH = 695
+
+# add timestamp to logging
+_excepthook = sys.excepthook
+def myExceptHook(type, value, traceback):
+        print >> sys.stderr, datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+        _excepthook(type, value, traceback)
+sys.excepthook = myExceptHook
 
 class GWApp(wx.App):
     def OnInit(self):
@@ -763,7 +771,8 @@ class MainPanel(wx.Panel):
                 self.ReadWinampPlaylist(file_name)
                 #self.SavePlaylist(self.main_playlist_location)
                 self.autoplay = True
-            elif file_name.endswith('.mp3'):                
+            elif file_name.endswith('.mp3'):
+                #print file_name
                 self.tab_song_collection.ScolFileAdd([file_name])
                 #self.SavePlaylist(self.main_playlist_location)
                 self.autoplay = True
@@ -934,9 +943,11 @@ class MainPanel(wx.Panel):
         print ' '
         for x in range(0, self.lc_playlist.GetItemCount()):
             if x == self.current_song.playlist_position:
-                print '   <span class="current">' + str(x).zfill(3) + '. ' + self.lc_playlist.GetItem(x, C_ARTIST).GetText() + ' - <a class="list_item" href="/' + str(x) + '">' + self.lc_playlist.GetItem(x, C_SONG).GetText() + '</a></span>'
+                outy = '   <span class="current">' + str(x).zfill(3) + '. ' + self.lc_playlist.GetItem(x, C_ARTIST).GetText() + ' - <a class="list_item" href="/' + str(x) + '">' + self.lc_playlist.GetItem(x, C_SONG).GetText() + '</a></span>'
+                print string_tools.unbork(outy)
             else:            
-                print '   ' + str(x).zfill(3) + '. ' + self.lc_playlist.GetItem(x, C_ARTIST).GetText() + ' - <a class="list_item" href="/' + str(x) + '">' + self.lc_playlist.GetItem(x, C_SONG).GetText() + '</a>'
+                outy = '   ' + str(x).zfill(3) + '. ' + self.lc_playlist.GetItem(x, C_ARTIST).GetText() + ' - <a class="list_item" href="/' + str(x) + '">' + self.lc_playlist.GetItem(x, C_SONG).GetText() + '</a>'
+                print string_tools.unbork(outy)
             
         print '</pre>'
         
@@ -2018,8 +2029,10 @@ class MainPanel(wx.Panel):
                     self.ReadPlaylist(path)
                 elif path.endswith('.m3u'):
                     self.ReadWinampPlaylist(path)
-                elif path.endswith('.mp3'):                  
-                    self.tab_song_collection.ScolFileAdd(path)
+                elif path.endswith('.mp3'):
+                    #print path
+                    p_arr = [path,]
+                    self.tab_song_collection.ScolFileAdd(p_arr)
                 else:
                     pass
         dlg.Destroy()
