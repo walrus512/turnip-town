@@ -170,6 +170,7 @@ class SongCollectionTab(wx.ScrolledWindow):
         
         for x in file_name_arr:
             add_dict = {}
+            print x
             artist = local_songs.GetMp3Artist(x)
             song = local_songs.GetMp3Title(x)
             album = local_songs.GetMp3Album(x)
@@ -248,7 +249,7 @@ class SongCollectionTab(wx.ScrolledWindow):
             if folder_name == '':
                 folder_name = '(root)'
            
-            disp = str(x)
+            #disp = str(x)
             if old_folder_name != folder_name:
                 child = self.tr_scol_folders.AppendItem(self.root, folder_name)
                 old_folder_name = folder_name

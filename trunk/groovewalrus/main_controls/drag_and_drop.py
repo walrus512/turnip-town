@@ -142,7 +142,7 @@ class DragList(wx.ListCtrl):
             #self.SetStringItem(index + counter2, 3, all_rows[3 + counter])
             #self.SetStringItem(index + counter2, 4, all_rows[4 + counter])
             #print counter2
-            counter = counter + 5
+            counter = counter + self.GetColumnCount() #5
             counter2 = counter2 + 1
                   
 
