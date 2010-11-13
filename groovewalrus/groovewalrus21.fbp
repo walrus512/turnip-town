@@ -11928,7 +11928,7 @@
                                                                                                     <property name="proportion">0</property>
                                                                                                     <object class="wxRadioBox" expanded="1">
                                                                                                         <property name="bg"></property>
-                                                                                                        <property name="choices">&quot;pymedia&quot; &quot;wx.media&quot; &quot;pyglet&quot;</property>
+                                                                                                        <property name="choices">&quot;pymedia&quot; &quot;wx.media&quot; &quot;pyglet&quot; &quot;mplayer&quot;</property>
                                                                                                         <property name="context_help"></property>
                                                                                                         <property name="enabled">1</property>
                                                                                                         <property name="fg"></property>
@@ -11936,7 +11936,7 @@
                                                                                                         <property name="hidden">0</property>
                                                                                                         <property name="id">wxID_ANY</property>
                                                                                                         <property name="label">Backend</property>
-                                                                                                        <property name="majorDimension">3</property>
+                                                                                                        <property name="majorDimension">4</property>
                                                                                                         <property name="maximum_size"></property>
                                                                                                         <property name="minimum_size"></property>
                                                                                                         <property name="name">m_rx_options_backend</property>
