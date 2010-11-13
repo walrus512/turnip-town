@@ -42,8 +42,15 @@ class OSSVolumeControl(object):
       #      self.set(0, 0)
 
 def SetMasterVolume(volume):
-    v = OSSVolumeControl().set(volume, volume)
+    try:
+        v = OSSVolumeControl().set(volume, volume)
+    except Exception, expt:
+        print u"soundmixer_linux: " + str(Exception) + str(expt)
 
 def GetMasterVolume():
-    v = OSSVolumeControl().get()    
-    return v[0]
+    try:
+        v = OSSVolumeControl().get()
+        return v[0]
+    except Exception, expt:
+        print u"soundmixer_linux: " + str(Exception) + str(expt)
+        return 50
