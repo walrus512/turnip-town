@@ -507,8 +507,6 @@ class MainPanel(wx.Panel):
         #check for playlist and sysargs
         self.CheckSysArgs(sys.argv)        
 
-        # load playlist history
-        self.FillPlaylistTree()
         
         #initalize song class
         self.current_song = CurrentSong(self)
@@ -713,6 +711,9 @@ class MainPanel(wx.Panel):
         #-------------
         #set ratings for playlist items
         self.GetAllSongRatings()
+        
+        # load playlist history
+        self.FillPlaylistTree()
         
         #-------------
         #plugins
@@ -2510,7 +2511,9 @@ class MainPanel(wx.Panel):
         child1 = self.tr_playlist_history.AppendItem(self.tr_playlist_history_root, 'Current Playlist')
         self.tr_playlist_history.SetPyData(child1, 'Current Playlist')        
         self.tr_playlist_history.SetItemImage(child1, 1)
-        self.tr_playlist_history.SelectItem(child1)
+        
+        if os.name == 'nt':
+            self.tr_playlist_history.SelectItem(child1)
         
         #print res_arr
         for x in res_arr:            

@@ -20,7 +20,7 @@ Place, Suite 330, Boston, MA 02111-1307 USA
 """
 
 import wx
-import main_thirdp.mpylayer.mpylayer_control as mpylayer
+import main_thirdp.mpylayer as mpylayer
 
 ########################################################################
 class Player(object):

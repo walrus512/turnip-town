@@ -14,8 +14,7 @@ from collections import deque
 from select import select
 from thread import start_new_thread
 
-####from mpylayer.prop_table 
-import prop_table as _property_table
+from prop_table import property_table as _property_table
 
 
 __all__=['MPlayerControl', 'SelectMPlayerControl', 'ThreadedMPlayerControl']
