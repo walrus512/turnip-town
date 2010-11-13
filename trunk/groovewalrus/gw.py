@@ -2459,6 +2459,7 @@ class MainPanel(wx.Panel):
             #add label
             if (playlist_name != None) & (playlist_name != None):
                 local_songs.DbFuncs().InsertPlaylistLabelData(playlist_name, date_time)        
+            self.tr_playlist_history.DeleteAllItems()
             self.FillPlaylistTree()
 
         dlg.Destroy()
@@ -2472,6 +2473,7 @@ class MainPanel(wx.Panel):
             playlist_arr.append((self.lc_playlist.GetItem(x, C_ARTIST).GetText(), self.lc_playlist.GetItem(x, C_SONG).GetText(), x, date_time))
         local_songs.DbFuncs().InsertPlaylistData(playlist_arr)
         #self.OnPlaylistHistoryClick(event=None)
+        self.tr_playlist_history.DeleteAllItems()
         self.FillPlaylistTree()
         
     def GetPlaylistFromDatabase(self, playlist_date=None):
@@ -2502,7 +2504,7 @@ class MainPanel(wx.Panel):
         #if save_playlist:
         #    self.SavePlaylist()
         res_arr = self.GetDatabasePlaylist(q_limit=25)
-        self.tr_playlist_history.DeleteAllItems()
+        #self.tr_playlist_history.DeleteAllItems()
         il = self.PlaylistImageList()
         self.tr_playlist_history.SetImageList(il)
         # you need the following, i don't know why:
@@ -2512,8 +2514,7 @@ class MainPanel(wx.Panel):
         self.tr_playlist_history.SetPyData(child1, 'Current Playlist')        
         self.tr_playlist_history.SetItemImage(child1, 1)
         
-        if os.name == 'nt':
-            self.tr_playlist_history.SelectItem(child1)
+        self.tr_playlist_history.SelectItem(child1)
         
         #print res_arr
         for x in res_arr:            
@@ -2603,6 +2604,7 @@ class MainPanel(wx.Panel):
         if len(p_date) > 5:
             query = "DELETE FROM m_playlists WHERE playlist_date='" + p_date + "'"
             local_songs.DbFuncs().DeleteQuery(query)
+            self.tr_playlist_history.DeleteAllItems()
             self.FillPlaylistTree()
             
     def DisplayPlaylistProperties(self, event):
@@ -2633,6 +2635,7 @@ class MainPanel(wx.Panel):
             if (dlg.GetValue() != None) & (dlg.GetValue() != ''):
                 local_songs.DbFuncs().InsertPlaylistLabelData(dlg.GetValue(), plid)
                 self.tr_playlist_history.SetItemText(self.tr_playlist_history.GetSelection(), dlg.GetValue())
+                self.tr_playlist_history.DeleteAllItems()
                 self.FillPlaylistTree()
         dlg.Destroy()
         
