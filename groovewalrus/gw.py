@@ -54,6 +54,7 @@ from main_utils import download_feed
 if os.name == 'nt':
     from main_utils import pyro_server
 from main_utils import string_tools
+from main_utils import global_hotkeys
 
 #---
 try: 
@@ -210,7 +211,7 @@ class MainFrame(wx.Frame):
         self.SetIcons(ib)
         
         # system tray icon        
-        self.tray_icon = None
+        self.tray_icon = None        
         
     def UseTrayIcon(self):
         self.tray_icon = wx.TaskBarIcon()
@@ -494,8 +495,8 @@ class MainPanel(wx.Panel):
         self.Bind(wx.EVT_BUTTON, self.OnClearCacheClick, id=xrc.XRCID('m_bu_options_cache_clear'))
         
         self.Bind(wx.EVT_BUTTON, self.OnUpdateClick, self.bb_update)
-        wx.EVT_CLOSE(self.parent, self.OnExit)
-           
+        wx.EVT_CLOSE(self.parent, self.OnExit)        
+        
         # --------------------------------------------------------- 
         #vars
         
@@ -660,6 +661,8 @@ class MainPanel(wx.Panel):
         wx.EVT_MENU(self, ctrlgID, self.OnLoadBackgroundImage)
         wx.EVT_MENU(self, ctrlperiodID, self.OnLoadAdvancedOptions)
         
+        # global hotkeys -------
+        global_hotkeys.GlobalHotkeys(self)
         
         # menu items -----------
         # file menu
@@ -1096,7 +1099,7 @@ class MainPanel(wx.Panel):
         #clear the cache
         temp_dir = system_files.GetDirectories(self).TempDirectory()
         file_cache.CheckCache(temp_dir, 0)
-        
+     
     def OpenWebsite(self, event):        
         default_app_open.dopen('http://groove-walrus.turnip-town.net')
         
@@ -1722,6 +1725,7 @@ class MainPanel(wx.Panel):
     def TogglePause(self):
         """ toggles between pausing and playing """
         self.player.TogglePause(self.current_song.status)
+        print 'ppp'
             
     def OnPlayListPlayClick(self, event):
         # get selected search relsult list item and add to playlist
