@@ -45,6 +45,7 @@ EventGhost - http://sourceforge.net/projects/eventghost/
 GrooveShark.py - Zimmmer: http://hak5.org
 GrooveShark PyApi - http://github.com/Tim-Smart/grooveshack     
 PyLast.py - http://code.google.com/p/pylast/
+Mpylayer - http://code.google.com/p/mpylayer/
 ---
 Tango Icons - http://tango.freedesktop.org
 "Walrus" Photo - http://picasaweb.google.com/dschmitz   

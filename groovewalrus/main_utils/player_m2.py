@@ -20,7 +20,7 @@ Place, Suite 330, Boston, MA 02111-1307 USA
 """
 
 import wx
-import main_thirdp.mpylayer.mpylayer_control as mpylayer
+import MplayerCtrl as mpc
 
 ########################################################################
 class Player(object):
@@ -30,43 +30,49 @@ class Player(object):
     def __init__(self, parent):
        
         self.parent = parent
-        try:
-            self.mediaPlayer = mpylayer.MPlayerControl()
-        except Exception, expt:
-            print u"player_m: " + str(Exception) + str(expt)
+        #self.mediaPlayer = self.parent.mediaPlayer
+        #backend = eval('wx.media.MEDIABACKEND_' + self.parent.ch_options_wxbackend.GetStringSelection())
+        mplayer_path = 'f:/temp/mplayer/mplayer.exe'
+        self.mediaPlayer = mpc.MplayerCtrl(self.parent, -1, mplayer_path)
+        self.mediaPlayer.Start()
+        #self.Bind(mpc.EVT_MEDIA_STARTED, self.on_media_started)
+        #self.Bind(mpc.EVT_MEDIA_FINISHED, self.on_media_finished)
+        #self.Bind(mpc.EVT_PROCESS_STARTED, self.on_process_started)
+        #self.Bind(mpc.EVT_PROCESS_STOPPED, self.on_process_stopped)
+        
         self.paused = False        
         
     #----------------------------------------------------------------------
+                  
+    #def PlayWxMedia(self, event):
+        #self.mediaPlayer.Play()
         
     def Play(self, file_name):
-        self.mediaPlayer.loadfile(file_name)
+        print file_name
+        #***
+        self.mediaPlayer.Loadfile('"' + file_name.replace('\\', '/') + '"')
+        #print self.mediaPlayer.GetFileName()
         self.SetParentVolume()
         
-    def Stop(self):        
-        try:
-            self.mediaPlayer.stop()
-        except Exception, expt:
-            print u"player_m: " + str(Exception) + str(expt)
+    def Stop(self):
+        self.mediaPlayer.Stop()
     
-    def SetVolume(self, volume):        
-        try:
-            self.mediaPlayer.volume = volume
-        except Exception, expt:
-            print u"player_m: " + str(Exception) + str(expt)
+    def SetVolume(self, volume):
+        self.mediaPlayer.SetProperty("volume", volume)#float(volume)/100)
         
     def SetParentVolume(self):
         # get the current volume level
         self.SetVolume(self.parent.GetVolume())
         
     def stop_play(self):
-        self.mediaPlayer.stop()
+        self.mediaPlayer.Stop()
                 
     def TogglePause(self, status):
         if status == 'paused':
-            self.mediaPlayer.pause()
+            self.mediaPlayer.Pause()
             self.paused = True
         else:
-            self.mediaPlayer.pause()
+            self.mediaPlayer.Pause()
             self.paused = False
 
         
