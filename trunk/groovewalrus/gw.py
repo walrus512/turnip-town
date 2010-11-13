@@ -51,13 +51,21 @@ from main_utils import system_files
 from main_utils import file_cache
 from main_utils import prefetch
 from main_utils import download_feed
-from main_utils import pyro_server
+if os.name == 'nt':
+    from main_utils import pyro_server
 from main_utils import string_tools
 
 #---
-from main_utils import player_wx
-from main_utils import player_pyglet
-from main_utils import player_pymedia
+try: 
+    from main_utils import player_pymedia
+    PLAYER = 'pymedia'
+except Exception, expt:
+    print "Load: " + str(Exception)+str(expt)
+    #from main_utils import player_wx
+    #from main_utils import player_pyglet
+    PLAYER = 'mplayer'
+from main_utils import player_m
+    
 
 from main_controls import drag_and_drop
 from main_controls import playback_panel
@@ -100,7 +108,7 @@ from main_thirdp import grooveshark_old
 #from plugins.zongdora import zongdora
 #from plugins.web_remote import web_remote
 
-PROGRAM_VERSION = "0.326"
+PROGRAM_VERSION = "0.327"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -175,7 +183,8 @@ class GWApp(wx.App):
             frame = MainFrame()
             panel = MainPanel(frame)    
             frame.Show(True)
-            pyro_server.StartPyro()        
+            if os.name == 'nt':
+                pyro_server.StartPyro()        
             return True
 
 class MainFrame(wx.Frame): 
@@ -718,7 +727,7 @@ class MainPanel(wx.Panel):
         ##self.mediaPlayer = wx.media.MediaCtrl(self, style=wx.SIMPLE_BORDER, szBackend=backend) #wx.media.MEDIABACKEND_WMP10)
         ##self.Bind(wx.media.EVT_MEDIA_LOADED, self.PlayWxMedia)        
         #set backend
-        self.SetBackend(None)
+        self.SetBackend(event=None, backend=PLAYER)
         #backend_types = ['pymedia', 'wx.media', 'pyglet']
         #self.use_backend = backend_types[self.rx_options_backend.GetSelection()]
         # ---------------------------------------------------------------
@@ -1028,21 +1037,23 @@ class MainPanel(wx.Panel):
     
     # ---------------------------------
     
-    def SetBackend(self, event):
+    def SetBackend(self, event, backend='pymedia'):
         #sets backend type, pymedia, wx.media, pyglet
         if event != None:
             self.SaveOptions(None)
             self.OnStopClick(None)
         
-        backend_types = ['pymedia', 'wx.media', 'pyglet']
+        backend_types = ['pymedia', 'wx.media', 'pyglet', 'mplayer']
         self.use_backend = backend_types[self.rx_options_backend.GetSelection()]
         
         if self.use_backend == 'pymedia':
             self.player = player_pymedia.Player(self)
-        elif self.use_backend == 'wx.media':
-            self.player = player_wx.Player(self)
+        #elif self.use_backend == 'wx.media':
+        #    self.player = player_wx.Player(self)
         else:
-            self.player = player_pyglet.Player(self)
+            self.player = player_m.Player(self)
+        #else:
+        #    self.player = player_pyglet.Player(self)
             
     def SetLanguage(self, event):
         dlg = wx.Dialog(self, -1, '', size=(230, 300))

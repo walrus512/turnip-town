@@ -2826,8 +2826,9 @@
 																										<item>pymedia</item>
 																										<item>wx.media</item>
 																										<item>pyglet</item>
+																										<item>mplayer</item>
 																									</content>
-																									<dimension>3</dimension>
+																									<dimension>4</dimension>
 																								</object>
 																							</object>
 																							<object class="sizeritem">
