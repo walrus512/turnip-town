@@ -71,7 +71,7 @@ class GlobalHotkeys():
                 h3 = wx.WXK_F3
                 h4 = wx.WXK_F4                
                 
-            self.RegisterHotkeys(modc, h1, h2, h3, h4)
+            self.RegisterHotkeys(str(modc), h1, h2, h3, h4)
         else:
             #use stored values
             self.RegisterHotkeys(hotkey_modifier, hotkey_previous, hotkey_play, hotkey_stop, hotkey_next)

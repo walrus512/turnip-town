@@ -1725,7 +1725,6 @@ class MainPanel(wx.Panel):
     def TogglePause(self):
         """ toggles between pausing and playing """
         self.player.TogglePause(self.current_song.status)
-        print 'ppp'
             
     def OnPlayListPlayClick(self, event):
         # get selected search relsult list item and add to playlist
