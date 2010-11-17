@@ -40,7 +40,7 @@ class Player(object):
         
     def Play(self, file_name):
         self.mediaPlayer.loadfile(file_name)
-        self.SetVolume(self.parent.GetVolume())
+        self.SetVolume(self.parent.sl_volume.GetValue())
         
     def Stop(self):        
         try:
@@ -56,7 +56,7 @@ class Player(object):
         
     def SetParentVolume(self):
         # get the current volume level
-        self.SetVolume(self.parent.GetVolume())
+        self.SetVolume(self.parent.sl_volume.GetValue())
         
     def stop_play(self):
         self.mediaPlayer.stop()

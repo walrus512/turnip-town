@@ -21,48 +21,158 @@ Place, Suite 330, Boston, MA 02111-1307 USA
 import wx
 import wx.xrc as xrc
 import time
+import os
 from threading import Thread
 from main_utils import audioscrobbler_lite
 from main_utils import file_cache
+from main_thirdp import google_translation
+from main_windows import options_window
 
 class BiographyTab(wx.ScrolledWindow):
     def __init__(self, parent):
-        self.parent = parent
-
-        # controls
-        self.bm_bio_pic = xrc.XRCCTRL(self.parent, 'm_bm_bio_pic')
-        self.hm_bio_text = xrc.XRCCTRL(self.parent, 'm_hm_bio_text')        
+        self.parent = parent 
+        #bio_diag =  wx.Dialog(parent, -1, "Biotext", style=wx.FRAME_SHAPED)
+        #bio_diag.SetSize((400,200))
+        #bio_diag.Show(True)
+        #bio_panel = wx.Panel(bio_diag, -1)
+        #self.hm_bio_text = wx.StaticText(self, -1)
+        self.pa_bio_pic = xrc.XRCCTRL(self.parent, 'm_pa_bio_pic')
+        self.st_bio_artist = xrc.XRCCTRL(self.parent, 'm_st_bio_artist')
+        self.ht_bio_text = xrc.XRCCTRL(self.parent, 'm_ht_bio_text')
+        
+        self.background_file = ''
+        
+        self.pa_bio_pic.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
+        self.pa_bio_pic.Bind(wx.EVT_ERASE_BACKGROUND, self.OnEraseBackground)
+        self.pa_bio_pic.Bind(wx.EVT_LEFT_UP, self.OnBackgroundClick)
+        self.ht_bio_text.Bind(wx.EVT_LEFT_UP, self.OnBackgroundClick)
+        
         
 # ---------------------------------------------------------
 # biography  ----------------------------------------------
     def GetArtistBio(self, artist):
         # get song's album from musicbrainz
+        #set text label
+        self.st_bio_artist.SetLabel(unicode(artist))
+        self.background_file = ''
+        (local_file_name, is_file) = file_cache.CreateCachedImage(self.parent.image_save_location, artist, '.jpg')
+        if is_file == True:
+            self.background_file = self.parent.image_save_location + local_file_name
+            self.pa_bio_pic.Refresh()
         # THREAD
-        current = BioThread(self.parent, artist)
+        current = BioThread(self.parent, artist, self, local_file_name)
         #THREAD
         current.start()
+           
+    def OnBackgroundClick(self, event):
+        if self.ht_bio_text.IsShown():
+            self.ht_bio_text.Show(False)
+        else:
+            self.ht_bio_text.Show(True)
+        event.Skip()
         
+    def OnEraseBackground(self, event):
+        """ Add a picture to the background """             
+        if (os.path.isfile(self.background_file)):
+            # yanked from ColourDB.py
+            dc = event.GetDC()
+        
+            if not dc:
+                dc = wx.ClientDC(self)
+                rect = self.GetUpdateRegion().GetBox()
+                dc.SetClippingRect(rect)
+            dc.Clear()        
+            bmp = wx.Bitmap(self.background_file)
+            #self.bm_bio_pic.SetSize(bio_bmp.GetSize())
+            #self.bm_bio_pic.SetBitmap(bio_bmp)
+            bb = bmp.GetSize()
+            hr = float(bb[0]) / self.pa_bio_pic.GetClientSize()[0]
+            hs = float(bb[1]) / hr
+            # rescale it so it's x= 250 y =? to keep aspect
+            hoo = wx.Bitmap.ConvertToImage(bmp)
+            hoo.Rescale(self.pa_bio_pic.GetClientSize()[0], hs) #, wx.IMAGE_QUALITY_HIGH)                
+            vshift = (bb[1] * -0.20)
+            if bb[1] > bb[0]:
+                vshift = ((bb[1] - bb[0]) * -1) + (bb[1] * 0.20)
+            
+            ioo = wx.BitmapFromImage(hoo)
+            ###self.bm_bio_pic.SetBitmap(ioo)
+            dc.DrawBitmap(ioo, 0, vshift)
+            ##w, h = self.pa_bio_pic.GetClientSize()
+            ##dc.SetBrush(wx.BrushFromBitmap(wx.Bitmap(self.background_file)))
+            ##dc.DrawRectangle(0, 0, w, h)
+        event.Skip()
+             
+#---------------------------------------------------------------------------
+# ####################################
+class BioThread(Thread): 
+    # grab rss feeds, thread style  
+    def __init__(self, parent, artist, tab, local_file_name):
+        Thread.__init__(self)        
+        self.parent = parent
+        self.artist = artist
+        self.tab = tab
+        self.local_file_name = local_file_name
+        #self.bio_text = bio_text
+                
+        # controls
+        self.ht_bio_text = xrc.XRCCTRL(self.parent, 'm_ht_bio_text')
+        
+        
+        #self.x_dim = self.bm_bio_pic.GetSize()[0]
+        #self.y_dim = self.bm_bio_pic.GetSize()[1]
+                 
+    def run(self):
+        local_file_name = self.local_file_name
+        if len(self.artist) > 0:
+            # try album art if nothing is listed for the song
+            bio_url = audioscrobbler_lite.Scrobb().get_artist_bio(self.artist)
+            #print bio_url[0]
+            if len(bio_url) > 1:
+                self.SetBioText(bio_url[1], self.artist)
+            if (len(str(bio_url[0])) > 8) & (self.tab.background_file ==''):
+                file_name = bio_url[0].rsplit('/', 1)[1]
+                ext = '.' + file_name.rsplit('.', 1)[1]                
+                (local_file_name, is_file) = file_cache.CreateCachedImage(self.parent.image_save_location, self.artist, ext)                
+                if is_file == False:
+                    self.parent.SaveSongArt(bio_url[0], local_file_name)
+                self.tab.background_file = self.parent.image_save_location + local_file_name
+                #if there's no album art set the bio image as the album cover
+            time.sleep(3)
+            if self.parent.palbum_art_file =='':                    
+                self.parent.SetImage(local_file_name, self.parent.image_save_location, resize=True)
+    
+                    
     def SetBioImage(self, file_name):
         """ sets the picture for the biography """
         # get albumcover for artist/song from last.fm
         bio_bmp = wx.Bitmap(self.parent.image_save_location + file_name, wx.BITMAP_TYPE_ANY) #wx.BITMAP_TYPE_JPEG)
         #self.bm_bio_pic.SetSize(bio_bmp.GetSize())
         #self.bm_bio_pic.SetBitmap(bio_bmp)
-        bb = bio_bmp.GetSize()        
-        hr = float(bb[0]) / 250
-        hs = float(bb[1]) / hr
+        ##bb = bio_bmp.GetSize()        
+        ##hr = float(bb[0]) / self.x_dim
+        ##hs = float(bb[1]) / hr
         # rescale it so it's x= 250 y =? to keep aspect
-        hoo = wx.Bitmap.ConvertToImage(bio_bmp)
-        hoo.Rescale(250, hs) #, wx.IMAGE_QUALITY_HIGH)
-        ioo = wx.BitmapFromImage(hoo)
-        self.bm_bio_pic.SetBitmap(ioo)
+        ##hoo = wx.Bitmap.ConvertToImage(bio_bmp)
+        ##hoo.Rescale(self.x_dim, hs) #, wx.IMAGE_QUALITY_HIGH)
+        ##ioo = wx.BitmapFromImage(hoo)
+        ###self.bm_bio_pic.SetBitmap(ioo)
+        self.tab.background_file = self.parent.image_save_location + file_name
 
     def SetBioText(self, bio_text, artist):
         """ sets the biography text """
+
         # get albumcover for artist/song from last.fm
         bio_text_str = self.StripTags(bio_text)
-        page_contents = '<p><FONT SIZE=3><b>' + unicode(artist) + '</b></FONT><br><br><FONT SIZE=-1>' + unicode(bio_text_str) + '</FONT></p>'
-        self.hm_bio_text.SetPage(page_contents)
+        tranny = 'en'
+        lang_set = options_window.GetSetting('language-selected', self.parent.FILEDB)
+        if (lang_set != False): #& (lang != None):
+            tranny = wx.Locale(int(lang_set)).GetCanonicalName()[0:2]
+        if tranny != 'en':
+            bio_text_str = google_translation.translate(bio_text_str, to=tranny)
+        page_contents = '<FONT SIZE=-1>' + unicode(bio_text_str) + '</FONT>'
+        self.ht_bio_text.SetPage(page_contents)
+
         
     def StripTags(self, text):
         """ strips out html tags """
@@ -81,31 +191,3 @@ class BiographyTab(wx.ScrolledWindow):
                             text = text[:start] + text[start+stop+1:]
                             finished = 0
         return text
-        
-#---------------------------------------------------------------------------
-# ####################################
-class BioThread(Thread): 
-    # grab rss feeds, thread style  
-    def __init__(self, parent, artist):
-        Thread.__init__(self)        
-        self.parent = parent
-        self.artist = artist
-                 
-    def run(self):
-        bio_url =''
-        if len(self.artist) > 0:
-            # try album art if nothing is listed for the song
-            bio_url = audioscrobbler_lite.Scrobb().get_artist_bio(self.artist)
-            #print bio_url[0]
-        if len(str(bio_url[0])) > 8:
-            file_name = bio_url[0].rsplit('/', 1)[1]
-            ext = '.' + file_name.rsplit('.', 1)[1]                
-            (local_file_name, is_file) = file_cache.CreateCachedImage(self.parent.image_save_location, self.artist, ext)                
-            if is_file == False:
-                self.parent.SaveSongArt(bio_url[0], local_file_name)
-            self.parent.tab_biography.SetBioImage(local_file_name)
-            #if there's no album art set the bio image as the album cover
-            time.sleep(3)
-            if self.parent.palbum_art_file =='':                    
-                self.parent.SetImage(local_file_name, self.parent.image_save_location, resize=True)
-        self.parent.tab_biography.SetBioText(bio_url[1], self.artist)

@@ -1387,34 +1387,44 @@
 													<flag>wxEXPAND</flag>
 													<border>5</border>
 													<object class="wxBoxSizer">
-														<orient>wxHORIZONTAL</orient>
+														<orient>wxVERTICAL</orient>
 														<object class="sizeritem">
 															<option>1</option>
-															<flag>wxEXPAND|wxBOTTOM|wxRIGHT</flag>
+															<flag>wxEXPAND | wxALL</flag>
 															<border>5</border>
-															<object class="wxHtmlWindow" name="m_hm_bio_text">
-																<style>wxHW_SCROLLBAR_AUTO</style>
-															</object>
-														</object>
-														<object class="sizeritem">
-															<option>0</option>
-															<flag>wxEXPAND</flag>
-															<border>5</border>
-															<object class="wxBoxSizer">
-																<orient>wxVERTICAL</orient>
-																<object class="spacer">
-																	<option>0</option>
-																	<flag>wxEXPAND</flag>
-																	<border>5</border>
-																	<size>0,10</size>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALL</flag>
-																	<border>5</border>
-																	<object class="wxStaticBitmap" name="m_bm_bio_pic">
-																		<size>250,-1</size>
-																		<bitmap />
+															<object class="wxPanel" name="m_pa_bio_pic">
+																<style>wxTAB_TRAVERSAL</style>
+																<object class="wxBoxSizer">
+																	<orient>wxVERTICAL</orient>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALL</flag>
+																		<border>10</border>
+																		<object class="wxStaticText" name="m_st_bio_artist">
+																			<font>
+																				<size>16</size>
+																				<family>default</family>
+																				<style>normal</style>
+																				<weight>bold</weight>
+																				<underlined>0</underlined>
+																			</font>
+																			<label></label>
+																		</object>
+																	</object>
+																	<object class="spacer">
+																		<option>1</option>
+																		<flag>wxEXPAND</flag>
+																		<border>5</border>
+																		<size>0,0</size>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALL|wxEXPAND</flag>
+																		<border>5</border>
+																		<object class="wxHtmlWindow" name="m_ht_bio_text">
+																			<style>wxHW_SCROLLBAR_AUTO</style>
+																			<size>-1,140</size>
+																		</object>
 																	</object>
 																</object>
 															</object>
