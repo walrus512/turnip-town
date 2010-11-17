@@ -54,5 +54,5 @@ def GetMasterVolume():
         return v[0]
     except Exception, expt:
         #print u"soundmixer_linux: " + str(Exception) + str(expt)
-        pass
+        return None
         #return 50
