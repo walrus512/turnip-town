@@ -69,6 +69,7 @@ class BiographyTab(wx.ScrolledWindow):
             self.ht_bio_text.Show(False)
         else:
             self.ht_bio_text.Show(True)
+        self.pa_bio_pic.Refresh()    
         event.Skip()
         
     def OnEraseBackground(self, event):
@@ -137,6 +138,7 @@ class BioThread(Thread):
                 if is_file == False:
                     self.parent.SaveSongArt(bio_url[0], local_file_name)
                 self.tab.background_file = self.parent.image_save_location + local_file_name
+                self.tab.pa_bio_pic.Refresh()
                 #if there's no album art set the bio image as the album cover
             time.sleep(3)
             if self.parent.palbum_art_file =='':                    
