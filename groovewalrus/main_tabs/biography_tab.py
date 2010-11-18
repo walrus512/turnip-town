@@ -20,6 +20,7 @@ Place, Suite 330, Boston, MA 02111-1307 USA
 """
 import wx
 import wx.xrc as xrc
+from wx.lib.embeddedimage import PyEmbeddedImage
 import time
 import os
 from threading import Thread
@@ -47,6 +48,7 @@ class BiographyTab(wx.ScrolledWindow):
         self.pa_bio_pic.Bind(wx.EVT_LEFT_UP, self.OnBackgroundClick)
         self.ht_bio_text.Bind(wx.EVT_LEFT_UP, self.OnBackgroundClick)
         
+
         
 # ---------------------------------------------------------
 # biography  ----------------------------------------------
@@ -73,35 +75,42 @@ class BiographyTab(wx.ScrolledWindow):
         event.Skip()
         
     def OnEraseBackground(self, event):
-        """ Add a picture to the background """             
-        if (os.path.isfile(self.background_file)):
-            # yanked from ColourDB.py
-            dc = event.GetDC()
+        """ Add a picture to the background """
+        pt = PyEmbeddedImage(
+            "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAAA3NCSVQICAjb4U/gAAAAQElE"
+            "QVRIiWM8cOAAAy0BE01NHxYWsECoAwcciNTg4HCAJAuGfhCNWjDwFjCOFhWjFoxaMGrBqAWj"
+            "FoxaMDIsAABPtQfBbeinLQAAAABJRU5ErkJggg==")            
         
-            if not dc:
-                dc = wx.ClientDC(self)
-                rect = self.GetUpdateRegion().GetBox()
-                dc.SetClippingRect(rect)
-            dc.Clear()        
+        # yanked from ColourDB.py
+        dc = event.GetDC()
+    
+        if not dc:
+            dc = wx.ClientDC(self)
+            rect = self.GetUpdateRegion().GetBox()
+            dc.SetClippingRect(rect)
+        dc.Clear()
+        if (os.path.isfile(self.background_file)):        
             bmp = wx.Bitmap(self.background_file)
-            #self.bm_bio_pic.SetSize(bio_bmp.GetSize())
-            #self.bm_bio_pic.SetBitmap(bio_bmp)
-            bb = bmp.GetSize()
-            hr = float(bb[0]) / self.pa_bio_pic.GetClientSize()[0]
-            hs = float(bb[1]) / hr
-            # rescale it so it's x= 250 y =? to keep aspect
-            hoo = wx.Bitmap.ConvertToImage(bmp)
-            hoo.Rescale(self.pa_bio_pic.GetClientSize()[0], hs) #, wx.IMAGE_QUALITY_HIGH)                
-            vshift = (bb[1] * -0.20)
-            if bb[1] > bb[0]:
-                vshift = ((bb[1] - bb[0]) * -1) + (bb[1] * 0.20)
-            
-            ioo = wx.BitmapFromImage(hoo)
-            ###self.bm_bio_pic.SetBitmap(ioo)
-            dc.DrawBitmap(ioo, 0, vshift)
-            ##w, h = self.pa_bio_pic.GetClientSize()
-            ##dc.SetBrush(wx.BrushFromBitmap(wx.Bitmap(self.background_file)))
-            ##dc.DrawRectangle(0, 0, w, h)
+        else:
+            bmp = pt.GetBitmap()
+        #self.bm_bio_pic.SetSize(bio_bmp.GetSize())
+        #self.bm_bio_pic.SetBitmap(bio_bmp)
+        bb = bmp.GetSize()
+        hr = float(bb[0]) / self.pa_bio_pic.GetClientSize()[0]
+        hs = float(bb[1]) / hr
+        # rescale it so it's x= 250 y =? to keep aspect
+        hoo = wx.Bitmap.ConvertToImage(bmp)
+        hoo.Rescale(self.pa_bio_pic.GetClientSize()[0], hs) #, wx.IMAGE_QUALITY_HIGH)                
+        vshift = (bb[1] * -0.20)
+        if bb[1] > bb[0]:
+            vshift = ((bb[1] - bb[0]) * -1) + (bb[1] * 0.20)
+        
+        ioo = wx.BitmapFromImage(hoo)
+        ###self.bm_bio_pic.SetBitmap(ioo)
+        dc.DrawBitmap(ioo, 0, vshift)
+        ##w, h = self.pa_bio_pic.GetClientSize()
+        ##dc.SetBrush(wx.BrushFromBitmap(wx.Bitmap(self.background_file)))
+        ##dc.DrawRectangle(0, 0, w, h)
         event.Skip()
              
 #---------------------------------------------------------------------------
@@ -125,6 +134,7 @@ class BioThread(Thread):
                  
     def run(self):
         local_file_name = self.local_file_name
+        self.tab.pa_bio_pic.Refresh()
         if len(self.artist) > 0:
             # try album art if nothing is listed for the song
             bio_url = audioscrobbler_lite.Scrobb().get_artist_bio(self.artist)
@@ -171,7 +181,10 @@ class BioThread(Thread):
         if (lang_set != False): #& (lang != None):
             tranny = wx.Locale(int(lang_set)).GetCanonicalName()[0:2]
         if tranny != 'en':
-            bio_text_str = google_translation.translate(bio_text_str, to=tranny)
+            try:
+                bio_text_str = google_translation.translate(bio_text_str, to=tranny)
+            except Exception, expt:
+                print "biography_tab:" + str(Exception) + str(expt)    
         page_contents = '<FONT SIZE=-1>' + unicode(bio_text_str) + '</FONT>'
         self.ht_bio_text.SetPage(page_contents)
 
