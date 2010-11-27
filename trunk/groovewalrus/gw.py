@@ -66,6 +66,8 @@ except Exception, expt:
     #from main_utils import player_pyglet
     PLAYER = 'mplayer'
 from main_utils import player_m
+if os.name != 'nt':
+    PLAYER = 'mplayer'
     
 
 from main_controls import drag_and_drop
@@ -109,7 +111,7 @@ from main_thirdp import grooveshark_old
 #from plugins.zongdora import zongdora
 #from plugins.web_remote import web_remote
 
-PROGRAM_VERSION = "0.327"
+PROGRAM_VERSION = "0.328"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -1051,7 +1053,11 @@ class MainPanel(wx.Panel):
         self.use_backend = backend_types[self.rx_options_backend.GetSelection()]
         
         if self.use_backend == 'pymedia':
-            self.player = player_pymedia.Player(self)
+            try:
+                self.player = player_pymedia.Player(self)
+            except Exception, expt:
+                print str(Exception)+str(expt)
+                self.player = player_m.Player(self)
         #elif self.use_backend == 'wx.media':
         #    self.player = player_wx.Player(self)
         else:
