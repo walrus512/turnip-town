@@ -76,6 +76,7 @@ class Song:
 
     def getStreamDetails(self):
         """function: Gets a stream key and host to get song content"""
+        print 'boo'
         parameters = {
             "songID": self.id,
             "prefetch": False,

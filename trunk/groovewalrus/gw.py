@@ -111,7 +111,7 @@ from main_thirdp import grooveshark_old
 #from plugins.zongdora import zongdora
 #from plugins.web_remote import web_remote
 
-PROGRAM_VERSION = "0.329"
+PROGRAM_VERSION = "0.330"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
