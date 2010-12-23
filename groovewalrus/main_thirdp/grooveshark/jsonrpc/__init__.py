@@ -27,14 +27,14 @@ import time
 # Constants
 DOMAIN = "grooveshark.com"
 HOME_URL = "http://listen." + DOMAIN
-TOKEN_URL = "https://cowbell." + DOMAIN + "/service.php"
+TOKEN_URL = "http://cowbell." + DOMAIN + "/more.php" #"https://cowbell." + DOMAIN + "/service.php"
 API_URL = "http://cowbell." + DOMAIN + "/more.php"
 SERVICE_URL = "http://cowbell." + DOMAIN + "/service.php"
 
 RANDOM_CHARS = "1234567890abcdef"
 
 CLIENT_NAME = "gslite" #htmlshark #jsqueue
-CLIENT_VERSION = "20100831.25"#"20101012.36"
+CLIENT_VERSION = "20101012.37" #"20100831.25"
 
 RE_SESSION = re.compile('"sessionID":"\s*?([A-z0-9]+)"') #re.compile('sessionID:\s*?\'([A-z0-9]+)\',')
 
@@ -79,7 +79,7 @@ class Request:
                 url = API_URL + "?" + method
 
         postData = json.dumps(postData)
-        #print url
+        print url
         #print headers
         #print postData
         self._request = urllib2.Request(url, postData, headers)
@@ -139,10 +139,9 @@ class JsonRPC:
             "secretKey": self._generateSecretKey(self._session)}
         response = self.request(parameters, "getCommunicationToken",
                 "token").send()
-
         try:
             return response["result"]
-        except TypeError, error:            
+        except TypeError, error:
             raise error
 
     def _generateToken(self, method):
