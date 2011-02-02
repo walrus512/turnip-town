@@ -70,7 +70,7 @@ class Tsong(object):
         print data_url
         
         headers = { 'User-Agent' : "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.2.8) Gecko/20100722 Firefox/3.6.8 (.NET CLR 3.5.30729)" }
-        url_connection = urllib2.Request(data_url.replace(' ', '+'), {}, headers)
+        url_connection = urllib2.Request(data_url.replace(' ', '+'), ' ', headers)
         #raw_results = url_connection.read()
         response = urllib2.urlopen(url_connection)
         raw_results = response.read()
