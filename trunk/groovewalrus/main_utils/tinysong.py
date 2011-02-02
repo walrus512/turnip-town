@@ -60,7 +60,7 @@ class Tsong(object):
         # <lfm <album <image
         results_array = []
         # replace "of" "and" "a" "the"
-        small_words_array = [" the ", " The ", "The ", "the ", " Of ", " And ", " A ", " Are ", " are ", " I ", " if ", " If ", " of ", " and ", " a ", "A ", " is ", " Is ", " to ", " To ", "I'm ", " i'm ", " I'm ", "I'd ", " i'd ", " I'd "]        
+        small_words_array = [" the ", " The ", "The ", "the ", " Of ", " And ", " A ", " Are ", " are ", " I ", " if ", " If ", " of ", " and ", " a ", "A ", " is ", " Is ", " to ", " To ", "I'm ", " i'm ", " I'm ", "I'd ", " i'd ", " I'd ", " & "]
         #query_string = query_string.lower()
         for x in small_words_array:
             query_string = query_string.replace(x, ' ')
