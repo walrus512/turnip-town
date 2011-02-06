@@ -19,22 +19,15 @@
 import re, os, string, stat, shutil, tempfile, binascii;
 import mimetypes;
 from stat import *;
-###from kaa.metadata.audio.eyeD3 import *;
+#from eyeD3 import *;
+import utils;
+import mp3;
 from frames import *;
 from binfuncs import *;
 import math;
-import utils;
-
-import mp3;
-import frames;
-
-import locale;
-LOCAL_ENCODING = locale.getpreferredencoding(do_setlocale=False);
-if not LOCAL_ENCODING or LOCAL_ENCODING == "ANSI_X3.4-1968":
-    LOCAL_ENCODING = 'latin1';
 
 ID3_V1_COMMENT_DESC = "ID3 v1 Comment";
-
+# Version constants
 ID3_CURRENT_VERSION = 0x00; # The version of the linked tag, if any.
 ID3_V1              = 0x10;
 ID3_V1_0            = 0x11;
@@ -46,6 +39,11 @@ ID3_V2_4            = 0x24;
 #ID3_V2_5            = 0x28; # This does not seem imminent.
 ID3_DEFAULT_VERSION = ID3_V2_4;
 ID3_ANY_VERSION     = ID3_V1 | ID3_V2;
+
+import locale;
+LOCAL_ENCODING = locale.getpreferredencoding(do_setlocale=True);
+if not LOCAL_ENCODING or LOCAL_ENCODING == "ANSI_X3.4-1968":
+    LOCAL_ENCODING = 'latin1';
 
 ################################################################################
 class TagException(Exception):
@@ -421,6 +419,9 @@ class Tag:
    # If this value is None the tag is not linked to any particular file..
    linkedFile = None;
 
+   # add TDTG (or TXXX) - Tagging Time - when saved
+   do_tdtg = True
+
    # Constructor.  An empty tag is created and the link method is used
    # to read an mp3 file's v1.x or v2.x tag.  You can optionally set a 
    # file name, but it will not be read, but may be written to.
@@ -597,10 +598,10 @@ class Tag:
 
    # Get artist.  There are a few frames that can contain this information,
    # and they are subtley different. 
-   #   eyeD3.frames.ARTIST_FID - Lead performer(s)/Soloist(s)
-   #   eyeD3.frames.BAND_FID - Band/orchestra/accompaniment
-   #   eyeD3.frames.CONDUCTOR_FID - Conductor/performer refinement
-   #   eyeD3.frames.REMIXER_FID - Interpreted, remixed, or otherwise modified by
+   #   frames.ARTIST_FID - Lead performer(s)/Soloist(s)
+   #   frames.BAND_FID - Band/orchestra/accompaniment
+   #   frames.CONDUCTOR_FID - Conductor/performer refinement
+   #   frames.REMIXER_FID - Interpreted, remixed, or otherwise modified by
    #
    # Any of these values can be passed as an argument to select the artist
    # of interest.  By default, the first one found (searched in the above order)
@@ -629,9 +630,9 @@ class Tag:
 
    # Get the track title.  By default the main title is returned.  Optionally,
    # you can pass:
-   #   eyeD3.frames.TITLE_FID - The title; the default.
-   #   eyeD3.frames.SUBTITLE_FID - The subtitle.
-   #   eyeD3.frames.CONTENT_TITLE_FID - Conten group description???? Rare.
+   #   frames.TITLE_FID - The title; the default.
+   #   frames.SUBTITLE_FID - The subtitle.
+   #   frames.CONTENT_TITLE_FID - Conten group description???? Rare.
    # An empty string is returned when no title exists.
    def getTitle(self, titleID = TITLE_FID):
       f = self.frames[titleID];
@@ -656,7 +657,7 @@ class Tag:
            return None;
 
    # Throws GenreException when the tag contains an unrecognized genre format.
-   # Note this method returns a eyeD3.Genre object, not a raw string.
+   # Note this method returns a Genre object, not a raw string.
    def getGenre(self):
       f = self.frames[GENRE_FID];
       if f and f[0].text:
@@ -692,33 +693,33 @@ class Tag:
 
    # Since multiple comment frames are allowed this returns a list with 0
    # or more elements.  The elements are not the comment strings, they are
-   # eyeD3.frames.CommentFrame objects.
+   # frames.CommentFrame objects.
    def getComments(self):
       return self.frames[COMMENT_FID];
 
    # Since multiple lyrics frames are allowed this returns a list with 0
    # or more elements.  The elements are not the lyrics strings, they are
-   # eyeD3.frames.LyricsFrame objects.
+   # frames.LyricsFrame objects.
    def getLyrics(self):
       return self.frames[LYRICS_FID];
 
-   # Returns a list (possibly empty) of eyeD3.frames.ImageFrame objects.
+   # Returns a list (possibly empty) of frames.ImageFrame objects.
    def getImages(self):
       return self.frames[IMAGE_FID];
 
-   # Returns a list (possibly empty) of eyeD3.frames.ObjectFrame objects.
+   # Returns a list (possibly empty) of frames.ObjectFrame objects.
    def getObjects(self):
       return self.frames[OBJECT_FID];
 
-   # Returns a list (possibly empty) of eyeD3.frames.URLFrame objects.
+   # Returns a list (possibly empty) of frames.URLFrame objects.
    # Both URLFrame and UserURLFrame objects are returned.  UserURLFrames
    # add a description and encoding, and have a different frame ID.
    def getURLs(self):
-      urls = list();
-      for fid in URL_FIDS:
-         urls.extend(self.frames[fid]);
-      urls.extend(self.frames[USERURL_FID]);
-      return urls;
+       urls = []
+       for fid in URL_FIDS:
+           urls.extend(self.frames[fid])
+       urls.extend(self.frames[USERURL_FID])
+       return urls
 
    def getUserTextFrames(self):
       return self.frames[USERTEXT_FID];
@@ -907,11 +908,31 @@ class Tag:
          self.frames.setUserTextFrame(self.strToUnicode(text),
                                       self.strToUnicode(desc), self.encoding);
 
+   def addUserURLFrame(self, desc, url):
+      if not url:
+         u_frames = self.frames[USERURL_FID]
+         for u in u_frames:
+            if u.description == desc:
+               self.frames.remove(u)
+               break
+      else:
+         self.frames.setUserURLFrame(str(url), self.strToUnicode(desc),
+                                     self.encoding)
+
+   def removeUserTextFrame(self, desc):
+      self.addUserTextFrame(desc, "")
+
+   def removeUserURLFrame(self, desc):
+      self.addUserURLFrame(desc, "")
+
    def removeComments(self):
        return self.frames.removeFramesByID(COMMENT_FID);
 
    def removeLyrics(self):
        return self.frames.removeFramesByID(LYRICS_FID);
+
+   def removeImages(self):
+       return self.frames.removeFramesByID(IMAGE_FID)
 
    def addImage(self, type, image_file_path, desc = u""):
        if image_file_path:
@@ -978,12 +999,14 @@ class Tag:
    def getBPM(self):
       bpm = self.frames[BPM_FID];
       if bpm:
-          return int(bpm[0].text);
+          # Round floats since the spec says this is an integer
+          bpm = int(float(bpm[0].text) + 0.5)
+          return bpm
       else:
           return None;
 
    def setBPM(self, bpm):
-       self.setTextFrame(BPM_FID, self.strToUnicode(str(bpm)));
+       self.setTextFrame(BPM_FID, self.strToUnicode(str(bpm)))
 
    def getPublisher(self):
       pub = self.frames[PUBLISHER_FID];
@@ -1014,6 +1037,12 @@ class Tag:
           self.frames.removeFramesByID(fid);
        else:
           self.frames.setTextFrame(fid, self.strToUnicode(txt), self.encoding);
+
+   def setURLFrame(self, fid, url):
+       if not url:
+          self.frames.removeFramesByID(fid)
+       else:
+          self.frames.setURLFrame(fid, url)
 
    def setTextEncoding(self, enc):
        if enc != LATIN1_ENCODING and enc != UTF_16_ENCODING and\
@@ -1080,7 +1109,7 @@ class Tag:
          elif c.description == "":
             cmt = c.comment;
             # Keep searching in case we find the description eyeD3 uses.
-      cmt = self._fixToWidth(cmt, 30);
+      cmt = self._fixToWidth(cmt.encode("latin_1"), 30);
       if version != ID3_V1_0:
          track = self.getTrackNum()[0];
          if track != None:
@@ -1207,20 +1236,21 @@ class Tag:
          currPadding = tmpTag.linkedFile.tagPadding;
          TRACE_MSG("Current tag padding: %d" % currPadding);
 
-      # Tag it!
-      t = time.strftime("%Y-%m-%dT%H:%M:%S", time.gmtime());
-      # TDTG for 2.4
-      if self.header.minorVersion == 4:
-          h = FrameHeader(self.header);
-          h.id = "TDTG";
-          dateFrame = DateFrame(h, date_str = self.strToUnicode(t),
-                                encoding = self.encoding);
-          self.frames.removeFramesByID("TDTG");
-          self.frames.addFrame(dateFrame);
-      # TXXX (Tagging time) for older versions
-      else:
-          self.frames.removeFramesByID("TDTG");
-          self.addUserTextFrame('Tagging time', t)
+      if self.do_tdtg:
+          t = time.strftime("%Y-%m-%dT%H:%M:%S", time.gmtime());
+          # Tag it!
+          if self.header.minorVersion == 4:
+              # TDTG for 2.4
+              h = FrameHeader(self.header);
+              h.id = "TDTG";
+              dateFrame = DateFrame(h, date_str = self.strToUnicode(t),
+                                    encoding = self.encoding);
+              self.frames.removeFramesByID("TDTG");
+              self.frames.addFrame(dateFrame);
+          else:
+              # TXXX (Tagging time) for older versions
+              self.frames.removeFramesByID("TDTG");
+              self.addUserTextFrame('Tagging time', t)
 
       # Render all frames first so the data size is known for the tag header.
       frameData = "";
@@ -1415,7 +1445,7 @@ class Genre:
       return self.name;
 
    # Sets the genre id.  The objects name field is set to the corresponding
-   # value obtained from eyeD3.genres.
+   # value obtained from genres.
    #
    # Throws GenreException when name does not map to a valid ID3 v1.1. id.
    # This behavior can be disabled by passing 0 as the second argument.
@@ -1436,7 +1466,7 @@ class Genre:
       self.name = name;
 
    # Sets the genre name.  The objects id field is set to the corresponding
-   # value obtained from eyeD3.genres.
+   # value obtained from genres.
    #
    # Throws GenreException when name does not map to a valid ID3 v1.1. name.
    # This behavior can be disabled by passing 0 as the second argument.
@@ -1448,7 +1478,7 @@ class Genre:
          id = genres[name];
          # Get titled case.
          name = genres[id];
-      except (KeyError, IndexError, TypeError):
+      except:
           if utils.strictID3():
               raise GenreException("Invalid genre name: " + name);
           id = None;
@@ -1459,7 +1489,7 @@ class Genre:
 
    # Sets the genre id and name. 
    #
-   # Throws GenreException when eyeD3.genres[id] != name (case insensitive). 
+   # Throws GenreException when genres[id] != name (case insensitive). 
    # This behavior can be disabled by passing 0 as the second argument.
    def set(self, id, name):
       if not isinstance(id, int):
@@ -1471,11 +1501,15 @@ class Genre:
          self.id = id;
          self.name = name;
       else:
-        if genres[name] != id:
-           raise GenreException("eyeD3.genres[" + str(id) + "] " +\
-                                "does not match " + name);
-        self.id = id;
-        self.name = name;
+         try:
+            if genres[name] != id:
+               raise GenreException("genres[" + str(id) + "] " +\
+                                    "does not match " + name);
+            self.id = id;
+            self.name = name;
+         except:
+            raise GenreException("genres[" + str(id) + "] " +\
+                                 "does not match " + name);
 
    # Parses genre information from genreStr. 
    # The following formats are supported:
@@ -1526,7 +1560,7 @@ class Genre:
 
       # Non standard, but witnessed.
       # Match genre alone. e.g. Rap, Rock, blues, 'Rock|Punk|Pop-Punk', etc
-      regex = re.compile("^[A-Z 0-9+/\-\|!&]+\00*$", re.IGNORECASE)
+      regex = re.compile("^[A-Z 0-9+/\-\|!&'\.]+\00*$", re.IGNORECASE)
       if regex.match(genreStr):
          self.setName(genreStr);
          return;
@@ -1551,7 +1585,7 @@ class TagFile:
    fileSize = int(0);
    tag      = None;
    # Number of seconds required to play the audio file.
-   play_time = 0.0
+   play_time = int(0);
 
    def __init__(self, fileName):
        self.fileName = fileName;
@@ -1582,15 +1616,8 @@ class TagFile:
       return self.play_time;
 
    def getPlayTimeString(self):
-      total = self.getPlayTime();
-      h = total / 3600;
-      m = (total % 3600) / 60;
-      s = (total % 3600) % 60;
-      if h:
-         timeStr = "%d:%.2d:%.2d" % (h, m, s);
-      else:
-         timeStr = "%d:%.2d" % (m, s);
-      return timeStr;
+      from utils import format_track_time
+      return format_track_time(self.getPlayTime())
 
 
 ################################################################################
@@ -1650,7 +1677,7 @@ class Mp3AudioFile(TagFile):
       # Compute track play time.
       tpf = mp3.computeTimePerFrame(self.header);
       if self.xingHeader and self.xingHeader.vbr:
-         self.play_time = tpf * self.xingHeader.numFrames;
+         self.play_time = int(tpf * self.xingHeader.numFrames);
       else:
          length = self.getSize();
          if self.tag and self.tag.isV2():
@@ -1661,7 +1688,7 @@ class Mp3AudioFile(TagFile):
                length -= 128;
          elif self.tag and self.tag.isV1():
             length -= 128;
-         self.play_time = (length / self.header.frameLength) * tpf
+         self.play_time = int((length / self.header.frameLength) * tpf);
 
       f.close();
 
@@ -1691,7 +1718,7 @@ class Mp3AudioFile(TagFile):
 ################################################################################
 def isMp3File(fileName):
     (type, enc) = mimetypes.guess_type(fileName);
-    return type == "audio/mpeg";
+    return type == "audio/x-mpg" or "audio/mpeg";
 
 ################################################################################
 class GenreMap(list):
@@ -1902,7 +1929,7 @@ class LinkedFile:
        if isinstance(fileName, str):
            try:
                self.name = unicode(fileName, sys.getfilesystemencoding());
-           except (UnicodeError, LookupError):
+           except:
                # Work around the local encoding not matching that of a mounted
                # filesystem
                self.name = fileName
@@ -1935,6 +1962,4 @@ def tagToUserTune(tag):
 # Module level globals.
 #
 genres = GenreMap();
-#id3 = Mp3AudioFile('E:/Music/M/M_019/MGMT-Oracular_Spectacular-ipc/05-mgmt-kids.mp3');
-#print id3.getPlayTime();
 
