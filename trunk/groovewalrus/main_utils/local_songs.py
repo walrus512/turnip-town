@@ -27,7 +27,7 @@ import wx
 
 from threading import Thread
 
-from main_thirdp import mp3tag
+from main_thirdp import eyeD3
 from main_utils import system_files
 
 
@@ -603,11 +603,16 @@ class VirtualList(wx.ListCtrl):
 #---------------------------------------------------------------------------
 # ####################################
 def GetMp3Length(file_name):
-    c = mp3tag.Mp3AudioFile(file_name)    
+    #try:
+    c = eyeD3.tag.Mp3AudioFile(file_name)
     return int(c.getPlayTime())
+    #except Exception, expt:
+    #    print "local_songs: GetMp3Length: " + str(Exception)+str(expt)
+    #    return (240)
+    
     
 def GetMp3Artist(file_name):
-    c = mp3tag.Mp3AudioFile(file_name)
+    c = eyeD3.tag.Mp3AudioFile(file_name)
     a =''
     try:
         b = c.tag.getArtist()    
@@ -618,7 +623,7 @@ def GetMp3Artist(file_name):
     
     
 def GetMp3Title(file_name):
-    c = mp3tag.Mp3AudioFile(file_name)
+    c = eyeD3.tag.Mp3AudioFile(file_name)
     a =''
     try:
         b = c.tag.getTitle()
@@ -628,7 +633,7 @@ def GetMp3Title(file_name):
     return a
     
 def GetMp3Album(file_name):
-    c = mp3tag.Mp3AudioFile(file_name)
+    c = eyeD3.tag.Mp3AudioFile(file_name)
     try:
         b = c.tag.getAlbum()
         a = ' '.join(i.capitalize() for i in b.split(' '))
@@ -637,7 +642,7 @@ def GetMp3Album(file_name):
     return a
     
 def SetMp3Album(file_name, album):
-    c = mp3tag.Mp3AudioFile(file_name)
+    c = eyeD3.tag.Mp3AudioFile(file_name)
     try:    
         c.tag.setAlbum(album)
         c.tag.update()
