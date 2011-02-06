@@ -24,6 +24,7 @@ import wx.html
 import wx.xrc as xrc
 from wx.lib.pubsub import Publisher as pub
 from wx.lib import langlistctrl
+import version_update_main
 
 import os
 import sys
@@ -111,7 +112,7 @@ from main_thirdp import grooveshark_old
 #from plugins.zongdora import zongdora
 #from plugins.web_remote import web_remote
 
-PROGRAM_VERSION = "0.330"
+PROGRAM_VERSION = "0.331"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="

@@ -19,7 +19,7 @@ class Target:
     def __init__(self, **kw):
         self.__dict__.update(kw)
         # for the versioninfo resources
-        self.version = "0.330"
+        self.version = "0.331"
         self.company_name = "Turnip-Town.net"
         self.copyright = "lots of copyright"
         self.name = "GrooveWalrus"
@@ -83,7 +83,7 @@ excludes = ['_tkinter', '_gtkagg', '_tkagg', '_agg2', '_cairo',
 setup(
     options = {"py2exe": {###"compressed": 1,
                           "optimize": 2,
-                          "packages": ["encodings"],
+                          "packages": ["encodings",],
                           "includes": includes,
                           "excludes": excludes, #matplot
                           'dll_excludes': ['tk84.dll', 'tcl84.dll', 'libgdk-win32-2.0-0.dll', 'libgobject-2.0-0.dll', 'libglib-2.0-0.dll', 'libgthread-2.0-0.dll'],
