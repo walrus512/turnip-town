@@ -429,6 +429,7 @@ class Tag:
       if fileName:
          self.linkedFile = LinkedFile(fileName);
       self.clear();
+      #self.frames =None
 
    def clear(self):
       self.header = TagHeader();
@@ -764,7 +765,7 @@ class Tag:
       elif not year:
           self.frames.removeFramesByID(fid)
       else:
-          self.frames.removeFramesByID(frames.OBSOLETE_YEAR_FID)
+          self.frames.removeFramesByID(OBSOLETE_YEAR_FID)#frames.OBSOLETE_YEAR_FID)
 
       dateStr = self.strToUnicode(str(year));
       if len(dateStr) != 4:
