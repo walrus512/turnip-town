@@ -17,8 +17,8 @@
 #
 ################################################################################
 
-eyeD3Version = "0.6.14";
-eyeD3Maintainer = "Travis Shirk <travis@pobox.com>";
+eyeD3Version = "@PACKAGE_VERSION@";
+eyeD3Maintainer = "@PACKAGE_BUGREPORT@";
 
 # Version constants
 ID3_CURRENT_VERSION = 0x00; # The version of the linked tag, if any.
@@ -34,7 +34,7 @@ ID3_DEFAULT_VERSION = ID3_V2_4;
 ID3_ANY_VERSION     = ID3_V1 | ID3_V2;
 
 import locale;
-LOCAL_ENCODING = locale.getpreferredencoding(do_setlocale=False);
+LOCAL_ENCODING = locale.getpreferredencoding(do_setlocale=True);
 if not LOCAL_ENCODING or LOCAL_ENCODING == "ANSI_X3.4-1968":
     LOCAL_ENCODING = 'latin1';
 

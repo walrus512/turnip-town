@@ -15,9 +15,9 @@
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#  $Id: utils.py 3035 2008-02-06 12:54:48Z dmeyer $
+#  $Id: utils.py,v 1.11.2.1 2005/12/02 03:18:42 travis Exp $
 ################################################################################
-###from kaa.metadata.audio.eyeD3 import *;
+#from eyeD3 import *;
 
 # Version constants
 ID3_CURRENT_VERSION = 0x00; # The version of the linked tag, if any.
@@ -32,6 +32,10 @@ ID3_V2_4            = 0x24;
 ID3_DEFAULT_VERSION = ID3_V2_4;
 ID3_ANY_VERSION     = ID3_V1 | ID3_V2;
 
+import locale;
+LOCAL_ENCODING = locale.getpreferredencoding(do_setlocale=True);
+if not LOCAL_ENCODING or LOCAL_ENCODING == "ANSI_X3.4-1968":
+    LOCAL_ENCODING = 'latin1';
 
 def versionsToConstant(v):
    major = v[0];

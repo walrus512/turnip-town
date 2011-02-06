@@ -105,44 +105,7 @@ def is_valid_mp_header(header):
 
     return True
 
-
-# kaa.metadata addition: custom version of find_header which performs
-# significantly better (and is more correct, handling the case in which
-# the header spans a 64k boundary).
 def find_header(fp, start_pos=0):
-    import struct
-    fp.seek(start_pos)
-    data = carry = ''
-    while True:
-        # Offset start_pos with any data we've already processed.
-        start_pos += len(data) - len(carry)
-        data, carry = carry + fp.read(64*1024), ''
-        if not data:
-            break
-        elif data == '\xff' * len(data):
-            # Lame catch for a pathological edge case in which the data
-            # is all 0xff.
-            continue
-
-        pos = -1
-        while pos < len(data):
-            pos = data.find('\xff', pos+1)
-            if pos < 0:
-                break
-            elif pos+4 <= len(data):
-                header_bytes = data[pos:pos+4]
-                header = struct.unpack('!I', header_bytes)[0]
-                if is_valid_mp_header(header):
-                    return pos + start_pos, header, header_bytes
-            else:
-                # Carry over all remaining data starting at the '\xff' we just
-                # found, in order to catch headers spanning a block boundary.
-                carry = data[pos:]
-
-    return None, None, None
-
-
-def __EYED3_ORIG_find_header(fp, start_pos=0):
     def find_sync(fp, start_pos=0):
         CHUNK_SIZE = 65536
 
@@ -575,7 +538,7 @@ class LameTag(dict):
    def decode(self, frame):
       """Decode the LAME info tag."""
       try: pos = frame.index("LAME")
-      except (ValueError, AttributeError): return
+      except: return
 
       # check the info tag crc.  if it's not valid, no point parsing much more.
       lamecrc = bin2dec(bytes2bin(frame[190:192]))
