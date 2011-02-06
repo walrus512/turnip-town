@@ -138,7 +138,7 @@ class LastfmTab(wx.ScrolledWindow):
             top_tracks_list = audioscrobbler_lite.Scrobb().make_similar_song_list(artist, song)
             self.GenerateScrobbList(top_tracks_list)
         else:    
-            dlg = wx.MessageDialog(self, 'Song not entered / playing.', 'Problems...', wx.OK | wx.ICON_WARNING)
+            dlg = wx.MessageDialog(self.parent, 'Song not entered / playing.', 'Problems...', wx.OK | wx.ICON_WARNING)
             dlg.ShowModal()
             dlg.Destroy()
         
@@ -151,7 +151,7 @@ class LastfmTab(wx.ScrolledWindow):
             #print top_tracks_list
             self.GenerateScrobbList(top_tracks_list, False, True)
         else:    
-            dlg = wx.MessageDialog(self, 'Artist not entered / song not playing.', 'Problems...', wx.OK | wx.ICON_WARNING)
+            dlg = wx.MessageDialog(self.parent, 'Artist not entered / song not playing.', 'Problems...', wx.OK | wx.ICON_WARNING)
             dlg.ShowModal()
             dlg.Destroy()
         
@@ -182,7 +182,7 @@ class LastfmTab(wx.ScrolledWindow):
             top_tracks_list = audioscrobbler_lite.Scrobb().make_artist_top_song_list(artist)
             self.GenerateScrobbList(top_tracks_list)
         else:    
-            dlg = wx.MessageDialog(self, 'Artist not entered / song not playing.', 'Problems...', wx.OK | wx.ICON_WARNING)
+            dlg = wx.MessageDialog(self.parent, 'Artist not entered / song not playing.', 'Problems...', wx.OK | wx.ICON_WARNING)
             dlg.ShowModal()
             dlg.Destroy()
         
@@ -193,7 +193,7 @@ class LastfmTab(wx.ScrolledWindow):
             top_tracks_list = audioscrobbler_lite.Scrobb().make_artist_top_album_list(artist)
             self.GenerateScrobbList(top_tracks_list, True)
         else:    
-            dlg = wx.MessageDialog(self, 'Artist not entered / song not playing.', 'Problems...', wx.OK | wx.ICON_WARNING)
+            dlg = wx.MessageDialog(self.parent, 'Artist not entered / song not playing.', 'Problems...', wx.OK | wx.ICON_WARNING)
             dlg.ShowModal()
             dlg.Destroy()
         
@@ -221,7 +221,7 @@ class LastfmTab(wx.ScrolledWindow):
             top_tracks_list = audioscrobbler_lite.Scrobb().make_song_top_tags_list(artist, song)
             self.GenerateScrobbList(top_tracks_list, False, False, True)
         else:    
-            dlg = wx.MessageDialog(self, 'Song not entered / playing.', 'Problems...', wx.OK | wx.ICON_WARNING)
+            dlg = wx.MessageDialog(self.parent, 'Song not entered / playing.', 'Problems...', wx.OK | wx.ICON_WARNING)
             dlg.ShowModal()
             dlg.Destroy()
 

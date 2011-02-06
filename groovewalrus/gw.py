@@ -2019,7 +2019,7 @@ class MainPanel(wx.Panel):
             track_dict.append({'creator': artist, 'title': title, 'album': album, 'location': song_id, 'duration': song_time})
             
         read_write_xml.xml_utils().save_tracks(filename, track_dict)
-        print 'save playlist'
+        print 'save playlist: ' + filename
         #self.GetAllSongRatings()
         
     def OnClearPlaylistClick(self, event):
