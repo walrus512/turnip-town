@@ -615,7 +615,7 @@ def GetMp3Artist(file_name):
     c = eyeD3.tag.Mp3AudioFile(file_name)
     a =''
     try:
-        b = c.getArtist()    
+        b = c.tag.getArtist()    
         a = ' '.join(i.capitalize() for i in b.split(' '))
     except AttributeError:
         pass
@@ -623,19 +623,21 @@ def GetMp3Artist(file_name):
     
     
 def GetMp3Title(file_name):
+    #print file_name
     c = eyeD3.tag.Mp3AudioFile(file_name)
     a =''
     try:
-        b = c.getTitle()
-        a = ' '.join(i.capitalize() for i in b.split(' '))
+    	b = c.tag.getTitle()
+    	a = ' '.join(i.capitalize() for i in b.split(' '))
     except AttributeError:
-        pass
+    	print str(AttributeError)
+    #    pass
     return a
     
 def GetMp3Album(file_name):
     c = eyeD3.tag.Mp3AudioFile(file_name)
     try:
-        b = c.getAlbum()
+        b = c.tag.getAlbum()
         a = ' '.join(i.capitalize() for i in b.split(' '))
     except AttributeError:
         a = ''
@@ -644,8 +646,8 @@ def GetMp3Album(file_name):
 def SetMp3Album(file_name, album):
     c = eyeD3.tag.Mp3AudioFile(file_name)
     try:    
-        c.setAlbum(album)
-        c.update()
+        c.tag.setAlbum(album)
+        c.tag.update()
     except AttributeError:
         print 'AttributeError'
 
