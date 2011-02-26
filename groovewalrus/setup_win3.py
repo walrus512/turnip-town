@@ -19,7 +19,7 @@ class Target:
     def __init__(self, **kw):
         self.__dict__.update(kw)
         # for the versioninfo resources
-        self.version = "0.331"
+        self.version = "0.332"
         self.company_name = "Turnip-Town.net"
         self.copyright = "lots of copyright"
         self.name = "GrooveWalrus"
@@ -37,14 +37,35 @@ class Target:
 manifest_template = '''
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
-<assemblyIdentity
+  <assemblyIdentity
     version="5.0.0.0"
     processorArchitecture="x86"
     name="%(prog)s"
     type="win32"
-/>
-<description>%(prog)s Program</description>
-<dependency>
+  />
+  <description>%(prog)s</description>
+  <trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+    <security>
+      <requestedPrivileges>
+        <requestedExecutionLevel
+            level="asInvoker"
+            uiAccess="false">
+        </requestedExecutionLevel>
+      </requestedPrivileges>
+    </security>
+  </trustInfo>
+  <dependency>
+    <dependentAssembly>
+      <assemblyIdentity
+            type="win32"
+            name="Microsoft.VC90.CRT"
+            version="9.0.21022.8"
+            processorArchitecture="x86"
+            publicKeyToken="1fc8b3b9a1e18e3b">
+      </assemblyIdentity>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
     <dependentAssembly>
         <assemblyIdentity
             type="win32"
@@ -55,7 +76,7 @@ manifest_template = '''
             language="*"
         />
     </dependentAssembly>
-</dependency>
+  </dependency>
 </assembly>
 '''
 
@@ -83,7 +104,7 @@ excludes = ['_tkinter', '_gtkagg', '_tkagg', '_agg2', '_cairo',
 setup(
     options = {"py2exe": {###"compressed": 1,
                           "optimize": 2,
-                          "packages": ["encodings",],
+                          "packages": ["encodings",], #"wx.lib.pubsub",],
                           "includes": includes,
                           "excludes": excludes, #matplot
                           'dll_excludes': ['tk84.dll', 'tcl84.dll', 'libgdk-win32-2.0-0.dll', 'libgobject-2.0-0.dll', 'libglib-2.0-0.dll', 'libgthread-2.0-0.dll'],
@@ -103,5 +124,6 @@ import shutil
 
 #shutil.rmtree('./dist/tcl')
 shutil.rmtree('./build')
-shutil.rmtree('./dist/mpl-data/example')
 shutil.rmtree('./dist/mpl-data/images')
+shutil.rmtree('./dist/mpl-data/example')
+

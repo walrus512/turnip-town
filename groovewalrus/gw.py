@@ -22,7 +22,17 @@ Place, Suite 330, Boston, MA 02111-1307 USA
 import wx
 import wx.html
 import wx.xrc as xrc
-from wx.lib.pubsub import Publisher as pub
+
+from wx.lib.pubsub import setupkwargs
+from wx.lib.pubsub import pub
+print pub.VERSION_STR
+
+#from wx.lib.pubsub import Publisher as pub
+#from wx.lib.pubsub import setupv1
+#from wx.lib.pubsub import setuparg1
+#from wx.lib.pubsub import Publisher
+#pub = Publisher()
+
 from wx.lib import langlistctrl
 import version_update_main
 
@@ -675,6 +685,7 @@ class MainPanel(wx.Panel):
         
         # edit menu
         self.parent.Bind(wx.EVT_MENU, self.OnDeleteClick, id=xrc.XRCID("m_mi_delete"))
+        self.parent.Bind(wx.EVT_MENU, self.OnInverseDeleteClick, id=xrc.XRCID("m_mi_inv_del"))
         self.parent.Bind(wx.EVT_MENU, self.OnCopyClick, id=xrc.XRCID("m_mi_copy"))
         self.parent.Bind(wx.EVT_MENU, self.OnPasteClick, id=xrc.XRCID("m_mi_paste"))
         self.parent.Bind(wx.EVT_MENU, self.OnCutClick, id=xrc.XRCID("m_mi_cut"))
@@ -833,12 +844,12 @@ class MainPanel(wx.Panel):
         pub.subscribe(self.SongIdReceiverAction, 'main.song_id')
         pub.subscribe(self.TimeReceiverAction, 'main.song_time.text')
         pub.subscribe(self.TimeSecondsReceiverAction, 'main.song_time.seconds')
-        pub.subscribe(self.SetCachedTimeReceiverAction, 'main.playback.45_seconds')
+        pub.subscribe(self.SetCachedTimeReceiverAction, 'main.playback.fourtyfive_seconds')
         pub.subscribe(self.UpdateMessengerStatus, 'main.playback.new')
         pub.subscribe(self.PyroMessage, 'main.pyro')
         
     def PyroMessage(self, message):
-        #pub.sendMessage('main.playback.45_seconds', {'artist':self.current_song.artist, 'song':self.current_song.song})
+        #pub.sendMessage('main.playback.fourtyfive_seconds', {'artist':self.current_song.artist, 'song':self.current_song.song})
         passed = False
         playback = False
         if 'sysarg' in message.data:
@@ -874,13 +885,13 @@ class MainPanel(wx.Panel):
         else:
             self.NiceOut()
         
-    def AlbumReceiverAction(self, message):
+    def AlbumReceiverAction(self, album, playlist_number):
         # {'album':album, 'playlist_number':self.playlist_number}
         # update playlist
-        self.lc_playlist.SetStringItem(message.data['playlist_number'], C_ALBUM, message.data['album'])
-        self.current_song.album = message.data['album']
+        self.lc_playlist.SetStringItem(playlist_number, C_ALBUM, album)
+        self.current_song.album = album
         
-    def SetCachedTimeReceiverAction(self, message):
+    def SetCachedTimeReceiverAction(self, artist, song):
         # check if file previously cached
         #print '45 seconds'
         temp_dir = system_files.GetDirectories(self).TempDirectory()
@@ -895,16 +906,17 @@ class MainPanel(wx.Panel):
             except Exception, expt:
                 print "SetCachedTimeReceiverAction: " + str(Exception) + str(expt)
         
-    def SongIdReceiverAction(self, message):        
+    def SongIdReceiverAction(self, song_id, playlist_number):        
         # update playlist
         #print message.data
-        self.lc_playlist.SetStringItem(message.data['playlist_number'], C_ID, message.data['song_id'])
+        self.lc_playlist.SetStringItem(playlist_number, C_ID, song_id)
         self.SavePlaylist(self.main_playlist_location)
         
-    def TimeReceiverAction(self, message):        
+    def TimeReceiverAction(self, time, playlist_number):        
         # update playlist
-        t = message.data['time']
-        i = message.data['playlist_number']
+        #time=self.song_time, playlist_number=self.playlist_position
+        t = time
+        i = playlist_number
         #print message
         #print message.data
         if (t != '') & (i != -1):
@@ -914,14 +926,15 @@ class MainPanel(wx.Panel):
                 print "TimeReceiverAction: " + str(Exception) + str(expt)
         #self.SavePlaylist(self.main_playlist_location)
         
-    def TimeSecondsReceiverAction(self, message):        
+    def TimeSecondsReceiverAction(self, time_seconds, playlist_number):        
         # update playlist
-        self.lc_playlist.SetStringItem(message.data['playlist_number'], C_TIME, self.ConvertTimeFormated(message.data['time_seconds']))
-        self.current_song.SetSongTimeSeconds(message.data['time_seconds'])
+        self.lc_playlist.SetStringItem(playlist_number, C_TIME, self.ConvertTimeFormated(time_seconds))
+        self.current_song.SetSongTimeSeconds(time_seconds)
         #self.SavePlaylist(self.main_playlist_location)
 
-    def UpdateMessengerStatus(self, message):        
+    def UpdateMessengerStatus(self, artist, song):        
         # update xfire status
+        #artist=cs.artist, song=cs.song
         messenger_enabled = options_window.GetSetting('messenger-enabled', self.FILEDB)
         messenger_path = options_window.GetSetting('messenger-path', self.FILEDB)
         
@@ -1321,7 +1334,7 @@ class MainPanel(wx.Panel):
         
             if self.time_count == 45:
                 #send a pubsub event at 45 seconds
-                pub.sendMessage('main.playback.45_seconds', {'artist':self.current_song.artist, 'song':self.current_song.song})
+                pub.sendMessage('main.playback.fourtyfive_seconds', artist=self.current_song.artist, song=self.current_song.song)
         
             if (self.scrobbed_active == 0) & (float(self.time_count) / float(self.current_song.song_time_seconds) > .4) & (self.auth_attempts == 0):
                 self.auth_attempts = 1
@@ -1893,7 +1906,7 @@ class MainPanel(wx.Panel):
                 self.time_count = self.sc_options_gs_wait.GetValue() * -1
                 
                 # publish to pubsub
-                pub.sendMessage('main.playback.load', {'artist':cs.artist, 'song':cs.song})
+                pub.sendMessage('main.playback.load', artist=cs.artist, song=cs.song)
          
                 if self.use_backend != 'flash':
                     self.player = self.flash
@@ -1967,7 +1980,7 @@ class MainPanel(wx.Panel):
                 cs.track_id = q_track_id
     
                 # publish to pubsub
-                pub.sendMessage('main.playback.new', {'artist':cs.artist, 'song':cs.song})
+                pub.sendMessage('main.playback.new', artist=cs.artist, song=cs.song)
                 self.SavePlaylist(self.main_playlist_location)
                 #print cs
                 
@@ -2153,6 +2166,7 @@ class MainPanel(wx.Panel):
         ID_FIX_ALBUM = 51
         ID_CLEAR = 61
         ID_SHARE = 71
+        ID_INVERSE_DELETE = 81
         
         menu = wx.Menu()
         
@@ -2163,17 +2177,19 @@ class MainPanel(wx.Panel):
         menu.AppendMenu(ID_FAVES, "Rate Song", sm)        
         
         #menu.Append(ID_FAVES, "Rate Song")
-        menu.Append(ID_SHARE, "Clipboard Share Link")
+        menu.Append(ID_SHARE, "Copy Share Link to Clipboard")
         menu.AppendSeparator()
         menu.Append(ID_SEARCH, "Find Better Version")        
         menu.Append(ID_FIX, "Song Details")
         menu.Append(ID_FIX_ALBUM, "Auto-Fix Album")
         menu.AppendSeparator()
         menu.Append(ID_CLEAR, "Clear Id")
-        menu.Append(ID_DELETE, "Delete")        
+        menu.Append(ID_INVERSE_DELETE, "Inverse Delete")
+        menu.Append(ID_DELETE, "Delete")
 
         
         wx.EVT_MENU(self, ID_DELETE, self.RemovePlaylistItem)
+        wx.EVT_MENU(self, ID_INVERSE_DELETE, self.RemoveOtherPlaylistItems)
         wx.EVT_MENU(self, ID_SEARCH, self.SearchAgain)
         wx.EVT_MENU(self, ID_FAVES, self.SongRate)
         wx.EVT_MENU(self, ID_FIX, self.FixPlaylistItem)
@@ -2215,6 +2231,31 @@ class MainPanel(wx.Panel):
                 del_count = del_count + 1
             self.lc_playlist.DeleteItem(self.lc_playlist.GetFirstSelected())
 
+        #update current song position
+        if del_count > 0:
+            self.current_song.playlist_position = self.current_song.playlist_position - del_count
+        
+        # save default playlist
+        #self.SavePlaylist(self.main_playlist_location)
+        ##self.ResizePlaylist()
+        
+    def RemoveOtherPlaylistItems(self, event=None):
+        self.BackupList()
+        # keep selected list item(s), remove others
+        del_count = 0
+
+        # iterate over all items and delete items that are not selected
+        for x in range(self.lc_playlist.GetItemCount()-1, 0, -1):
+            # counter for songs deleted before current one
+            print x
+            if self.lc_playlist.IsSelected(x):
+            	self.lc_playlist.Select(x, on=0)
+            	print 'keep' + str(x)
+            else:
+            	self.lc_playlist.DeleteItem(x)
+            	print 'del' + str(x)
+            	if x < self.current_song.playlist_position:
+                	del_count = del_count + 1
         #update current song position
         if del_count > 0:
             self.current_song.playlist_position = self.current_song.playlist_position - del_count
@@ -2693,6 +2734,16 @@ class MainPanel(wx.Panel):
             self.RemovePlaylistItem()
             #if self.lc_faves.IsShownOnScreen():
                 #self.RemoveFavesItem()
+                
+    def OnInverseDeleteClick(self, event=None):
+        #check which listctrl is visable
+        #save list for undo
+        #delete items(s)
+        #check if it's the delete key
+        if self.lc_playlist.IsShownOnScreen():
+            self.RemoveOtherPlaylistItems()
+            #if self.lc_faves.IsShownOnScreen():
+                #self.RemoveFavesItem()
             
     def OnKeyUp(self, event):
         print 'key'
@@ -2936,7 +2987,7 @@ class CurrentSong():
         
     def SetSongTime(self, song_time):
         self.song_time = song_time
-        pub.sendMessage('main.song_time.text', {'time':self.song_time, 'playlist_number':self.playlist_position})
+        pub.sendMessage('main.song_time.text', time=self.song_time, playlist_number=self.playlist_position)
         
     def SetSongTimeSeconds(self, song_time_seconds):
         self.song_time_seconds = song_time_seconds        
@@ -2975,11 +3026,11 @@ class CurrentSong():
                 
             #check if file exists
             if os.path.isfile(self.song_id):                
-                pub.sendMessage('main.song_id', {'song_id':self.song_id, 'playlist_number':self.playlist_position})
+                pub.sendMessage('main.song_id', song_id=self.song_id, playlist_number=self.playlist_position)
                 album = local_songs.GetMp3Album(self.song_id)
                 if (len(album) >= 1) & (len(self.album) <1):
                     self.album = album
-                    pub.sendMessage('main.album', {'album':self.album, 'playlist_number':self.playlist_position})
+                    pub.sendMessage('main.album', album=self.album, playlist_number=self.playlist_position)
             # try grooveshark
             else:
                 #grab results from tinysong
@@ -2993,7 +3044,7 @@ class CurrentSong():
                     # let's check for album and update that too
                     if (self.album =='') & (query_results[0]['AlbumName'] != ''):
                         self.album = query_results[0]['AlbumName']
-                        pub.sendMessage('main.album', {'album':self.album, 'playlist_number':self.playlist_position})
+                        pub.sendMessage('main.album', album=self.album, playlist_number=self.playlist_position)
                     
                     # check for song match
                     if self.song.upper() != query_results[0]['SongName'].upper():
@@ -3003,7 +3054,7 @@ class CurrentSong():
                         for x in range(1, len(query_results) - 1):                            
                             if (query_results[x]['SongName'].upper() == self.song.upper()) & (found_it != True):
                                 xx = query_results[x]['SongID']
-                                pub.sendMessage('main.song_id', {'song_id':xx, 'playlist_number':self.playlist_position})
+                                pub.sendMessage('main.song_id', song_id=xx, playlist_number=self.playlist_position)
                                 self.song_id = xx
                                 found_it = True
                                 break                                
@@ -3015,7 +3066,7 @@ class CurrentSong():
                         for x in range(1, len(query_results) - 1):                            
                             if (query_results[x]['ArtistName'].upper() == self.artist.upper()) & (found_it != True):
                                 yy = query_results[x]['SongID']
-                                pub.sendMessage('main.song_id', {'song_id':yy, 'playlist_number':self.playlist_position})
+                                pub.sendMessage('main.song_id', song_id=yy, playlist_number=self.playlist_position)
                                 self.song_id = yy
                                 found_it = True
                                 break
@@ -3023,11 +3074,11 @@ class CurrentSong():
                             self.parent.lc_playlist.SetItemBackgroundColour(self.playlist_position, HICOLOR_1)
                             # don't scrobb the wrong song
                             self.scrobbed_song = 1
-                            pub.sendMessage('main.song_id', {'song_id':returned_song_id, 'playlist_number':self.playlist_position})
+                            pub.sendMessage('main.song_id', song_id=returned_song_id, playlist_number=self.playlist_position)
                             self.song_id = returned_song_id
                     #update playlist
                     else:
-                        pub.sendMessage('main.song_id', {'song_id':returned_song_id, 'playlist_number':self.playlist_position})
+                        pub.sendMessage('main.song_id', song_id=returned_song_id, playlist_number=self.playlist_position)
                         self.song_id = returned_song_id
                 else:                    
                     #no search results found
@@ -3063,7 +3114,7 @@ class FetchAlbumThread(Thread):
         try:
             album_array = musicbrainz.Brainz().get_song_info(self.artist, self.song)
             album = album_array[1]
-            pub.sendMessage('main.album', {'album':album, 'playlist_number':self.playlist_number})
+            pub.sendMessage('main.album', album=album, playlist_number=self.playlist_number)
         except Exception, expt:
             print "FetchAlbumThread: " + str(Exception) + str(expt)
 
@@ -3085,7 +3136,7 @@ class FetchTimeThread(Thread):
         try:
             track_time = musicbrainz.Brainz().get_song_time(self.artist, self.song)
             if track_time != 0:
-                pub.sendMessage('main.song_time.seconds', {'time_seconds':track_time, 'playlist_number':self.playlist_number})
+                pub.sendMessage('main.song_time.seconds', time_seconds=track_time, playlist_number=self.playlist_number)
         except Exception, expt:
             print "FetchTimeThread: " + (Exception) + str(expt)
 
