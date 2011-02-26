@@ -21,7 +21,9 @@ Place, Suite 330, Boston, MA 02111-1307 USA
         
 import Pyro.core
 from threading import Thread
-from wx.lib.pubsub import Publisher as pub
+#from wx.lib.pubsub import Publisher as pub
+from wx.lib.pubsub import setupkwargs
+from wx.lib.pubsub import pub
 
 class PyroResponse(Pyro.core.ObjBase):
     def __init__(self):
@@ -29,11 +31,11 @@ class PyroResponse(Pyro.core.ObjBase):
         
     def MessageOnLoad(self, message):
         #print message
-        pub.sendMessage('main.pyro', {'sysarg': message})
+        pub.sendMessage('main.pyro', sysarg=message)
                
     def MessagePlayback(self, message):
         #print message
-        pub.sendMessage('main.pyro', {'playback': message})
+        pub.sendMessage('main.pyro', playback=message)
 
 def StartPyro():
     #THREAD

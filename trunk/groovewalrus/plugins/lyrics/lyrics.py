@@ -22,7 +22,10 @@ import wx
 import wx.xrc as xrc
 import urllib
 import os
-from wx.lib.pubsub import Publisher as pub
+#from wx.lib.pubsub import Publisher as pub
+#from wx.lib.pubsub import setupkwargs
+#from wx.lib.pubsub import pub
+
 from threading import Thread
 
 from main_utils.read_write_xml import xml_utils

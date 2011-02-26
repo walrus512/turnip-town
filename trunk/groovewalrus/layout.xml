@@ -312,6 +312,7 @@
 																	<underlined>0</underlined>
 																</font>
 																<label>Playlist</label>
+																<wrap>-1</wrap>
 															</object>
 														</object>
 														<object class="spacer">
@@ -499,6 +500,7 @@
 															<underlined>0</underlined>
 														</font>
 														<label>Last.fm</label>
+														<wrap>-1</wrap>
 													</object>
 												</object>
 												<object class="sizeritem">
@@ -539,6 +541,7 @@
 																			<underlined>1</underlined>
 																		</font>
 																		<label>Similar Songs</label>
+																		<wrap>-1</wrap>
 																	</object>
 																</object>
 																<object class="sizeritem">
@@ -553,6 +556,7 @@
 																			<underlined>1</underlined>
 																		</font>
 																		<label>Similar Artists</label>
+																		<wrap>-1</wrap>
 																	</object>
 																</object>
 																<object class="sizeritem">
@@ -575,6 +579,7 @@
 																			<underlined>1</underlined>
 																		</font>
 																		<label>Top Songs: Artist</label>
+																		<wrap>-1</wrap>
 																	</object>
 																</object>
 																<object class="sizeritem">
@@ -589,6 +594,7 @@
 																			<underlined>1</underlined>
 																		</font>
 																		<label>Top Albums: Artist</label>
+																		<wrap>-1</wrap>
 																	</object>
 																</object>
 																<object class="sizeritem">
@@ -603,6 +609,7 @@
 																			<underlined>1</underlined>
 																		</font>
 																		<label>Top Songs: Album</label>
+																		<wrap>-1</wrap>
 																	</object>
 																</object>
 																<object class="sizeritem">
@@ -625,6 +632,7 @@
 																			<underlined>1</underlined>
 																		</font>
 																		<label>Top Songs: Geo</label>
+																		<wrap>-1</wrap>
 																	</object>
 																</object>
 																<object class="sizeritem">
@@ -667,6 +675,7 @@
 																			<underlined>1</underlined>
 																		</font>
 																		<label>Top Tags: Song</label>
+																		<wrap>-1</wrap>
 																	</object>
 																</object>
 																<object class="sizeritem">
@@ -681,6 +690,7 @@
 																			<underlined>1</underlined>
 																		</font>
 																		<label>Top Songs: Tag</label>
+																		<wrap>-1</wrap>
 																	</object>
 																</object>
 																<object class="sizeritem">
@@ -774,6 +784,7 @@
 																								<style>wxALIGN_RIGHT</style>
 																								<size>60,-1</size>
 																								<label>Artist</label>
+																								<wrap>-1</wrap>
 																							</object>
 																						</object>
 																						<object class="sizeritem">
@@ -815,6 +826,7 @@
 																						<style>wxALIGN_RIGHT</style>
 																						<size>60,-1</size>
 																						<label>Song</label>
+																						<wrap>-1</wrap>
 																					</object>
 																				</object>
 																				<object class="sizeritem">
@@ -835,6 +847,7 @@
 																						<style>wxALIGN_RIGHT</style>
 																						<size>60,-1</size>
 																						<label>Album</label>
+																						<wrap>-1</wrap>
 																					</object>
 																				</object>
 																				<object class="sizeritem">
@@ -887,6 +900,7 @@
 															<underlined>0</underlined>
 														</font>
 														<label>My Last.fm</label>
+														<wrap>-1</wrap>
 													</object>
 												</object>
 												<object class="sizeritem">
@@ -927,6 +941,7 @@
 																			<underlined>1</underlined>
 																		</font>
 																		<label>Me</label>
+																		<wrap>-1</wrap>
 																	</object>
 																</object>
 																<object class="sizeritem">
@@ -949,6 +964,7 @@
 																			<underlined>1</underlined>
 																		</font>
 																		<label>My Friends</label>
+																		<wrap>-1</wrap>
 																	</object>
 																</object>
 																<object class="sizeritem">
@@ -963,6 +979,7 @@
 																			<underlined>1</underlined>
 																		</font>
 																		<label>My Neighbours</label>
+																		<wrap>-1</wrap>
 																	</object>
 																</object>
 																<object class="sizeritem">
@@ -985,6 +1002,7 @@
 																			<underlined>1</underlined>
 																		</font>
 																		<label>Loved Songs</label>
+																		<wrap>-1</wrap>
 																	</object>
 																</object>
 																<object class="spacer">
@@ -1046,6 +1064,7 @@
 																				<style>wxALIGN_RIGHT</style>
 																				<size>80,-1</size>
 																				<label>User</label>
+																				<wrap>-1</wrap>
 																			</object>
 																		</object>
 																		<object class="sizeritem">
@@ -1154,6 +1173,7 @@
 															<underlined>0</underlined>
 														</font>
 														<label>Album</label>
+														<wrap>-1</wrap>
 													</object>
 												</object>
 												<object class="sizeritem">
@@ -1259,6 +1279,7 @@
 																						<style>wxALIGN_RIGHT</style>
 																						<size>60,-1</size>
 																						<label>Album</label>
+																						<wrap>-1</wrap>
 																					</object>
 																				</object>
 																				<object class="sizeritem">
@@ -1308,6 +1329,7 @@
 																						<style>wxALIGN_RIGHT</style>
 																						<size>60,-1</size>
 																						<label>Artist</label>
+																						<wrap>-1</wrap>
 																					</object>
 																				</object>
 																				<object class="sizeritem">
@@ -1328,6 +1350,7 @@
 																						<style>wxALIGN_RIGHT</style>
 																						<size>60,-1</size>
 																						<label>Song</label>
+																						<wrap>-1</wrap>
 																					</object>
 																				</object>
 																				<object class="sizeritem">
@@ -1372,6 +1395,7 @@
 															<underlined>0</underlined>
 														</font>
 														<label>Biography</label>
+														<wrap>-1</wrap>
 													</object>
 												</object>
 												<object class="sizeritem">
@@ -1409,6 +1433,7 @@
 																				<underlined>0</underlined>
 																			</font>
 																			<label></label>
+																			<wrap>-1</wrap>
 																		</object>
 																	</object>
 																	<object class="spacer">
@@ -1455,6 +1480,7 @@
 															<underlined>0</underlined>
 														</font>
 														<label>Favorites</label>
+														<wrap>-1</wrap>
 													</object>
 												</object>
 												<object class="sizeritem">
@@ -1532,6 +1558,7 @@
 																	<underlined>1</underlined>
 																</font>
 																<label>Rating:</label>
+																<wrap>-1</wrap>
 															</object>
 														</object>
 														<object class="sizeritem">
@@ -1632,6 +1659,7 @@
 															<underlined>0</underlined>
 														</font>
 														<label>Song Collection</label>
+														<wrap>-1</wrap>
 													</object>
 												</object>
 												<object class="sizeritem">
@@ -1737,6 +1765,7 @@
 																									<style>wxALIGN_RIGHT</style>
 																									<size>80,-1</size>
 																									<label>Search:</label>
+																									<wrap>-1</wrap>
 																								</object>
 																							</object>
 																							<object class="sizeritem">
@@ -1822,6 +1851,7 @@
 																									<style>wxALIGN_RIGHT</style>
 																									<size>80,-1</size>
 																									<label>Search:</label>
+																									<wrap>-1</wrap>
 																								</object>
 																							</object>
 																							<object class="sizeritem">
@@ -1889,6 +1919,7 @@
 															<underlined>0</underlined>
 														</font>
 														<label>List Sifter</label>
+														<wrap>-1</wrap>
 													</object>
 												</object>
 												<object class="sizeritem">
@@ -1938,6 +1969,7 @@
 																								<border>5</border>
 																								<object class="wxStaticText" name="m_staticText18">
 																									<label>Pre:</label>
+																									<wrap>-1</wrap>
 																								</object>
 																							</object>
 																							<object class="sizeritem">
@@ -1968,6 +2000,7 @@
 																								<border>5</border>
 																								<object class="wxStaticText" name="m_staticText191">
 																									<label>Sep:</label>
+																									<wrap>-1</wrap>
 																								</object>
 																							</object>
 																							<object class="sizeritem">
@@ -1986,6 +2019,7 @@
 																								<border>5</border>
 																								<object class="wxStaticText" name="m_staticText44">
 																									<label>Post:</label>
+																									<wrap>-1</wrap>
 																								</object>
 																							</object>
 																							<object class="sizeritem">
@@ -2055,6 +2089,7 @@
 																								<border>5</border>
 																								<object class="wxStaticText" name="m_staticText451">
 																									<label>Feed URL:</label>
+																									<wrap>-1</wrap>
 																								</object>
 																							</object>
 																							<object class="sizeritem">
@@ -2194,6 +2229,7 @@
 																	<underlined>0</underlined>
 																</font>
 																<label>Options</label>
+																<wrap>-1</wrap>
 															</object>
 														</object>
 														<object class="sizeritem">
@@ -2257,6 +2293,7 @@
 																										<object class="wxStaticText" name="m_st_options_i18n_default">
 																											<size>250,-1</size>
 																											<label>Locale:</label>
+																											<wrap>-1</wrap>
 																										</object>
 																									</object>
 																								</object>
@@ -2323,6 +2360,7 @@
 																												<border>5</border>
 																												<object class="wxStaticText" name="m_staticText49">
 																													<label>Save music to:</label>
+																													<wrap>-1</wrap>
 																												</object>
 																											</object>
 																											<object class="sizeritem">
@@ -2383,6 +2421,7 @@
 																										<underlined>0</underlined>
 																									</font>
 																									<label>Last.fm Account</label>
+																									<wrap>-1</wrap>
 																								</object>
 																							</object>
 																							<object class="sizeritem">
@@ -2399,6 +2438,7 @@
 																											<style>wxALIGN_RIGHT</style>
 																											<size>70,-1</size>
 																											<label>Username</label>
+																											<wrap>-1</wrap>
 																										</object>
 																									</object>
 																									<object class="sizeritem">
@@ -2427,6 +2467,7 @@
 																											<style>wxALIGN_RIGHT</style>
 																											<size>70,-1</size>
 																											<label>Password</label>
+																											<wrap>-1</wrap>
 																										</object>
 																									</object>
 																									<object class="sizeritem">
@@ -2477,6 +2518,7 @@
 																										<border>10</border>
 																										<object class="wxStaticText" name="m_st_options_auth">
 																											<label>Status:</label>
+																											<wrap>-1</wrap>
 																										</object>
 																									</object>
 																									<object class="sizeritem">
@@ -2575,6 +2617,7 @@
 																								<object class="wxStaticText" name="m_staticText2111">
 																									<style>wxALIGN_LEFT</style>
 																									<label>Wait</label>
+																									<wrap>-1</wrap>
 																								</object>
 																							</object>
 																							<object class="sizeritem">
@@ -2595,6 +2638,7 @@
 																								<border>5</border>
 																								<object class="wxStaticText" name="m_staticText45">
 																									<label>seconds before playing a streamed song (it takes time to load).</label>
+																									<wrap>-1</wrap>
 																								</object>
 																							</object>
 																						</object>
@@ -2611,6 +2655,7 @@
 																								<border>5</border>
 																								<object class="wxStaticText" name="m_staticText46">
 																									<label>Play songs for</label>
+																									<wrap>-1</wrap>
 																								</object>
 																							</object>
 																							<object class="sizeritem">
@@ -2631,6 +2676,7 @@
 																								<border>5</border>
 																								<object class="wxStaticText" name="m_staticText47">
 																									<label>minutes</label>
+																									<wrap>-1</wrap>
 																								</object>
 																							</object>
 																							<object class="sizeritem">
@@ -2651,6 +2697,7 @@
 																								<border>5</border>
 																								<object class="wxStaticText" name="m_staticText48">
 																									<label>seconds, if a time can&apos;t be found.</label>
+																									<wrap>-1</wrap>
 																								</object>
 																							</object>
 																						</object>
@@ -2699,6 +2746,7 @@
 																										<border>5</border>
 																										<object class="wxStaticText" name="m_st_options_cache_location">
 																											<label>Location:</label>
+																											<wrap>-1</wrap>
 																										</object>
 																									</object>
 																								</object>
@@ -2715,6 +2763,7 @@
 																										<border>5</border>
 																										<object class="wxStaticText" name="m_staticText491">
 																											<label>Cache Size (in songs):</label>
+																											<wrap>-1</wrap>
 																										</object>
 																									</object>
 																									<object class="sizeritem">
@@ -2781,6 +2830,7 @@
 																								<underlined>0</underlined>
 																							</font>
 																							<label>Plug-ins</label>
+																							<wrap>-1</wrap>
 																						</object>
 																					</object>
 																					<object class="sizeritem">
@@ -2942,6 +2992,10 @@
 				</object>
 				<object class="wxMenuItem" name="m_mi_paste">
 					<label>Paste\tCtrl-V</label>
+					<help></help>
+				</object>
+				<object class="wxMenuItem" name="m_mi_inv_del">
+					<label>Inverse Delete\tIns</label>
 					<help></help>
 				</object>
 				<object class="wxMenuItem" name="m_mi_delete">
