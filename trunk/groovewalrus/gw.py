@@ -369,9 +369,12 @@ class MainPanel(wx.Panel):
         self.pa_options_plugins = xrc.XRCCTRL(self, "m_pa_options_plugins")
         
         self.bm_cover = xrc.XRCCTRL(self, 'm_bm_cover_small')
-        self.bm_cover.Bind(wx.EVT_LEFT_UP, self.OnAlbumCoverClick)       
+        self.bm_cover.Bind(wx.EVT_LEFT_UP, self.OnAlbumCoverClick)  
         
-        # options
+        # tab icons ------------------
+        self.TabImageList()
+        
+        # options ------------------
         self.tc_options_username = xrc.XRCCTRL(self, 'm_tc_options_username')
         self.tc_options_password = xrc.XRCCTRL(self, 'm_tc_options_password')
         self.rx_options_double_click = xrc.XRCCTRL(self, 'm_rx_options_double_click')
@@ -1228,6 +1231,30 @@ class MainPanel(wx.Panel):
             bmp = wx.Bitmap(file_name, wx.BITMAP_TYPE_PNG)
             rate_images.Add(bmp)
         return rate_images
+        
+    def TabImageList(self):
+        # song rating imagelist
+        rate_images = wx.ImageList(16, 16, True)        
+        image_files = [
+            GRAPHICS_LOCATION + 'audio-x-generic.png', 
+            GRAPHICS_LOCATION + 'arrow-right-table.png', 
+            GRAPHICS_LOCATION + 'arrow-right-table.png', 
+            GRAPHICS_LOCATION + 'arrow-right-table.png', #GRAPHICS_LOCATION + 'media-optical.png', 
+            GRAPHICS_LOCATION + 'arrow-right-table.png', #GRAPHICS_LOCATION + 'x-office-document.png',
+            GRAPHICS_LOCATION + 'arrow-right-table.png', #GRAPHICS_LOCATION + 'weather-clear.png', 
+            GRAPHICS_LOCATION + 'arrow-right-table.png', #GRAPHICS_LOCATION + 'document-open.png', 
+            GRAPHICS_LOCATION + 'arrow-right-table.png',
+            GRAPHICS_LOCATION + 'arrow-right-table.png', #GRAPHICS_LOCATION + 'preferences-system-16.png',
+            ]
+        for file_name in image_files:
+            bmp = wx.Bitmap(file_name, wx.BITMAP_TYPE_PNG)
+            rate_images.Add(bmp)
+            
+        self.nb_main.AssignImageList(rate_images)
+        
+        for x in range(0, len(image_files)):
+        	if image_files[x][-9:] != 'table.png':
+        		self.nb_main.SetPageImage(x, x)
         
     def PlaylistImageList(self):
         # song rating imagelist
@@ -2247,7 +2274,6 @@ class MainPanel(wx.Panel):
         # iterate over all items and delete items that are not selected
         for x in range(self.lc_playlist.GetItemCount()-1, 0, -1):
             # counter for songs deleted before current one
-            print x
             if self.lc_playlist.IsSelected(x):
             	self.lc_playlist.Select(x, on=0)
             	print 'keep' + str(x)
