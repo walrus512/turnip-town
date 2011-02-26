@@ -21,7 +21,7 @@
         <property name="skip_python_events">1</property>
         <property name="use_enum">0</property>
         <property name="use_microsoft_bom">0</property>
-        <object class="Panel" expanded="0">
+        <object class="Panel" expanded="1">
             <property name="BottomDockable">1</property>
             <property name="LeftDockable">1</property>
             <property name="RightDockable">1</property>
@@ -98,7 +98,7 @@
             <event name="OnSetFocus"></event>
             <event name="OnSize"></event>
             <event name="OnUpdateUI"></event>
-            <object class="wxBoxSizer" expanded="0">
+            <object class="wxBoxSizer" expanded="1">
                 <property name="minimum_size"></property>
                 <property name="name">bSizer1</property>
                 <property name="orient">wxHORIZONTAL</property>
@@ -113,11 +113,11 @@
                         <property name="width">5</property>
                     </object>
                 </object>
-                <object class="sizeritem" expanded="0">
+                <object class="sizeritem" expanded="1">
                     <property name="border">5</property>
                     <property name="flag">wxEXPAND</property>
                     <property name="proportion">1</property>
-                    <object class="wxBoxSizer" expanded="0">
+                    <object class="wxBoxSizer" expanded="1">
                         <property name="minimum_size"></property>
                         <property name="name">bSizer921</property>
                         <property name="orient">wxVERTICAL</property>
@@ -1746,27 +1746,27 @@
                                 </object>
                             </object>
                         </object>
-                        <object class="sizeritem" expanded="0">
+                        <object class="sizeritem" expanded="1">
                             <property name="border">5</property>
                             <property name="flag">wxEXPAND</property>
                             <property name="proportion">1</property>
-                            <object class="wxBoxSizer" expanded="0">
+                            <object class="wxBoxSizer" expanded="1">
                                 <property name="minimum_size"></property>
                                 <property name="name">bSizer3</property>
                                 <property name="orient">wxVERTICAL</property>
                                 <property name="permission">none</property>
-                                <object class="sizeritem" expanded="0">
+                                <object class="sizeritem" expanded="1">
                                     <property name="border">5</property>
                                     <property name="flag">wxEXPAND | wxALL</property>
                                     <property name="proportion">1</property>
-                                    <object class="wxNotebook" expanded="0">
+                                    <object class="wxNotebook" expanded="1">
                                         <property name="BottomDockable">1</property>
                                         <property name="LeftDockable">1</property>
                                         <property name="RightDockable">1</property>
                                         <property name="TopDockable">1</property>
                                         <property name="aui_name"></property>
                                         <property name="bg"></property>
-                                        <property name="bitmapsize"></property>
+                                        <property name="bitmapsize">16,16</property>
                                         <property name="caption"></property>
                                         <property name="caption_visible">1</property>
                                         <property name="center_pane">0</property>
@@ -1839,7 +1839,7 @@
                                         <event name="OnSize"></event>
                                         <event name="OnUpdateUI"></event>
                                         <object class="notebookpage" expanded="0">
-                                            <property name="bitmap"></property>
+                                            <property name="bitmap">graphics/audio-x-generic.png; Load From File</property>
                                             <property name="label">Playlist</property>
                                             <property name="select">1</property>
                                             <object class="wxScrolledWindow" expanded="0">
@@ -7166,7 +7166,7 @@
                                             </object>
                                         </object>
                                         <object class="notebookpage" expanded="0">
-                                            <property name="bitmap"></property>
+                                            <property name="bitmap">graphics/media-optical.png; Load From File</property>
                                             <property name="label">Album</property>
                                             <property name="select">0</property>
                                             <object class="wxScrolledWindow" expanded="0">
@@ -8642,7 +8642,7 @@
                                             </object>
                                         </object>
                                         <object class="notebookpage" expanded="0">
-                                            <property name="bitmap"></property>
+                                            <property name="bitmap">graphics/x-office-document.png; Load From File</property>
                                             <property name="label">Biography</property>
                                             <property name="select">0</property>
                                             <object class="wxScrolledWindow" expanded="0">
@@ -9174,7 +9174,7 @@
                                             </object>
                                         </object>
                                         <object class="notebookpage" expanded="0">
-                                            <property name="bitmap">; Load From File</property>
+                                            <property name="bitmap">graphics/weather-clear.png; Load From File</property>
                                             <property name="label">Favorites</property>
                                             <property name="select">0</property>
                                             <object class="wxScrolledWindow" expanded="0">
@@ -10425,7 +10425,7 @@
                                             </object>
                                         </object>
                                         <object class="notebookpage" expanded="0">
-                                            <property name="bitmap"></property>
+                                            <property name="bitmap">graphics/document-open.png; Load From File</property>
                                             <property name="label">Collection</property>
                                             <property name="select">0</property>
                                             <object class="wxScrolledWindow" expanded="0">
@@ -14397,7 +14397,7 @@
                                             </object>
                                         </object>
                                         <object class="notebookpage" expanded="0">
-                                            <property name="bitmap"></property>
+                                            <property name="bitmap">graphics/preferences-system-16.png; Load From File</property>
                                             <property name="label">Options</property>
                                             <property name="select">0</property>
                                             <object class="wxScrolledWindow" expanded="0">
