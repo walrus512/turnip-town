@@ -31,11 +31,11 @@ class PyroResponse(Pyro.core.ObjBase):
         
     def MessageOnLoad(self, message):
         #print message
-        pub.sendMessage('main.pyro', sysarg=message)
+        pub.sendMessage('main.pyro', sysarg=message, playback=False)
                
     def MessagePlayback(self, message):
         #print message
-        pub.sendMessage('main.pyro', playback=message)
+        pub.sendMessage('main.pyro', sysarg=False, playback=message)
 
 def StartPyro():
     #THREAD

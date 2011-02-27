@@ -84,6 +84,7 @@ def DoStuff(path):
         pyro_server.SendPlaybackPyro(path[1:])
     if path[1:].isdigit():
         pyro_server.SendPlaybackPyro(path[1:])
+        #print path[1:]
     
 class HttpControl():
     def __init__(self):
