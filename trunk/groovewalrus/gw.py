@@ -122,7 +122,7 @@ from main_thirdp import grooveshark_old
 #from plugins.zongdora import zongdora
 #from plugins.web_remote import web_remote
 
-PROGRAM_VERSION = "0.332"
+PROGRAM_VERSION = "0.333"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -836,11 +836,13 @@ class MainPanel(wx.Panel):
     # pubsub receivers-----------------
     def SetReceiver(self, target, topic):
         #set up a reciever for pub sub, work around for plugins
+        print topic
         listener = pub.subscribe(target.GenericReceiverAction, topic)        
         return listener
+        pass
         
-    def KillReceiver(self, target):
-        pub.unsubscribe(target)
+    def KillReceiver(self, target, topic):
+        pub.unsubscribe(target, topic)
         
     def LocalReceivers(self):
         pub.subscribe(self.AlbumReceiverAction, 'main.album')
@@ -851,14 +853,11 @@ class MainPanel(wx.Panel):
         pub.subscribe(self.UpdateMessengerStatus, 'main.playback.new')
         pub.subscribe(self.PyroMessage, 'main.pyro')
         
-    def PyroMessage(self, message):
+    def PyroMessage(self, sysarg, playback):
         #pub.sendMessage('main.playback.fourtyfive_seconds', {'artist':self.current_song.artist, 'song':self.current_song.song})
-        passed = False
-        playback = False
-        if 'sysarg' in message.data:
-            passed = message.data['sysarg']
-        if 'playback' in message.data:
-            playback = message.data['playback']           
+        
+        passed = sysarg       
+        playback = playback
 
         if passed:
             #print passed
@@ -1253,8 +1252,8 @@ class MainPanel(wx.Panel):
         self.nb_main.AssignImageList(rate_images)
         
         for x in range(0, len(image_files)):
-        	if image_files[x][-9:] != 'table.png':
-        		self.nb_main.SetPageImage(x, x)
+            if image_files[x][-9:] != 'table.png':
+                self.nb_main.SetPageImage(x, x)
         
     def PlaylistImageList(self):
         # song rating imagelist
@@ -1564,9 +1563,18 @@ class MainPanel(wx.Panel):
             self.SavePlaylist(self.main_playlist_location)
             self.SaveOptions(event)
             options_window.SetSetting('main-volume', self.sl_volume.GetValue(), self.FILEDB)
-        self.parent.Destroy()
+            
+        try:
+        	self.parent.tray_icon.Destroy()
+        except Exception, expt:
+        	pass	
+        #
+        #event.Skip()
         #sys.exit()#1
-        #os._exit()#2
+        self.parent.Destroy()
+        os._exit(0)
+        
+        ##2
         
     def OnSaveOptionsClick(self, event):
         # hide the notebook, or show it
@@ -2275,13 +2283,13 @@ class MainPanel(wx.Panel):
         for x in range(self.lc_playlist.GetItemCount()-1, 0, -1):
             # counter for songs deleted before current one
             if self.lc_playlist.IsSelected(x):
-            	self.lc_playlist.Select(x, on=0)
-            	print 'keep' + str(x)
+                self.lc_playlist.Select(x, on=0)
+                print 'keep' + str(x)
             else:
-            	self.lc_playlist.DeleteItem(x)
-            	print 'del' + str(x)
-            	if x < self.current_song.playlist_position:
-                	del_count = del_count + 1
+                self.lc_playlist.DeleteItem(x)
+                print 'del' + str(x)
+                if x < self.current_song.playlist_position:
+                    del_count = del_count + 1
         #update current song position
         if del_count > 0:
             self.current_song.playlist_position = self.current_song.playlist_position - del_count

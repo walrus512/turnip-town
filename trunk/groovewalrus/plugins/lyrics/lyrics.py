@@ -23,8 +23,8 @@ import wx.xrc as xrc
 import urllib
 import os
 #from wx.lib.pubsub import Publisher as pub
-#from wx.lib.pubsub import setupkwargs
-#from wx.lib.pubsub import pub
+from wx.lib.pubsub import setupkwargs
+from wx.lib.pubsub import pub
 
 from threading import Thread
 
@@ -127,7 +127,7 @@ class MainPanel(wx.Dialog):
         wx.EVT_MENU(self, ctrleqID, self.IncreaseFontSize)
         wx.EVT_MENU(self, ctrlmiID, self.DecreaseFontSize)
 
-    def GenericReceiverAction(self, message):
+    def GenericReceiverAction(self, artist, song):
         """Sets the pubsub receiver action."""
         self.GetLyrics(None)
         
@@ -186,7 +186,7 @@ class MainPanel(wx.Dialog):
             
     def CloseMe(self, event=None):
         self.SaveOptions()
-        self.parent.KillReceiver(self.GenericReceiverAction)
+        self.parent.KillReceiver(self.GenericReceiverAction, 'main.playback.new')
         self.Destroy()
         
     def LoadSettings(self):
