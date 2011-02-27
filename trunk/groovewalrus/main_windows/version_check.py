@@ -24,7 +24,7 @@ import urllib
 from main_utils import read_write_xml
 import os, sys
 
-VERSION_URL = "http://groove-walrus.turnip-town.net/dru/version/version3.xml"
+VERSION_URL = "http://groove-walrus.turnip-town.net/dru/version/version5.xml"
 
 SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0]))
 if os.path.isfile(SYSLOC + os.sep + "layout.xml") == False:
