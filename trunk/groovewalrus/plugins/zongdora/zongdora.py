@@ -109,7 +109,7 @@ class MainPanel(wx.Dialog):
         self.dialog.SetPosition((50,50))
                 
     def CloseMe(self, event=None):
-        self.parent.KillReceiver(self.GenericReceiverAction)
+        #self.parent.KillReceiver(self.GenericReceiverAction)
         self.Destroy()
         
     def OnListClick(self, event):
