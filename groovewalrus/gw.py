@@ -406,6 +406,7 @@ class MainPanel(wx.Panel):
         # playlist
         # playlist is subclassed to draglist in the xrc
         self.lc_playlist = xrc.XRCCTRL(self,'m_lc_playlist')
+        self.bb_song_timer = xrc.XRCCTRL(self,'m_bb_song_timer')        
         self.lc_playlist.InsertColumn(C_RATING," ")
         self.lc_playlist.InsertColumn(C_ARTIST,"Artist")
         self.lc_playlist.InsertColumn(C_SONG,"Song")
@@ -481,6 +482,7 @@ class MainPanel(wx.Panel):
         self.Bind(wx.EVT_BUTTON, self.RemovePlaylistItem, id=xrc.XRCID('m_bb_remove_playlist_item'))
         self.Bind(wx.EVT_BUTTON, self.OnLoadPlaylistClick, id=xrc.XRCID('m_bb_load_playlist'))
         self.Bind(wx.EVT_BUTTON, self.OnPlaylistHistoryClick, id=xrc.XRCID('m_bb_playlist_options'))
+        self.Bind(wx.EVT_BUTTON, self.OnPlaybackTimerClick, id=xrc.XRCID('m_bb_song_timer'))
         
         #playlist history     
         self.Bind(wx.EVT_TREE_SEL_CHANGED, self.OnTreeSelChange, self.tr_playlist_history)
@@ -532,6 +534,8 @@ class MainPanel(wx.Panel):
         # thread for playing a local track
         self.current_local = None
         
+        self.stop_after = 0
+        self.stop_next = False
         #self.current_song.artist = ''
         #self.current_song.song = ''
         #self.current_song.album = ''
@@ -1565,9 +1569,9 @@ class MainPanel(wx.Panel):
             options_window.SetSetting('main-volume', self.sl_volume.GetValue(), self.FILEDB)
             
         try:
-        	self.parent.tray_icon.Destroy()
+            self.parent.tray_icon.Destroy()
         except Exception, expt:
-        	pass	
+            pass    
         #
         #event.Skip()
         #sys.exit()#1
@@ -1848,9 +1852,18 @@ class MainPanel(wx.Panel):
         # play passed song, clicked = True if user clicked to play
         
         # stop current song --------
-        self.StopAll()
+        #self.StopAll()
+        self.OnStopClick(event=None)
         
-        if self.lc_playlist.GetItemCount() != 0:
+        if (self.lc_playlist.GetItemCount() != 0) & (self.stop_next == False):
+        
+            #--------------------------------------
+            # playback timer
+            if self.stop_after > 1:
+                self.stop_after = self.stop_after -1
+            if self.stop_after == 1:               
+                self.stop_after = 99                
+                self.stop_next = True
     
             #---------------------------------------
             self.gobbled_track = 0
@@ -2020,6 +2033,10 @@ class MainPanel(wx.Panel):
                 #print cs
                 
             self.GetSongRating(cs.track_id, cs.playlist_position)
+            
+        elif self.stop_next == True:
+            self.OnPlaybackTimerClick()
+            
 # ---------------------------------------------------------  
     # time functions
     def ConvertTimeFormated(self, seconds):
@@ -2298,6 +2315,24 @@ class MainPanel(wx.Panel):
         #self.SavePlaylist(self.main_playlist_location)
         ##self.ResizePlaylist()
                 
+    def OnPlaybackTimerClick(self, event=None):
+        #lets you stop playback after a song or 2
+        self.stop_next = False
+        #toggle on click between 0,1,2,3,5
+        bmp0 = wx.Bitmap(GRAPHICS_LOCATION + "image-loading.png", wx.BITMAP_TYPE_ANY)
+        bmp1 = wx.Bitmap(GRAPHICS_LOCATION + "image-loading-1.png", wx.BITMAP_TYPE_ANY)
+        bmp2 = wx.Bitmap(GRAPHICS_LOCATION + "image-loading-2.png", wx.BITMAP_TYPE_ANY)
+        bmp3 = wx.Bitmap(GRAPHICS_LOCATION + "image-loading-3.png", wx.BITMAP_TYPE_ANY)
+        bmp4 = wx.Bitmap(GRAPHICS_LOCATION + "image-loading-4.png", wx.BITMAP_TYPE_ANY)
+        bmp_list = [bmp0, bmp1, bmp2, bmp3, bmp4,] 
+        
+        if self.stop_after < 4:
+            self.stop_after = self.stop_after + 1        
+        else:
+            self.stop_after = 0    
+        
+        self.bb_song_timer.SetBitmapLabel(bmp_list[self.stop_after])
+        
     def FixPlaylistItem(self, event):
         # display the song steails window
         if self.lc_playlist.GetFirstSelected() >= 0:
