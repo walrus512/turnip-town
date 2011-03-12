@@ -122,7 +122,7 @@ from main_thirdp import grooveshark_old
 #from plugins.zongdora import zongdora
 #from plugins.web_remote import web_remote
 
-PROGRAM_VERSION = "0.334"
+PROGRAM_VERSION = "0.335"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -717,6 +717,7 @@ class MainPanel(wx.Panel):
         
         # tools menu        
         self.parent.Bind(wx.EVT_MENU, self.OnUpdateClick, id=xrc.XRCID("m_mi_version_update"))
+        self.parent.Bind(wx.EVT_MENU, self.TinysongKey, id=xrc.XRCID("m_mi_tingsong"))
         self.parent.Bind(wx.EVT_MENU, self.tab_song_collection.OnSColAddClick, id=xrc.XRCID("m_mi_song_collection"))
         self.parent.Bind(wx.EVT_MENU, self.ImportGroovesharkPlaylist, id=xrc.XRCID("m_mi_import_grooveshark"))
         self.parent.Bind(wx.EVT_MENU, self.SetLanguage, id=xrc.XRCID("m_mi_select_language"))
@@ -780,6 +781,9 @@ class MainPanel(wx.Panel):
         # load rss feeds --------
         self.list_sifter.LoadRSSFeeds()
         
+        # get tinysong api key
+        self.TinysongKey()
+        
         # load favorites --------
         # might not need this try:
         try:
@@ -836,7 +840,14 @@ class MainPanel(wx.Panel):
                 #self.GetPlaylistFromDatabase()
             
 #-----------------------------------------------------------            
-
+    # tinysong api key
+    def TinysongKey(self, event=None):
+        if (options_window.GetSetting('tingsong-api-key', self.FILEDB) == False) | (event != None):
+            dlg = wx.TextEntryDialog(self, 'You need a Tinysong api key (from http://tinysong.com):', 'TinySong API Key')
+            if dlg.ShowModal() == wx.ID_OK:
+                options_window.SetSetting('tingsong-api-key', dlg.GetValue(), self.FILEDB)
+            dlg.Destroy()
+            
     # pubsub receivers-----------------
     def SetReceiver(self, target, topic):
         #set up a reciever for pub sub, work around for plugins
@@ -3028,6 +3039,8 @@ class CurrentSong():
         #self.artist_graphic = ''        
         self.SetDefaultValues()
         #self.CheckId(song_id)
+        self.FILEDB = system_files.GetDirectories(self).DatabaseLocation()
+        self.tsong = tinysong.Tsong()
         
     def __str__(self):        
         print '            artist:   ' + self.artist
@@ -3104,7 +3117,7 @@ class CurrentSong():
             else:
                 #grab results from tinysong
                 self.parent.SetNetworkStatus('grooveshark', 1)
-                query_results = tinysong.Tsong().get_search_results(query_string, 32)
+                query_results = self.tsong.get_search_results(query_string, 32)
                    #*** change this stuff, change it in prefetch.py too
                 if len(query_results) >= 1:
                     self.parent.SetNetworkStatus('grooveshark', 0)
@@ -3222,6 +3235,8 @@ class WebFetchThread(Thread):
         self.song = song
         self.album = album
         self.webfetchtype = webfetchtype
+        self.FILEDB = system_files.GetDirectories(self).DatabaseLocation()
+        self.tsong = tinysong.Tsong()
                  
     def run(self):
         if self.webfetchtype == 'COVERS':
@@ -3270,7 +3285,7 @@ class WebFetchThread(Thread):
             #for searching
             query_string = self.artist + ' ' + self.song
             self.panel.SetNetworkStatus('grooveshark', 1)
-            query_results = tinysong.Tsong().get_search_results(query_string, 1)
+            query_results = self.tsong.get_search_results(query_string, 1)
             #print query_results
             if len(query_results) == 1:
                 self.panel.SetNetworkStatus('grooveshark', 0)
