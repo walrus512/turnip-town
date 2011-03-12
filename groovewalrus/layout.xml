@@ -3077,6 +3077,10 @@
 					<label>Version Update...</label>
 					<help></help>
 				</object>
+				<object class="wxMenuItem" name="m_mi_tingsong">
+					<label>Tingsong Key</label>
+					<help></help>
+				</object>
 				<object class="wxMenuItem" name="m_mi_song_collection">
 					<label>Song Collection Locations...</label>
 					<help></help>

@@ -25,7 +25,8 @@ try:
 except ImportError:
     from main_thirdp import simplejson as json
 #import xml.etree.ElementTree as ET
-
+from main_windows import options_window
+from main_utils import system_files
 #Example
 #    http://tinysong.com/s/Beethoven?limit=3
 #Returns
@@ -43,14 +44,15 @@ http://tinysong.com/s/Beethoven?format=json&limit=3
 """ #'
 
 TRACK_GETINFO = "http://tinysong.com/s/"
-Q_LIMIT = "?format=json&key=bf75d94d98b1f60c5abe23ea4816c9ff&limit="
+Q_LIMIT = "?format=json&limit="
 
 
     
 # ===================================================================
 class Tsong(object):
     def __init__(self):
-    	pass
+        self.FILEDB = system_files.GetDirectories(self).DatabaseLocation()
+        self.api_key = options_window.GetSetting('tingsong-api-key', self.FILEDB)    	
     	#self.last_similar_file_name = ''    	
         #self.last_country_name = ''
 
@@ -66,7 +68,7 @@ class Tsong(object):
             query_string = query_string.replace(x, ' ')
         query_string = url_quote(query_string)
         #print query_string
-        data_url = TRACK_GETINFO + query_string + Q_LIMIT + str(limit)
+        data_url = TRACK_GETINFO + query_string + Q_LIMIT + str(limit) + "&key=" + self.api_key
         print data_url
         
         headers = { 'User-Agent' : "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.2.8) Gecko/20100722 Firefox/3.6.8 (.NET CLR 3.5.30729)" }
