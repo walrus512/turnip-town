@@ -21,6 +21,7 @@ Place, Suite 330, Boston, MA 02111-1307 USA
 import wx
 import wx.xrc as xrc
 from main_utils import audioscrobbler_lite
+from threading import Thread
 
 #columns
 C_RATING = 0
@@ -91,9 +92,7 @@ class LastfmTab(wx.ScrolledWindow):
         self.parent.Bind(wx.EVT_BUTTON, self.OnClearLastSearchClick, id=xrc.XRCID('m_bb_last_clear_search'))
         self.parent.Bind(wx.EVT_BUTTON, self.LastfmAddPlaylist, id=xrc.XRCID('m_bb_last_add'))
         self.parent.Bind(wx.EVT_BUTTON, self.OnAutoGenerateLastfmPlayist, id=xrc.XRCID('m_bb_last_plize'))        
-        
-        
-        
+      
         
 # --------------------------------------------------------- 
 # last.fm ------------------------------------------------- 
@@ -110,6 +109,11 @@ class LastfmTab(wx.ScrolledWindow):
                 
         album = self.tc_last_search_album.GetValue()
         return artist, song, album
+        
+    def LastThread(self, last_query):
+        last_thread = GetLFThread(self)
+        last_thread.SetType(last_query) 
+        last_thread.start()
 
     def OnClearLastSearchClick(self, event):
         # clear lastfm search field
@@ -132,11 +136,12 @@ class LastfmTab(wx.ScrolledWindow):
     
     def OnLastTSSimilarClick(self, event):
         # grab similar tracks from last fm
-        artist, song, album = self.GetLastThree()        
+        self.artist, self.song, self.album = self.GetLastThree()        
         
-        if len(song) > 0:
-            top_tracks_list = audioscrobbler_lite.Scrobb().make_similar_song_list(artist, song)
-            self.GenerateScrobbList(top_tracks_list)
+        if len(self.song) > 0:                        
+            self.LastThread('similar_track')
+            #top_tracks_list = audioscrobbler_lite.Scrobb().make_similar_song_list(artist, song)
+            #self.GenerateScrobbList(top_tracks_list)
         else:    
             dlg = wx.MessageDialog(self.parent, 'Song not entered / playing.', 'Problems...', wx.OK | wx.ICON_WARNING)
             dlg.ShowModal()
@@ -145,11 +150,12 @@ class LastfmTab(wx.ScrolledWindow):
     def OnLastArtistSimilarClick(self, event):
         # grab similar tracks from last fm
         # get artist from artist search box, if blank get from current playing song
-        artist, song, album = self.GetLastThree()        
-        if len(artist) > 0:
-            top_tracks_list = audioscrobbler_lite.Scrobb().make_similar_artist_list(artist)
+        self.artist, self.song, self.album = self.GetLastThree()        
+        if len(self.artist) > 0:
+            self.LastThread('similar_artist')
+            #top_tracks_list = audioscrobbler_lite.Scrobb().make_similar_artist_list(artist)
             #print top_tracks_list
-            self.GenerateScrobbList(top_tracks_list, False, True)
+            #self.GenerateScrobbList(top_tracks_list, False, True)
         else:    
             dlg = wx.MessageDialog(self.parent, 'Artist not entered / song not playing.', 'Problems...', wx.OK | wx.ICON_WARNING)
             dlg.ShowModal()
@@ -157,19 +163,19 @@ class LastfmTab(wx.ScrolledWindow):
         
     def OnLastTSAlbumClick(self, event):
         # get top tracks for a given album
-        artist, song, album = self.GetLastThree()
-        if (album == '') & (len(song) > 0):
+        #$$$$ not threaded
+        self.artist, self.song, self.album = self.GetLastThree()
+        if (self.album == '') & (len(self.song) > 0):
             # check for album of playing song
-            track_stuff = self.parent.GetSongAlbumInfo(artist, song)
-            album = track_stuff[1]        
+            track_stuff = self.parent.GetSongAlbumInfo(self.artist, self.song)
+            self.album = track_stuff[1]        
         # get album id
         # get top tracks
-        if len(album) > 0:
-            top_tracks_list = audioscrobbler_lite.Scrobb().make_album_top_song_list(artist, album)
-            #print top_tracks_list
-            # trhread the queries to get the plays for each song in teh album
-            self.parent.TTA(top_tracks_list)
-            self.GenerateScrobbList(top_tracks_list, False, False)
+        if len(self.album) > 0:
+            self.LastThread('top_tracks_album')
+            #top_tracks_list = audioscrobbler_lite.Scrobb().make_album_top_song_list(artist, album)
+            #self.parent.TTA(top_tracks_list)
+            #self.GenerateScrobbList(top_tracks_list, False, False)
         else:
             dlg = wx.MessageDialog(self, 'Artist not entered / album not entered.', 'Problems...', wx.OK | wx.ICON_WARNING)
             dlg.ShowModal()
@@ -177,10 +183,11 @@ class LastfmTab(wx.ScrolledWindow):
         
     def OnLastTSArtistClick(self, event):
         # grab top tracks from last fm
-        artist, song, album = self.GetLastThree()
-        if len(artist) > 0:
-            top_tracks_list = audioscrobbler_lite.Scrobb().make_artist_top_song_list(artist)
-            self.GenerateScrobbList(top_tracks_list)
+        self.artist, self.song, self.album = self.GetLastThree()
+        if len(self.artist) > 0:
+            self.LastThread('top_artist')
+            #top_tracks_list = audioscrobbler_lite.Scrobb().make_artist_top_song_list(artist)
+            #self.GenerateScrobbList(top_tracks_list)
         else:    
             dlg = wx.MessageDialog(self.parent, 'Artist not entered / song not playing.', 'Problems...', wx.OK | wx.ICON_WARNING)
             dlg.ShowModal()
@@ -188,10 +195,11 @@ class LastfmTab(wx.ScrolledWindow):
         
     def OnLastTAArtistClick(self, event):
         # grab top albums from last fm
-        artist, song, album = self.GetLastThree()
-        if len(artist) > 0:
-            top_tracks_list = audioscrobbler_lite.Scrobb().make_artist_top_album_list(artist)
-            self.GenerateScrobbList(top_tracks_list, True)
+        self.artist, self.song, self.album = self.GetLastThree()
+        if len(self.artist) > 0:
+            self.LastThread('top_albums')
+            #top_tracks_list = audioscrobbler_lite.Scrobb().make_artist_top_album_list(artist)
+            #self.GenerateScrobbList(top_tracks_list, True)
         else:    
             dlg = wx.MessageDialog(self.parent, 'Artist not entered / song not playing.', 'Problems...', wx.OK | wx.ICON_WARNING)
             dlg.ShowModal()
@@ -199,27 +207,28 @@ class LastfmTab(wx.ScrolledWindow):
         
     def OnLastTSGeoClick(self, event):
         # grab top tracks from last fm per country
-        country = self.ch_last_country.GetStringSelection()
-        if len(country) > 0:
-            top_tracks_list = audioscrobbler_lite.Scrobb().make_geo_top_song_list(country)
-            self.GenerateScrobbList(top_tracks_list)
-        #print country
+        self.country = self.ch_last_country.GetStringSelection()
+        if len(self.country) > 0:
+            self.LastThread('country')
+            #top_tracks_list = audioscrobbler_lite.Scrobb().make_geo_top_song_list(country)
+            #self.GenerateScrobbList(top_tracks_list)        
         
     def OnLastTSGenreClick(self, event):
         # grab top tracks from last fm per country
-        genre = self.co_last_tag.GetValue() #(0)#Selection()
-        if len(genre) > 0:
-            top_tracks_list = audioscrobbler_lite.Scrobb().make_genre_top_song_list(genre)
-            self.GenerateScrobbList(top_tracks_list)
-        #print genre
+        self.genre = self.co_last_tag.GetValue() #(0)#Selection()
+        if len(self.genre) > 0:
+            self.LastThread('genre')
+            #top_tracks_list = audioscrobbler_lite.Scrobb().make_genre_top_song_list(genre)
+            #self.GenerateScrobbList(top_tracks_list)
         
     def OnLastTTSongClick(self, event):
         # grab top tags per song
-        artist, song, album = self.GetLastThree()
+        self.artist, self.song, self.album = self.GetLastThree()
 
-        if len(song) > 0:
-            top_tracks_list = audioscrobbler_lite.Scrobb().make_song_top_tags_list(artist, song)
-            self.GenerateScrobbList(top_tracks_list, False, False, True)
+        if len(self.song) > 0:
+            self.LastThread('song_tags')
+            #top_tracks_list = audioscrobbler_lite.Scrobb().make_song_top_tags_list(artist, song)
+            #self.GenerateScrobbList(top_tracks_list, False, False, True)
         else:    
             dlg = wx.MessageDialog(self.parent, 'Song not entered / playing.', 'Problems...', wx.OK | wx.ICON_WARNING)
             dlg.ShowModal()
@@ -345,3 +354,75 @@ class LastfmTab(wx.ScrolledWindow):
             #doble-clik on a tag, get list of top songs for tag            
             top_tracks_list = audioscrobbler_lite.Scrobb().make_genre_top_song_list(tag)
             self.GenerateScrobbList(top_tracks_list)
+            
+            
+            
+# --------------------------------------------------------- 
+# ######################################################### 
+# --------------------------------------------------------- 
+import wx.lib.agw.pybusyinfo as PBI
+
+class GetLFThread(Thread): 
+    # another thread to update download progress
+    def __init__(self, parent):
+        Thread.__init__(self)
+        self.parent = parent
+        self.get_type =''
+        self.load_state = False
+        
+    def SetType(self, get_type):
+        self.get_type = get_type        
+                        
+    def run(self):
+        if self.get_type == 'similar_track':
+            self.ShowLoading()
+            top_tracks_list = audioscrobbler_lite.Scrobb().make_similar_song_list(self.parent.artist, self.parent.song)
+            self.parent.GenerateScrobbList(top_tracks_list)
+            self.ShowLoading(False)
+        elif self.get_type == 'similar_artist':
+            self.ShowLoading()
+            top_tracks_list = audioscrobbler_lite.Scrobb().make_similar_artist_list(self.parent.artist)
+            self.parent.GenerateScrobbList(top_tracks_list, False, True)
+            self.ShowLoading(False)
+        elif self.get_type == 'top_artist':
+            self.ShowLoading()
+            top_tracks_list = audioscrobbler_lite.Scrobb().make_artist_top_song_list(self.parent.artist)
+            self.parent.GenerateScrobbList(top_tracks_list)
+            self.ShowLoading(False)
+        elif self.get_type == 'top_albums':
+            self.ShowLoading()
+            top_tracks_list = audioscrobbler_lite.Scrobb().make_artist_top_album_list(self.parent.artist)
+            self.parent.GenerateScrobbList(top_tracks_list)
+            self.ShowLoading(False)
+        elif self.get_type == 'country':
+            self.ShowLoading()
+            top_tracks_list = audioscrobbler_lite.Scrobb().make_geo_top_song_list(self.parent.country)
+            self.parent.GenerateScrobbList(top_tracks_list)
+            self.ShowLoading(False)
+        elif self.get_type == 'genre':
+            self.ShowLoading()
+            top_tracks_list = audioscrobbler_lite.Scrobb().make_genre_top_song_list(self.parent.genre)
+            self.parent.GenerateScrobbList(top_tracks_list)
+            self.ShowLoading(False)
+        elif self.get_type == 'song_tags':
+            self.ShowLoading()
+            top_tracks_list = audioscrobbler_lite.Scrobb().make_song_top_tags_list(self.parent.artist, self.parent.song)
+            self.parent.GenerateScrobbList(top_tracks_list, False, False, True)
+            self.ShowLoading(False)
+        elif self.get_type == 'top_tracks_album':
+            self.ShowLoading()
+            top_tracks_list = audioscrobbler_lite.Scrobb().make_album_top_song_list(self.parent.artist, self.parent.album)
+            self.parent.parent.TTA(top_tracks_list)
+            self.parent.GenerateScrobbList(top_tracks_list, False, False)
+            self.ShowLoading(False)
+            #top_tracks_list = audioscrobbler_lite.Scrobb().make_album_top_song_list(artist, album)
+            #self.parent.TTA(top_tracks_list)
+            #self.GenerateScrobbList(top_tracks_list, False, False)
+            
+    def ShowLoading(self, loading=True):
+        if loading:        
+            message = "Loading Last.fm..."
+            self.busy = PBI.PyBusyInfo(message, parent=None, title="Retrieving Data") #, icon=images.Smiles.GetBitmap())
+            #wx.Yield()
+        else:
+            del self.busy
