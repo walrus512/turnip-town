@@ -2027,7 +2027,7 @@ class MainPanel(wx.Panel):
                 #self.lc_playlist.Select(playlist_number)
                 if os.name == 'nt':
                     self.GetSongArt(cs.artist, cs.album)
-                    self.tab_biography.GetArtistBio(cs.artist)
+                self.tab_biography.GetArtistBio(cs.artist)
                     
                 cs.scrobble_song = 0            
                 self.db_submit_complete = False

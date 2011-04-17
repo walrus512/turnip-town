@@ -29,6 +29,13 @@ from main_utils import file_cache
 from main_thirdp import google_translation
 from main_windows import options_window
 
+EVT_NEW_IMAGE = wx.PyEventBinder(wx.NewEventType(), 0)
+
+class ImageEvent(wx.PyCommandEvent):
+    def __init__(self, eventType=EVT_NEW_IMAGE.evtType[0], id=0):
+        wx.PyCommandEvent.__init__(self, eventType, id)
+        self.data = None
+
 class BiographyTab(wx.ScrolledWindow):
     def __init__(self, parent):
         self.parent = parent 
@@ -48,7 +55,7 @@ class BiographyTab(wx.ScrolledWindow):
         self.pa_bio_pic.Bind(wx.EVT_LEFT_UP, self.OnBackgroundClick)
         self.ht_bio_text.Bind(wx.EVT_LEFT_UP, self.OnBackgroundClick)
         
-
+        self.parent.Bind(EVT_NEW_IMAGE, self.UpdateBio)
         
 # ---------------------------------------------------------
 # biography  ----------------------------------------------
@@ -65,7 +72,28 @@ class BiographyTab(wx.ScrolledWindow):
         current = BioThread(self.parent, artist, self, local_file_name)
         #THREAD
         current.start()
-           
+        
+    def UpdateBio(self, event):
+        #(bio_url[1], self.artist)
+        self.SetBioText(event.data[0], event.data[1])
+        
+    def SetBioText(self, bio_text, artist):
+        """ sets the biography text """
+
+        # get albumcover for artist/song from last.fm
+        bio_text_str = StripTags(bio_text)
+        tranny = 'en'
+        lang_set = options_window.GetSetting('language-selected', self.parent.FILEDB)
+        if (lang_set != False): #& (lang != None):
+            tranny = wx.Locale(int(lang_set)).GetCanonicalName()[0:2]
+        if tranny != 'en':
+            try:
+                bio_text_str = google_translation.translate(bio_text_str, to=tranny)
+            except Exception, expt:
+                print "biography_tab:" + str(Exception) + str(expt)    
+        page_contents = '<FONT SIZE=-1>' + unicode(bio_text_str) + '</FONT>'
+        self.ht_bio_text.SetPage(page_contents)    
+    
     def OnBackgroundClick(self, event):
         if self.ht_bio_text.IsShown():
             self.ht_bio_text.Show(False)
@@ -140,7 +168,12 @@ class BioThread(Thread):
             bio_url = audioscrobbler_lite.Scrobb().get_artist_bio(self.artist)
             #print bio_url[0]
             if len(bio_url) > 1:
-                self.SetBioText(bio_url[1], self.artist)
+                #self.SetBioText(bio_url[1], self.artist)
+                event = ImageEvent()
+                event.data = (bio_url[1], self.artist)
+                wx.PostEvent(self.parent, event)
+                
+                
             if (len(str(bio_url[0])) > 8) & (self.tab.background_file ==''):
                 file_name = bio_url[0].rsplit('/', 1)[1]
                 ext = '.' + file_name.rsplit('.', 1)[1]                
@@ -155,54 +188,22 @@ class BioThread(Thread):
                 self.parent.SetImage(local_file_name, self.parent.image_save_location, resize=True)
     
                     
-    def SetBioImage(self, file_name):
-        """ sets the picture for the biography """
-        # get albumcover for artist/song from last.fm
-        bio_bmp = wx.Bitmap(self.parent.image_save_location + file_name, wx.BITMAP_TYPE_ANY) #wx.BITMAP_TYPE_JPEG)
-        #self.bm_bio_pic.SetSize(bio_bmp.GetSize())
-        #self.bm_bio_pic.SetBitmap(bio_bmp)
-        ##bb = bio_bmp.GetSize()        
-        ##hr = float(bb[0]) / self.x_dim
-        ##hs = float(bb[1]) / hr
-        # rescale it so it's x= 250 y =? to keep aspect
-        ##hoo = wx.Bitmap.ConvertToImage(bio_bmp)
-        ##hoo.Rescale(self.x_dim, hs) #, wx.IMAGE_QUALITY_HIGH)
-        ##ioo = wx.BitmapFromImage(hoo)
-        ###self.bm_bio_pic.SetBitmap(ioo)
-        self.tab.background_file = self.parent.image_save_location + file_name
-
-    def SetBioText(self, bio_text, artist):
-        """ sets the biography text """
-
-        # get albumcover for artist/song from last.fm
-        bio_text_str = self.StripTags(bio_text)
-        tranny = 'en'
-        lang_set = options_window.GetSetting('language-selected', self.parent.FILEDB)
-        if (lang_set != False): #& (lang != None):
-            tranny = wx.Locale(int(lang_set)).GetCanonicalName()[0:2]
-        if tranny != 'en':
-            try:
-                bio_text_str = google_translation.translate(bio_text_str, to=tranny)
-            except Exception, expt:
-                print "biography_tab:" + str(Exception) + str(expt)    
-        page_contents = '<FONT SIZE=-1>' + unicode(bio_text_str) + '</FONT>'
-        self.ht_bio_text.SetPage(page_contents)
 
         
-    def StripTags(self, text):
-        """ strips out html tags """
-        finished = 0
-        if (text != None):
-            if (len(text) > 0):
-                while not finished:
-                    finished = 1
-                    # check if there is an open tag left
-                    start = text.find("<")
-                    if start >= 0:
-                        # if there is, check if the tag gets closed
-                        stop = text[start:].find(">")
-                        if stop >= 0:
-                            # if it does, strip it, and continue loop
-                            text = text[:start] + text[start+stop+1:]
-                            finished = 0
-        return text
+def StripTags(text):
+    """ strips out html tags """
+    finished = 0
+    if (text != None):
+        if (len(text) > 0):
+            while not finished:
+                finished = 1
+                # check if there is an open tag left
+                start = text.find("<")
+                if start >= 0:
+                    # if there is, check if the tag gets closed
+                    stop = text[start:].find(">")
+                    if stop >= 0:
+                        # if it does, strip it, and continue loop
+                        text = text[:start] + text[start+stop+1:]
+                        finished = 0
+    return text

@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "GrooveWalrus"
-#define MyAppVerName "GrooveWalrus 0.336"
+#define MyAppVerName "GrooveWalrus 0.337"
 #define MyAppPublisher "Turnip-town.net"
 #define MyAppURL "http://groove-walrus.turnip-town.net/"
 #define MyAppExeName "gw.exe"

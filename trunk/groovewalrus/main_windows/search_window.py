@@ -43,6 +43,21 @@ C_ALBUM = 3
 C_ID = 4
 C_TIME = 5
 
+# Define notification event for thread completion
+EVT_RESULT_ID = wx.NewId()
+
+def EVT_RESULT(win, func):
+    """Define Result Event."""
+    win.Connect(-1, -1, EVT_RESULT_ID, func)
+
+class ResultEvent(wx.PyEvent):
+    """Simple event to carry arbitrary result data."""
+    def __init__(self, data):
+        """Init Result Event."""
+        wx.PyEvent.__init__(self)
+        self.SetEventType(EVT_RESULT_ID)
+        self.data = data
+
 class SearchWindow(wx.Dialog):
     """Search Window for searching"""
     def __init__(self, parent):
@@ -91,6 +106,8 @@ class SearchWindow(wx.Dialog):
         self.st_search_header.Bind(wx.EVT_LEFT_UP, self.OnMouseLeftUp)
         self.st_search_header.Bind(wx.EVT_RIGHT_UP, self.OnRightUp)
                 
+        EVT_RESULT(self, self.FillSearchList)
+        
         # set layout --------------
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(panel, 1, wx.EXPAND|wx.ALL, 5)
@@ -159,14 +176,14 @@ class SearchWindow(wx.Dialog):
             #THREAD
             current.start()
             
-    def FillSearchList(self, query_results):
+    def FillSearchList(self, event):
         # search field, then search
         counter = 0
         # calc how many time to run through the loop, based on 8 items per result
         #times_to_run = divmod(len(query_results), 8)[0]
         #print times_to_run
         self.lc_search.DeleteAllItems()
-        for x in query_results:
+        for x in event.data:
             self.parent.SetNetworkStatus('grooveshark', 0)
             if len(x) > 0:
                 #print counter
@@ -293,7 +310,8 @@ class FetchThread(Thread):
             g_session.startSession()
             xx = g_session.getSearchResults(self.query_string, type="Songs")
             result_list = xx['result']['result']
-            self.parent.FillSearchList(result_list)
+            #self.parent.FillSearchList(result_list)
+            wx.PostEvent(self.parent, ResultEvent(result_list))
         #else:
             #query_results = tinysong.Tsong().get_search_results(self.query_string)
             #self.parent.FillSearchList(query_results)
