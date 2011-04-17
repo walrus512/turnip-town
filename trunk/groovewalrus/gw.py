@@ -782,7 +782,7 @@ class MainPanel(wx.Panel):
         self.list_sifter.LoadRSSFeeds()
         
         # get tinysong api key
-        self.TinysongKey()
+        ##self.TinysongKey()
         
         # load favorites --------
         # might not need this try:
