@@ -44,6 +44,13 @@ NB_OPTIONS = 8
 NB_ABOUT = 9
 WN_SEARCH = 99
 
+EVT_NEW_LAST = wx.PyEventBinder(wx.NewEventType(), 0)
+
+class LastEvent(wx.PyCommandEvent):
+    def __init__(self, eventType=EVT_NEW_LAST.evtType[0], id=0):
+        wx.PyCommandEvent.__init__(self, eventType, id)
+        self.data = None
+
 class LastfmTab(wx.ScrolledWindow):
     def __init__(self, parent):
         self.parent = parent
@@ -93,6 +100,7 @@ class LastfmTab(wx.ScrolledWindow):
         self.parent.Bind(wx.EVT_BUTTON, self.LastfmAddPlaylist, id=xrc.XRCID('m_bb_last_add'))
         self.parent.Bind(wx.EVT_BUTTON, self.OnAutoGenerateLastfmPlayist, id=xrc.XRCID('m_bb_last_plize'))        
       
+        self.parent.Bind(EVT_NEW_LAST, self.GenerateScrobbList)        
         
 # --------------------------------------------------------- 
 # last.fm ------------------------------------------------- 
@@ -234,7 +242,11 @@ class LastfmTab(wx.ScrolledWindow):
             dlg.ShowModal()
             dlg.Destroy()
 
-    def GenerateScrobbList(self, top_list, albums=False, artists=False, tags=False):
+    def GenerateScrobbList(self, event): #top_list, albums=False, artists=False, tags=False):
+        top_list = event.data[0]
+        albums = event.data[1]
+        artists = event.data[2]
+        tags=event.data[3]
         # put some data in a list control
         counter = 0
         self.lc_lastfm.DeleteAllItems()
@@ -374,50 +386,60 @@ class GetLFThread(Thread):
         self.get_type = get_type        
                         
     def run(self):
+        event = LastEvent()
         if self.get_type == 'similar_track':
             self.ShowLoading()
             top_tracks_list = audioscrobbler_lite.Scrobb().make_similar_song_list(self.parent.artist, self.parent.song)
-            self.parent.GenerateScrobbList(top_tracks_list)
+            #self.parent.GenerateScrobbList(top_tracks_list)
+            event.data = (top_tracks_list, False, False, False)
             self.ShowLoading(False)
         elif self.get_type == 'similar_artist':
             self.ShowLoading()
             top_tracks_list = audioscrobbler_lite.Scrobb().make_similar_artist_list(self.parent.artist)
-            self.parent.GenerateScrobbList(top_tracks_list, False, True)
+            #self.parent.GenerateScrobbList(top_tracks_list, False, True)
+            event.data = (top_tracks_list, False, True, False)
             self.ShowLoading(False)
         elif self.get_type == 'top_artist':
             self.ShowLoading()
             top_tracks_list = audioscrobbler_lite.Scrobb().make_artist_top_song_list(self.parent.artist)
-            self.parent.GenerateScrobbList(top_tracks_list)
+            #self.parent.GenerateScrobbList(top_tracks_list)
+            event.data = (top_tracks_list, False, False, False)
             self.ShowLoading(False)
         elif self.get_type == 'top_albums':
             self.ShowLoading()
             top_tracks_list = audioscrobbler_lite.Scrobb().make_artist_top_album_list(self.parent.artist)
-            self.parent.GenerateScrobbList(top_tracks_list)
+            #self.parent.GenerateScrobbList(top_tracks_list)
+            event.data = (top_tracks_list, False, False, False)
             self.ShowLoading(False)
         elif self.get_type == 'country':
             self.ShowLoading()
             top_tracks_list = audioscrobbler_lite.Scrobb().make_geo_top_song_list(self.parent.country)
-            self.parent.GenerateScrobbList(top_tracks_list)
+            #self.parent.GenerateScrobbList(top_tracks_list)
+            event.data = (top_tracks_list, False, False, False)
             self.ShowLoading(False)
         elif self.get_type == 'genre':
             self.ShowLoading()
             top_tracks_list = audioscrobbler_lite.Scrobb().make_genre_top_song_list(self.parent.genre)
-            self.parent.GenerateScrobbList(top_tracks_list)
+            #self.parent.GenerateScrobbList(top_tracks_list)
+            event.data = (top_tracks_list, False, False, False)
             self.ShowLoading(False)
         elif self.get_type == 'song_tags':
             self.ShowLoading()
             top_tracks_list = audioscrobbler_lite.Scrobb().make_song_top_tags_list(self.parent.artist, self.parent.song)
-            self.parent.GenerateScrobbList(top_tracks_list, False, False, True)
+            #self.parent.GenerateScrobbList(top_tracks_list, False, False, True)
+            event.data = (top_tracks_list, False, False, True)
             self.ShowLoading(False)
         elif self.get_type == 'top_tracks_album':
             self.ShowLoading()
             top_tracks_list = audioscrobbler_lite.Scrobb().make_album_top_song_list(self.parent.artist, self.parent.album)
             self.parent.parent.TTA(top_tracks_list)
-            self.parent.GenerateScrobbList(top_tracks_list, False, False)
+            #self.parent.GenerateScrobbList(top_tracks_list, False, False)
+            event.data = (top_tracks_list, False, False, False)
             self.ShowLoading(False)
             #top_tracks_list = audioscrobbler_lite.Scrobb().make_album_top_song_list(artist, album)
             #self.parent.TTA(top_tracks_list)
             #self.GenerateScrobbList(top_tracks_list, False, False)
+        wx.PostEvent(self.parent.parent, event) 
             
     def ShowLoading(self, loading=True):
         if loading:        
