@@ -30,8 +30,14 @@ from main_thirdp import google_translation
 from main_windows import options_window
 
 EVT_NEW_IMAGE = wx.PyEventBinder(wx.NewEventType(), 0)
+EVT_NEW_IMAGE2 = wx.PyEventBinder(wx.NewEventType(), 0)
 
 class ImageEvent(wx.PyCommandEvent):
+    def __init__(self, eventType=EVT_NEW_IMAGE.evtType[0], id=0):
+        wx.PyCommandEvent.__init__(self, eventType, id)
+        self.data = None
+        
+class ImageEvent2(wx.PyCommandEvent):
     def __init__(self, eventType=EVT_NEW_IMAGE.evtType[0], id=0):
         wx.PyCommandEvent.__init__(self, eventType, id)
         self.data = None
@@ -56,6 +62,7 @@ class BiographyTab(wx.ScrolledWindow):
         self.ht_bio_text.Bind(wx.EVT_LEFT_UP, self.OnBackgroundClick)
         
         self.parent.Bind(EVT_NEW_IMAGE, self.UpdateBio)
+        self.parent.Bind(EVT_NEW_IMAGE2, self.UpdateImage)
         
 # ---------------------------------------------------------
 # biography  ----------------------------------------------
@@ -75,8 +82,15 @@ class BiographyTab(wx.ScrolledWindow):
         
     def UpdateBio(self, event):
         #(bio_url[1], self.artist)
-        self.SetBioText(event.data[0], event.data[1])
+        if event.data != None:
+            self.SetBioText(event.data[0], event.data[1])
+        else:
+            self.pa_bio_pic.Refresh()
         
+    def UpdateImage(self, event):
+        #(bio_url[1], self.artist)
+        self.parent.SetImage(event.data, self.parent.image_save_location, resize=True)
+            
     def SetBioText(self, bio_text, artist):
         """ sets the biography text """
 
@@ -171,8 +185,7 @@ class BioThread(Thread):
                 #self.SetBioText(bio_url[1], self.artist)
                 event = ImageEvent()
                 event.data = (bio_url[1], self.artist)
-                wx.PostEvent(self.parent, event)
-                
+                wx.PostEvent(self.parent, event)                
                 
             if (len(str(bio_url[0])) > 8) & (self.tab.background_file ==''):
                 file_name = bio_url[0].rsplit('/', 1)[1]
@@ -181,15 +194,18 @@ class BioThread(Thread):
                 if is_file == False:
                     self.parent.SaveSongArt(bio_url[0], local_file_name)
                 self.tab.background_file = self.parent.image_save_location + local_file_name
-                self.tab.pa_bio_pic.Refresh()
+                #self.tab.pa_bio_pic.Refresh()
+                event = ImageEvent()
+                event.data = None
+                wx.PostEvent(self.parent, event)
                 #if there's no album art set the bio image as the album cover
             time.sleep(3)
-            if self.parent.palbum_art_file =='':                    
-                self.parent.SetImage(local_file_name, self.parent.image_save_location, resize=True)
-    
-                    
+            if self.parent.palbum_art_file =='':
+                event = ImageEvent2()
+                event.data = local_file_name
+                wx.PostEvent(self.parent, event)
+                #self.parent.SetImage(local_file_name, self.parent.image_save_location, resize=True)    
 
-        
 def StripTags(text):
     """ strips out html tags """
     finished = 0
