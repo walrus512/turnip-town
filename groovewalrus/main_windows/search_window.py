@@ -24,6 +24,8 @@ import wx.xrc as xrc
 from main_utils import tinysong
 from main_utils import local_songs
 #from main_utils import drag_and_drop
+#***
+from main_thirdp.grooveshark.jsonrpc import *
 
 import sys, os
 from threading import Thread
@@ -287,5 +289,16 @@ class FetchThread(Thread):
             query_results = local_songs.DbFuncs().GetResultsArray(self.query_string, 40)
             self.parent.FillSearchListLocal(query_results, self.query_string)
         else:
-            query_results = tinysong.Tsong().get_search_results(self.query_string)
-            self.parent.FillSearchList(query_results)
+            g_session = jsonrpcSession()
+            g_session.startSession()
+            xx = g_session.getSearchResults(self.query_string, type="Songs")
+            result_list = xx['result']['result']
+            self.parent.FillSearchList(result_list)
+        #else:
+            #query_results = tinysong.Tsong().get_search_results(self.query_string)
+            #self.parent.FillSearchList(query_results)
+            
+            
+            
+
+        

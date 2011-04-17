@@ -194,10 +194,8 @@ class JsonRPC:
             "type": type}
 
         response = Request(self, parameters, "getSearchResultsEx").send()
-
-        return {
-            "query": query,
-            "songs": self._parseSongs(response["result"]["Return"])}
+        #print response
+        return response
 
     def getPopular(self):
         """function: Get popular songs from Grooveshark"""
