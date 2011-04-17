@@ -512,6 +512,8 @@ class MainPanel(wx.Panel):
         
         self.Bind(wx.EVT_BUTTON, self.OnClearCacheClick, id=xrc.XRCID('m_bu_options_cache_clear'))
         
+        self.Bind(EVT_NEW_IMAGE, self.ImageThreadSet)
+        
         self.Bind(wx.EVT_BUTTON, self.OnUpdateClick, self.bb_update)
         wx.EVT_CLOSE(self.parent, self.OnExit)        
         
@@ -847,6 +849,9 @@ class MainPanel(wx.Panel):
             if dlg.ShowModal() == wx.ID_OK:
                 options_window.SetSetting('tingsong-api-key', dlg.GetValue(), self.FILEDB)
             dlg.Destroy()
+            
+    def ImageThreadSet(self, event):
+        self.SetImage(event.data[0], event.data[1])
             
     # pubsub receivers-----------------
     def SetReceiver(self, target, topic):
@@ -2025,8 +2030,8 @@ class MainPanel(wx.Panel):
                 print self.use_backend
                 self.parent.SetTitle(cs.artist + '-' + cs.song + ' - ' + PROGRAM_NAME + ' ' + PROGRAM_VERSION)
                 #self.lc_playlist.Select(playlist_number)
-                if os.name == 'nt':
-                    self.GetSongArt(cs.artist, cs.album)
+                #if os.name == 'nt':
+                self.GetSongArt(cs.artist, cs.album)
                 self.tab_biography.GetArtistBio(cs.artist)
                     
                 cs.scrobble_song = 0            
@@ -3225,7 +3230,13 @@ class FetchTimeThread(Thread):
 # --------------------------------------------------------- 
 # ######################################################### 
 # --------------------------------------------------------- 
+EVT_NEW_IMAGE = wx.PyEventBinder(wx.NewEventType(), 0)
 
+class ImageEvent(wx.PyCommandEvent):
+    def __init__(self, eventType=EVT_NEW_IMAGE.evtType[0], id=0):
+        wx.PyCommandEvent.__init__(self, eventType, id)
+        self.data = None
+        
 class WebFetchThread(Thread): 
     # grab rss feeds, thread style  
     def __init__(self, panel, artist, song, album, webfetchtype):
@@ -3257,11 +3268,19 @@ class WebFetchThread(Thread):
                 (local_file_name, is_file) = file_cache.CreateCachedImage(self.panel.image_save_location, art_alb, ext)
                 
                 self.panel.SaveSongArt(song_art_url, local_file_name)               
-                self.panel.SetImage(local_file_name, self.panel.image_save_location)
+                #self.panel.SetImage(local_file_name, self.panel.image_save_location)
                 self.panel.palbum_art_file = local_file_name
+                event = ImageEvent()
+                event.data = (local_file_name, self.panel.image_save_location)
+                wx.PostEvent(self.panel, event)
+                
             else:
-                self.panel.SetImage('no_cover.png', GRAPHICS_LOCATION)
                 self.panel.palbum_art_file =''
+                #self.panel.SetImage('no_cover.png', GRAPHICS_LOCATION)
+                event = ImageEvent()
+                event.data = ('no_cover.png', GRAPHICS_LOCATION)
+                wx.PostEvent(self.panel, event)
+                
                 #print 'no-cover'
             
         if self.webfetchtype == 'VERSION':

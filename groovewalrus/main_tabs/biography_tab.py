@@ -38,7 +38,7 @@ class ImageEvent(wx.PyCommandEvent):
         self.data = None
         
 class ImageEvent2(wx.PyCommandEvent):
-    def __init__(self, eventType=EVT_NEW_IMAGE.evtType[0], id=0):
+    def __init__(self, eventType=EVT_NEW_IMAGE2.evtType[0], id=0):
         wx.PyCommandEvent.__init__(self, eventType, id)
         self.data = None
 
