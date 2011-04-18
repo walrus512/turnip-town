@@ -122,7 +122,7 @@ from main_thirdp import grooveshark_old
 #from plugins.zongdora import zongdora
 #from plugins.web_remote import web_remote
 
-PROGRAM_VERSION = "0.337"
+PROGRAM_VERSION = "0.338"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -3045,7 +3045,7 @@ class CurrentSong():
         self.SetDefaultValues()
         #self.CheckId(song_id)
         self.FILEDB = system_files.GetDirectories(self).DatabaseLocation()
-        self.tsong = tinysong.Tsong()
+        #self.tsong = tinysong.Tsong()
         
     def __str__(self):        
         print '            artist:   ' + self.artist
@@ -3122,7 +3122,13 @@ class CurrentSong():
             else:
                 #grab results from tinysong
                 self.parent.SetNetworkStatus('grooveshark', 1)
-                query_results = self.tsong.get_search_results(query_string, 32)
+                #query_results = self.tsong.get_search_results(query_string, 32)
+                
+                g_session = jsonrpcSession()
+                g_session.startSession()
+                xx = g_session.getSearchResults(query_string, type="Songs")
+                query_results = xx['result']['result']
+
                    #*** change this stuff, change it in prefetch.py too
                 if len(query_results) >= 1:
                     self.parent.SetNetworkStatus('grooveshark', 0)
@@ -3247,7 +3253,7 @@ class WebFetchThread(Thread):
         self.album = album
         self.webfetchtype = webfetchtype
         self.FILEDB = system_files.GetDirectories(self).DatabaseLocation()
-        self.tsong = tinysong.Tsong()
+        #self.tsong = tinysong.Tsong()
                  
     def run(self):
         if self.webfetchtype == 'COVERS':
@@ -3304,7 +3310,13 @@ class WebFetchThread(Thread):
             #for searching
             query_string = self.artist + ' ' + self.song
             self.panel.SetNetworkStatus('grooveshark', 1)
-            query_results = self.tsong.get_search_results(query_string, 1)
+            #query_results = self.tsong.get_search_results(query_string, 1)
+            
+            g_session = jsonrpcSession()
+            g_session.startSession()
+            xx = g_session.getSearchResults(query_string, type="Songs")
+            query_results = xx['result']['result']
+            
             #print query_results
             if len(query_results) == 1:
                 self.panel.SetNetworkStatus('grooveshark', 0)
