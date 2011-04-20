@@ -24,7 +24,8 @@ import os
 from main_utils import system_files
 from main_utils import file_cache
 from main_utils import local_songs
-from main_utils import tinysong
+#from main_utils import tinysong
+from main_windows import search_window
 
 # cycle through playlist from current song
 # if found as local file skip
@@ -80,9 +81,11 @@ class PreFetch(object):
 
     def GetSongId(self, artist, track):
     # use tinysong to find the song id
-    # THIS SHOULD ALL BE SOMEWHERE ELSE, IT'S DUPLICATING STUFF IN gw.py
+    # *** THIS SHOULD ALL BE SOMEWHERE ELSE, IT'S DUPLICATING STUFF IN gw.py
             
-        query_results = tinysong.Tsong().get_search_results(artist + ' ' + track, 32)
+        #query_results = tinysong.Tsong().get_search_results(artist + ' ' + track, 32)
+        # *** ahh!
+        query_results = search_window.GetSearchResults(artist + ' ' + track)
         
         if len(query_results) >= 1:                
             # song id is at [1] - 4,2,6,1

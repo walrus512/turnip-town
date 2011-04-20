@@ -362,12 +362,14 @@ class LastfmTab(wx.ScrolledWindow):
         elif (len(song) == 0) & (len(album) == 0) & (len(tag) == 0):
             # get the top songs for the selected artist            
             if len(artist) > 0:
-                top_tracks_list = audioscrobbler_lite.Scrobb().make_artist_top_song_list(artist)
-                self.GenerateScrobbList(top_tracks_list)
+                self.OnLastTSArtistClick(event=None)
+                #top_tracks_list = audioscrobbler_lite.Scrobb().make_artist_top_song_list(artist)
+                #self.GenerateScrobbList(top_tracks_list)
         elif (len(tag) != 0):
-            #doble-clik on a tag, get list of top songs for tag            
-            top_tracks_list = audioscrobbler_lite.Scrobb().make_genre_top_song_list(tag)
-            self.GenerateScrobbList(top_tracks_list)
+            #doble-clik on a tag, get list of top songs for tag
+            self.OnLastTSGenreClick(event=None)
+            #top_tracks_list = audioscrobbler_lite.Scrobb().make_genre_top_song_list(tag)
+            #self.GenerateScrobbList(top_tracks_list)
             
     def ShowLoading(self, loading=True):
         if loading:        
@@ -375,7 +377,10 @@ class LastfmTab(wx.ScrolledWindow):
             self.busy = PBI.PyBusyInfo(message, parent=None, title="Retrieving Data") #, icon=images.Smiles.GetBitmap())
             #wx.Yield()
         else:
-            del self.busy
+            try:
+                del self.busy
+            except Exception, expt:
+                print 'last.fm: ' + str(expt)+str(Exception)    
             
 # --------------------------------------------------------- 
 # ######################################################### 
@@ -410,7 +415,7 @@ class GetLFThread(Thread):
         elif self.get_type == 'top_albums':
             top_tracks_list = audioscrobbler_lite.Scrobb().make_artist_top_album_list(self.parent.artist)
             #self.parent.GenerateScrobbList(top_tracks_list)
-            event.data = (top_tracks_list, False, False, False)
+            event.data = (top_tracks_list, True, False, False)
         elif self.get_type == 'country':
             top_tracks_list = audioscrobbler_lite.Scrobb().make_geo_top_song_list(self.parent.country)
             #self.parent.GenerateScrobbList(top_tracks_list)

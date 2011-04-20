@@ -306,17 +306,18 @@ class FetchThread(Thread):
             query_results = local_songs.DbFuncs().GetResultsArray(self.query_string, 40)
             self.parent.FillSearchListLocal(query_results, self.query_string)
         else:
-            g_session = jsonrpcSession()
-            g_session.startSession()
-            xx = g_session.getSearchResults(self.query_string, type="Songs")
-            result_list = xx['result']['result']
+            result_list = GetSearchResults(self.query_string)            
             #self.parent.FillSearchList(result_list)
             wx.PostEvent(self.parent, ResultEvent(result_list))
         #else:
             #query_results = tinysong.Tsong().get_search_results(self.query_string)
             #self.parent.FillSearchList(query_results)
             
-            
+def GetSearchResults(query):
+    g_session = jsonrpcSession()
+    g_session.startSession()
+    xx = g_session.getSearchResults(query, type="Songs")
+    return xx['result']['result']
             
 
         
