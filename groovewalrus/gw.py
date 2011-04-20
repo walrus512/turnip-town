@@ -50,7 +50,7 @@ import sqlite3
 import subprocess
 
 from main_utils import musicbrainz
-from main_utils import tinysong
+#from main_utils import tinysong
 #from main_utils import jiwa
 from main_utils import read_write_xml
 from main_utils import audioscrobbler_lite
@@ -122,7 +122,7 @@ from main_thirdp import grooveshark_old
 #from plugins.zongdora import zongdora
 #from plugins.web_remote import web_remote
 
-PROGRAM_VERSION = "0.338"
+PROGRAM_VERSION = "0.339"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
