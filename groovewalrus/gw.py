@@ -104,10 +104,13 @@ from main_tabs import my_lastfm_tab
 from main_tabs import lastfm_tab
 
 from main_thirdp import pylast
-if os.name == 'nt':
+if wx.Platform == '__WXMSW__':
     from main_thirdp import soundmixer 
-else:
+elif wx.Platform == '__WXGTK__':
     from main_thirdp import soundmixer_linux as soundmixer
+else:
+    from main_thirdp import soundmixer_apple as soundmixer
+    
 from main_thirdp.grooveshark.jsonrpc import *
 from main_thirdp import grooveshark_old
 
@@ -122,7 +125,7 @@ from main_thirdp import grooveshark_old
 #from plugins.zongdora import zongdora
 #from plugins.web_remote import web_remote
 
-PROGRAM_VERSION = "0.339"
+PROGRAM_VERSION = "0.340"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
