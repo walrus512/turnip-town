@@ -2971,7 +2971,7 @@
 			<object class="wxMenu" name="m_menu1">
 				<label>_File</label>
 				<object class="wxMenuItem" name="m_mi_open">
-					<label>Open...\tF6</label>
+					<label>Open...\tCtrl-O</label>
 					<help></help>
 				</object>
 				<object class="wxMenuItem" name="m_mi_save_playlist">
@@ -2983,7 +2983,7 @@
 					<help></help>
 				</object>
 				<object class="wxMenuItem" name="m_mi_save_playlist_as">
-					<label>Export Playlist As...\tF5</label>
+					<label>Export Playlist As...\tCtrl-E</label>
 					<help></help>
 				</object>
 				<object class="separator" />
@@ -3022,53 +3022,80 @@
 			</object>
 			<object class="wxMenu" name="m_menu3">
 				<label>_View</label>
+				<object class="wxMenuItem" name="m_mi_reset_position">
+					<label>Reset Position\tCtrl-P</label>
+					<help></help>
+				</object>
+				<object class="wxMenuItem" name="m_mi_toggle_playlist">
+					<label>Toggle Playlist\tCtrl-M</label>
+					<help></help>
+				</object>
 				<object class="wxMenuItem" name="m_mi_album_cover">
-					<label>Album Cover</label>
+					<label>Album Cover\tCtrl-R</label>
+					<help></help>
+				</object>
+				<object class="wxMenuItem" name="m_mi_search">
+					<label>Search\tCtrl-F</label>
 					<help></help>
 				</object>
 			</object>
 			<object class="wxMenu" name="m_menu6">
 				<label>_Playback</label>
 				<object class="wxMenuItem" name="m_mi_previous">
-					<label>Previous\tF1</label>
+					<label>Previous</label>
 					<help></help>
 				</object>
 				<object class="wxMenuItem" name="m_mi_play">
-					<label>Play\tF2</label>
+					<label>Play</label>
 					<help></help>
 				</object>
 				<object class="wxMenuItem" name="m_mi_stop">
-					<label>Stop\tF3</label>
+					<label>Stop</label>
 					<help></help>
 				</object>
 				<object class="wxMenuItem" name="m_mi_next">
-					<label>Next\tF4</label>
+					<label>Next</label>
 					<help></help>
 				</object>
 				<object class="separator" />
 				<object class="wxMenuItem" name="m_mi_shuffle">
-					<label>Shuffle\tF7</label>
+					<label>Shuffle</label>
 					<help></help>
 				</object>
 				<object class="wxMenuItem" name="m_mi_repeat">
-					<label>Repeat\tF8</label>
+					<label>Repeat</label>
 					<help></help>
 				</object>
 				<object class="separator" />
 				<object class="wxMenu" name="m_menu11">
 					<label>Volume</label>
 					<object class="wxMenuItem" name="m_mi_volume_down">
-						<label>Volume Down\tF9</label>
+						<label>Volume Down</label>
 						<help></help>
 					</object>
 					<object class="wxMenuItem" name="m_mi_volume_up">
-						<label>Volume Up\tF10</label>
+						<label>Volume Up</label>
 						<help></help>
 					</object>
 					<object class="wxMenuItem" name="m_mi_volume_mute">
-						<label>Mute Volume\tF11</label>
+						<label>Mute Volume</label>
 						<help></help>
 					</object>
+				</object>
+			</object>
+			<object class="wxMenu" name="m_menu8">
+				<label>Playlist</label>
+				<object class="wxMenuItem" name="m_mi_clear_playlist">
+					<label>Clear Playlist\tCtrl-D</label>
+					<help></help>
+				</object>
+				<object class="wxMenuItem" name="m_mi_clear_albums">
+					<label>Clear Albums\tCtrl-K</label>
+					<help></help>
+				</object>
+				<object class="wxMenuItem" name="m_mi_clear_ids">
+					<label>Clear Id&apos;s\tCtrl-L</label>
+					<help></help>
 				</object>
 			</object>
 			<object class="wxMenu" name="m_menu4">
@@ -3077,20 +3104,21 @@
 					<label>Version Update...</label>
 					<help></help>
 				</object>
-				<object class="wxMenuItem" name="m_mi_tingsong">
-					<label>Tingsong Key</label>
-					<help></help>
-				</object>
 				<object class="wxMenuItem" name="m_mi_song_collection">
 					<label>Song Collection Locations...</label>
 					<help></help>
 				</object>
 				<object class="wxMenuItem" name="m_mi_import_grooveshark">
-					<label>Import Grooveshark Playlist</label>
+					<label>Import Grooveshark Playlist...</label>
 					<help></help>
 				</object>
-				<object class="wxMenuItem" name="m_mi_select_language">
-					<label>Select Language</label>
+				<object class="separator" />
+				<object class="wxMenuItem" name="m_mi_advanced_options">
+					<label>Advanced Options...</label>
+					<help></help>
+				</object>
+				<object class="wxMenuItem" name="m_mi_options">
+					<label>Options...</label>
 					<help></help>
 				</object>
 			</object>
@@ -3103,12 +3131,16 @@
 					<label>GrooveShark Version...</label>
 					<help></help>
 				</object>
-				<object class="wxMenuItem" name="m_mi_about">
-					<label>About...</label>
+				<object class="wxMenuItem" name="m_mi_tingsong">
+					<label>Tingsong Key...</label>
 					<help></help>
 				</object>
 				<object class="wxMenuItem" name="m_mi_website">
 					<label>GrooveWalrus Website</label>
+					<help></help>
+				</object>
+				<object class="wxMenuItem" name="m_mi_about">
+					<label>About...</label>
 					<help></help>
 				</object>
 			</object>
