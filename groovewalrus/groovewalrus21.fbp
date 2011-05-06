@@ -21,7 +21,7 @@
         <property name="skip_python_events">1</property>
         <property name="use_enum">0</property>
         <property name="use_microsoft_bom">0</property>
-        <object class="Panel" expanded="1">
+        <object class="Panel" expanded="0">
             <property name="BottomDockable">1</property>
             <property name="LeftDockable">1</property>
             <property name="RightDockable">1</property>
@@ -98,7 +98,7 @@
             <event name="OnSetFocus"></event>
             <event name="OnSize"></event>
             <event name="OnUpdateUI"></event>
-            <object class="wxBoxSizer" expanded="1">
+            <object class="wxBoxSizer" expanded="0">
                 <property name="minimum_size"></property>
                 <property name="name">bSizer1</property>
                 <property name="orient">wxHORIZONTAL</property>
@@ -113,11 +113,11 @@
                         <property name="width">5</property>
                     </object>
                 </object>
-                <object class="sizeritem" expanded="1">
+                <object class="sizeritem" expanded="0">
                     <property name="border">5</property>
                     <property name="flag">wxEXPAND</property>
                     <property name="proportion">1</property>
-                    <object class="wxBoxSizer" expanded="1">
+                    <object class="wxBoxSizer" expanded="0">
                         <property name="minimum_size"></property>
                         <property name="name">bSizer921</property>
                         <property name="orient">wxVERTICAL</property>
@@ -1746,20 +1746,20 @@
                                 </object>
                             </object>
                         </object>
-                        <object class="sizeritem" expanded="1">
+                        <object class="sizeritem" expanded="0">
                             <property name="border">5</property>
                             <property name="flag">wxEXPAND</property>
                             <property name="proportion">1</property>
-                            <object class="wxBoxSizer" expanded="1">
+                            <object class="wxBoxSizer" expanded="0">
                                 <property name="minimum_size"></property>
                                 <property name="name">bSizer3</property>
                                 <property name="orient">wxVERTICAL</property>
                                 <property name="permission">none</property>
-                                <object class="sizeritem" expanded="1">
+                                <object class="sizeritem" expanded="0">
                                     <property name="border">5</property>
                                     <property name="flag">wxEXPAND | wxALL</property>
                                     <property name="proportion">1</property>
-                                    <object class="wxNotebook" expanded="1">
+                                    <object class="wxNotebook" expanded="0">
                                         <property name="BottomDockable">1</property>
                                         <property name="LeftDockable">1</property>
                                         <property name="RightDockable">1</property>
@@ -2518,21 +2518,21 @@
                                                                             <event name="OnUpdateUI"></event>
                                                                         </object>
                                                                     </object>
-                                                                    <object class="sizeritem" expanded="1">
+                                                                    <object class="sizeritem" expanded="0">
                                                                         <property name="border">5</property>
                                                                         <property name="flag">wxEXPAND</property>
                                                                         <property name="proportion">0</property>
-                                                                        <object class="spacer" expanded="1">
+                                                                        <object class="spacer" expanded="0">
                                                                             <property name="height">20</property>
                                                                             <property name="permission">protected</property>
                                                                             <property name="width">0</property>
                                                                         </object>
                                                                     </object>
-                                                                    <object class="sizeritem" expanded="1">
+                                                                    <object class="sizeritem" expanded="0">
                                                                         <property name="border">5</property>
                                                                         <property name="flag">wxALL|wxALIGN_CENTER_HORIZONTAL</property>
                                                                         <property name="proportion">0</property>
-                                                                        <object class="wxBitmapButton" expanded="1">
+                                                                        <object class="wxBitmapButton" expanded="0">
                                                                             <property name="BottomDockable">1</property>
                                                                             <property name="LeftDockable">1</property>
                                                                             <property name="RightDockable">1</property>
@@ -19143,7 +19143,7 @@
                         <property name="label">Open...</property>
                         <property name="name">m_mi_open</property>
                         <property name="permission">none</property>
-                        <property name="shortcut">F6</property>
+                        <property name="shortcut">Ctrl-O</property>
                         <property name="unchecked_bitmap"></property>
                         <event name="OnMenuSelection"></event>
                         <event name="OnUpdateUI"></event>
@@ -19188,7 +19188,7 @@
                         <property name="label">Export Playlist As...</property>
                         <property name="name">m_mi_save_playlist_as</property>
                         <property name="permission">none</property>
-                        <property name="shortcut">F5</property>
+                        <property name="shortcut">Ctrl-E</property>
                         <property name="unchecked_bitmap"></property>
                         <event name="OnMenuSelection"></event>
                         <event name="OnUpdateUI"></event>
@@ -19323,10 +19323,55 @@
                         <property name="help"></property>
                         <property name="id">wxID_ANY</property>
                         <property name="kind">wxITEM_NORMAL</property>
+                        <property name="label">Reset Position</property>
+                        <property name="name">m_mi_reset_position</property>
+                        <property name="permission">none</property>
+                        <property name="shortcut">Ctrl-P</property>
+                        <property name="unchecked_bitmap"></property>
+                        <event name="OnMenuSelection"></event>
+                        <event name="OnUpdateUI"></event>
+                    </object>
+                    <object class="wxMenuItem" expanded="1">
+                        <property name="bitmap"></property>
+                        <property name="checked">0</property>
+                        <property name="enabled">1</property>
+                        <property name="help"></property>
+                        <property name="id">wxID_ANY</property>
+                        <property name="kind">wxITEM_NORMAL</property>
+                        <property name="label">Toggle Playlist</property>
+                        <property name="name">m_mi_toggle_playlist</property>
+                        <property name="permission">none</property>
+                        <property name="shortcut">Ctrl-M</property>
+                        <property name="unchecked_bitmap"></property>
+                        <event name="OnMenuSelection"></event>
+                        <event name="OnUpdateUI"></event>
+                    </object>
+                    <object class="wxMenuItem" expanded="1">
+                        <property name="bitmap"></property>
+                        <property name="checked">0</property>
+                        <property name="enabled">1</property>
+                        <property name="help"></property>
+                        <property name="id">wxID_ANY</property>
+                        <property name="kind">wxITEM_NORMAL</property>
                         <property name="label">Album Cover</property>
                         <property name="name">m_mi_album_cover</property>
                         <property name="permission">none</property>
-                        <property name="shortcut"></property>
+                        <property name="shortcut">Ctrl-R</property>
+                        <property name="unchecked_bitmap"></property>
+                        <event name="OnMenuSelection"></event>
+                        <event name="OnUpdateUI"></event>
+                    </object>
+                    <object class="wxMenuItem" expanded="1">
+                        <property name="bitmap"></property>
+                        <property name="checked">0</property>
+                        <property name="enabled">1</property>
+                        <property name="help"></property>
+                        <property name="id">wxID_ANY</property>
+                        <property name="kind">wxITEM_NORMAL</property>
+                        <property name="label">Search</property>
+                        <property name="name">m_mi_search</property>
+                        <property name="permission">none</property>
+                        <property name="shortcut">Ctrl-F</property>
                         <property name="unchecked_bitmap"></property>
                         <event name="OnMenuSelection"></event>
                         <event name="OnUpdateUI"></event>
@@ -19346,7 +19391,7 @@
                         <property name="label">Previous</property>
                         <property name="name">m_mi_previous</property>
                         <property name="permission">none</property>
-                        <property name="shortcut">F1</property>
+                        <property name="shortcut"></property>
                         <property name="unchecked_bitmap"></property>
                         <event name="OnMenuSelection"></event>
                         <event name="OnUpdateUI"></event>
@@ -19361,7 +19406,7 @@
                         <property name="label">Play</property>
                         <property name="name">m_mi_play</property>
                         <property name="permission">none</property>
-                        <property name="shortcut">F2</property>
+                        <property name="shortcut"></property>
                         <property name="unchecked_bitmap"></property>
                         <event name="OnMenuSelection"></event>
                         <event name="OnUpdateUI"></event>
@@ -19376,7 +19421,7 @@
                         <property name="label">Stop</property>
                         <property name="name">m_mi_stop</property>
                         <property name="permission">none</property>
-                        <property name="shortcut">F3</property>
+                        <property name="shortcut"></property>
                         <property name="unchecked_bitmap"></property>
                         <event name="OnMenuSelection"></event>
                         <event name="OnUpdateUI"></event>
@@ -19391,7 +19436,7 @@
                         <property name="label">Next</property>
                         <property name="name">m_mi_next</property>
                         <property name="permission">none</property>
-                        <property name="shortcut">F4</property>
+                        <property name="shortcut"></property>
                         <property name="unchecked_bitmap"></property>
                         <event name="OnMenuSelection"></event>
                         <event name="OnUpdateUI"></event>
@@ -19410,7 +19455,7 @@
                         <property name="label">Shuffle</property>
                         <property name="name">m_mi_shuffle</property>
                         <property name="permission">none</property>
-                        <property name="shortcut">F7</property>
+                        <property name="shortcut"></property>
                         <property name="unchecked_bitmap"></property>
                         <event name="OnMenuSelection"></event>
                         <event name="OnUpdateUI"></event>
@@ -19425,7 +19470,7 @@
                         <property name="label">Repeat</property>
                         <property name="name">m_mi_repeat</property>
                         <property name="permission">none</property>
-                        <property name="shortcut">F8</property>
+                        <property name="shortcut"></property>
                         <property name="unchecked_bitmap"></property>
                         <event name="OnMenuSelection"></event>
                         <event name="OnUpdateUI"></event>
@@ -19448,7 +19493,7 @@
                             <property name="label">Volume Down</property>
                             <property name="name">m_mi_volume_down</property>
                             <property name="permission">none</property>
-                            <property name="shortcut">F9</property>
+                            <property name="shortcut"></property>
                             <property name="unchecked_bitmap"></property>
                             <event name="OnMenuSelection"></event>
                             <event name="OnUpdateUI"></event>
@@ -19463,7 +19508,7 @@
                             <property name="label">Volume Up</property>
                             <property name="name">m_mi_volume_up</property>
                             <property name="permission">none</property>
-                            <property name="shortcut">F10</property>
+                            <property name="shortcut"></property>
                             <property name="unchecked_bitmap"></property>
                             <event name="OnMenuSelection"></event>
                             <event name="OnUpdateUI"></event>
@@ -19478,11 +19523,61 @@
                             <property name="label">Mute Volume</property>
                             <property name="name">m_mi_volume_mute</property>
                             <property name="permission">none</property>
-                            <property name="shortcut">F11</property>
+                            <property name="shortcut"></property>
                             <property name="unchecked_bitmap"></property>
                             <event name="OnMenuSelection"></event>
                             <event name="OnUpdateUI"></event>
                         </object>
+                    </object>
+                </object>
+                <object class="wxMenu" expanded="1">
+                    <property name="label">Playlist</property>
+                    <property name="name">m_menu8</property>
+                    <property name="permission">protected</property>
+                    <object class="wxMenuItem" expanded="1">
+                        <property name="bitmap"></property>
+                        <property name="checked">0</property>
+                        <property name="enabled">1</property>
+                        <property name="help"></property>
+                        <property name="id">wxID_ANY</property>
+                        <property name="kind">wxITEM_NORMAL</property>
+                        <property name="label">Clear Playlist</property>
+                        <property name="name">m_mi_clear_playlist</property>
+                        <property name="permission">none</property>
+                        <property name="shortcut">Ctrl-D</property>
+                        <property name="unchecked_bitmap"></property>
+                        <event name="OnMenuSelection"></event>
+                        <event name="OnUpdateUI"></event>
+                    </object>
+                    <object class="wxMenuItem" expanded="1">
+                        <property name="bitmap"></property>
+                        <property name="checked">0</property>
+                        <property name="enabled">1</property>
+                        <property name="help"></property>
+                        <property name="id">wxID_ANY</property>
+                        <property name="kind">wxITEM_NORMAL</property>
+                        <property name="label">Clear Albums</property>
+                        <property name="name">m_mi_clear_albums</property>
+                        <property name="permission">none</property>
+                        <property name="shortcut">Ctrl-K</property>
+                        <property name="unchecked_bitmap"></property>
+                        <event name="OnMenuSelection"></event>
+                        <event name="OnUpdateUI"></event>
+                    </object>
+                    <object class="wxMenuItem" expanded="1">
+                        <property name="bitmap"></property>
+                        <property name="checked">0</property>
+                        <property name="enabled">1</property>
+                        <property name="help"></property>
+                        <property name="id">wxID_ANY</property>
+                        <property name="kind">wxITEM_NORMAL</property>
+                        <property name="label">Clear Id&apos;s</property>
+                        <property name="name">m_mi_clear_ids</property>
+                        <property name="permission">none</property>
+                        <property name="shortcut">Ctrl-L</property>
+                        <property name="unchecked_bitmap"></property>
+                        <event name="OnMenuSelection"></event>
+                        <event name="OnUpdateUI"></event>
                     </object>
                 </object>
                 <object class="wxMenu" expanded="1">
@@ -19511,21 +19606,6 @@
                         <property name="help"></property>
                         <property name="id">wxID_ANY</property>
                         <property name="kind">wxITEM_NORMAL</property>
-                        <property name="label">Tingsong Key</property>
-                        <property name="name">m_mi_tingsong</property>
-                        <property name="permission">none</property>
-                        <property name="shortcut"></property>
-                        <property name="unchecked_bitmap"></property>
-                        <event name="OnMenuSelection"></event>
-                        <event name="OnUpdateUI"></event>
-                    </object>
-                    <object class="wxMenuItem" expanded="1">
-                        <property name="bitmap"></property>
-                        <property name="checked">0</property>
-                        <property name="enabled">1</property>
-                        <property name="help"></property>
-                        <property name="id">wxID_ANY</property>
-                        <property name="kind">wxITEM_NORMAL</property>
                         <property name="label">Song Collection Locations...</property>
                         <property name="name">m_mi_song_collection</property>
                         <property name="permission">none</property>
@@ -19541,8 +19621,27 @@
                         <property name="help"></property>
                         <property name="id">wxID_ANY</property>
                         <property name="kind">wxITEM_NORMAL</property>
-                        <property name="label">Import Grooveshark Playlist</property>
+                        <property name="label">Import Grooveshark Playlist...</property>
                         <property name="name">m_mi_import_grooveshark</property>
+                        <property name="permission">none</property>
+                        <property name="shortcut"></property>
+                        <property name="unchecked_bitmap"></property>
+                        <event name="OnMenuSelection"></event>
+                        <event name="OnUpdateUI"></event>
+                    </object>
+                    <object class="separator" expanded="1">
+                        <property name="name">m_separator5</property>
+                        <property name="permission">none</property>
+                    </object>
+                    <object class="wxMenuItem" expanded="1">
+                        <property name="bitmap"></property>
+                        <property name="checked">0</property>
+                        <property name="enabled">1</property>
+                        <property name="help"></property>
+                        <property name="id">wxID_ANY</property>
+                        <property name="kind">wxITEM_NORMAL</property>
+                        <property name="label">Advanced Options...</property>
+                        <property name="name">m_mi_advanced_options</property>
                         <property name="permission">none</property>
                         <property name="shortcut"></property>
                         <property name="unchecked_bitmap"></property>
@@ -19556,8 +19655,8 @@
                         <property name="help"></property>
                         <property name="id">wxID_ANY</property>
                         <property name="kind">wxITEM_NORMAL</property>
-                        <property name="label">Select Language</property>
-                        <property name="name">m_mi_select_language</property>
+                        <property name="label">Options...</property>
+                        <property name="name">m_mi_options</property>
                         <property name="permission">none</property>
                         <property name="shortcut"></property>
                         <property name="unchecked_bitmap"></property>
@@ -19596,8 +19695,8 @@
                         <property name="help"></property>
                         <property name="id">wxID_ANY</property>
                         <property name="kind">wxITEM_NORMAL</property>
-                        <property name="label">About...</property>
-                        <property name="name">m_mi_about</property>
+                        <property name="label">Tingsong Key...</property>
+                        <property name="name">m_mi_tingsong</property>
                         <property name="permission">none</property>
                         <property name="shortcut"></property>
                         <property name="unchecked_bitmap"></property>
@@ -19613,6 +19712,21 @@
                         <property name="kind">wxITEM_NORMAL</property>
                         <property name="label">GrooveWalrus Website</property>
                         <property name="name">m_mi_website</property>
+                        <property name="permission">none</property>
+                        <property name="shortcut"></property>
+                        <property name="unchecked_bitmap"></property>
+                        <event name="OnMenuSelection"></event>
+                        <event name="OnUpdateUI"></event>
+                    </object>
+                    <object class="wxMenuItem" expanded="1">
+                        <property name="bitmap"></property>
+                        <property name="checked">0</property>
+                        <property name="enabled">1</property>
+                        <property name="help"></property>
+                        <property name="id">wxID_ANY</property>
+                        <property name="kind">wxITEM_NORMAL</property>
+                        <property name="label">About...</property>
+                        <property name="name">m_mi_about</property>
                         <property name="permission">none</property>
                         <property name="shortcut"></property>
                         <property name="unchecked_bitmap"></property>

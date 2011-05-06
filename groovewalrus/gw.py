@@ -65,6 +65,7 @@ from main_utils import download_feed
 if os.name == 'nt':
     from main_utils import pyro_server
 from main_utils import string_tools
+from main_utils import hotkeys
 from main_utils import global_hotkeys
 
 #---
@@ -124,6 +125,7 @@ from main_thirdp import grooveshark_old
 #from plugins.sync import sync
 #from plugins.zongdora import zongdora
 #from plugins.web_remote import web_remote
+#from plugins.hotkeys import hotkeys
 
 PROGRAM_VERSION = "0.340"
 PROGRAM_NAME = "GrooveWalrus"
@@ -218,8 +220,8 @@ class MainFrame(wx.Frame):
         # load menubar from xrc xml file
         res = xrc.XmlResource(RESFILE)
         self.menubar = res.LoadMenuBarOnFrame(self, "m_mb_main")
-        self.menu_plugins = self.menubar.GetMenu(5)
-        self.menu_tools = self.menubar.GetMenu(4)
+        self.menu_plugins = self.menubar.GetMenu(6)
+        self.menu_tools = self.menubar.GetMenu(5)
                 
         # program icon
         ib = wx.IconBundle()
@@ -606,83 +608,7 @@ class MainPanel(wx.Panel):
         self.SetImage('no_cover.png', GRAPHICS_LOCATION)
                        
         # hotkeys ------------------
-        backID = 701
-        playID = 702
-        stopID = 703
-        forwID = 704
-        saveID = 705
-        loadID = 706
-        randID = 707
-        reapID = 708
-        vlupID = 709
-        vldnID = 7010
-        tbupID = 7012
-        muteID = 7011
-        #tbdnID = 7011
-        ctrldID = 801
-        ctrlrID = 802
-        ctrlbID = 803
-        ctrl9ID = 910
-        ctrl8ID = 911
-        ctrlfID = 804
-        ctrlmID = 805        
-        ctrlgID = 806
-        ctrlperiodID = 807
-        
-        self.aTable_values = [
-                                   (wx.ACCEL_NORMAL, wx.WXK_F1, backID),
-                                   (wx.ACCEL_NORMAL, wx.WXK_F2, playID),
-                                   (wx.ACCEL_NORMAL, wx.WXK_F3, stopID),
-                                   (wx.ACCEL_NORMAL, wx.WXK_F4, forwID),
-                                   (wx.ACCEL_NORMAL, wx.WXK_F5, saveID),
-                                   (wx.ACCEL_NORMAL, wx.WXK_F6, loadID),
-                                   (wx.ACCEL_NORMAL, wx.WXK_F7, randID),
-                                   (wx.ACCEL_NORMAL, wx.WXK_F8, reapID),
-                                   (wx.ACCEL_NORMAL, wx.WXK_F9, vldnID),
-                                   (wx.ACCEL_NORMAL, wx.WXK_F10, vlupID),
-                                   (wx.ACCEL_NORMAL, wx.WXK_F11, muteID),
-                                   (wx.ACCEL_NORMAL, wx.WXK_F12, tbupID),
-                                   (wx.ACCEL_CTRL, ord('D'), ctrldID),
-                                   (wx.ACCEL_CTRL, ord('R'), ctrlrID),
-                                   (wx.ACCEL_CTRL, ord('B'), ctrlbID),
-                                   (wx.ACCEL_CTRL, ord('9'), ctrl9ID),
-                                   (wx.ACCEL_CTRL, ord('8'), ctrl8ID),
-                                   (wx.ACCEL_CTRL, ord('F'), ctrlfID),
-                                   (wx.ACCEL_CTRL, ord('G'), ctrlgID),
-                                   (wx.ACCEL_CTRL, ord('M'), ctrlmID),
-                                   (wx.ACCEL_CTRL, ord('.'), ctrlperiodID)
-                                           ]
-        aTable = wx.AcceleratorTable(self.aTable_values)
-        #add to main program
-        self.SetAcceleratorTable(aTable)
-        #add to album viewer window too
-        self.album_viewer.SetAcceleratorTable(aTable)
-         
-        wx.EVT_MENU(self, backID, self.OnBackwardClick)
-        wx.EVT_MENU(self, playID, self.OnPlayClick)
-        wx.EVT_MENU(self, stopID, self.OnStopClick)
-        wx.EVT_MENU(self, forwID, self.OnForwardClick) 
-        
-        wx.EVT_MENU(self, saveID, self.OnSavePlaylistClick)
-        wx.EVT_MENU(self, loadID, self.OnLoadPlaylistClick)
-        wx.EVT_MENU(self, randID, self.OnRandomClick)
-        wx.EVT_MENU(self, reapID, self.OnRepeatClick)
-        
-        wx.EVT_MENU(self, vldnID, self.OnVolumeDown)
-        wx.EVT_MENU(self, vlupID, self.OnVolumeUp)
-        wx.EVT_MENU(self, muteID, self.OnMuteClick)
-        wx.EVT_MENU(self, tbupID, self.OnNextTab)
-        
-        wx.EVT_MENU(self, ctrldID, self.OnClearPlaylistClick)
-        wx.EVT_MENU(self, ctrlrID, self.ResetPosition)
-        wx.EVT_MENU(self, ctrlbID, self.RandomBackgroundColour)
-        wx.EVT_MENU(self, ctrlfID, self.OnSearchClick)
-        
-        wx.EVT_MENU(self, ctrl9ID, self.ClearAlbumValues)
-        wx.EVT_MENU(self, ctrl8ID, self.ClearIdValues)
-        wx.EVT_MENU(self, ctrlmID, self.MiniMode)
-        wx.EVT_MENU(self, ctrlgID, self.OnLoadBackgroundImage)
-        wx.EVT_MENU(self, ctrlperiodID, self.OnLoadAdvancedOptions)
+        hotkeys.Hotkeys(self).SetHotkeys()
         
         # global hotkeys -------
         global_hotkeys.GlobalHotkeys(self)
@@ -708,6 +634,9 @@ class MainPanel(wx.Panel):
         
         # view menu
         self.parent.Bind(wx.EVT_MENU, self.OnAlbumCoverClick, id=xrc.XRCID("m_mi_album_cover"))
+        self.parent.Bind(wx.EVT_MENU, self.ResetPosition, id=xrc.XRCID("m_mi_reset_position"))
+        self.parent.Bind(wx.EVT_MENU, self.MiniMode, id=xrc.XRCID("m_mi_toggle_playlist"))
+        self.parent.Bind(wx.EVT_MENU, self.OnSearchClick, id=xrc.XRCID("m_mi_search"))
         
         # playback menu
         self.parent.Bind(wx.EVT_MENU, self.OnPlayClick, id=xrc.XRCID("m_mi_play"))
@@ -720,12 +649,19 @@ class MainPanel(wx.Panel):
         self.parent.Bind(wx.EVT_MENU, self.OnVolumeUp, id=xrc.XRCID("m_mi_volume_up"))
         self.parent.Bind(wx.EVT_MENU, self.OnVolumeDown, id=xrc.XRCID("m_mi_volume_down"))
         
+        # playlist menu
+        self.parent.Bind(wx.EVT_MENU, self.OnClearPlaylistClick, id=xrc.XRCID("m_mi_clear_playlist"))
+        self.parent.Bind(wx.EVT_MENU, self.ClearAlbumValues, id=xrc.XRCID("m_mi_clear_albums"))
+        self.parent.Bind(wx.EVT_MENU, self.ClearIdValues, id=xrc.XRCID("m_mi_clear_ids"))
+                
         # tools menu        
         self.parent.Bind(wx.EVT_MENU, self.OnUpdateClick, id=xrc.XRCID("m_mi_version_update"))
         self.parent.Bind(wx.EVT_MENU, self.TinysongKey, id=xrc.XRCID("m_mi_tingsong"))
         self.parent.Bind(wx.EVT_MENU, self.tab_song_collection.OnSColAddClick, id=xrc.XRCID("m_mi_song_collection"))
         self.parent.Bind(wx.EVT_MENU, self.ImportGroovesharkPlaylist, id=xrc.XRCID("m_mi_import_grooveshark"))
         self.parent.Bind(wx.EVT_MENU, self.SetLanguage, id=xrc.XRCID("m_mi_select_language"))
+        self.parent.Bind(wx.EVT_MENU, self.OnLoadAdvancedOptions, id=xrc.XRCID("m_mi_advanced_options"))
+        
         #
         self.lastfm_toggle = self.parent.menu_tools.Append(7666, "Last.fm Scrobbling", kind=wx.ITEM_CHECK)
         self.parent.Bind(wx.EVT_MENU, self.OnToggleScrobble, id=7666)        
