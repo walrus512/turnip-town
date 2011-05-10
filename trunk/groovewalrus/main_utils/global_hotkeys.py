@@ -79,10 +79,10 @@ class GlobalHotkeys():
                  
         h1 = options_window.GetSetting('hotkey-previous', self.FILEDB)
         h2 = options_window.GetSetting('hotkey-play', self.FILEDB)
-        h3 = options_window.GetSetting('hotkey-next', self.FILEDB)
-        h4 = options_window.GetSetting('hotkey-stop', self.FILEDB)
-        h5 = options_window.GetSetting('hotkey-volume-up', self.FILEDB)
-        h6 = options_window.GetSetting('hotkey-volume-down', self.FILEDB)
+        h3 = options_window.GetSetting('hotkey-stop', self.FILEDB)
+        h4 = options_window.GetSetting('hotkey-next', self.FILEDB)
+        h5 = options_window.GetSetting('hotkey-volume-down', self.FILEDB)
+        h6 = options_window.GetSetting('hotkey-volume-up', self.FILEDB)
         h7 = options_window.GetSetting('hotkey-volume-mute', self.FILEDB)
         h8 = options_window.GetSetting('hotkey-shuffle', self.FILEDB)
         h9 = options_window.GetSetting('hotkey-repeat', self.FILEDB)
@@ -119,25 +119,40 @@ class GlobalHotkeys():
         
     def RegisterHotkeys(self, modc, h1, h2, h3, h4, h5, h6, h7, h8, h9):
         #assign the keys
+        the_keys = [h1, h2, h3, h4, h5, h6, h7, h8, h9]
         mod_type = options_window.GetSetting('hotkey-modifier-type', self.FILEDB)
         if (mod_type == '1'):
-            self.parent.RegisterHotKey(100, 0, int(h1))
-            self.parent.RegisterHotKey(101, 0, int(h2))
-            self.parent.RegisterHotKey(102, 0, int(h3))
-            self.parent.RegisterHotKey(103, 0, int(h4))
-            self.parent.RegisterHotKey(104, 0, int(h5))
-            self.parent.RegisterHotKey(105, 0, int(h6))
-            self.parent.RegisterHotKey(106, 0, int(h7))
-            self.parent.RegisterHotKey(107, 0, int(h8))
-            self.parent.RegisterHotKey(108, 0, int(h9))            
+            counter  = 100
+            for x in the_keys:
+                try:
+                    self.parent.RegisterHotKey(counter, 0, int(x))
+                except Exception, expt:
+                    print str(Exception) + str(expt)
+                counter = counter + 1
+            #self.parent.RegisterHotKey(100, 0, int(h1))
+            #self.parent.RegisterHotKey(101, 0, int(h2))
+            #self.parent.RegisterHotKey(102, 0, int(h3))
+            #self.parent.RegisterHotKey(103, 0, int(h4))
+            #self.parent.RegisterHotKey(104, 0, int(h5))
+            #self.parent.RegisterHotKey(105, 0, int(h6))
+            #self.parent.RegisterHotKey(106, 0, int(h7))
+            #self.parent.RegisterHotKey(107, 0, int(h8))
+            #self.parent.RegisterHotKey(108, 0, int(h9))            
         elif mod_type == '0':
-            self.parent.RegisterHotKey(100, int(modc), int(h1))
-            self.parent.RegisterHotKey(101, int(modc), int(h2))
-            self.parent.RegisterHotKey(102, int(modc), int(h3))
-            self.parent.RegisterHotKey(103, int(modc), int(h4))
-            self.parent.RegisterHotKey(104, int(modc), int(h5))
-            self.parent.RegisterHotKey(105, int(modc), int(h6))
-            self.parent.RegisterHotKey(106, int(modc), int(h7))
-            self.parent.RegisterHotKey(107, int(modc), int(h8))
-            self.parent.RegisterHotKey(108, int(modc), int(h9))
+            counter  = 100
+            for x in the_keys:
+                try:
+                    self.parent.RegisterHotKey(counter, int(modc), int(x))
+                except Exception, expt:
+                    print str(Exception) + str(expt)
+                counter = counter + 1
+            #self.parent.RegisterHotKey(100, int(modc), int(h1))
+            #self.parent.RegisterHotKey(101, int(modc), int(h2))
+            #self.parent.RegisterHotKey(102, int(modc), int(h3))
+            #self.parent.RegisterHotKey(103, int(modc), int(h4))
+            #self.parent.RegisterHotKey(104, int(modc), int(h5))
+            #self.parent.RegisterHotKey(105, int(modc), int(h6))
+            #self.parent.RegisterHotKey(106, int(modc), int(h7))
+            #self.parent.RegisterHotKey(107, int(modc), int(h8))
+            #self.parent.RegisterHotKey(108, int(modc), int(h9))
             

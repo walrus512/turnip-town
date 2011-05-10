@@ -65,12 +65,12 @@ class Hotkeys():
             h2 = int(h2)
         else: 
             h2 = wx.WXK_F2
-        h3 = options_window.GetSetting('acc-next', self.FILEDB)
+        h3 = options_window.GetSetting('acc-stop', self.FILEDB)
         if h3: 
             h3 = int(h3)
         else: 
             h3 = wx.WXK_F3
-        h4 = options_window.GetSetting('acc-stop', self.FILEDB)
+        h4 = options_window.GetSetting('acc-next', self.FILEDB)
         if h4: 
             h4 = int(h4)
         else: 
