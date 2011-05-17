@@ -2271,7 +2271,7 @@
 																		<style>wxNB_FIXEDWIDTH</style>
 																		<object class="notebookpage">
 																			<label>Main</label>
-																			<selected>1</selected>
+																			<selected>0</selected>
 																			<object class="wxScrolledWindow" name="m_scrolledWindow25">
 																				<style>wxHSCROLL|wxVSCROLL</style>
 																				<object class="wxBoxSizer">
@@ -2870,65 +2870,6 @@
 																								<border>5</border>
 																								<object class="wxScrolledWindow" name="m_pa_options_plugins">
 																									<style>wxHSCROLL|wxVSCROLL</style>
-																								</object>
-																							</object>
-																						</object>
-																					</object>
-																				</object>
-																			</object>
-																		</object>
-																		<object class="notebookpage">
-																			<label>Test</label>
-																			<selected>0</selected>
-																			<object class="wxScrolledWindow" name="m_scrolledWindow15">
-																				<style>wxHSCROLL|wxVSCROLL</style>
-																				<object class="wxBoxSizer">
-																					<orient>wxVERTICAL</orient>
-																					<object class="sizeritem">
-																						<option>0</option>
-																						<flag>wxEXPAND</flag>
-																						<border>5</border>
-																						<object class="wxStaticBoxSizer">
-																							<orient>wxHORIZONTAL</orient>
-																							<label>Backends</label>
-																							<object class="sizeritem">
-																								<option>0</option>
-																								<flag>wxALL</flag>
-																								<border>5</border>
-																								<object class="wxRadioBox" name="m_rx_options_backend">
-																									<style>wxRA_SPECIFY_COLS</style>
-																									<label>Backend</label>
-																									<selection>0</selection>
-																									<content>
-																										<item>pymedia</item>
-																										<item>wx.media</item>
-																										<item>pyglet</item>
-																										<item>mplayer</item>
-																									</content>
-																									<dimension>4</dimension>
-																								</object>
-																							</object>
-																							<object class="sizeritem">
-																								<option>0</option>
-																								<flag></flag>
-																								<border>5</border>
-																								<object class="wxStaticBoxSizer">
-																									<orient>wxVERTICAL</orient>
-																									<label>wx.media type</label>
-																									<object class="sizeritem">
-																										<option>0</option>
-																										<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
-																										<border>5</border>
-																										<object class="wxChoice" name="m_ch_options_wxbackend">
-																											<selection>0</selection>
-																											<content>
-																												<item>WMP10</item>
-																												<item>GSTREAMER</item>
-																												<item>QUICKTIME</item>
-																												<item>DIRECTSHOW</item>
-																											</content>
-																										</object>
-																									</object>
 																								</object>
 																							</object>
 																						</object>
