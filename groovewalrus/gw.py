@@ -127,7 +127,7 @@ from main_thirdp import grooveshark_old
 #from plugins.web_remote import web_remote
 #from plugins.hotkeys import hotkeys
 
-PROGRAM_VERSION = "0.340"
+PROGRAM_VERSION = "0.342"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -512,8 +512,8 @@ class MainPanel(wx.Panel):
         self.Bind(wx.EVT_BUTTON, self.OnSaveOptionsClick, id=xrc.XRCID('m_bu_options_save'))        
         self.Bind(wx.EVT_BUTTON, self.OnSetRecordDirClick, id=xrc.XRCID('m_bu_options_record_dir'))
         self.Bind(wx.EVT_BUTTON, self.SaveOptions, id=xrc.XRCID('m_bu_options_set_cache'))
-        self.Bind(wx.EVT_RADIOBOX, self.SetBackend, id=xrc.XRCID('m_rx_options_backend'))
-        self.Bind(wx.EVT_CHOICE, self.SetBackend, id=xrc.XRCID('m_ch_options_wxbackend'))
+        #self.Bind(wx.EVT_RADIOBOX, self.SetBackend, id=xrc.XRCID('m_rx_options_backend'))
+        #self.Bind(wx.EVT_CHOICE, self.SetBackend, id=xrc.XRCID('m_ch_options_wxbackend'))
         
         self.Bind(wx.EVT_BUTTON, self.OnClearCacheClick, id=xrc.XRCID('m_bu_options_cache_clear'))
         
@@ -1025,7 +1025,7 @@ class MainPanel(wx.Panel):
             self.OnStopClick(None)
         
         backend_types = ['pymedia', 'wx.media', 'pyglet', 'mplayer']
-        self.use_backend = backend_types[self.rx_options_backend.GetSelection()]
+        self.use_backend = backend #_types[self.rx_options_backend.GetSelection()]
         
         if self.use_backend == 'pymedia':
             try:
@@ -1518,6 +1518,7 @@ class MainPanel(wx.Panel):
         #pass
 
     def OnExit(self, event):
+        self.OnStopClick(event=None)
         if self.update_event == False:
             self.SavePlaylist(self.main_playlist_location)
             self.SaveOptions(event)

@@ -87,10 +87,10 @@ class Options(object):
                 self.parent.sc_options_gs_wait.SetValue(int(options_dict['gs_wait']))
             if options_dict.has_key('scrobble_port'):
                 self.parent.rx_options_scrobble_port.SetSelection(int(options_dict['scrobble_port']))
-            if options_dict.has_key('backend'):
-                self.parent.rx_options_backend.SetSelection(int(options_dict['backend']))
-            if options_dict.has_key('wxbackend'):
-                self.parent.ch_options_wxbackend.SetSelection(int(options_dict['wxbackend']))
+            #if options_dict.has_key('backend'):
+                #self.parent.rx_options_backend.SetSelection(int(options_dict['backend']))
+            #if options_dict.has_key('wxbackend'):
+                #self.parent.ch_options_wxbackend.SetSelection(int(options_dict['wxbackend']))
             if options_dict.has_key('scrobble_album'):
                 self.parent.cb_options_scrobble_album.SetValue(int(options_dict['scrobble_album']))
             if options_dict.has_key('tray'):
@@ -135,8 +135,8 @@ class Options(object):
         #window_dict['alternate_source'] = str(int(self.parent.cb_options_alternate.GetValue()))
         window_dict['search_noid'] = str(int(self.parent.cb_options_noid.GetValue()))
         window_dict['double_click'] = str(int(self.parent.rx_options_double_click.GetSelection()))
-        window_dict['backend'] = str(int(self.parent.rx_options_backend.GetSelection()))
-        window_dict['wxbackend'] = str(int(self.parent.ch_options_wxbackend.GetSelection()))
+        #window_dict['backend'] = str(int(self.parent.rx_options_backend.GetSelection()))
+        #window_dict['wxbackend'] = str(int(self.parent.ch_options_wxbackend.GetSelection()))
         window_dict['win_pos'] = str(self.parent.GetParent().GetPosition())
         window_dict['gs_wait'] = str(self.parent.sc_options_gs_wait.GetValue())
         window_dict['scrobble_port'] = str(int(self.parent.rx_options_scrobble_port.GetSelection()))
