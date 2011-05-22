@@ -91,7 +91,7 @@
 																	<border>5</border>
 																	<object class="wxStaticText" name="m_staticText32">
 																		<style>wxALIGN_RIGHT</style>
-																		<size>120,-1</size>
+																		<size>100,-1</size>
 																		<label>Previous</label>
 																		<wrap>-1</wrap>
 																	</object>
@@ -102,8 +102,25 @@
 																	<border>5</border>
 																	<object class="wxTextCtrl" name="m_tc_acc_previous">
 																		<style>wxTE_READONLY</style>
+																		<size>35,-1</size>
 																		<value></value>
 																		<maxlength>0</maxlength>
+																	</object>
+																</object>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																	<border>5</border>
+																	<object class="wxStaticText" name="m_st_acc_previous">
+																		<size>120,-1</size>
+																		<font>
+																			<family>default</family>
+																			<style>normal</style>
+																			<weight>bold</weight>
+																			<underlined>0</underlined>
+																		</font>
+																		<label></label>
+																		<wrap>-1</wrap>
 																	</object>
 																</object>
 															</object>
@@ -120,7 +137,7 @@
 																	<border>5</border>
 																	<object class="wxStaticText" name="m_staticText44">
 																		<style>wxALIGN_RIGHT</style>
-																		<size>120,-1</size>
+																		<size>100,-1</size>
 																		<label>Play/Pause</label>
 																		<wrap>-1</wrap>
 																	</object>
@@ -131,8 +148,25 @@
 																	<border>5</border>
 																	<object class="wxTextCtrl" name="m_tc_acc_play">
 																		<style>wxTE_READONLY</style>
+																		<size>35,-1</size>
 																		<value></value>
 																		<maxlength>0</maxlength>
+																	</object>
+																</object>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																	<border>5</border>
+																	<object class="wxStaticText" name="m_st_acc_play">
+																		<size>120,-1</size>
+																		<font>
+																			<family>default</family>
+																			<style>normal</style>
+																			<weight>bold</weight>
+																			<underlined>0</underlined>
+																		</font>
+																		<label></label>
+																		<wrap>-1</wrap>
 																	</object>
 																</object>
 															</object>
@@ -149,7 +183,7 @@
 																	<border>5</border>
 																	<object class="wxStaticText" name="m_staticText411">
 																		<style>wxALIGN_RIGHT</style>
-																		<size>120,-1</size>
+																		<size>100,-1</size>
 																		<label>Stop</label>
 																		<wrap>-1</wrap>
 																	</object>
@@ -160,8 +194,25 @@
 																	<border>5</border>
 																	<object class="wxTextCtrl" name="m_tc_acc_stop">
 																		<style>wxTE_READONLY</style>
+																		<size>35,-1</size>
 																		<value></value>
 																		<maxlength>0</maxlength>
+																	</object>
+																</object>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																	<border>5</border>
+																	<object class="wxStaticText" name="m_st_acc_stop">
+																		<size>120,-1</size>
+																		<font>
+																			<family>default</family>
+																			<style>normal</style>
+																			<weight>bold</weight>
+																			<underlined>0</underlined>
+																		</font>
+																		<label></label>
+																		<wrap>-1</wrap>
 																	</object>
 																</object>
 															</object>
@@ -178,7 +229,7 @@
 																	<border>5</border>
 																	<object class="wxStaticText" name="m_staticText311">
 																		<style>wxALIGN_RIGHT</style>
-																		<size>120,-1</size>
+																		<size>100,-1</size>
 																		<label>Next</label>
 																		<wrap>-1</wrap>
 																	</object>
@@ -189,8 +240,25 @@
 																	<border>5</border>
 																	<object class="wxTextCtrl" name="m_tc_acc_next">
 																		<style>wxTE_READONLY</style>
+																		<size>35,-1</size>
 																		<value></value>
 																		<maxlength>0</maxlength>
+																	</object>
+																</object>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																	<border>5</border>
+																	<object class="wxStaticText" name="m_st_acc_next">
+																		<size>120,-1</size>
+																		<font>
+																			<family>default</family>
+																			<style>normal</style>
+																			<weight>bold</weight>
+																			<underlined>0</underlined>
+																		</font>
+																		<label></label>
+																		<wrap>-1</wrap>
 																	</object>
 																</object>
 															</object>
@@ -213,8 +281,20 @@
 																	<option>0</option>
 																	<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
 																	<border>5</border>
-																	<object class="wxTextCtrl" name="m_tc_acc_volume_up">
+																	<object class="wxStaticText" name="m_staticText433">
+																		<style>wxALIGN_RIGHT</style>
+																		<size>100,-1</size>
+																		<label>Volume Down</label>
+																		<wrap>-1</wrap>
+																	</object>
+																</object>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																	<border>5</border>
+																	<object class="wxTextCtrl" name="m_tc_acc_volume_down">
 																		<style>wxTE_READONLY</style>
+																		<size>35,-1</size>
 																		<value></value>
 																		<maxlength>0</maxlength>
 																	</object>
@@ -223,9 +303,15 @@
 																	<option>0</option>
 																	<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
 																	<border>5</border>
-																	<object class="wxStaticText" name="m_staticText421">
+																	<object class="wxStaticText" name="m_st_acc_volume_down">
 																		<size>120,-1</size>
-																		<label>Volume Up</label>
+																		<font>
+																			<family>default</family>
+																			<style>normal</style>
+																			<weight>bold</weight>
+																			<underlined>0</underlined>
+																		</font>
+																		<label></label>
 																		<wrap>-1</wrap>
 																	</object>
 																</object>
@@ -241,8 +327,20 @@
 																	<option>0</option>
 																	<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
 																	<border>5</border>
-																	<object class="wxTextCtrl" name="m_tc_acc_volume_down">
+																	<object class="wxStaticText" name="m_staticText421">
+																		<style>wxALIGN_RIGHT</style>
+																		<size>100,-1</size>
+																		<label>Volume Up</label>
+																		<wrap>-1</wrap>
+																	</object>
+																</object>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																	<border>5</border>
+																	<object class="wxTextCtrl" name="m_tc_acc_volume_up">
 																		<style>wxTE_READONLY</style>
+																		<size>35,-1</size>
 																		<value></value>
 																		<maxlength>0</maxlength>
 																	</object>
@@ -251,9 +349,15 @@
 																	<option>0</option>
 																	<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
 																	<border>5</border>
-																	<object class="wxStaticText" name="m_staticText433">
+																	<object class="wxStaticText" name="m_st_acc_volume_up">
 																		<size>120,-1</size>
-																		<label>Volume Down</label>
+																		<font>
+																			<family>default</family>
+																			<style>normal</style>
+																			<weight>bold</weight>
+																			<underlined>0</underlined>
+																		</font>
+																		<label></label>
 																		<wrap>-1</wrap>
 																	</object>
 																</object>
@@ -265,12 +369,24 @@
 															<border>5</border>
 															<object class="wxBoxSizer">
 																<orient>wxHORIZONTAL</orient>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																	<border>5</border>
+																	<object class="wxStaticText" name="m_staticText4311">
+																		<style>wxALIGN_RIGHT</style>
+																		<size>100,-1</size>
+																		<label>Volume Mute</label>
+																		<wrap>-1</wrap>
+																	</object>
+																</object>
 																<object class="sizeritem">
 																	<option>0</option>
 																	<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
 																	<border>5</border>
 																	<object class="wxTextCtrl" name="m_tc_acc_volume_mute">
 																		<style>wxTE_READONLY</style>
+																		<size>35,-1</size>
 																		<value></value>
 																		<maxlength>0</maxlength>
 																	</object>
@@ -279,9 +395,15 @@
 																	<option>0</option>
 																	<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
 																	<border>5</border>
-																	<object class="wxStaticText" name="m_staticText4311">
+																	<object class="wxStaticText" name="m_st_acc_volume_mute">
 																		<size>120,-1</size>
-																		<label>Volume Mute</label>
+																		<font>
+																			<family>default</family>
+																			<style>normal</style>
+																			<weight>bold</weight>
+																			<underlined>0</underlined>
+																		</font>
+																		<label></label>
 																		<wrap>-1</wrap>
 																	</object>
 																</object>
@@ -293,12 +415,24 @@
 															<border>5</border>
 															<object class="wxBoxSizer">
 																<orient>wxHORIZONTAL</orient>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																	<border>5</border>
+																	<object class="wxStaticText" name="m_staticText43211">
+																		<style>wxALIGN_RIGHT</style>
+																		<size>100,-1</size>
+																		<label>Shuffle</label>
+																		<wrap>-1</wrap>
+																	</object>
+																</object>
 																<object class="sizeritem">
 																	<option>0</option>
 																	<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
 																	<border>5</border>
 																	<object class="wxTextCtrl" name="m_tc_acc_shuffle">
 																		<style>wxTE_READONLY</style>
+																		<size>35,-1</size>
 																		<value></value>
 																		<maxlength>0</maxlength>
 																	</object>
@@ -307,9 +441,15 @@
 																	<option>0</option>
 																	<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
 																	<border>5</border>
-																	<object class="wxStaticText" name="m_staticText43211">
+																	<object class="wxStaticText" name="m_st_acc_shuffle">
 																		<size>120,-1</size>
-																		<label>Shuffle</label>
+																		<font>
+																			<family>default</family>
+																			<style>normal</style>
+																			<weight>bold</weight>
+																			<underlined>0</underlined>
+																		</font>
+																		<label></label>
 																		<wrap>-1</wrap>
 																	</object>
 																</object>
@@ -325,8 +465,20 @@
 																	<option>0</option>
 																	<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
 																	<border>5</border>
+																	<object class="wxStaticText" name="m_staticText4322">
+																		<style>wxALIGN_RIGHT</style>
+																		<size>100,-1</size>
+																		<label>Repeat</label>
+																		<wrap>-1</wrap>
+																	</object>
+																</object>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																	<border>5</border>
 																	<object class="wxTextCtrl" name="m_tc_acc_repeat">
 																		<style>wxTE_READONLY</style>
+																		<size>35,-1</size>
 																		<value></value>
 																		<maxlength>0</maxlength>
 																	</object>
@@ -335,9 +487,15 @@
 																	<option>0</option>
 																	<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
 																	<border>5</border>
-																	<object class="wxStaticText" name="m_staticText4322">
+																	<object class="wxStaticText" name="m_st_acc_repeat">
 																		<size>120,-1</size>
-																		<label>Repeat</label>
+																		<font>
+																			<family>default</family>
+																			<style>normal</style>
+																			<weight>bold</weight>
+																			<underlined>0</underlined>
+																		</font>
+																		<label></label>
 																		<wrap>-1</wrap>
 																	</object>
 																</object>

@@ -222,6 +222,7 @@ class MainFrame(wx.Frame):
         self.menubar = res.LoadMenuBarOnFrame(self, "m_mb_main")
         self.menu_plugins = self.menubar.GetMenu(6)
         self.menu_tools = self.menubar.GetMenu(5)
+        self.menu_playback = self.menubar.GetMenu(3)
                 
         # program icon
         ib = wx.IconBundle()
@@ -375,7 +376,7 @@ class MainPanel(wx.Panel):
         
         self.bm_cover = xrc.XRCCTRL(self, 'm_bm_cover_small')
         self.bm_cover.Bind(wx.EVT_LEFT_UP, self.OnAlbumCoverClick)  
-        
+ 
         # tab icons ------------------
         self.TabImageList()
         
@@ -606,13 +607,7 @@ class MainPanel(wx.Panel):
         self.album_viewer = album_viewer.AlbumViewer(self, GRAPHICS_LOCATION)
         #cover_bmp = wx.Bitmap(self.image_save_location + 'no_cover.png', wx.BITMAP_TYPE_ANY) #wx.BITMAP_TYPE_JPEG)
         self.SetImage('no_cover.png', GRAPHICS_LOCATION)
-                       
-        # hotkeys ------------------
-        hotkeys.Hotkeys(self).SetHotkeys()
-        
-        # global hotkeys -------
-        global_hotkeys.GlobalHotkeys(self)
-        
+                               
         # menu items -----------
         # file menu
         self.parent.Bind(wx.EVT_MENU, self.OnLoadPlaylistClick, id=xrc.XRCID("m_mi_open"))
@@ -676,11 +671,8 @@ class MainPanel(wx.Panel):
         self.GetAllSongRatings()
         
         # load playlist history
-        self.FillPlaylistTree()
-        
-        #-------------
-        #plugins
-        a = plugin_loader.PluginLoader(self)
+        self.FillPlaylistTree()        
+
                 
         # options ---------------
         # load options from settings.xml
@@ -731,6 +723,16 @@ class MainPanel(wx.Panel):
             self.favorites.ReadFaves() #self.faves_playlist_location)
         except:
             print "Faves load error"
+            
+        # hotkeys ------------------
+        hotkeys.Hotkeys(self).SetHotkeys()
+        
+        # global hotkeys -------
+        global_hotkeys.GlobalHotkeys(self)
+        
+        #-------------
+        #plugins /after hotkeys
+        a = plugin_loader.PluginLoader(self)
                 
         #autoplay ---------------
         # should be one of the last things loaded

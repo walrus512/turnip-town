@@ -2939,7 +2939,6 @@
 					<label>Undo\tCtrl-Z</label>
 					<help></help>
 				</object>
-				<object class="separator" />
 				<object class="wxMenuItem" name="m_mi_cut">
 					<label>Cut\tCtrl-X</label>
 					<help></help>
@@ -2952,12 +2951,17 @@
 					<label>Paste\tCtrl-V</label>
 					<help></help>
 				</object>
+				<object class="wxMenuItem" name="m_mi_insert">
+					<label>Insert\tCtrl-B</label>
+					<help></help>
+				</object>
+				<object class="separator" />
 				<object class="wxMenuItem" name="m_mi_inv_del">
 					<label>Inverse Delete\tIns</label>
 					<help></help>
 				</object>
 				<object class="wxMenuItem" name="m_mi_delete">
-					<label>Delete</label>
+					<label>Delete\tDel.</label>
 					<help></help>
 				</object>
 			</object>
@@ -2998,7 +3002,18 @@
 					<label>Next</label>
 					<help></help>
 				</object>
-				<object class="separator" />
+				<object class="wxMenuItem" name="m_mi_volume_down">
+					<label>Volume Down</label>
+					<help></help>
+				</object>
+				<object class="wxMenuItem" name="m_mi_volume_up">
+					<label>Volume Up</label>
+					<help></help>
+				</object>
+				<object class="wxMenuItem" name="m_mi_volume_mute">
+					<label>Mute Volume</label>
+					<help></help>
+				</object>
 				<object class="wxMenuItem" name="m_mi_shuffle">
 					<label>Shuffle</label>
 					<help></help>
@@ -3006,22 +3021,6 @@
 				<object class="wxMenuItem" name="m_mi_repeat">
 					<label>Repeat</label>
 					<help></help>
-				</object>
-				<object class="separator" />
-				<object class="wxMenu" name="m_menu11">
-					<label>Volume</label>
-					<object class="wxMenuItem" name="m_mi_volume_down">
-						<label>Volume Down</label>
-						<help></help>
-					</object>
-					<object class="wxMenuItem" name="m_mi_volume_up">
-						<label>Volume Up</label>
-						<help></help>
-					</object>
-					<object class="wxMenuItem" name="m_mi_volume_mute">
-						<label>Mute Volume</label>
-						<help></help>
-					</object>
 				</object>
 			</object>
 			<object class="wxMenu" name="m_menu8">
@@ -3054,14 +3053,15 @@
 					<help></help>
 				</object>
 				<object class="separator" />
-				<object class="wxMenuItem" name="m_mi_advanced_options">
-					<label>Advanced Options...</label>
-					<help></help>
-				</object>
 				<object class="wxMenuItem" name="m_mi_options">
 					<label>Options...</label>
 					<help></help>
 				</object>
+				<object class="wxMenuItem" name="m_mi_advanced_options">
+					<label>Advanced Options...</label>
+					<help></help>
+				</object>
+				<object class="separator" />
 			</object>
 			<object class="wxMenu" name="m_menu7">
 				<label>Plug-_ins</label>
