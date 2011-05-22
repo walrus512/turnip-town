@@ -51,6 +51,16 @@ class MainPanel(wx.Dialog):
         self.tc_acc_volume_mute = xrc.XRCCTRL(self, 'm_tc_acc_volume_mute')
         self.tc_acc_repeat = xrc.XRCCTRL(self, 'm_tc_acc_repeat')
         self.tc_acc_shuffle = xrc.XRCCTRL(self, 'm_tc_acc_shuffle')
+        
+        self.st_acc_previous = xrc.XRCCTRL(self, 'm_st_acc_previous')
+        self.st_acc_play = xrc.XRCCTRL(self, 'm_st_acc_play')
+        self.st_acc_stop = xrc.XRCCTRL(self, 'm_st_acc_stop')
+        self.st_acc_next = xrc.XRCCTRL(self, 'm_st_acc_next')
+        self.st_acc_volume_up = xrc.XRCCTRL(self, 'm_st_acc_volume_up')
+        self.st_acc_volume_down = xrc.XRCCTRL(self, 'm_st_acc_volume_down')
+        self.st_acc_volume_mute = xrc.XRCCTRL(self, 'm_st_acc_volume_mute')
+        self.st_acc_repeat = xrc.XRCCTRL(self, 'm_st_acc_repeat')
+        self.st_acc_shuffle = xrc.XRCCTRL(self, 'm_st_acc_shuffle')
         #---
         self.tc_previous = xrc.XRCCTRL(self, 'm_tc_previous')
         self.tc_play = xrc.XRCCTRL(self, 'm_tc_play')
@@ -115,6 +125,7 @@ class MainPanel(wx.Dialog):
         
         # load settings -----------
         self.LoadSettings()
+        self.SetLabels()
         
     def OnKeyDown2(self, event):
         #event.Skip()
@@ -125,6 +136,19 @@ class MainPanel(wx.Dialog):
         #event.Skip()
         #set the keycode to teh text control
         event.GetEventObject().SetValue(str(event.GetKeyCode()))
+        self.SetLabels()
+        
+    def SetLabels(self):
+        #print hotkeys.GetKeyName(int(self.tc_acc_previous.GetValue()))
+        self.st_acc_previous.SetLabel(hotkeys.GetKeyName(int(self.tc_acc_previous.GetValue())))
+        self.st_acc_play.SetLabel(hotkeys.GetKeyName(int(self.tc_acc_play.GetValue())))
+        self.st_acc_stop.SetLabel(hotkeys.GetKeyName(int(self.tc_acc_stop.GetValue())))
+        self.st_acc_next.SetLabel(hotkeys.GetKeyName(int(self.tc_acc_next.GetValue())))
+        self.st_acc_volume_down.SetLabel(hotkeys.GetKeyName(int(self.tc_acc_volume_down.GetValue())))
+        self.st_acc_volume_up.SetLabel(hotkeys.GetKeyName(int(self.tc_acc_volume_up.GetValue())))
+        self.st_acc_volume_mute.SetLabel(hotkeys.GetKeyName(int(self.tc_acc_volume_mute.GetValue())))
+        self.st_acc_shuffle.SetLabel(hotkeys.GetKeyName(int(self.tc_acc_shuffle.GetValue())))
+        self.st_acc_repeat.SetLabel(hotkeys.GetKeyName(int(self.tc_acc_repeat.GetValue())))
         
     def OnSaveClick(self, event):
         """Saves the goddamn stuff to the db."""                
