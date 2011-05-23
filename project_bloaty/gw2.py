@@ -2,7 +2,8 @@
 
 import xmlrpclib
 import socket
-from main_server import xmlrpc_server
+#from main_server 
+import xmlrpc_server
 
 from main_objects import playlist
 
