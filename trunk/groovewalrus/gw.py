@@ -2747,6 +2747,7 @@ class MainPanel(wx.Panel):
         if event.GetKeyCode() == 1:
             #crtl-a
             self.SelectAll(event.GetEventObject())#self.lc_playlist)
+        event.Skip()    
                 
     def SelectAll(self, list_control):
         for x in range(0, list_control.GetItemCount()):
