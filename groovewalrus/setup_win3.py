@@ -19,7 +19,7 @@ class Target:
     def __init__(self, **kw):
         self.__dict__.update(kw)
         # for the versioninfo resources
-        self.version = "0.341"
+        self.version = "0.342"
         self.company_name = "Turnip-Town.net"
         self.copyright = "lots of copyright"
         self.name = "GrooveWalrus"
