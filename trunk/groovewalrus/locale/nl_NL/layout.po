@@ -1,24 +1,18 @@
-# Dutch translation for groovewalrus
-# Copyright (c) 2010 Rosetta Contributors and Canonical Ltd 2010
-# This file is distributed under the same license as the groovewalrus package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
-#
+
 msgid ""
 msgstr ""
-"Project-Id-Version: groovewalrus\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2005-02-18 16:51+0000\n"
-"PO-Revision-Date: 2010-10-13 14:06+0000\n"
-"Last-Translator: karelrosseel <Unknown>\n"
-"Language-Team: Dutch <nl@li.org>\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: Fri Feb 18 16:51:55 2005\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-10-31 13:12+0000\n"
-"X-Generator: Launchpad (build Unknown)\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: xrc_i18n.py\n"
 
 msgid "None"
-msgstr "Geen"
+msgstr ""
 
 msgid "Playlist"
 msgstr "Afspeellijst"
@@ -199,8 +193,6 @@ msgstr "Wachten"
 
 msgid "seconds before playing a streamed song (it takes time to load)."
 msgstr ""
-"Seconden voor het afspelen is een streamed liedje aan het afspelen (neemt "
-"enkele laadtijd in beslag)"
 
 msgid "Play songs for"
 msgstr "Speel het liedje af"
@@ -213,8 +205,6 @@ msgstr "seconden, als na een tijd het liedje niet kan worden gevonden"
 
 msgid "Pre-fetch songs (loads next song while current song is playing)."
 msgstr ""
-"Pre-fetch liedjes (dit laad het volgende liedje terwijl het vorige liedje "
-"nog aan"
 
 msgid "Song Cache"
 msgstr "Cache hat liedje"
@@ -234,26 +224,14 @@ msgstr "Cache leegmaken"
 msgid "Plug-ins"
 msgstr "Invoegtoepassingen"
 
-msgid "Test"
-msgstr "Test"
-
-msgid "Backends"
-msgstr "Back-ends"
-
-msgid "Backend"
-msgstr "Back-end"
-
-msgid "wx.media type"
-msgstr "wx.media type"
-
 msgid "MyMenuBar"
 msgstr "MyMenuBar"
 
 msgid "_File"
 msgstr "_Bestand"
 
-msgid "Open...\tF6"
-msgstr "Opben...\tF6"
+msgid "Open...\tCtrl-O"
+msgstr ""
 
 msgid "Save Playlist\tCtrl-S"
 msgstr "Opslaan Speelijst\tCtrl-S"
@@ -261,8 +239,8 @@ msgstr "Opslaan Speelijst\tCtrl-S"
 msgid "Quick-Save Playlist\tCtrl-W"
 msgstr "Snel-Opslaan Speelijst\tCtrl-W"
 
-msgid "Export Playlist As...\tF5"
-msgstr "Exporteer Speellijst...\tF5"
+msgid "Export Playlist As...\tCtrl-E"
+msgstr ""
 
 msgid "Exit"
 msgstr "Afsluiten"
@@ -282,47 +260,68 @@ msgstr "Kopieren\tCtrl-C"
 msgid "Paste\tCtrl-V"
 msgstr "Plakken\tCtrl-V"
 
-msgid "Delete"
-msgstr "Verwijderen"
+msgid "Insert\tCtrl-B"
+msgstr ""
+
+msgid "Inverse Delete\tIns"
+msgstr ""
+
+msgid "Delete\tDel."
+msgstr ""
 
 msgid "_View"
 msgstr "Beel_d"
 
-msgid "Album Cover"
-msgstr "Albumafbeelding"
+msgid "Reset Position\tCtrl-P"
+msgstr ""
+
+msgid "Toggle Playlist\tCtrl-M"
+msgstr ""
+
+msgid "Album Cover\tCtrl-R"
+msgstr ""
+
+msgid "Search\tCtrl-F"
+msgstr ""
 
 msgid "_Playback"
 msgstr "_Terugspoelen"
 
-msgid "Previous\tF1"
-msgstr "Vorige Liedje\tF1"
+msgid "Previous"
+msgstr ""
 
-msgid "Play\tF2"
-msgstr "Afspelen\tF2"
+msgid "Play"
+msgstr ""
 
-msgid "Stop\tF3"
-msgstr "Stoppen\tF3"
+msgid "Stop"
+msgstr ""
 
-msgid "Next\tF4"
-msgstr "Volgende\tF3"
+msgid "Next"
+msgstr ""
 
-msgid "Shuffle\tF7"
-msgstr "Door elkaar schudden\tF7"
+msgid "Volume Down"
+msgstr ""
 
-msgid "Repeat\tF8"
-msgstr "herhalen\tF8"
+msgid "Volume Up"
+msgstr ""
 
-msgid "Volume"
-msgstr "Volume"
+msgid "Mute Volume"
+msgstr ""
 
-msgid "Volume Down\tF9"
-msgstr "Volume Lager\tF9"
+msgid "Shuffle"
+msgstr "Willekeurig afspelen"
 
-msgid "Volume Up\tF10"
-msgstr "Volume Hoger\tF10"
+msgid "Repeat"
+msgstr "Herhaal"
 
-msgid "Mute Volume\tF11"
-msgstr "Geluid uit\tF11"
+msgid "Clear Playlist\tCtrl-D"
+msgstr ""
+
+msgid "Clear Albums\tCtrl-K"
+msgstr ""
+
+msgid "Clear Id's\tCtrl-L"
+msgstr ""
 
 msgid "_Tools"
 msgstr "_Extra"
@@ -333,8 +332,14 @@ msgstr "Versie Updaten"
 msgid "Song Collection Locations..."
 msgstr "Liedjes Verzameling Locaties"
 
-msgid "Import Grooveshark Playlist"
-msgstr "Importeer Grooveshark Speellijst"
+msgid "Import Grooveshark Playlist..."
+msgstr ""
+
+msgid "Options..."
+msgstr ""
+
+msgid "Advanced Options..."
+msgstr ""
 
 msgid "Plug-_ins"
 msgstr "Plug-_ins"
@@ -345,11 +350,14 @@ msgstr "_Help"
 msgid "GrooveShark Version..."
 msgstr "GrooveShark Versie..."
 
-msgid "About..."
-msgstr "Info..."
+msgid "Tingsong Key..."
+msgstr ""
 
 msgid "GrooveWalrus Website"
 msgstr "GrooveWalrus Website"
+
+msgid "About..."
+msgstr "Info..."
 
 msgid "united states"
 msgstr "Verenigde Staten"
@@ -444,26 +452,8 @@ msgstr "Geen Poort"
 msgid "Default Port"
 msgstr "Standaard Poort"
 
-msgid "pymedia"
-msgstr "pymedia"
-
-msgid "wx.media"
-msgstr "wx.media"
-
-msgid "pyglet"
-msgstr "pyglet"
-
-msgid "WMP10"
-msgstr "WMP10"
-
-msgid "GSTREAMER"
-msgstr "GSTREAMER"
-
-msgid "QUICKTIME"
-msgstr "QUICKTIME"
-
-msgid "DIRECTSHOW"
-msgstr "DIRECTSHOW"
+msgid "Volume"
+msgstr "Volume"
 
 msgid "Add Favorite"
 msgstr "Favoriet toevoegen"
@@ -476,12 +466,6 @@ msgstr "Opslaan Liedje"
 
 msgid "Search"
 msgstr "Zoeken"
-
-msgid "Shuffle"
-msgstr "Willekeurig afspelen"
-
-msgid "Repeat"
-msgstr "Herhaal"
 
 msgid "Grooveshark Status"
 msgstr "Grooveshark Status"
@@ -503,6 +487,9 @@ msgstr "Geselecteerde verwijderen"
 
 msgid "Clear Playlist"
 msgstr "Afspeellijst leegmaken"
+
+msgid "Playback Timer"
+msgstr ""
 
 msgid "Geographical Region"
 msgstr "Aardrijkskundige Regio"
@@ -554,3 +541,4 @@ msgstr "Wis Feed URL-link"
 
 msgid "Save RSS Feed"
 msgstr "Sla RSS Feed op"
+

@@ -224,25 +224,13 @@ msgstr ""
 msgid "Plug-ins"
 msgstr "Wtyczki"
 
-msgid "Test"
-msgstr ""
-
-msgid "Backends"
-msgstr ""
-
-msgid "Backend"
-msgstr ""
-
-msgid "wx.media type"
-msgstr ""
-
 msgid "MyMenuBar"
 msgstr "MyMenuBar"
 
 msgid "_File"
 msgstr "_Plik"
 
-msgid "Open...\tF6"
+msgid "Open...\tCtrl-O"
 msgstr ""
 
 msgid "Save Playlist\tCtrl-S"
@@ -251,7 +239,7 @@ msgstr ""
 msgid "Quick-Save Playlist\tCtrl-W"
 msgstr ""
 
-msgid "Export Playlist As...\tF5"
+msgid "Export Playlist As...\tCtrl-E"
 msgstr ""
 
 msgid "Exit"
@@ -272,46 +260,67 @@ msgstr "Kopiuj\tCtrl-C"
 msgid "Paste\tCtrl-V"
 msgstr "Wklej\tCtrl-V"
 
-msgid "Delete"
+msgid "Insert\tCtrl-B"
+msgstr ""
+
+msgid "Inverse Delete\tIns"
+msgstr ""
+
+msgid "Delete\tDel."
 msgstr ""
 
 msgid "_View"
 msgstr "_Widok"
 
-msgid "Album Cover"
-msgstr "Okładka albumu"
+msgid "Reset Position\tCtrl-P"
+msgstr ""
+
+msgid "Toggle Playlist\tCtrl-M"
+msgstr ""
+
+msgid "Album Cover\tCtrl-R"
+msgstr ""
+
+msgid "Search\tCtrl-F"
+msgstr ""
 
 msgid "_Playback"
 msgstr "_Odtwarzanie"
 
-msgid "Previous\tF1"
-msgstr "Poprzedni\tF1"
-
-msgid "Play\tF2"
-msgstr "Odtwarzaj\tF2"
-
-msgid "Stop\tF3"
-msgstr "Stop\tF3"
-
-msgid "Next\tF4"
-msgstr "Następny\tF4"
-
-msgid "Shuffle\tF7"
+msgid "Previous"
 msgstr ""
 
-msgid "Repeat\tF8"
+msgid "Play"
 msgstr ""
 
-msgid "Volume"
-msgstr "Głośność"
-
-msgid "Volume Down\tF9"
+msgid "Stop"
 msgstr ""
 
-msgid "Volume Up\tF10"
+msgid "Next"
 msgstr ""
 
-msgid "Mute Volume\tF11"
+msgid "Volume Down"
+msgstr ""
+
+msgid "Volume Up"
+msgstr ""
+
+msgid "Mute Volume"
+msgstr ""
+
+msgid "Shuffle"
+msgstr "Mieszaj"
+
+msgid "Repeat"
+msgstr "Powtarzaj"
+
+msgid "Clear Playlist\tCtrl-D"
+msgstr ""
+
+msgid "Clear Albums\tCtrl-K"
+msgstr ""
+
+msgid "Clear Id's\tCtrl-L"
 msgstr ""
 
 msgid "_Tools"
@@ -323,7 +332,13 @@ msgstr ""
 msgid "Song Collection Locations..."
 msgstr ""
 
-msgid "Import Grooveshark Playlist"
+msgid "Import Grooveshark Playlist..."
+msgstr ""
+
+msgid "Options..."
+msgstr ""
+
+msgid "Advanced Options..."
 msgstr ""
 
 msgid "Plug-_ins"
@@ -335,11 +350,14 @@ msgstr "Pomo_c"
 msgid "GrooveShark Version..."
 msgstr ""
 
-msgid "About..."
-msgstr "O programie..."
+msgid "Tingsong Key..."
+msgstr ""
 
 msgid "GrooveWalrus Website"
 msgstr ""
+
+msgid "About..."
+msgstr "O programie..."
 
 msgid "united states"
 msgstr "Stany Zjednoczone"
@@ -434,26 +452,8 @@ msgstr "Brak portu"
 msgid "Default Port"
 msgstr "Domyślny port"
 
-msgid "pymedia"
-msgstr ""
-
-msgid "wx.media"
-msgstr ""
-
-msgid "pyglet"
-msgstr ""
-
-msgid "WMP10"
-msgstr ""
-
-msgid "GSTREAMER"
-msgstr ""
-
-msgid "QUICKTIME"
-msgstr ""
-
-msgid "DIRECTSHOW"
-msgstr ""
+msgid "Volume"
+msgstr "Głośność"
 
 msgid "Add Favorite"
 msgstr "Dodaj ulubiony"
@@ -466,12 +466,6 @@ msgstr "Zapisz utwór"
 
 msgid "Search"
 msgstr "Szukaj"
-
-msgid "Shuffle"
-msgstr "Mieszaj"
-
-msgid "Repeat"
-msgstr "Powtarzaj"
 
 msgid "Grooveshark Status"
 msgstr ""
@@ -493,6 +487,9 @@ msgstr "Usuń zaznaczone"
 
 msgid "Clear Playlist"
 msgstr "Wyczyść playlistę"
+
+msgid "Playback Timer"
+msgstr ""
 
 msgid "Geographical Region"
 msgstr "Region geograficzny"
