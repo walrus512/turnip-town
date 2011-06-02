@@ -127,7 +127,7 @@ from main_thirdp import grooveshark_old
 #from plugins.web_remote import web_remote
 #from plugins.hotkeys import hotkeys
 
-PROGRAM_VERSION = "0.343"
+PROGRAM_VERSION = "0.344"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -513,6 +513,7 @@ class MainPanel(wx.Panel):
         self.Bind(wx.EVT_BUTTON, self.OnSaveOptionsClick, id=xrc.XRCID('m_bu_options_save'))        
         self.Bind(wx.EVT_BUTTON, self.OnSetRecordDirClick, id=xrc.XRCID('m_bu_options_record_dir'))
         self.Bind(wx.EVT_BUTTON, self.SaveOptions, id=xrc.XRCID('m_bu_options_set_cache'))
+        self.Bind(wx.EVT_BUTTON, self.SetLanguage, id=xrc.XRCID('m_bu_options_language'))
         #self.Bind(wx.EVT_RADIOBOX, self.SetBackend, id=xrc.XRCID('m_rx_options_backend'))
         #self.Bind(wx.EVT_CHOICE, self.SetBackend, id=xrc.XRCID('m_ch_options_wxbackend'))
         
@@ -654,7 +655,7 @@ class MainPanel(wx.Panel):
         self.parent.Bind(wx.EVT_MENU, self.TinysongKey, id=xrc.XRCID("m_mi_tingsong"))
         self.parent.Bind(wx.EVT_MENU, self.tab_song_collection.OnSColAddClick, id=xrc.XRCID("m_mi_song_collection"))
         self.parent.Bind(wx.EVT_MENU, self.ImportGroovesharkPlaylist, id=xrc.XRCID("m_mi_import_grooveshark"))
-        self.parent.Bind(wx.EVT_MENU, self.SetLanguage, id=xrc.XRCID("m_mi_select_language"))
+        #self.parent.Bind(wx.EVT_MENU, self.SetLanguage, id=xrc.XRCID("m_mi_select_language"))
         self.parent.Bind(wx.EVT_MENU, self.OnLoadAdvancedOptions, id=xrc.XRCID("m_mi_advanced_options"))
         
         #
@@ -925,22 +926,21 @@ class MainPanel(wx.Panel):
             else:
                 blk_s = blk_s + '_'
                 
-        print '<pre>     artist:   ' + self.current_song.artist
-        print '       song:   ' + self.current_song.song
-        print '      album:   ' + self.current_song.album        
-        print '       time:   ' + t_time + " / " + self.ConvertTimeFormated(self.current_song.song_time_seconds)        
-        print '               [' + blk_s + ']'
-        print '     status:   ' + self.current_song.status + '     rdm: ' + str(self.random_toggle) + '     rpt: ' + str(self.repeat_toggle) + ' ' + self.repeat_toggle_type
+        print ('<pre>     artist:   ' + self.current_song.artist).encode('utf-8')
+        print ('       song:   ' + self.current_song.song).encode('utf-8')
+        print ('      album:   ' + self.current_song.album).encode('utf-8')
+        print ('       time:   ' + t_time + " / " + self.ConvertTimeFormated(self.current_song.song_time_seconds)).encode('utf-8')
+        print ('               [' + blk_s + ']').encode('utf-8')
+        print ('     status:   ' + self.current_song.status + '     rdm: ' + str(self.random_toggle) + '     rpt: ' + str(self.repeat_toggle) + ' ' + self.repeat_toggle_type).encode('utf-8')
         print ' '
         print ' '
         for x in range(0, self.lc_playlist.GetItemCount()):
             if x == self.current_song.playlist_position:
-                outy = '   <span class="current">' + str(x).zfill(3) + '. ' + self.lc_playlist.GetItem(x, C_ARTIST).GetText() + ' - <a class="list_item" href="/' + str(x) + '">' + self.lc_playlist.GetItem(x, C_SONG).GetText() + '</a></span>'
+                outy = '   <span class="current">' + str(x).zfill(3) + '. ' + (self.lc_playlist.GetItem(x, C_ARTIST).GetText()).encode('utf-8') + ' - <a class="list_item" href="/' + str(x).encode('utf-8') + '">' + self.lc_playlist.GetItem(x, C_SONG).GetText().encode('utf-8') + '</a></span>'
                 print string_tools.unbork(outy)
             else:            
-                outy = '   ' + str(x).zfill(3) + '. ' + self.lc_playlist.GetItem(x, C_ARTIST).GetText() + ' - <a class="list_item" href="/' + str(x) + '">' + self.lc_playlist.GetItem(x, C_SONG).GetText() + '</a>'
+                outy = '   ' + str(x).zfill(3) + '. ' + (self.lc_playlist.GetItem(x, C_ARTIST).GetText()).encode('utf-8') + ' - <a class="list_item" href="/' + str(x).encode('utf-8') + '">' + self.lc_playlist.GetItem(x, C_SONG).GetText().encode('utf-8') + '</a>'
                 print string_tools.unbork(outy)
-            
         print '</pre>'
         
     # background colours / pictures --------------------
@@ -1378,7 +1378,7 @@ class MainPanel(wx.Panel):
                     pf_artist = pf_artistsong[0]
                     pf_song = pf_artistsong[1]
                     pf_cached_file_name = pf_artistsong[2]
-                    print 'pre-fetching: ' + pf_song + ' ' + pf_cached_file_name
+                    #print 'pre-fetching: ' + pf_song + ' ' + pf_cached_file_name
                     pf_song_id = prefetch.PreFetch(self).GetSongId(pf_artist, pf_song)
                     #print pf_song_id
                     #download file
@@ -2066,7 +2066,7 @@ class MainPanel(wx.Panel):
 
         if dlg.ShowModal() == wx.ID_OK:
             paths = dlg.GetPaths()
-            print paths
+            #print paths
             self.BackupList()
             self.lc_playlist.DeleteAllItems()
             for path in paths:                
@@ -2215,7 +2215,7 @@ class MainPanel(wx.Panel):
     def SongRate(self, event):
         #re-rate selected favourite list item
         event_id = event.GetId()
-        print event_id
+        #print event_id
         val = self.lc_playlist.GetFirstSelected()
         music_id = ''
         grooveshark_id = ''
@@ -2811,7 +2811,7 @@ class MainPanel(wx.Panel):
             #if len(self.copy_array[x][0]) > 0:
             index = sel_list.InsertStringItem(cur_item, '')
             for y in range(0, len(self.copy_array[0])):
-                print y
+                #print y
                 sel_list.SetStringItem(cur_item, y+1, self.copy_array[x][y])
 
     def OnUndoClick(self, event):
