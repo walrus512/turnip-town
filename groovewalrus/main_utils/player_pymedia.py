@@ -75,7 +75,7 @@ class PlayThread(Thread):
         """ plays a god-damn song """
         
         #local mp3 playback 
-        print 'local: ' + self.file_name
+        print self.file_name.encode('utf-8')
         self.parent.current_song.status = 'loading'
         while os.path.isfile(self.file_name) != True:
             time.sleep(1)
@@ -123,7 +123,7 @@ class PlayThread(Thread):
                             #print r.channels
                             if rate< 1 or rate> 1:
                                 resampler= sound.Resampler( (r.sample_rate,r.channels), (int(r.sample_rate/rate),r.channels) )
-                                print 'Sound resampling %d->%d' % ( r.sample_rate, r.sample_rate/rate )
+                                #print 'Sound resampling %d->%d' % ( r.sample_rate, r.sample_rate/rate )
               
                         data= r.data
                         if resampler:
@@ -133,8 +133,8 @@ class PlayThread(Thread):
     
                             d= len( data )/ float( r.sample_rate* r.channels* 2 )
                             time.sleep( d )
-                            if int( t+d )!= int( t ):
-                                print 'playing: %d sec\r' % ( t+d ),
+                            #if int( t+d )!= int( t ):
+                            #    print 'playing: %d sec\r' % ( t+d ),
                             t+= d
                         else:
                             self.snd.play( data )

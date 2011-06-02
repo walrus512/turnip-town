@@ -557,9 +557,9 @@ class VirtualList(wx.ListCtrl):
         ritem = ''
         if self.query_flag == True:            
             conn = sqlite3.connect(self.FILEDB)
-            # for unicode/crazy text errors
-            #***conn.text_factory = str
+            # for unicode/crazy text errors            
             c = conn.cursor()
+            #conn.text_factory = str
             tq = "SELECT music_id, file_name, folder_name, folder_path FROM m_files WHERE music_id = " + str(row_num)            
             #tq = "SELECT music_id, file_name, folder_name, folder_path FROM m_files LIMIT 1 OFFSET " + str(row_num - 1)
             

@@ -39,7 +39,7 @@ SONGDB_RESFILE = SYSLOC + os.sep + 'layout_songdb.xml'
 class SongDBWindow(wx.Dialog):
     """Song DB Window for adding songs"""
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, -1, "Song Collection Locations", size=(600, 400), pos=(10,10))#, style=wx.FRAME_SHAPED) #STAY_ON_TOP)#wx.FRAME_SHAPED)
+        wx.Dialog.__init__(self, parent, -1, "Song Collection Locations", size=(600, 430), pos=(10,10))#, style=wx.FRAME_SHAPED) #STAY_ON_TOP)#wx.FRAME_SHAPED)
         self.parent = parent
         
         self.FILEDB = system_files.GetDirectories(None).DatabaseLocation()
@@ -84,7 +84,7 @@ class SongDBWindow(wx.Dialog):
         sizer.Add(panel, 1, wx.EXPAND|wx.ALL, 5)
         self.SetSizer(sizer)
         self.SetAutoLayout(True)
-        
+        #self.SetSize(self.GetEffectiveMinSize())
         self.GetLocations()        
        
 #----------------------------------------------------------------------
@@ -254,6 +254,7 @@ class FileThread(Thread):
         c = conn.cursor()
         counter = 0
         first_dir = True
+        conn.text_factory = str
 
         for root, dirs, files in os.walk(base_path):
 
@@ -337,3 +338,9 @@ def AddSingleFile(complete_filename):
         #print path_n
         #print folder_n        
     c.close()
+    
+def ToUni(string):
+    return unicode(string, 'utf-8')
+    
+def ToUtf8(string):
+    return string.encode('utf-8')
