@@ -279,7 +279,11 @@ class MainFrame(wx.Frame):
         lang_set = options_window.GetSetting('language-selected', self.FILEDB)
 
         if (lang_set != False): #& (lang != None):
-            lang = int(lang_set)
+            try:
+                lang = int(lang_set)
+            except Exception, expt:
+                print str(Exception) + str(expt)
+                lang = wx.LANGUAGE_DEFAULT   
         #if lang == None:
         else:
             lang = wx.LANGUAGE_DEFAULT
