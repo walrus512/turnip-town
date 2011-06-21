@@ -1,10 +1,11 @@
 # http://wiki.wxpython.org/ListControls#Drag_and_Drop_with_lists
 import wx
+import wx.lib.mixins.listctrl as listmix
 MAIN_PLAYLIST = "playlist.xspf"
 
 #---------------------------------------------------------------------------
 # ####################################
-class DragList(wx.ListCtrl):
+class DragList(wx.ListCtrl, listmix.ColumnSorterMixin):
     _firstEventType = wx.EVT_SIZE
     #_firstEventType = wx.EVT_WINDOW_CREATE
 
@@ -18,7 +19,7 @@ class DragList(wx.ListCtrl):
         # But this seems to be the actually working way, cf:
         # http://aspn.activestate.com/ASPN/Mail/Message/wxPython-users/2169189
                 
-        self.Bind(self._firstEventType, self.OnCreate)      
+        self.Bind(self._firstEventType, self.OnCreate)
 
     def _PostInit(self):
         # initializes drag drop
@@ -145,7 +146,15 @@ class DragList(wx.ListCtrl):
             counter = counter + self.GetColumnCount() #5
             counter2 = counter2 + 1
                   
+    # Used by the ColumnSorterMixin, see wx/lib/mixins/listctrl.py
+    def GetListCtrl(self):
+        return self
 
+    # Used by the ColumnSorterMixin, see wx/lib/mixins/listctrl.py
+    #def GetSortImages(self):
+        #return (self.sm_dn, self.sm_up)
+            
+            
 class ListDrop(wx.PyDropTarget):
     """ Drop target for simple lists. """
 
