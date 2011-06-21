@@ -32,7 +32,7 @@ print pub.VERSION_STR
 #from wx.lib.pubsub import setuparg1
 #from wx.lib.pubsub import Publisher
 #pub = Publisher()
-
+import wx.lib.mixins.listctrl as listmix
 from wx.lib import langlistctrl
 import version_update_main
 
@@ -434,6 +434,9 @@ class MainPanel(wx.Panel):
         ##self.lc_playlist.Bind(wx.EVT_CHAR, self.OnPlaylistKeyPress)
         self.lc_playlist.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
         self.lc_playlist.Bind(wx.EVT_CHAR, self.OnChar)
+        # for column sorting
+        listmix.ColumnSorterMixin.__init__(self.lc_playlist, 6)
+        self.lc_playlist.itemDataMap = {}
         
         #playlist history
         self.lc_playlist_history = xrc.XRCCTRL(self, 'm_lc_playlist_history')
@@ -493,7 +496,7 @@ class MainPanel(wx.Panel):
         self.Bind(wx.EVT_BUTTON, self.OnLoadPlaylistClick, id=xrc.XRCID('m_bb_load_playlist'))
         self.Bind(wx.EVT_BUTTON, self.OnPlaylistHistoryClick, id=xrc.XRCID('m_bb_playlist_options'))
         self.Bind(wx.EVT_BUTTON, self.OnPlaybackTimerClick, id=xrc.XRCID('m_bb_song_timer'))
-        
+                
         #playlist history     
         self.Bind(wx.EVT_TREE_SEL_CHANGED, self.OnTreeSelChange, self.tr_playlist_history)
         self.Bind(wx.EVT_TREE_BEGIN_LABEL_EDIT, self.OnTreeBeginEdit, self.tr_playlist_history)
@@ -673,7 +676,7 @@ class MainPanel(wx.Panel):
         
         #-------------
         #set ratings for playlist items
-        self.GetAllSongRatings()
+        #self.GetAllSongRatings()
         
         # load playlist history
         self.FillPlaylistTree()        
@@ -2127,6 +2130,7 @@ class MainPanel(wx.Panel):
             #self.SavePlaylist(self.main_playlist_location)
             #self.ResizePlaylist()
             self.GetAllSongRatings()
+            self.BuildSortData()
         
     def ReadPlaylist(self, filename):
         # take current playlist and write to listcontrol
@@ -2165,11 +2169,13 @@ class MainPanel(wx.Panel):
                         song_time = self.ConvertMilliTimeFormated(song_time)
                     self.lc_playlist.SetStringItem(counter, C_TIME, song_time)
                     counter = counter + 1
+                    
                 except TypeError:
                     print 'error:ReadPlaylist'
                     #pass
             #self.ResizePlaylist()
             self.GetAllSongRatings()
+            self.BuildSortData()
         
     def OnPlaylistRightClick(self, event):        
         # make a menu
@@ -2252,6 +2258,7 @@ class MainPanel(wx.Panel):
         # save default playlist
         #self.SavePlaylist(self.main_playlist_location)
         ##self.ResizePlaylist()
+        self.BuildSortData()
         
     def RemoveOtherPlaylistItems(self, event=None):
         self.BackupList()
@@ -2276,6 +2283,7 @@ class MainPanel(wx.Panel):
         # save default playlist
         #self.SavePlaylist(self.main_playlist_location)
         ##self.ResizePlaylist()
+        self.BuildSortData()
                 
     def OnPlaybackTimerClick(self, event=None):
         #lets you stop playback after a song or 2
@@ -2316,6 +2324,7 @@ class MainPanel(wx.Panel):
         #save playlist
         self.SavePlaylist(self.main_playlist_location)
         ##self.ResizePlaylist()
+        self.BuildSortData()
         
     def UpdatePlaylistItem(self, current_count, artist, song, album, url, duration=''):
         #set value
@@ -2326,6 +2335,7 @@ class MainPanel(wx.Panel):
         self.lc_playlist.SetStringItem(current_count, C_TIME, duration)
         ##self.ResizePlaylist()
         ##self.SavePlaylist(self.main_playlist_location)
+        self.BuildSortData()
         
     def SetPlaylistItem(self, current_count, artist, song, album='', url='', duration=''):
         #set value
@@ -2336,6 +2346,7 @@ class MainPanel(wx.Panel):
         self.lc_playlist.SetStringItem(current_count, C_ID, url)
         self.lc_playlist.SetStringItem(current_count, C_TIME, duration)
         ##self.ResizePlaylist()
+        self.BuildSortData()
         
     def ResizePlaylist(self, event=None):
         #x_size = self.lc_playlist.GetSize()[0] - 50
@@ -2397,6 +2408,7 @@ class MainPanel(wx.Panel):
         # clear all the album values on the playlist
         for x in range(0, self.lc_playlist.GetItemCount()):
             self.lc_playlist.SetStringItem(x, C_ALBUM, '')
+        self.BuildSortData()    
             
     def ClearIdValues(self, event):
         # clear all the album values on the playlist
@@ -2434,12 +2446,14 @@ class MainPanel(wx.Panel):
                         self.SetPlaylistItem(current_count + x, artist, song, '', '')
 
         #save the playlist
-        self.SavePlaylist(self.main_playlist_location)        
+        self.SavePlaylist(self.main_playlist_location)
+        self.BuildSortData()
         
     def SuperAddToPlaylist(self, add_dict, plize=False):
         #backup current db
         #****self.SearchOrPlaylist(artist, song)
         #self.ResizePlaylist()
+        
         if len(add_dict) > 0:
             self.BackupList()
             if plize == True:
@@ -2457,7 +2471,8 @@ class MainPanel(wx.Panel):
             self.nb_main.SetPageText(NB_PLAYLIST, 'Playlist (' + str(self.lc_playlist.GetItemCount()) + ')')
             
             self.GetAllSongRatings(start_from=first_last_row)            
-        
+            self.BuildSortData()
+            
     def AddAll(self, list_control, num_cols=2):
         add_arr = []
         for val in range(0, list_control.GetItemCount()):
@@ -2493,6 +2508,31 @@ class MainPanel(wx.Panel):
                 add_arr.append(add_dict)
                 val = list_control.GetNextSelected(val)                
             self.SuperAddToPlaylist(add_arr, plize=False)
+        
+    def _getSelectedIndices( self, state =  wx.LIST_STATE_SELECTED):
+        indices = []
+        lastFound = -1
+        while True:
+            index = self.GetNextItem(lastFound, wx.LIST_NEXT_ALL, state,)
+            if index == -1:
+                break
+            else:
+                lastFound = index
+                indices.append( index )
+        return indices
+
+    def BuildSortData(self):
+        for x in range(0, self.lc_playlist.GetItemCount()):
+            #print x
+            rating = x #self.lc_playlist.GetItem(x, C_RATING).GetText()
+            artist = self.lc_playlist.GetItem(x, C_ARTIST).GetText()
+            title = self.lc_playlist.GetItem(x, C_SONG).GetText()
+            album = self.lc_playlist.GetItem(x, C_ALBUM).GetText()
+            song_id = self.lc_playlist.GetItem(x, C_ID).GetText()
+            time = self.lc_playlist.GetItem(x, C_TIME).GetText()
+            
+            self.lc_playlist.SetItemData(x, x)
+            self.lc_playlist.itemDataMap[x] = (rating, artist, title, album, song_id, time)
         
 # ---------------------------------------------------------  
 # playlist history ---------------------------------------- 
