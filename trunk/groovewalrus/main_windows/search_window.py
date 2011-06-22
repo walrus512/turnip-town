@@ -114,6 +114,16 @@ class SearchWindow(wx.Dialog):
         self.SetSizer(sizer)
         self.SetAutoLayout(True)
         
+        # esacpe to close window
+        #escID = 337
+        #wx.EVT_CHAR_HOOK(self, escID, self.hide_me)
+        #aTable_values = [
+        #    (wx.ACCEL_NORMAL, wx.WXK_ESCAPE, escID),
+        #        ]
+        #aTable = wx.AcceleratorTable(aTable_values)
+        #self.SetAcceleratorTable(aTable)        
+        self.Bind(wx.EVT_CHAR_HOOK, self.OnKeyDown)
+        
 #----------------------------------------------------------------------
                 
     def show_me(self):
@@ -149,6 +159,11 @@ class SearchWindow(wx.Dialog):
     def hide_me(self, event=None):
         # hide the window
         self.Show(False)
+        
+    def OnKeyDown(self, event):
+        keycode = event.GetKeyCode()
+        self.hide_me()
+        #event.Skip()
 
 #----------------------------------------------------------------------        
  
