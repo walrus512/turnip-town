@@ -19,74 +19,56 @@ this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place, Suite 330, Boston, MA 02111-1307 USA
 """
 
-#playlist object
-#-add song
-#-remove song
-#-insert song
-#-playlist history
-#-playlist item - title, artist, time, album, location
-#-playlist item data - last_played, first_played, times_played, rating
+#loads backend
+#controls playback
+import backend
 
 ########################################################################
-class Playlist:
-    """It's a playlist"""
+class Playback:
+    """It's a playback"""
     #----------------------------------------------------------------------
-    def __init__(self, playlist_name=None):
-        self.playlist = []
-        self.name = playlist_name
-        self.current_song = -1
+    def __init__(self, song=None):
+        #set backend
+        be = backend.Backend()
+        bl = be.GetBackendList()
+        self.player = be.SetBackend(bl[0])
+        self.song = song
+        #self.player = backend.player.Player()
+        self.is_playing = False
+        self.is_plaused = False
+        self.playback_modes = ['normal', 'repeat', 'repeat all', 'random']
+        self.playback_mode = self.playback_modes[0]
         
     #----------------------------------------------------------------------
         
-    def AddSong(self, song_dict):
+    def Play(self, song):
         #title, artist, time, album, location
-        self.CheckSongDict(song_dict)
-        self.playlist.append(song_dict)        
+        #song.file_name = 'asfasf'
+        self.player.Play(song)
         
-    def CheckSongDict(self, song_dict):
-        #check to make sure there's a song title and artist
-        if ('title' in song_dict.keys()) & ('artist' in song_dict.keys()):
-            pass
-        else:        
-            raise StandardError('Invalid playlist item, song or artist not found.')        
-            
-    def DeleteSong(self, song_id):
-        return(self.playlist.pop(song_id))
+    def Stop(self):
+        '''Stop playback'''
+        self.player.Stop()
         
-    def InsertSong(self, song_dict, position):
-        self.CheckSongDict(song_dict)
-        self.playlist.insert(position, song_dict)
-        
-    def MoveSong(self, song_id, position):
-        x = self.DeleteSong(song_id)
-        self.InsertSong(x, position)
+    def Next(self):
+        ''' Play next track '''
+        pass
     
-    def GetName(self):
-        return(self.name)
+    def Previous(self):
+        '''Play previous track'''
+        pass
+   
+    def SeekForward(self):
+        '''Seek foward in current track'''
+        pass
+    
+    def SeekBackward(self):
+        '''Seek backward in current track'''
+        pass
         
-    def SetName(self, name):
-        self.name = name
-        return(self.name)
-        
-    def SetSongAttrib(self, song_id, attribute, value):
-        x = self.playlist[song_id] 
-        x[attribute] = value
-        self.playlist[song_id] = x
-        
-    def GetCount(self):
-        return (len(self.playlist))    
 
 if __name__ == "__main__":       
-    x = Playlist()
-    print x.GetName()
-    x.AddSong({'artist':'Beck', 'title':'Sad Song'})
-    x.AddSong({'artist':'U2', 'title':'Gloria'})
-    print x.playlist
-    x.SetSongAttrib(0, 'rating', 0)
-    print x.playlist
-    print x.DeleteSong(1)
-    print x.playlist
-    x.InsertSong({'artist':'U2', 'title':'Lemon'}, 0)
-    print x.playlist
-    x.MoveSong(0, 1)
-    print x.playlist
+    x = Playback('poop')
+    x.Play('pop')
+    x.Stop()
+    print x.playback_mode
