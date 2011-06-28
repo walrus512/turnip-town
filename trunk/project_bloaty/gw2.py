@@ -34,16 +34,16 @@ print s.system.listMethods()
 
 x = playlist.Playlist()
 print x.GetName()
-x.AddSong({'artist':'Beck', 'title':'Sad Song'})
-x.AddSong({'artist':'U2', 'title':'Gloria'})
+x.AddItem({'artist':'Beck', 'title':'Sad Song'})
+x.AddItem({'artist':'U2', 'title':'Gloria'})
 print x.playlist
 x.SetSongAttrib(0, 'rating', 0)
 print x.playlist
-print x.DeleteSong(1)
+print x.DeleteItem(1)
 print x.playlist
-x.InsertSong({'artist':'U2', 'title':'Lemon'}, 0)
+x.InsertItem({'artist':'U2', 'title':'Lemon'}, 0)
 print x.playlist
-x.MoveSong(0, 1)
+x.MoveItem(0, 1)
 print x.playlist
 print x.GetCount()
 print x.GetCurrentNumber()

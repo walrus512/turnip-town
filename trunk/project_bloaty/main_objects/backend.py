@@ -55,5 +55,5 @@ class Backend:
 if __name__ == "__main__":       
     x = Backend()
     print x.GetBackendList()
-    x.SetBackend('backends.win32.player_null')
+    x.SetBackend('backends.win32.player_pymedia')
     
