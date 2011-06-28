@@ -38,28 +38,28 @@ class Playlist:
         
     #----------------------------------------------------------------------
         
-    def AddItem(self, song_dict):
+    def AddSong(self, song_dict):
         #title, artist, time, album, location
-        self.CheckItemDict(song_dict)
+        self.CheckSongDict(song_dict)
         self.playlist.append(song_dict)        
         
-    def CheckItemDict(self, song_dict):
+    def CheckSongDict(self, song_dict):
         #check to make sure there's a song title and artist
         if ('title' in song_dict.keys()) & ('artist' in song_dict.keys()):
             pass
         else:        
             raise StandardError('Invalid playlist item, song or artist not found.')        
             
-    def DeleteItem(self, song_id):
+    def DeleteSong(self, song_id):
         return(self.playlist.pop(song_id))
         
-    def InsertItem(self, song_dict, position):
-        self.CheckItemDict(song_dict)
+    def InsertSong(self, song_dict, position):
+        self.CheckSongDict(song_dict)
         self.playlist.insert(position, song_dict)
         
-    def MoveItem(self, song_id, position):
-        x = self.DeleteItem(song_id)
-        self.InsertItem(x, position)
+    def MoveSong(self, song_id, position):
+        x = self.DeleteSong(song_id)
+        self.InsertSong(x, position)
     
     def GetName(self):
         return(self.name)
@@ -68,25 +68,37 @@ class Playlist:
         self.name = name
         return(self.name)
         
-    def SetItemAttrib(self, song_id, attribute, value):
+    def SetSongAttrib(self, song_id, attribute, value):
         x = self.playlist[song_id] 
         x[attribute] = value
         self.playlist[song_id] = x
         
     def GetCount(self):
-        return (len(self.playlist))    
+        return (len(self.playlist))
+    
+    def GetCurrentNumber(self):
+        if self.GetCount() > 0:
+            if self.current_song == -1:
+                self.current_song = 0
+            elif self.GetCount() >= self.current_song:
+                self.current_song = 0
+            else:
+                pass
+        else:
+            self.current_song = -1
+        return self.current_song
 
 if __name__ == "__main__":       
     x = Playlist()
     print x.GetName()
-    x.AddItem({'artist':'Beck', 'title':'Sad Item'})
-    x.AddItem({'artist':'U2', 'title':'Gloria'})
+    x.AddSong({'artist':'Beck', 'title':'Sad Song'})
+    x.AddSong({'artist':'U2', 'title':'Gloria'})
     print x.playlist
-    x.SetItemAttrib(0, 'rating', 0)
+    x.SetSongAttrib(0, 'rating', 0)
     print x.playlist
-    print x.DeleteItem(1)
+    print x.DeleteSong(1)
     print x.playlist
-    x.InsertItem({'artist':'U2', 'title':'Lemon'}, 0)
+    x.InsertSong({'artist':'U2', 'title':'Lemon'}, 0)
     print x.playlist
-    x.MoveItem(0, 1)
+    x.MoveSong(0, 1)
     print x.playlist

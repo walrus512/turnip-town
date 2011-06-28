@@ -20,34 +20,28 @@ Place, Suite 330, Boston, MA 02111-1307 USA
 """
 
 #song object
-#-title
-#-artist
-#-rating
-#-location
-#-time
-
-import os
-#from main_utils import local_songs
 
 ########################################################################
 class Song:
     """It's a song"""
     #----------------------------------------------------------------------
-    def __init__(self):        
-        self.artist = None
-        self.title = None
-        self.location = None
-        self.rating = None
-        self.time = None
+    def __init__(self, playlist_name=None):
+        self.title = ''
+        self.next_track = ''
+        self.previous_track = ''
+        self.artist = ''
+        self.track_time = 0
+        self.file_name = ''
+        self.time_played = 0
+        self.song_id = 0                
+        
     #----------------------------------------------------------------------
         
-    def GetSongTime(self, file_location):
-        stime = None
-        if os.path.isfile(file_location):
-            stime = local_songs.GetMp3Length(location)
-        return stime    
-   
+    def SetSongTitle(self, song_title):
+        #title
+        self.title = song_title
+        
 
 if __name__ == "__main__":       
     x = Song()
-    print x.artist
+    x.title = 'Some Title'
