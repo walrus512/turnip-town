@@ -45,6 +45,9 @@ class Server:
         # Run the server's main loop
         print 'stop'
         self.server.shutdown()
+        
+    def GetServer(self):
+        return self.server
 
 if __name__ == "__main__":
     x = Server()
