@@ -26,14 +26,15 @@ class Song:
     """It's a song"""
     #----------------------------------------------------------------------
     def __init__(self, playlist_name=None):
+        self.artist = ''
         self.title = ''
         self.next_track = ''
-        self.previous_track = ''
-        self.artist = ''
+        self.previous_track = ''        
         self.track_time = 0
-        self.file_name = ''
+        self.location = ''
         self.time_played = 0
-        self.song_id = 0                
+        self.song_id = 0
+        self.rating = None
         
     #----------------------------------------------------------------------
         
@@ -41,6 +42,11 @@ class Song:
         #title
         self.title = song_title
         
+    def GetSongTime(self, file_location):
+        stime = 240
+        #if os.path.isfile(file_location):
+            #stime = local_songs.GetMp3Length(location)
+        return stime  
 
 if __name__ == "__main__":       
     x = Song()
