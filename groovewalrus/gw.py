@@ -127,7 +127,7 @@ from main_thirdp import grooveshark_old
 #from plugins.web_remote import web_remote
 #from plugins.hotkeys import hotkeys
 
-PROGRAM_VERSION = "0.344"
+PROGRAM_VERSION = "0.345"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -684,7 +684,10 @@ class MainPanel(wx.Panel):
                 
         # options ---------------
         # load options from settings.xml
-        options_window.Options(self).LoadOptions()
+        try:
+            options_window.Options(self).LoadOptions()
+        except Excpetion, expt:
+            print 'load options: ' + str(Exception) + str(expt)    
         if self.cb_options_tray.GetValue() == 1:
             self.parent.UseTrayIcon()
             
