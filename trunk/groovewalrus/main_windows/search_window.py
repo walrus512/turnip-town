@@ -162,8 +162,9 @@ class SearchWindow(wx.Dialog):
         
     def OnKeyDown(self, event):
         keycode = event.GetKeyCode()
-        self.hide_me()
-        #event.Skip()
+        if keycode == wx.WXK_ESCAPE:
+            self.hide_me()
+        event.Skip()
 
 #----------------------------------------------------------------------        
  
@@ -215,7 +216,8 @@ class SearchWindow(wx.Dialog):
                     #album
                     self.lc_search.SetStringItem(counter, 3, x['AlbumName'])
                     if self.parent.cb_options_noid.GetValue() == False:
-                        self.lc_search.SetStringItem(counter, 4, play_url)
+                        print play_url
+                        self.lc_search.SetStringItem(counter, 4, str(play_url))
                 else:
                     index = self.lc_search.InsertStringItem(counter, '')
                     # title

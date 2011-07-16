@@ -127,7 +127,7 @@ from main_thirdp import grooveshark_old
 #from plugins.web_remote import web_remote
 #from plugins.hotkeys import hotkeys
 
-PROGRAM_VERSION = "0.345"
+PROGRAM_VERSION = "0.347"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -686,7 +686,7 @@ class MainPanel(wx.Panel):
         # load options from settings.xml
         try:
             options_window.Options(self).LoadOptions()
-        except Excpetion, expt:
+        except Exception, expt:
             print 'load options: ' + str(Exception) + str(expt)    
         if self.cb_options_tray.GetValue() == 1:
             self.parent.UseTrayIcon()
@@ -1683,6 +1683,9 @@ class MainPanel(wx.Panel):
         is_shown = self.album_viewer.ToggleShow()
 
     def OnUpdateClick(self, event):
+        default_app_open.dopen('http://groove-walrus.turnip-town.net')
+        
+    def OnUpdateClickOld(self, event):
         # open website
         #version_check.VersionCheck(self, PROGRAM_VERSION).DisplayNewVersionMessage()
         self.update_event = True
@@ -1861,7 +1864,7 @@ class MainPanel(wx.Panel):
             cs.artist = self.lc_playlist.GetItem(playlist_number, C_ARTIST).GetText()
             cs.song = self.lc_playlist.GetItem(playlist_number, C_SONG).GetText()
             cs.album = self.lc_playlist.GetItem(playlist_number, C_ALBUM).GetText()
-            cs.song_id = self.lc_playlist.GetItem(playlist_number, C_ID).GetText() #str(self.lc_playlist.GetItem(playlist_number, 3).GetText())
+            cs.song_id = str(self.lc_playlist.GetItem(playlist_number, C_ID).GetText()) #str(self.lc_playlist.GetItem(playlist_number, 3).GetText())
             cs.song_time = self.lc_playlist.GetItem(playlist_number, C_TIME).GetText()
             #cs.track_id = 0
             #cs.song_time_seconds = 0
@@ -3029,7 +3032,7 @@ class CurrentSong():
         self.artist = artist
         self.album = album
         self.song_time = song_time        
-        self.song_id = song_id          #song-id listed on the listctrl, either 'file location or gs id'
+        self.song_id = str(song_id)          #song-id listed on the listctrl, either 'file location or gs id'
         #self.album_graphic = ''
         #self.artist_graphic = ''        
         self.SetDefaultValues()
@@ -3122,7 +3125,7 @@ class CurrentSong():
                    #*** change this stuff, change it in prefetch.py too
                 if len(query_results) >= 1:
                     self.parent.SetNetworkStatus('grooveshark', 0)
-                    returned_song_id = query_results[0]['SongID']
+                    returned_song_id = str(query_results[0]['SongID'])
 
                     # let's check for album and update that too
                     if (self.album =='') & (query_results[0]['AlbumName'] != ''):
@@ -3136,7 +3139,7 @@ class CurrentSong():
                         found_it = False
                         for x in range(1, len(query_results) - 1):                            
                             if (query_results[x]['SongName'].upper() == self.song.upper()) & (found_it != True):
-                                xx = query_results[x]['SongID']
+                                xx = str(query_results[x]['SongID'])
                                 pub.sendMessage('main.song_id', song_id=xx, playlist_number=self.playlist_position)
                                 self.song_id = xx
                                 found_it = True
@@ -3148,7 +3151,7 @@ class CurrentSong():
                         found_it = False
                         for x in range(1, len(query_results) - 1):                            
                             if (query_results[x]['ArtistName'].upper() == self.artist.upper()) & (found_it != True):
-                                yy = query_results[x]['SongID']
+                                yy = str(query_results[x]['SongID'])
                                 pub.sendMessage('main.song_id', song_id=yy, playlist_number=self.playlist_position)
                                 self.song_id = yy
                                 found_it = True
