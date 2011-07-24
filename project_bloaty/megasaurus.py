@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-GrooveWalrus: song
+GrooveWalrus: megasaurus
 Copyright (C) 2011
 11y3y3y3y43@gmail.com
 http://groove-walrus.turnip-town.net
@@ -19,39 +19,31 @@ this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 Place, Suite 330, Boston, MA 02111-1307 USA
 """
 
-#song object
+#megasaurus - combines all the junk into a mega class for including in the xml-rpc server
+
+from main_objects import playlist
+from main_objects import playback
+from main_objects import backend
 
 ########################################################################
-class Song:
-    """It's a song"""
+class Megasaurus(playlist.Playlist, playback.Playback, backend.Backend):
+    """It's a playlist"""
     #----------------------------------------------------------------------
     def __init__(self, playlist_name=None):
-        self.artist = ''
-        self.title = ''
-        self.album = ''
-        self.next_song = None
-        self.previous_song = None        
-        self.track_time = 0
-        self.location = ''
-        self.time_played = 0
-        self.song_id = 0
-        self.rating = None
-        
+        self.playlist = []
+        self.name = playlist_name
+        self.current_song = -1
     #----------------------------------------------------------------------
+    # playlists ----------- 
+    def CreatePlaylist(self):
+        '''Creates a new playlist'''
+        pass
         
-    def SetSongTitle(self, song_title):
-        #title
-        self.title = song_title
-        
-    def GetSongTime(self, file_location):
-        stime = 240
-        #if os.path.isfile(file_location):
-            #stime = local_songs.GetMp3Length(location)
-        return stime
+    # playback -----------
     
-    def SetNextsong(self, song):
-        self.next_song = song
-
-if __name__ == "__main__":       
-    x = Song()
-    x.title = 'Some Title'
+    
+    # backends -----------
+    
+    
+    # settings -----------
+        

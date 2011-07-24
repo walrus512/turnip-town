@@ -26,25 +26,25 @@ import time
 import os
 
 from threading import Thread
-from main_windows import options_window
+###from main_windows import options_window
 
 EMULATE=0
 BUFFER_SIZE = 320000
 
 ########################################################################
 class Player(object): 
-    def __init__(self, parent):
+    def __init__(self): #, parent):
         self.local_play_status = True
         self.paused = False
         #self.snd = None
         self.play_thread = None
-        self.parent = parent
+        ##self.parent = parent
                 
     def Play(self, file_name):
         #print file_name
         #source = pyglet.media.load(file_name)
         #self.mediaPlayer.queue(source)
-        self.play_thread = PlayThread(file_name, self.parent)
+        self.play_thread = PlayThread(file_name) #, self.parent)
         #THREAD
         self.play_thread.start()
         
@@ -63,33 +63,33 @@ class Player(object):
             
 class PlayThread(Thread):
     """ makes a thread for pymedia playback """
-    def __init__(self, file_name, parent):
+    def __init__(self, file_name): #, parent):
         Thread.__init__(self)
         self.paused = False
         self.file_name = file_name
         self.local_play_status = True
         self.snd = None
-        self.parent = parent
+        #self.parent = parent
         
     def run(self):
         """ plays a god-damn song """
         
         #local mp3 playback 
         print self.file_name.encode('utf-8')
-        self.parent.current_song.status = 'loading'
+        #self.parent.current_song.status = 'loading'
         while os.path.isfile(self.file_name) != True:
             time.sleep(1)
             
-        get_buffer = options_window.GetSetting('buffer-size-bytes', self.parent.FILEDB)
-        if get_buffer != False:
-            buffer_sz = int(get_buffer)
-        else:
-            buffer_sz = BUFFER_SIZE
+        ###get_buffer = options_window.GetSetting('buffer-size-bytes', self.parent.FILEDB)
+        ###if get_buffer != False:
+        ###    buffer_sz = int(get_buffer)
+        ###else:
+        buffer_sz = BUFFER_SIZE
         while os.path.getsize(self.file_name) < buffer_sz:
             time.sleep(2)
             #print os.path.getsize(file_name)
-        self.parent.time_count = -1
-        self.parent.current_song.status = 'playing'
+        #self.parent.time_count = -1
+        #self.parent.current_song.status = 'playing'
             
         
         card=0
@@ -152,8 +152,8 @@ class PlayThread(Thread):
           
     def stop(self):
         self.local_play_status = False
-        if os.name != 'nt':
-            time.sleep(4)
+        #if os.name != 'nt':
+            #time.sleep(4)
             
     def toggle_pause(self):
         if self.snd:

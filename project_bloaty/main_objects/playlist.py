@@ -26,6 +26,7 @@ Place, Suite 330, Boston, MA 02111-1307 USA
 #-playlist history
 #-playlist item - title, artist, time, album, location
 #-playlist item data - last_played, first_played, times_played, rating
+from main_objects import song
 
 ########################################################################
 class Playlist:
@@ -45,20 +46,20 @@ class Playlist:
         
     def CheckItemDict(self, song_dict):
         #check to make sure there's a song title and artist
-        if ('title' in song_dict.keys()) & ('artist' in song_dict.keys()):
+        if ('Title' in song_dict.keys()) & ('Artist' in song_dict.keys()):
             pass
         else:        
             raise StandardError('Invalid playlist item, song or artist not found.')        
             
-    def DeleteItem(self, song_id):
-        return(self.playlist.pop(song_id))
+    def DeleteItem(self, list_id):
+        return(self.playlist.pop(list_id))
         
     def InsertItem(self, song_dict, position):
         self.CheckItemDict(song_dict)
         self.playlist.insert(position, song_dict)
         
-    def MoveItem(self, song_id, position):
-        x = self.DeleteItem(song_id)
+    def MoveItem(self, list_id, position):
+        x = self.DeleteItem(list_id)
         self.InsertItem(x, position)
     
     def GetName(self):
@@ -68,10 +69,10 @@ class Playlist:
         self.name = name
         return(self.name)
         
-    def SetItemAttrib(self, song_id, attribute, value):
-        x = self.playlist[song_id] 
+    def SetItemAttrib(self, list_id, attribute, value):
+        x = self.playlist[list_id] 
         x[attribute] = value
-        self.playlist[song_id] = x
+        self.playlist[list_id] = x
         
     def GetCount(self):
         return (len(self.playlist))
@@ -87,6 +88,38 @@ class Playlist:
         else:
             self.current_song = -1
         return self.current_song
+    
+    def SetCurrentNumber(self, number):
+        self.current_song = number
+        
+    def GetNext(self):
+        self.current_song  = self.current_song + 1
+        return self.GetCurrentNumber()
+    
+    def GetPrevious(self):
+        self.current_song  = self.current_song - 1
+        return self.GetCurrentNumber()
+    
+    def GetNextRandom(self):
+        pass
+    
+    def PrintPlaylist(self):
+        print self.playlist
+        
+    def GetPlaylist(self):
+        return self.playlist
+        
+    #--------
+    
+    def LoadPlaylist(self, list_name):
+        '''load a playlist from the db'''
+        pass
+        
+    def SavePlaylist(self):
+        pass
+    
+    def ExportPlaylist(self, file_name):
+        pass
 
 if __name__ == "__main__":       
     x = Playlist()
