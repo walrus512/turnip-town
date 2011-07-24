@@ -50,6 +50,7 @@ class Backend:
             print str(Exception)+str(expt)        
 
     def GetBackend(self):
+        print self.backend
         return self.backend
 
 if __name__ == "__main__":       

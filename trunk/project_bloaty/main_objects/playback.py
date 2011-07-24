@@ -22,6 +22,7 @@ Place, Suite 330, Boston, MA 02111-1307 USA
 #loads backend
 #controls playback
 import backend
+import os
 
 ########################################################################
 class Playback:
@@ -29,31 +30,50 @@ class Playback:
     #----------------------------------------------------------------------
     def __init__(self, song=None):
         #set backend
-        be = backend.Backend()
-        bl = be.GetBackendList()
-        self.player = be.SetBackend(bl[0])
+        bl = backend.Backend().GetBackendList()
+        self.PlaybackSetBackend(bl[0])
+        #self.player = be.SetBackend(bl[0])
         self.song = song
         #self.player = backend.player.Player()
         self.is_playing = False
         self.is_plaused = False
-        self.playback_modes = ['normal', 'repeat', 'repeat all', 'random']
+        self.playback_modes = ['normal', 'repeat', 'repeat_all', 'random']
         self.playback_mode = self.playback_modes[0]
         
     #----------------------------------------------------------------------
+    def PlaybackSetBackend(self, this_backend):
+        return backend.Backend().SetBackend(this_backend)
         
-    def Play(self, song):
+    def Play(self, item):
         #title, artist, time, album, location
-        #song.file_name = 'asfasf'
-        self.player.Play(song)
+        #song.file_name = 'asfasf'        
+        self.player.Play(item.location)
+        
+    def PlayWith(self, this_backend, location):
+        print location
+        self.player = self.PlaybackSetBackend(this_backend)
+        #self.player = backend.Backend().SetBackend(this_backend)
+        self.Stop()        
+        
+        #check file exists
+        if os.path.isfile(location): 
+            self.player.Play(location)
+        else:
+            pass
+        #check local
+        #check cache
+        #check online (grooveshark)
+        
         
     def Stop(self):
         '''Stop playback'''
+        print self.player
         self.player.Stop()
         
     def Next(self):
         ''' Play next track '''
-        pass
-    
+        pass        
+        
     def Previous(self):
         '''Play previous track'''
         pass
