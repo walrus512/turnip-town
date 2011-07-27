@@ -127,7 +127,7 @@ from main_thirdp import grooveshark_old
 #from plugins.web_remote import web_remote
 #from plugins.hotkeys import hotkeys
 
-PROGRAM_VERSION = "0.348"
+PROGRAM_VERSION = "0.349"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -1169,9 +1169,9 @@ class MainPanel(wx.Panel):
                 g_session = jsonrpcSession(None, g_version)
                 g_session.startSession()
                 mylist = playlist.playlistFromId(g_session, playlist_id)
-                               
+
                 add_arr = []
-                for x in range(0, len(mylist.songs)-1):
+                for x in range(0, len(mylist.songs)):
                     add_dict = {}
                     add_dict['artist'] = mylist.songs[x].artistName
                     add_dict['song'] = mylist.songs[x].name
