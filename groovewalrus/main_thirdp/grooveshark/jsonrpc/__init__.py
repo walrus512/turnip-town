@@ -55,9 +55,9 @@ class Request:
             clientVersion = CLIENT_VERSION
         client = CLIENT_NAME
 
-        if method == 'getSearchResultsEx':
+        if method == 'getSearchResultsEx' or method == 'playlistGetSongs':
             clientVersion = SEARCH_CLIENT_VERSION
-            client = SEARCH_CLIENT_NAME            
+            client = SEARCH_CLIENT_NAME
             
         postData = {
             "header": {
@@ -208,7 +208,7 @@ class JsonRPC:
             "query": query,
             "type": type,
             "guts":0,
-            "ppOverride":false,
+            "ppOverride":"false",
             }
         response = Request(self, parameters, "getSearchResultsEx").send()
         #print response
