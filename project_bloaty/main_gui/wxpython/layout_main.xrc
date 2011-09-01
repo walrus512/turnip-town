@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
+	<object class="wxPanel" name="m_pa_main">
+		<style>wxTAB_TRAVERSAL</style>
+		<size>681,433</size>
+		<object class="wxBoxSizer">
+			<orient>wxVERTICAL</orient>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxEXPAND</flag>
+				<border>0</border>
+				<object class="wxToolBar" name="m_tb_main">
+					<style>wxTB_HORIZONTAL</style>
+					<bitmapsize></bitmapsize>
+					<margins></margins>
+					<packing>1</packing>
+					<separation>5</separation>
+					<object class="tool" name="m_tl_previous">
+						<label>tool</label>
+						<tooltip></tooltip>
+						<longhelp></longhelp>
+						<bitmap>graphics/media-skip-backward.png</bitmap>
+					</object>
+					<object class="tool" name="m_tl_play">
+						<label>tool</label>
+						<tooltip></tooltip>
+						<longhelp></longhelp>
+						<bitmap>graphics/media-playback-start.png</bitmap>
+					</object>
+					<object class="tool" name="m_tl_pause">
+						<label>tool</label>
+						<tooltip></tooltip>
+						<longhelp></longhelp>
+						<bitmap>graphics/media-playback-pause.png</bitmap>
+					</object>
+					<object class="tool" name="m_tl_stop">
+						<label>tool</label>
+						<tooltip></tooltip>
+						<longhelp></longhelp>
+						<bitmap>graphics/media-playback-stop.png</bitmap>
+					</object>
+					<object class="tool" name="m_tl_next">
+						<label>tool</label>
+						<tooltip></tooltip>
+						<longhelp></longhelp>
+						<bitmap>graphics/media-skip-forward.png</bitmap>
+					</object>
+					<object class="separator" />
+					<object class="wxSlider" name="m_sl_volume">
+						<style>wxSL_BOTH|wxSL_HORIZONTAL</style>
+						<value>50</value>
+						<min>0</min>
+						<max>100</max>
+					</object>
+					<object class="separator" />
+					<object class="wxTextCtrl" name="m_tc_search">
+						<value></value>
+						<maxlength>0</maxlength>
+					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxEXPAND | wxALL</flag>
+				<border>0</border>
+				<object class="wxPanel" name="m_pa_track">
+					<style>wxTAB_TRAVERSAL</style>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxEXPAND | wxALL</flag>
+				<border>0</border>
+				<object class="wxPanel" name="m_pa_background">
+					<style>wxTAB_TRAVERSAL</style>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>1</option>
+				<flag>wxEXPAND | wxALL</flag>
+				<border>0</border>
+				<object class="unknown" name="m_auinotebook1" />
+			</object>
+		</object>
+	</object>
+</resource>
