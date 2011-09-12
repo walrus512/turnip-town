@@ -22,6 +22,8 @@ import wx
 import wx.xrc as xrc
 from main_utils import audioscrobbler_lite
 from main_utils import default_app_open
+from main_thirdp import pylast
+from threading import Thread
 
 #columns
 C_RATING = 0
@@ -43,6 +45,14 @@ NB_SIFT = 7
 NB_OPTIONS = 8
 NB_ABOUT = 9
 WN_SEARCH = 99
+API_KEY = "13eceb51a4c2e0f825c492f04bf693c8"
+
+EVT_NEW_MYLAST = wx.PyEventBinder(wx.NewEventType(), 0)
+
+class MyLastEvent(wx.PyCommandEvent):
+    def __init__(self, eventType=EVT_NEW_MYLAST.evtType[0], id=0):
+        wx.PyCommandEvent.__init__(self, eventType, id)
+        self.data = None
 
 class MyLastfmTab(wx.ScrolledWindow):
     def __init__(self, parent):
@@ -63,7 +73,8 @@ class MyLastfmTab(wx.ScrolledWindow):
         self.lc_mylast.InsertColumn(1,"Artist")
         self.lc_mylast.InsertColumn(2,"Song")
         self.lc_mylast.InsertColumn(3,"User")
-        self.lc_mylast.InsertColumn(4,"Count")        
+        self.lc_mylast.InsertColumn(4,"Match")
+        self.lc_mylast.InsertColumn(5,"Date")
         self.parent.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnMyLastListClick, self.lc_mylast)
         self.parent.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.OnMyLastListDoubleClick, self.lc_mylast)
         # wxMSW
@@ -83,9 +94,21 @@ class MyLastfmTab(wx.ScrolledWindow):
         self.st_mylast_loved.Bind(wx.EVT_LEFT_UP, self.OnMyLastLovedClick)  
         self.parent.Bind(wx.EVT_BUTTON, self.OnAutoGenerateMyLastPlayist, id=xrc.XRCID('m_bb_mylast_plize'))
         
+        self.network = pylast.LastFMNetwork(api_key = API_KEY)
+        self.current_page = 0
+        self.total_pages = 0
+        
+        self.parent.Bind(EVT_NEW_MYLAST, self.GenerateScrobbList2)
         
 # --------------------------------------------------------- 
 # My last.fm ----------------------------------------------
+
+    def MyLastThread(self, last_query):
+        last_thread = GetLFThread(self)
+        last_thread.SetType(last_query)
+        self.ShowLoading()
+        last_thread.start()
+
     def OnMyLastClearClick(self, event):
         # clear lastfm search field
         self.tc_mylast_search_user.Clear()
@@ -108,26 +131,23 @@ class MyLastfmTab(wx.ScrolledWindow):
             
     def OnMyLastFriendsClick(self, event):
         # search for user
-        user = self.parent.tc_options_username.GetValue()
-        if user != '':
-            top_tracks_list = audioscrobbler_lite.Scrobb().get_friends(user)
-            self.GenerateScrobbList2(top_tracks_list)
+        self.user = self.parent.tc_options_username.GetValue()
+        if self.user != '':
+            self.MyLastThread('friends')            
             
     def OnMyLastNeighClick(self, event):
         # search for user
-        user = self.parent.tc_options_username.GetValue()
-        if user != '':
-            top_tracks_list = audioscrobbler_lite.Scrobb().get_neighbours(user)
-            self.GenerateScrobbList2(top_tracks_list)
+        self.user = self.parent.tc_options_username.GetValue()
+        if self.user != '':
+            self.MyLastThread('neighbours')
             
     def OnMyLastLovedClick(self, event):
         #grab your loved tracks
-        user = self.tc_mylast_search_user.GetValue()
-        if user == '':
-            user = self.parent.tc_options_username.GetValue()
-        if user != '':
-            top_tracks_list = audioscrobbler_lite.Scrobb().get_loved_songs(user)
-            self.GenerateScrobbList2(top_tracks_list)
+        self.user = self.tc_mylast_search_user.GetValue()
+        if self.user == '':
+            self.user = self.parent.tc_options_username.GetValue()
+        if self.user != '':
+            self.MyLastThread('loved_songs')
             
     def OnMyLastRecommenedArtistsClick(self, event):
         # search for user
@@ -140,7 +160,12 @@ class MyLastfmTab(wx.ScrolledWindow):
         #       print auth_user.get_recommended_artists_page()
         pass
                        
-    def GenerateScrobbList2(self, top_list, albums=False, artists=False):
+    def GenerateScrobbList2(self, event): #top_list, albums=False, artists=False):
+        self.ShowLoading(False)
+        top_list = event.data[0]
+        self.current_page = event.data[1]
+        self.total_pages = event.data[2]
+        tags=event.data[3]
         # put some data in a list control
         counter = 0
         self.lc_mylast.DeleteAllItems()
@@ -148,24 +173,30 @@ class MyLastfmTab(wx.ScrolledWindow):
             if len(x) == 3:
                 # just printing artist/song
                 self.lc_mylast.InsertStringItem(counter, '')
-                self.lc_mylast.SetStringItem(counter, 1, x[1])
-                self.lc_mylast.SetStringItem(counter, 2, x[0])
+                self.lc_mylast.SetStringItem(counter, 1, x[0])
+                self.lc_mylast.SetStringItem(counter, 2, x[1])
                 self.lc_mylast.SetStringItem(counter, 3, '')
-                self.lc_mylast.SetStringItem(counter, 4, x[2])
+                self.lc_mylast.SetStringItem(counter, 4, '')
+                self.lc_mylast.SetStringItem(counter, 5, x[2])
             if len(x) == 2:
                 self.lc_mylast.InsertStringItem(counter, '')
                 self.lc_mylast.SetStringItem(counter, 1, '')
                 self.lc_mylast.SetStringItem(counter, 2, '')
                 self.lc_mylast.SetStringItem(counter, 3, x[0])
                 self.lc_mylast.SetStringItem(counter, 4, x[1])
+                self.lc_mylast.SetStringItem(counter, 5, '')
             #self.lc_lastfm.SetItemData(counter, x[1] + ':' + x[0])
             counter = counter + 1
         
-        self.lc_mylast.SetColumnWidth(0, 0)
-        self.lc_mylast.SetColumnWidth(1, wx.LIST_AUTOSIZE)
-        self.lc_mylast.SetColumnWidth(2, wx.LIST_AUTOSIZE)
-        self.lc_mylast.SetColumnWidth(3, wx.LIST_AUTOSIZE)
-        self.lc_mylast.SetColumnWidth(4, wx.LIST_AUTOSIZE_USEHEADER)
+        for t in range(0, 6):
+            if len(self.lc_mylast.GetItem(0, t).GetText()) >= 1:
+                self.lc_mylast.SetColumnWidth(t, wx.LIST_AUTOSIZE)
+            else:
+                self.lc_mylast.SetColumnWidth(t, 0)    
+        #self.lc_mylast.SetColumnWidth(1, wx.LIST_AUTOSIZE)
+        #self.lc_mylast.SetColumnWidth(2, wx.LIST_AUTOSIZE)
+        #self.lc_mylast.SetColumnWidth(3, wx.LIST_AUTOSIZE)
+        #self.lc_mylast.SetColumnWidth(4, wx.LIST_AUTOSIZE_USEHEADER)
         #self.nb_main.SetPageText(2, 'last.fm (' + str(counter) + ')')
                     
     def OnMyLastListClick(self, event):
@@ -193,10 +224,17 @@ class MyLastfmTab(wx.ScrolledWindow):
                 # make a menu
                 ID_PLAYLIST = 1
                 ID_CLEAR = 2
+                ID_NEXT = 3
                 menu = wx.Menu()
                 menu.Append(ID_PLAYLIST, "Add to Playlist")
                 menu.AppendSeparator()
                 menu.Append(ID_CLEAR, "Clear Playlist")
+                menu.AppendSeparator()
+                # a submenu in the 2nd menu
+                submenu = wx.Menu()
+                for s in range(1, self.total_pages):
+                    submenu.Append(2000 + s, "Page " + str(s))
+                menu.AppendMenu(203, "Results", submenu)
                 wx.EVT_MENU(self.parent, ID_PLAYLIST, self.OnMyLastAddSelected)
                 wx.EVT_MENU(self.parent, ID_CLEAR, self.parent.OnClearPlaylistClick)       
                 self.parent.PopupMenu(menu)
@@ -236,3 +274,58 @@ class MyLastfmTab(wx.ScrolledWindow):
             self.nb_main.SetSelection(NB_LAST)            
             top_tracks_list = audioscrobbler_lite.Scrobb().make_artist_top_song_list(artist)
             self.parent.tab_lastfm.GenerateScrobbList(top_tracks_list)
+            
+    def ShowLoading(self, loading=True):
+        if loading:        
+            message = "Loading Last.fm..."
+            self.busy = PBI.PyBusyInfo(message, parent=None, title="Retrieving Data") #, icon=images.Smiles.GetBitmap())
+            #wx.Yield()
+        else:
+            try:
+                del self.busy
+            except Exception, expt:
+                print 'last.fm: ' + str(expt)+str(Exception)    
+            
+# --------------------------------------------------------- 
+# ######################################################### 
+# --------------------------------------------------------- 
+import wx.lib.agw.pybusyinfo as PBI
+
+class GetLFThread(Thread): 
+    # another thread to update download progress
+    def __init__(self, parent):
+        Thread.__init__(self)
+        self.parent = parent
+        self.get_type =''
+        self.load_state = False
+        
+        self.network = pylast.LastFMNetwork(api_key = API_KEY)
+        
+    def SetType(self, get_type):
+        self.get_type = get_type        
+                        
+    def run(self):
+        event = MyLastEvent()
+        if self.get_type == 'loved_songs':
+            lfm_user = self.network.get_user(self.parent.user)
+            results = lfm_user.get_loved_tracks()
+            top_tracks_list = results['results']
+            self.current_page = int(results['page'])
+            self.total_pages = int(results['total_pages'])
+            event.data = (top_tracks_list, self.current_page, self.total_pages, False)
+        elif self.get_type == 'neighbours':
+            lfm_user = self.network.get_user(self.parent.user)
+            results = lfm_user.get_neighbours()
+            top_tracks_list = results['results']
+            self.current_page = int(results['page'])
+            self.total_pages = int(results['total_pages'])
+            event.data = (top_tracks_list, self.current_page, self.total_pages, False)
+        elif self.get_type == 'friends':
+            lfm_user = self.network.get_user(self.parent.user)
+            results = lfm_user.get_friends()
+            top_tracks_list = results['results']
+            self.current_page = int(results['page'])
+            self.total_pages = int(results['total_pages'])
+            event.data = (top_tracks_list, self.current_page, self.total_pages, False)
+        wx.PostEvent(self.parent.parent, event) 
+                   
