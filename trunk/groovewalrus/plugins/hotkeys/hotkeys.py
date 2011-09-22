@@ -140,15 +140,19 @@ class MainPanel(wx.Dialog):
         
     def SetLabels(self):
         #print hotkeys.GetKeyName(int(self.tc_acc_previous.GetValue()))
-        self.st_acc_previous.SetLabel(hotkeys.GetKeyName(int(self.tc_acc_previous.GetValue())))
-        self.st_acc_play.SetLabel(hotkeys.GetKeyName(int(self.tc_acc_play.GetValue())))
-        self.st_acc_stop.SetLabel(hotkeys.GetKeyName(int(self.tc_acc_stop.GetValue())))
-        self.st_acc_next.SetLabel(hotkeys.GetKeyName(int(self.tc_acc_next.GetValue())))
-        self.st_acc_volume_down.SetLabel(hotkeys.GetKeyName(int(self.tc_acc_volume_down.GetValue())))
-        self.st_acc_volume_up.SetLabel(hotkeys.GetKeyName(int(self.tc_acc_volume_up.GetValue())))
-        self.st_acc_volume_mute.SetLabel(hotkeys.GetKeyName(int(self.tc_acc_volume_mute.GetValue())))
-        self.st_acc_shuffle.SetLabel(hotkeys.GetKeyName(int(self.tc_acc_shuffle.GetValue())))
-        self.st_acc_repeat.SetLabel(hotkeys.GetKeyName(int(self.tc_acc_repeat.GetValue())))
+        try:
+            self.st_acc_previous.SetLabel(hotkeys.GetKeyName(int(self.tc_acc_previous.GetValue())))
+            self.st_acc_play.SetLabel(hotkeys.GetKeyName(int(self.tc_acc_play.GetValue())))
+            self.st_acc_stop.SetLabel(hotkeys.GetKeyName(int(self.tc_acc_stop.GetValue())))
+            self.st_acc_next.SetLabel(hotkeys.GetKeyName(int(self.tc_acc_next.GetValue())))
+            self.st_acc_volume_down.SetLabel(hotkeys.GetKeyName(int(self.tc_acc_volume_down.GetValue())))
+            self.st_acc_volume_up.SetLabel(hotkeys.GetKeyName(int(self.tc_acc_volume_up.GetValue())))
+            self.st_acc_volume_mute.SetLabel(hotkeys.GetKeyName(int(self.tc_acc_volume_mute.GetValue())))
+            self.st_acc_shuffle.SetLabel(hotkeys.GetKeyName(int(self.tc_acc_shuffle.GetValue())))
+            self.st_acc_repeat.SetLabel(hotkeys.GetKeyName(int(self.tc_acc_repeat.GetValue())))
+        except Exception, e:
+            print 'Hotkeys: ' + str(Exception) + str(e) 
+           
         
     def OnSaveClick(self, event):
         """Saves the goddamn stuff to the db."""                
