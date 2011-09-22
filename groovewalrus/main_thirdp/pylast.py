@@ -2943,7 +2943,7 @@ class User(_BaseObject):
         return Track(artist, title, self.network)
 
 
-    def get_recent_tracks(self, limit = 10):
+    def get_recent_tracks(self, limit = 50, page=1):
         """Returns this user's played track as a sequence of PlayedTrack objects
         in reverse order of their playtime, all the way back to the first track.
         
@@ -2956,23 +2956,26 @@ class User(_BaseObject):
         get only a sequence of Track objects with no playback dates. """
         
         params = self._get_params()
-        if limit:
-            params['limit'] = limit
+        params['limit'] = limit
+        params['page'] = page  
+        
+        doc = self._request('user.getRecentTracks', True, params)
         
         seq = []
-        for track in _collect_nodes(limit, self, "user.getRecentTracks", True, params):
+        page_info = doc.getElementsByTagName('recenttracks').item(0)
+        page = page_info.getAttribute('page')
+        total_pages = page_info.getAttribute('totalPages')
+        
+        for track in doc.getElementsByTagName('track'):
             
-            if track.hasAttribute('nowplaying'):
-                continue    #to prevent the now playing track from sneaking in here
-                
             title = _extract(track, "name")
             artist = _extract(track, "artist")
             date = _extract(track, "date")
-            timestamp = track.getElementsByTagName("date")[0].getAttribute("uts")
-                
-            seq.append(PlayedTrack(Track(artist, title, self.network), date, timestamp))
-        
-        return seq
+            
+            seq.append((artist, title, date))
+            
+        #return seq
+        return {'page': page, 'total_pages': total_pages, 'results': seq}
     
     def get_id(self):
         """Returns the user id."""

@@ -123,17 +123,18 @@ class MyLastfmTab(wx.ScrolledWindow):
             
     def OnMyLastMeClick(self, event):
         # search for user
-        user = self.parent.tc_options_username.GetValue()
+        self.user = self.parent.tc_options_username.GetValue()
         tperiod = self.rx_mylast_period.GetSelection() 
-        if user != '':
-            top_tracks_list = audioscrobbler_lite.Scrobb().make_user_top_songs(user, tperiod)
-            self.GenerateScrobbList2(top_tracks_list)
+        if self.user != '':
+            self.MyLastThread('me')
+            #top_tracks_list = audioscrobbler_lite.Scrobb().make_user_top_songs(user, tperiod)
+            #self.GenerateScrobbList2(top_tracks_list)
             
     def OnMyLastFriendsClick(self, event):
         # search for user
         self.user = self.parent.tc_options_username.GetValue()
         if self.user != '':
-            self.MyLastThread('friends')            
+            self.MyLastThread('friends')
             
     def OnMyLastNeighClick(self, event):
         # search for user
@@ -306,26 +307,20 @@ class GetLFThread(Thread):
                         
     def run(self):
         event = MyLastEvent()
+        lfm_user = self.network.get_user(self.parent.user)
         if self.get_type == 'loved_songs':
-            lfm_user = self.network.get_user(self.parent.user)
             results = lfm_user.get_loved_tracks()
-            top_tracks_list = results['results']
-            self.current_page = int(results['page'])
-            self.total_pages = int(results['total_pages'])
-            event.data = (top_tracks_list, self.current_page, self.total_pages, False)
         elif self.get_type == 'neighbours':
-            lfm_user = self.network.get_user(self.parent.user)
             results = lfm_user.get_neighbours()
-            top_tracks_list = results['results']
-            self.current_page = int(results['page'])
-            self.total_pages = int(results['total_pages'])
-            event.data = (top_tracks_list, self.current_page, self.total_pages, False)
         elif self.get_type == 'friends':
-            lfm_user = self.network.get_user(self.parent.user)
             results = lfm_user.get_friends()
-            top_tracks_list = results['results']
-            self.current_page = int(results['page'])
-            self.total_pages = int(results['total_pages'])
-            event.data = (top_tracks_list, self.current_page, self.total_pages, False)
+        elif self.get_type == 'me':            
+            results = lfm_user.get_recent_tracks()
+            
+        top_tracks_list = results['results']
+        self.current_page = int(results['page'])
+        self.total_pages = int(results['total_pages'])
+        event.data = (top_tracks_list, self.current_page, self.total_pages, False)
+        
         wx.PostEvent(self.parent.parent, event) 
                    
