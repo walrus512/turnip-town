@@ -61,7 +61,7 @@ class ResultEvent(wx.PyEvent):
 class SearchWindow(wx.Dialog):
     """Search Window for searching"""
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, -1, "Search", style=wx.FRAME_SHAPED) #STAY_ON_TOP)#wx.FRAME_SHAPED)
+        wx.Dialog.__init__(self, parent, -1, "Search", style=wx.FRAME_SHAPED|wx.RESIZE_BORDER) #STAY_ON_TOP)#wx.FRAME_SHAPED)
         self.parent = parent
         
         # XML Resources can be loaded from a file like this:

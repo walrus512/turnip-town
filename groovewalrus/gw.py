@@ -126,6 +126,7 @@ from main_thirdp import grooveshark_old
 #from plugins.zongdora import zongdora
 #from plugins.web_remote import web_remote
 #from plugins.hotkeys import hotkeys
+#from plugins.messenger_plus import messenger_plus
 
 PROGRAM_VERSION = "0.350"
 PROGRAM_NAME = "GrooveWalrus"
@@ -1864,7 +1865,11 @@ class MainPanel(wx.Panel):
             cs.artist = self.lc_playlist.GetItem(playlist_number, C_ARTIST).GetText()
             cs.song = self.lc_playlist.GetItem(playlist_number, C_SONG).GetText()
             cs.album = self.lc_playlist.GetItem(playlist_number, C_ALBUM).GetText()
-            cs.song_id = str(self.lc_playlist.GetItem(playlist_number, C_ID).GetText()) #str(self.lc_playlist.GetItem(playlist_number, 3).GetText())
+            try:
+                cs.song_id = self.lc_playlist.GetItem(playlist_number, C_ID).GetText() #str(self.lc_playlist.GetItem(playlist_number, 3).GetText())
+            except Exception, e:
+                print str(Exception) + str(e)
+                cs.song_id = string_tools.unbork(self.lc_playlist.GetItem(playlist_number, C_ID).GetText()) #str(self.lc_playlist.GetItem(playlist_number, 3).GetText())
             cs.song_time = self.lc_playlist.GetItem(playlist_number, C_TIME).GetText()
             #cs.track_id = 0
             #cs.song_time_seconds = 0
