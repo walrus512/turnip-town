@@ -2,7 +2,7 @@
 <resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
 	<object class="wxPanel" name="m_pa_main">
 		<style>wxTAB_TRAVERSAL|wxWANTS_CHARS</style>
-		<size>677,470</size>
+		<size>677,552</size>
 		<object class="wxBoxSizer">
 			<orient>wxHORIZONTAL</orient>
 			<object class="spacer">
@@ -619,6 +619,8 @@
 																	<flag>wxALL|wxALIGN_RIGHT</flag>
 																	<border>4</border>
 																	<object class="wxStaticText" name="m_st_last_ts_album">
+																		<enabled>0</enabled>
+																		<hidden>1</hidden>
 																		<font>
 																			<family>default</family>
 																			<style>normal</style>
@@ -788,7 +790,47 @@
 																					</object>
 																				</object>
 																				<object class="sizeritem">
+																					<option>0</option>
+																					<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																					<border>5</border>
+																					<object class="wxStaticText" name="m_staticText19">
+																						<style>wxALIGN_RIGHT</style>
+																						<size>100,-1</size>
+																						<label>Artist</label>
+																						<wrap>-1</wrap>
+																					</object>
+																				</object>
+																				<object class="sizeritem">
 																					<option>1</option>
+																					<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
+																					<border>5</border>
+																					<object class="wxTextCtrl" name="m_tc_last_search_artist">
+																						<style>wxTE_PROCESS_ENTER</style>
+																						<value></value>
+																						<maxlength>0</maxlength>
+																					</object>
+																				</object>
+																				<object class="sizeritem">
+																					<option>0</option>
+																					<flag>wxALIGN_CENTER_VERTICAL|wxEXPAND|wxALL</flag>
+																					<border>5</border>
+																					<object class="wxBitmapButton" name="m_bb_last_clear_search">
+																						<style>wxBU_AUTODRAW</style>
+																						<tooltip>Clear</tooltip>
+																						<bitmap>graphics/edit-clear.png</bitmap>
+																						<default>0</default>
+																					</object>
+																				</object>
+																			</object>
+																		</object>
+																		<object class="sizeritem">
+																			<option>0</option>
+																			<flag>wxEXPAND</flag>
+																			<border>5</border>
+																			<object class="wxBoxSizer">
+																				<orient>wxVERTICAL</orient>
+																				<object class="sizeritem">
+																					<option>0</option>
 																					<flag>wxEXPAND</flag>
 																					<border>5</border>
 																					<object class="wxBoxSizer">
@@ -797,10 +839,10 @@
 																							<option>0</option>
 																							<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
 																							<border>5</border>
-																							<object class="wxStaticText" name="m_staticText19">
+																							<object class="wxStaticText" name="m_staticText20">
 																								<style>wxALIGN_RIGHT</style>
-																								<size>60,-1</size>
-																								<label>Artist</label>
+																								<size>100,-1</size>
+																								<label>Song</label>
 																								<wrap>-1</wrap>
 																							</object>
 																						</object>
@@ -808,7 +850,7 @@
 																							<option>1</option>
 																							<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
 																							<border>5</border>
-																							<object class="wxTextCtrl" name="m_tc_last_search_artist">
+																							<object class="wxTextCtrl" name="m_tc_last_search_song">
 																								<style>wxTE_PROCESS_ENTER</style>
 																								<value></value>
 																								<maxlength>0</maxlength>
@@ -816,79 +858,31 @@
 																						</object>
 																						<object class="sizeritem">
 																							<option>0</option>
-																							<flag>wxTOP|wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL|wxEXPAND</flag>
+																							<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
 																							<border>5</border>
-																							<object class="wxBitmapButton" name="m_bb_last_clear_search">
-																								<style>wxBU_AUTODRAW</style>
-																								<tooltip>Clear</tooltip>
-																								<bitmap>graphics/edit-clear.png</bitmap>
-																								<default>0</default>
+																							<object class="wxStaticText" name="m_staticText21">
+																								<style>wxALIGN_RIGHT</style>
+																								<size>100,-1</size>
+																								<label>Album</label>
+																								<wrap>-1</wrap>
+																							</object>
+																						</object>
+																						<object class="sizeritem">
+																							<option>1</option>
+																							<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
+																							<border>5</border>
+																							<object class="wxTextCtrl" name="m_tc_last_search_album">
+																								<style>wxTE_PROCESS_ENTER</style>
+																								<value></value>
+																								<maxlength>0</maxlength>
 																							</object>
 																						</object>
 																					</object>
 																				</object>
 																			</object>
 																		</object>
-																		<object class="sizeritem">
-																			<option>1</option>
-																			<flag>wxEXPAND</flag>
-																			<border>5</border>
-																			<object class="wxBoxSizer">
-																				<orient>wxHORIZONTAL</orient>
-																				<object class="sizeritem">
-																					<option>0</option>
-																					<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
-																					<border>5</border>
-																					<object class="wxStaticText" name="m_staticText20">
-																						<style>wxALIGN_RIGHT</style>
-																						<size>60,-1</size>
-																						<label>Song</label>
-																						<wrap>-1</wrap>
-																					</object>
-																				</object>
-																				<object class="sizeritem">
-																					<option>1</option>
-																					<flag>wxTOP|wxBOTTOM|wxRIGHT</flag>
-																					<border>5</border>
-																					<object class="wxTextCtrl" name="m_tc_last_search_song">
-																						<style>wxTE_PROCESS_ENTER</style>
-																						<value></value>
-																						<maxlength>0</maxlength>
-																					</object>
-																				</object>
-																				<object class="sizeritem">
-																					<option>0</option>
-																					<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
-																					<border>5</border>
-																					<object class="wxStaticText" name="m_staticText21">
-																						<style>wxALIGN_RIGHT</style>
-																						<size>60,-1</size>
-																						<label>Album</label>
-																						<wrap>-1</wrap>
-																					</object>
-																				</object>
-																				<object class="sizeritem">
-																					<option>1</option>
-																					<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT</flag>
-																					<border>5</border>
-																					<object class="wxTextCtrl" name="m_tc_last_search_album">
-																						<style>wxTE_PROCESS_ENTER</style>
-																						<value></value>
-																						<maxlength>0</maxlength>
-																					</object>
-																				</object>
-																			</object>
-																		</object>
 																	</object>
 																</object>
-															</object>
-														</object>
-														<object class="sizeritem">
-															<option>0</option>
-															<flag>wxEXPAND</flag>
-															<border>5</border>
-															<object class="wxBoxSizer">
-																<orient>wxVERTICAL</orient>
 															</object>
 														</object>
 													</object>

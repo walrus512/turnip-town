@@ -25,7 +25,7 @@ import sys
 
 from main_utils import local_songs
 from main_thirdp import pylast
-API_KEY = "13eceb51a4c2e0f825c492f04bf693c8"
+#API_KEY = "13eceb51a4c2e0f825c492f04bf693c8"
 #from main_utils import system_files
 #import sqlite3
 
@@ -64,7 +64,7 @@ class RatingsButton(wx.BitmapButton):
         #self.Bind(wx.EVT_SIZE, self.OnSize)
         self.Bind(wx.EVT_BUTTON, self.OnClick)
         self.parent = self.GetGrandParent()
-        self.sk = None
+        #self.sk = None
 
     def OnCreate(self, evt):
         self.Unbind(self._firstEventType)
@@ -138,15 +138,16 @@ class RateEvents(object):
             self.parent.GetSongRating(track_id, list_num)
         
         if event_id == 4:
-            sk = self.parent.GenerateSessionKey2()
-            LoveTrack(artist, song, sk)
+            network = self.parent.GetNetwork()
+            LoveTrack(artist, song, network)
 
                
-def LoveTrack(artist, song, sk):
-    #love track on last.fm too    
-    if (len(artist) > 0) & (len(song) > 0) & (sk != None):
-        last_track = pylast.Track(artist, song, API_KEY, '6a2eb503cff117001fac5d1b8e230211', sk)
-        last_track.love()        
+def LoveTrack(artist, song, network):
+    #love track on last.fm too
+    if (len(artist) > 0) & (len(song) > 0) & (network != None):
+        last_track = network.get_track(artist, song)
+        print last_track.get_id()
+        last_track.love()
         
 def GetTrackId(artist, song, grooveshark_id, music_id):
     track_id = -1
