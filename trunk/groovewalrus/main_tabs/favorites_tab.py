@@ -150,8 +150,8 @@ class FavoritesTab(wx.ScrolledWindow):
         if (pl_artist == artist) & (pl_song == song):
             self.parent.GetSongRating(track_id, list_num) 
         
-        sk = self.parent.GenerateSessionKey2()
-        ratings_button.LoveTrack(artist, song, sk)        
+        network = self.parent.GetNetwork()
+        ratings_button.LoveTrack(artist, song, network)        
         
     def OnPlaylistFavesClick(self, event):
         # add a favorite (or many faves) from the right-click menu on the playlist
@@ -182,8 +182,8 @@ class FavoritesTab(wx.ScrolledWindow):
                 # only love the first one, don't want to hammer last.fm
                 if need_love == True:
                     need_love = False
-                    sk = self.parent.GenerateSessionKey2()
-                    ratings_button.LoveTrack(artist, song, sk)
+                    network = self.parent.GetNetwork()
+                    ratings_button.LoveTrack(artist, song, network)
                 val = self.parent.lc_playlist.GetNextSelected(val)
                 
 
@@ -324,8 +324,8 @@ class FavoritesTab(wx.ScrolledWindow):
         track_id = ratings_button.GetTrackId(artist, song, grooveshark_id, music_id)
         ratings_button.AddRating(self.parent, track_id, event_id)
         if event_id == 4:
-            sk = self.parent.GenerateSessionKey2()
-            ratings_button.LoveTrack(artist, song, sk)
+            network = self.parent.GetNetwork()
+            ratings_button.LoveTrack(artist, song, network)
             
     def OnClearRatingClick(self, event):
         val = self.lc_faves.GetFirstSelected()

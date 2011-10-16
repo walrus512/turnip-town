@@ -71,7 +71,7 @@ EVENT_MAYBE_ATTENDING = '1'
 EVENT_NOT_ATTENDING = '2'
 
 PERIOD_OVERALL = 'overall'
-PERIOD_7DAYS = "7day"
+PERIOD_7DAYS = '7day'
 PERIOD_3MONTHS = '3month'
 PERIOD_6MONTHS = '6month'
 PERIOD_12MONTHS = '12month'
@@ -1253,8 +1253,28 @@ class Album(_BaseObject, _Taggable):
         """Returns the list of Tracks on this album."""
         
         uri = 'lastfm://playlist/album/%s' %self.get_id()
-        
+        print XSPF(uri, self.network).get_tracks()
         return XSPF(uri, self.network).get_tracks()
+        
+    def get_info(self, page=1):
+        """Returns a list of the most played Tracks by this artist."""
+        
+        params = self._get_params()        
+        
+        doc = self._request("album.getInfo", True, params)
+        print doc.toxml()
+        seq = []
+        
+        for track in doc.getElementsByTagName('track'):
+            
+            title = _extract(track, "name")
+            artist = _extract(track, "name", 1)
+            #playcount = _number(_extract(track, "playcount"))
+            
+            seq.append((artist, title))
+        
+        return {'page': 1, 'total_pages': 1, 'results': seq}
+        
     
     def get_mbid(self):
         """Returns the MusicBrainz id of the album."""
@@ -1441,23 +1461,36 @@ class Artist(_BaseObject, _Taggable):
         
         return events
     
-    def get_similar(self, limit = None):
+    def get_similar(self, page=1, limit = None):
         """Returns the similar artists on the network."""
         
         params = self._get_params()
         if limit:
             params['limit'] = limit
+        params['page'] = page    
         
         doc = self._request('artist.getSimilar', True, params)
         
-        names = _extract_all(doc, "name")
-        matches = _extract_all(doc, "match")
+        #names = _extract_all(doc, "name")
+       # matches = _extract_all(doc, "match")
         
-        artists = []
-        for i in range(0, len(names)):
-            artists.append(SimilarItem(Artist(names[i], self.network), _number(matches[i])))
+        #artists = []
+        #for i in range(0, len(names)):
+        #    artists.append(SimilarItem(Artist(names[i], self.network), _number(matches[i])))
+        #    artists.append((artist, title, playcount))
         
-        return artists
+        #return artists
+
+        seq = []
+        
+        for track in doc.getElementsByTagName('artist'):
+            
+            artist = _extract(track, "name")
+            match = _extract(track, "match")
+            
+            seq.append((artist, match))
+        
+        return {'page': 1, 'total_pages': 1, 'results': seq}
 
     def get_top_albums(self, page=1):
         """Retuns a list of the top albums."""
@@ -1469,7 +1502,7 @@ class Artist(_BaseObject, _Taggable):
         
         seq = []
         page_info = doc.getElementsByTagName('topalbums').item(0)
-        page = page_info.getAttribute('page')
+        r_page = page_info.getAttribute('page')
         total_pages = page_info.getAttribute('totalPages')
         
         for node in doc.getElementsByTagName("album"):
@@ -1479,7 +1512,7 @@ class Artist(_BaseObject, _Taggable):
             
             seq.append((artist, name, playcount))
         
-        return {'page': page, 'total_pages': total_pages, 'results': seq}
+        return {'page': r_page, 'total_pages': total_pages, 'results': seq}
         
     def get_top_tracks(self, page=1):
         """Returns a list of the most played Tracks by this artist."""
@@ -1492,18 +1525,18 @@ class Artist(_BaseObject, _Taggable):
         seq = []
         
         page_info = doc.getElementsByTagName('toptracks').item(0)
-        page = page_info.getAttribute('page')
+        r_page = page_info.getAttribute('page')
         total_pages = page_info.getAttribute('totalPages')
         
         for track in doc.getElementsByTagName('track'):
             
             title = _extract(track, "name")
             artist = _extract(track, "name", 1)
-            playcount = _number(_extract(track, "playcount"))
+            playcount = _extract(track, "playcount")
             
             seq.append((artist, title, playcount))
         
-        return {'page': page, 'total_pages': total_pages, 'results': seq}
+        return {'page': r_page, 'total_pages': total_pages, 'results': seq}
     
     def get_top_fans(self, limit = None):
         """Returns a list of the Users who played this artist the most.
@@ -1893,22 +1926,27 @@ class Country(_BaseObject):
         
         return seq
     
-    def get_top_tracks(self):
+    def get_top_tracks(self, page=1):
         """Returns a sequence of the most played tracks"""
+        params = self._get_params()
+        params['page'] = page
         
-        doc = self._request("geo.getTopTracks", True)
+        doc = self._request("geo.getTopTracks", True, params)
         
         seq = []
+        page_info = doc.getElementsByTagName('toptracks').item(0)
+        r_page = page_info.getAttribute('page')
+        total_pages = page_info.getAttribute('totalPages')
         
         for n in doc.getElementsByTagName('track'):
             
             title = _extract(n, 'name')
             artist = _extract(n, 'name', 1)
-            playcount = _number(_extract(n, "playcount"))
+            playcount = _extract(n, "listeners")
             
-            seq.append( TopItem(Track(artist, title, self.network), playcount))
+            seq.append((artist, title, playcount))          
         
-        return seq
+        return {'page': r_page, 'total_pages': total_pages, 'results': seq}
     
     def get_url(self, domain_name = DOMAIN_ENGLISH):
         """Returns the url of the event page on the network. 
@@ -2251,21 +2289,27 @@ class Tag(_BaseObject):
         
         return seq
         
-    def get_top_tracks(self):
+    def get_top_tracks(self, page=1):
         """Returns a list of the most played Tracks by this artist."""
+        params = self._get_params()
+        params['page'] = page
         
-        doc = self._request("tag.getTopTracks", True)
+        doc = self._request("tag.getTopTracks", True, params)
         
         seq = []
+        page_info = doc.getElementsByTagName('toptracks').item(0)
+        r_page = page_info.getAttribute('page')
+        total_pages = page_info.getAttribute('totalPages')
+        
         for track in doc.getElementsByTagName('track'):
             
             title = _extract(track, "name")
             artist = _extract(track, "name", 1)
-            playcount = _number(_extract(track, "playcount"))
+            #playcount = _extract(track, "playcount")
             
-            seq.append( TopItem(Track(artist, title, self.network), playcount) )
+            seq.append((artist, title))#, playcount))
         
-        return seq
+        return {'page': r_page, 'total_pages': total_pages, 'results': seq}
     
     def get_top_artists(self):
         """Returns a sequence of the most played artists."""
@@ -2490,20 +2534,45 @@ class Track(_BaseObject, _Taggable):
         
         self._request('track.ban')
     
-    def get_similar(self):
+    def get_similar(self, page=1):
         """Returns similar tracks for this track on the network, based on listening data. """
         
-        doc = self._request('track.getSimilar', True)
+        params = self._get_params()
+        params['page'] = page
+        
+        doc = self._request('track.getSimilar', True, params)
         
         seq = []
+        
         for node in doc.getElementsByTagName("track"):
             title = _extract(node, 'name')
             artist = _extract(node, 'name', 1)
-            match = _number(_extract(node, "match"))
+            match = _extract(node, "match")
             
-            seq.append(SimilarItem(Track(artist, title, self.network), match))
+            seq.append((artist, title, match))            
         
-        return seq
+        return {'page': 1, 'total_pages': 1, 'results': seq} 
+        
+    def get_top_tags(self, page=1, limit=None):
+        """Returns a sequence of the top tags used by this user with their counts as TopItem objects. 
+        * limit: The limit of how many tags to return. 
+        """
+        
+        params = self._get_params()
+        params['page'] = page
+        
+        doc = self._request("track.getTopTags", True, params)
+        
+        seq = []
+        for node in doc.getElementsByTagName("tag"):
+            tag = _extract(node, 'name')            
+            count = _extract(node, "count")
+            
+            seq.append((tag, count))            
+        
+        return {'page': 1, 'total_pages': 1, 'results': seq} 
+        
+               
 
     def get_top_fans(self, limit = None):
         """Returns a list of the Users who played this track."""
@@ -2824,7 +2893,7 @@ class User(_BaseObject):
         
         seq = []
         page_info = doc.getElementsByTagName('friends').item(0)
-        page = page_info.getAttribute('page')
+        r_page = page_info.getAttribute('page')
         total_pages = page_info.getAttribute('totalPages')
         
         for user in doc.getElementsByTagName('user'):
@@ -2835,7 +2904,7 @@ class User(_BaseObject):
             
             seq.append((username, ''))
         
-        return {'page': page, 'total_pages': total_pages, 'results': seq}
+        return {'page': r_page, 'total_pages': total_pages, 'results': seq}
     
     def get_loved_tracks(self, limit=50, page=1):
         """Returns this user's loved track as a sequence of LovedTrack objects
@@ -2857,7 +2926,7 @@ class User(_BaseObject):
         
         seq = []
         page_info = doc.getElementsByTagName('lovedtracks').item(0)
-        page = page_info.getAttribute('page')
+        r_page = page_info.getAttribute('page')
         total_pages = page_info.getAttribute('totalPages')
         
         for track in doc.getElementsByTagName('track'):
@@ -2868,7 +2937,7 @@ class User(_BaseObject):
             
             seq.append((artist, title, date))
         
-        return {'page': page, 'total_pages': total_pages, 'results': seq}
+        return {'page': r_page, 'total_pages': total_pages, 'results': seq}
         
         
     
@@ -2963,7 +3032,7 @@ class User(_BaseObject):
         
         seq = []
         page_info = doc.getElementsByTagName('recenttracks').item(0)
-        page = page_info.getAttribute('page')
+        r_page = page_info.getAttribute('page')
         total_pages = page_info.getAttribute('totalPages')
         
         for track in doc.getElementsByTagName('track'):
@@ -2975,7 +3044,7 @@ class User(_BaseObject):
             seq.append((artist, title, date))
             
         #return seq
-        return {'page': page, 'total_pages': total_pages, 'results': seq}
+        return {'page': r_page, 'total_pages': total_pages, 'results': seq}
     
     def get_id(self):
         """Returns the user id."""
@@ -3098,7 +3167,7 @@ class User(_BaseObject):
         
         return seq
     
-    def get_top_tracks(self, period = PERIOD_OVERALL):
+    def get_top_tracks(self, page=1, period=PERIOD_OVERALL):
         """Returns the top tracks played by a user. 
         * period: The period of time. Possible values:
           o PERIOD_OVERALL
@@ -3110,18 +3179,24 @@ class User(_BaseObject):
         
         params = self._get_params()
         params['period'] = period
+        params['page'] = page
         
         doc = self._request('user.getTopTracks', True, params)
         
         seq = []
+        
+        page_info = doc.getElementsByTagName('toptracks').item(0)
+        r_page = page_info.getAttribute('page')
+        total_pages = page_info.getAttribute('totalPages')
+        
         for track in doc.getElementsByTagName('track'):
-            name = _extract(track, 'name')
+            title = _extract(track, 'name')
             artist = _extract(track, 'name', 1)
             playcount = _extract(track, "playcount")
             
-            seq.append(TopItem(Track(artist, name, self.network), playcount))
+            seq.append((artist, title, playcount))            
         
-        return seq
+        return {'page': r_page, 'total_pages': total_pages, 'results': seq}
     
     def get_weekly_chart_dates(self):
         """Returns a list of From and To tuples for the available charts."""

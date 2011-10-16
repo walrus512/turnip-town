@@ -128,7 +128,7 @@ from main_thirdp import grooveshark_old
 #from plugins.hotkeys import hotkeys
 #from plugins.messenger_plus import messenger_plus
 
-PROGRAM_VERSION = "0.350"
+PROGRAM_VERSION = "0.351"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -209,7 +209,7 @@ class GWApp(wx.App):
 
 class MainFrame(wx.Frame): 
     def __init__(self): 
-        wx.Frame.__init__(self, None, -1, PROGRAM_NAME + ' ' + PROGRAM_VERSION, size=(FRAME_WIDTH, 530), pos=(200,200), style=wx.DEFAULT_FRAME_STYLE|wx.WANTS_CHARS) #^(wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX)) #, style=wx.STAY_ON_TOP) 
+        wx.Frame.__init__(self, None, -1, PROGRAM_NAME + ' ' + PROGRAM_VERSION, size=(FRAME_WIDTH, 550), pos=(200,200), style=wx.DEFAULT_FRAME_STYLE|wx.WANTS_CHARS) #^(wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX)) #, style=wx.STAY_ON_TOP) 
         
         # create/update database ----------
         local_songs.DbFuncs().create_tables()
@@ -608,7 +608,8 @@ class MainPanel(wx.Panel):
         self.scrobbed_active = 0
         self.auth_attempts = 0
         self.current_song.scrobble_song = 0
-        self.session_key2 = None
+        self.session_key = None
+        self.network = None
         #self.SetScrobb()
         self.db_submit_complete = False
         
@@ -1263,42 +1264,36 @@ class MainPanel(wx.Panel):
         self.current_song.scrobble_song = 0
         self.scrobbed_active = 0
         username = self.tc_options_username.GetValue()
-        password = self.tc_options_password.GetValue()        
+        password = self.tc_options_password.GetValue()
+        
+        #(self, api_key="", api_secret="", session_key="", username="", password_hash="")
+        
         if (len(username) > 0) & (len(password) > 0):
             self.SetNetworkStatus('lastfm', 1)
-            md5_password = pylast.md5(password)
-            client_id = LASTFM_CLIENT_ID
-            client_version = PROGRAM_VERSION
             try:
-                self.song_scrobb = pylast.Scrobbler(client_id, client_version, username, md5_password)                
-                self.session_key = self.song_scrobb._get_session_id()
+                self.network = pylast.LastFMNetwork(api_key=API_KEY, api_secret='6a2eb503cff117001fac5d1b8e230211', username=username, password_hash=pylast.md5(password))                
+                self.session_key = self.network.session_key               
                 self.st_options_auth.SetLabel('Authorized: ' + time.asctime())  
                 self.scrobbed_active = 1
                 self.SetNetworkStatus('lastfm', 0)
             except Exception, expt:
-                print str(Exception) + str(expt)
+                print 'SetScrobb'  + str(Exception) + str(expt)
                 self.st_options_auth.SetLabel('Status: something failed. User/password?')
                 self.st_options_auth.SetBackgroundColour('Yellow')
                 self.SetNetworkStatus('lastfm', 2)
                 #self.nb_main.SetSelection(NB_OPTIONS)
-        
+                
+    def GetNetwork(self):
+        if self.network == None:
+            self.SetScrobb()
+        return self.network
+                
     def GenerateSessionKey2(self, regenerate=False):
         # generate a non-song scrobbling seesion key
-        self.session_key2 = None        
-        #check if scrobbling is enabled, yes: get key, no: return None
-        if self.cb_options_scrobble.IsChecked():        
-            username = self.tc_options_username.GetValue()
-            password = self.tc_options_password.GetValue()
-            if (password != '') & (username !='' ):
-                self.SetNetworkStatus('lastfm', 1)
-                if (self.session_key2 == None) or (regenerate == True):
-                    last_sess = pylast.SessionKeyGenerator(API_KEY, '6a2eb503cff117001fac5d1b8e230211')
-        
-                    md5_password = pylast.md5(password)
-                    self.session_key2 = last_sess.get_session_key(username, md5_password)
-                    if self.session_key2 != None:
-                        self.SetNetworkStatus('lastfm', 0)
-        return self.session_key2            
+        if self.session_key == None:
+            if self.cb_options_scrobble.IsChecked():        
+                self.SetScrobb()
+        return self.session_key            
                 
     def OnToggleScrobble(self, event):        
         if self.cb_options_scrobble.IsChecked():
@@ -1366,14 +1361,16 @@ class MainPanel(wx.Panel):
                 if self.cb_options_scrobble.GetValue() == 1:
                     try:
                         self.SetNetworkStatus('lastfm', 1)
-                        self.song_scrobb.scrobble(self.current_song.artist, self.current_song.song, time_started, 'P', 'L', self.current_song.song_time_seconds, s_album, "", "", port)
+                        self.network.scrobble(artist=self.current_song.artist, title=self.current_song.song, timestamp=time_started, duration=self.current_song.song_time_seconds, album=s_album)
+                        #scrobble(self, artist, title, timestamp, album = None, album_artist = None, track_number = None, 
+                        #duration = None, stream_id = None, context = None, mbid = None):
                         print 'scobbled'
                         self.SetNetworkStatus('lastfm', 0)
                         #album=""
-                    except pylast.BadSession:
+                    except Exception, e:
                         self.SetNetworkStatus('lastfm', 2)
                         self.SetScrobb()
-                        self.song_scrobb.scrobble(self.current_song.artist, self.current_song.song, time_started, 'P', 'L', self.current_song.song_time_seconds, s_album, "", "", port)
+                        self.network.scrobble(artist=self.current_song.artist, title=self.current_song.song, timestamp=time_started, duration=self.current_song.song_time_seconds, album=s_album)
                         #pylast.BadSession:
                         
             if self.cb_options_prefetch.GetValue() == False:
@@ -2245,8 +2242,8 @@ class MainPanel(wx.Panel):
         track_id = ratings_button.GetTrackId(artist, song, grooveshark_id, music_id)
         ratings_button.AddRating(self, track_id, event_id)
         if event_id == 4:
-            sk = self.GenerateSessionKey2()
-            ratings_button.LoveTrack(artist, song, sk)
+            network = self.GetNetwork()
+            ratings_button.LoveTrack(artist, song, network)
         self.GetSongRating(track_id, val)
         
     def RemovePlaylistItem(self, event=None):

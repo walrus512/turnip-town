@@ -20,8 +20,9 @@ Place, Suite 330, Boston, MA 02111-1307 USA
 """
 import wx
 import wx.xrc as xrc
-from main_utils import audioscrobbler_lite
+#from main_utils import audioscrobbler_lite
 from threading import Thread
+from main_thirdp import pylast
 
 #columns
 C_RATING = 0
@@ -43,6 +44,7 @@ NB_SIFT = 7
 NB_OPTIONS = 8
 NB_ABOUT = 9
 WN_SEARCH = 99
+API_KEY = "13eceb51a4c2e0f825c492f04bf693c8"
 
 EVT_NEW_LAST = wx.PyEventBinder(wx.NewEventType(), 0)
 
@@ -77,8 +79,10 @@ class LastfmTab(wx.ScrolledWindow):
         self.lc_lastfm.InsertColumn(1,"Artist")
         self.lc_lastfm.InsertColumn(2,"Song")
         self.lc_lastfm.InsertColumn(3,"Album")
-        self.lc_lastfm.InsertColumn(4,"Count")
+        self.lc_lastfm.InsertColumn(4,"Match")
         self.lc_lastfm.InsertColumn(5,"Tag")
+        self.lc_lastfm.InsertColumn(6,"Count")
+        
         self.parent.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnLastfmListClick, self.lc_lastfm)
         self.parent.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.OnLastfmListDoubleClick, self.lc_lastfm)
         # wxMSW
@@ -92,7 +96,7 @@ class LastfmTab(wx.ScrolledWindow):
         self.st_last_ta_artist.Bind(wx.EVT_LEFT_UP, self.OnLastTAArtistClick)
         self.st_last_ts_geo.Bind(wx.EVT_LEFT_UP, self.OnLastTSGeoClick)
         self.st_last_ts_genre.Bind(wx.EVT_LEFT_UP, self.OnLastTSGenreClick)
-        self.st_last_ts_album.Bind(wx.EVT_LEFT_UP, self.OnLastTSAlbumClick)
+        ##self.st_last_ts_album.Bind(wx.EVT_LEFT_UP, self.OnLastTSAlbumClick)
         self.st_last_ts_similar.Bind(wx.EVT_LEFT_UP, self.OnLastTSSimilarClick)
         self.st_last_art_similar.Bind(wx.EVT_LEFT_UP, self.OnLastArtistSimilarClick)
         self.st_last_tt_song.Bind(wx.EVT_LEFT_UP, self.OnLastTTSongClick)
@@ -109,17 +113,20 @@ class LastfmTab(wx.ScrolledWindow):
         # figure out where we should get the artist/song/ablum info to search on
         artist = self.tc_last_search_artist.GetValue()        
         if len(artist) == 0:
-            artist = self.parent.current_song.artist #st_track_info.GetLabel().split(' - ', 1)[0]
+            artist = self.parent.current_song.artist
             
         song = self.tc_last_search_song.GetValue()        
         if len(song) == 0:
-            song = self.parent.current_song.song #st_track_info.GetLabel().split(' - ', 1)
-                
+            song = self.parent.current_song.song
+            
         album = self.tc_last_search_album.GetValue()
+        if len(album) == 0:
+            album = self.parent.current_song.album
+
         return artist, song, album
         
-    def LastThread(self, last_query):
-        last_thread = GetLFThread(self)
+    def LastThread(self, last_query, page=1):
+        last_thread = GetLFThread(self, page)
         last_thread.SetType(last_query)
         self.ShowLoading()
         last_thread.start()
@@ -145,10 +152,11 @@ class LastfmTab(wx.ScrolledWindow):
     
     def OnLastTSSimilarClick(self, event):
         # grab similar tracks from last fm
-        self.artist, self.song, self.album = self.GetLastThree()        
+        self.artist, self.song, self.album = self.GetLastThree()
+        page = 1
         
         if len(self.song) > 0:                        
-            self.LastThread('similar_track')
+            self.LastThread('similar_track', page)
             #top_tracks_list = audioscrobbler_lite.Scrobb().make_similar_song_list(artist, song)
             #self.GenerateScrobbList(top_tracks_list)
         else:    
@@ -170,25 +178,25 @@ class LastfmTab(wx.ScrolledWindow):
             dlg.ShowModal()
             dlg.Destroy()
         
-    def OnLastTSAlbumClick(self, event):
+    ##def OnLastTSAlbumClick(self, event):
         # get top tracks for a given album
         #$$$$ not threaded
-        self.artist, self.song, self.album = self.GetLastThree()
-        if (self.album == '') & (len(self.song) > 0):
+    ##    self.artist, self.song, self.album = self.GetLastThree()
+        #if (self.album == '') & (len(self.song) > 0):
             # check for album of playing song
-            track_stuff = self.parent.GetSongAlbumInfo(self.artist, self.song)
-            self.album = track_stuff[1]        
+            #track_stuff = self.parent.GetSongAlbumInfo(self.artist, self.song)
+            #self.album = track_stuff[1]        
         # get album id
         # get top tracks
-        if len(self.album) > 0:
-            self.LastThread('top_tracks_album')
+   ##     if len(self.album) > 0:
+    ##        self.LastThread('top_tracks_album')
             #top_tracks_list = audioscrobbler_lite.Scrobb().make_album_top_song_list(artist, album)
             #self.parent.TTA(top_tracks_list)
             #self.GenerateScrobbList(top_tracks_list, False, False)
-        else:
-            dlg = wx.MessageDialog(self, 'Artist not entered / album not entered.', 'Problems...', wx.OK | wx.ICON_WARNING)
-            dlg.ShowModal()
-            dlg.Destroy()
+    ##    else:
+    ##        dlg = wx.MessageDialog(self.parent, 'Artist not entered / album not entered.', 'Problems...', wx.OK | wx.ICON_WARNING)
+     ##       dlg.ShowModal()
+     ##       dlg.Destroy()
         
     def OnLastTSArtistClick(self, event):
         # grab top tracks from last fm
@@ -246,55 +254,67 @@ class LastfmTab(wx.ScrolledWindow):
     def GenerateScrobbList(self, event): #top_list, albums=False, artists=False, tags=False):
         self.ShowLoading(False)
         top_list = event.data[0]
-        albums = event.data[1]
-        artists = event.data[2]
-        tags=event.data[3]
+        self.current_page = event.data[1]
+        self.total_pages = event.data[2]
+        columns = event.data[3]
         # put some data in a list control
         counter = 0
         self.lc_lastfm.DeleteAllItems()
-        for x in top_list:            
-            if albums == True:
+        
+        for x in top_list:
+            #if len(x) == 3:            
                 # just printing artist/album
-                self.lc_lastfm.InsertStringItem(counter, '')
-                self.lc_lastfm.SetStringItem(counter, 1, x[1])
-                self.lc_lastfm.SetStringItem(counter, 2, '')
-                self.lc_lastfm.SetStringItem(counter, 3, x[0])
-                self.lc_lastfm.SetStringItem(counter, 4, x[2])
-                self.lc_lastfm.SetStringItem(counter, 5, '')
-            elif artists == True:
-                # just printing artist
-                self.lc_lastfm.InsertStringItem(counter, '')
+            self.lc_lastfm.InsertStringItem(counter, '')
+            self.lc_lastfm.SetStringItem(counter, 1, '')
+            if 'artist' in columns:
                 self.lc_lastfm.SetStringItem(counter, 1, x[0])
-                self.lc_lastfm.SetStringItem(counter, 2, '')
-                self.lc_lastfm.SetStringItem(counter, 3, '')
-                self.lc_lastfm.SetStringItem(counter, 4, x[1])
-                self.lc_lastfm.SetStringItem(counter, 5, '')
-            elif tags == True:
+            self.lc_lastfm.SetStringItem(counter, 2, '')
+            if 'song' in columns:
+                self.lc_lastfm.SetStringItem(counter, 2, x[1])
+            self.lc_lastfm.SetStringItem(counter, 3, '')
+            if 'album' in columns:
+                self.lc_lastfm.SetStringItem(counter, 3, x[1]) 
+            self.lc_lastfm.SetStringItem(counter, 4, '')
+            if 'match' in columns:
+                if len(x) == 3:
+                    self.lc_lastfm.SetStringItem(counter, 4, x[2])
+                else:
+                    self.lc_lastfm.SetStringItem(counter, 4, x[1])
+            self.lc_lastfm.SetStringItem(counter, 5, '')
+            if 'tag' in columns:
+                self.lc_lastfm.SetStringItem(counter, 5, x[0]) 
+            self.lc_lastfm.SetStringItem(counter, 6, '')
+            if 'count' in columns:
+                if len(x) == 3:
+                    self.lc_lastfm.SetStringItem(counter, 6, x[2])
+                else:
+                    self.lc_lastfm.SetStringItem(counter, 6, x[1])
+            #else:
                 # just printing artist
-                self.lc_lastfm.InsertStringItem(counter, '')
-                self.lc_lastfm.SetStringItem(counter, 1, '')
-                self.lc_lastfm.SetStringItem(counter, 2, '')
-                self.lc_lastfm.SetStringItem(counter, 3, '')
-                self.lc_lastfm.SetStringItem(counter, 4, x[1])
-                self.lc_lastfm.SetStringItem(counter, 5, x[0])
-            else:
-                # just printing artist/song
-                self.lc_lastfm.InsertStringItem(counter, '')
-                self.lc_lastfm.SetStringItem(counter, 1, x[1])
-                self.lc_lastfm.SetStringItem(counter, 2, x[0])
-                self.lc_lastfm.SetStringItem(counter, 3, '')
-                self.lc_lastfm.SetStringItem(counter, 4, x[2])
-                self.lc_lastfm.SetStringItem(counter, 5, '')
-
-            #self.lc_lastfm.SetItemData(counter, x[1] + ':' + x[0])
+            #    self.lc_lastfm.InsertStringItem(counter, '')
+            #    self.lc_lastfm.SetStringItem(counter, 1, x[0])
+             #   self.lc_lastfm.SetStringItem(counter, 2, '')
+             #   self.lc_lastfm.SetStringItem(counter, 3, '')
+             #   self.lc_lastfm.SetStringItem(counter, 4, x[1])
+             #   self.lc_lastfm.SetStringItem(counter, 5, '')
+             #   self.lc_lastfm.SetStringItem(counter, 6, '')
             counter = counter + 1
-               
-        self.lc_lastfm.SetColumnWidth(0, 0)
-        self.lc_lastfm.SetColumnWidth(1, wx.LIST_AUTOSIZE)
-        self.lc_lastfm.SetColumnWidth(2, wx.LIST_AUTOSIZE)
-        self.lc_lastfm.SetColumnWidth(3, wx.LIST_AUTOSIZE)
-        self.lc_lastfm.SetColumnWidth(4, wx.LIST_AUTOSIZE_USEHEADER)
-        self.lc_lastfm.SetColumnWidth(5, wx.LIST_AUTOSIZE)
+              
+        for t in range(0, 7):
+            if len(self.lc_lastfm.GetItem(0, t).GetText()) >= 1:
+                #if t == 6:
+                #    self.lc_mylast.SetColumnWidth(t, wx.LIST_AUTOSIZE_USEHEADER)
+                #else:
+                self.lc_lastfm.SetColumnWidth(t, wx.LIST_AUTOSIZE)
+            else:
+                self.lc_lastfm.SetColumnWidth(t, 0) 
+             
+        #self.lc_lastfm.SetColumnWidth(0, 0)
+        #self.lc_lastfm.SetColumnWidth(1, wx.LIST_AUTOSIZE)
+        #self.lc_lastfm.SetColumnWidth(2, wx.LIST_AUTOSIZE)
+        #self.lc_lastfm.SetColumnWidth(3, wx.LIST_AUTOSIZE)
+        #self.lc_lastfm.SetColumnWidth(4, wx.LIST_AUTOSIZE_USEHEADER)
+        #self.lc_lastfm.SetColumnWidth(5, wx.LIST_AUTOSIZE)
         #self.nb_main.SetPageText(2, 'last.fm (' + str(counter) + ')')  
                 
     def OnLastfmRightClick(self, event):
@@ -389,52 +409,57 @@ import wx.lib.agw.pybusyinfo as PBI
 
 class GetLFThread(Thread): 
     # another thread to update download progress
-    def __init__(self, parent):
+    def __init__(self, parent, page):
         Thread.__init__(self)
         self.parent = parent
+        self.page = page
         self.get_type =''
         self.load_state = False
         
+        self.network = pylast.LastFMNetwork(api_key = API_KEY)
+        
     def SetType(self, get_type):
         self.get_type = get_type        
-                        
+  
     def run(self):
         event = LastEvent()
-        if self.get_type == 'similar_track':
-            top_tracks_list = audioscrobbler_lite.Scrobb().make_similar_song_list(self.parent.artist, self.parent.song)
-            #self.parent.GenerateScrobbList(top_tracks_list)
-            event.data = (top_tracks_list, False, False, False)
-        elif self.get_type == 'similar_artist':
-            top_tracks_list = audioscrobbler_lite.Scrobb().make_similar_artist_list(self.parent.artist)
-            #self.parent.GenerateScrobbList(top_tracks_list, False, True)
-            event.data = (top_tracks_list, False, True, False)
-        elif self.get_type == 'top_artist':
-            top_tracks_list = audioscrobbler_lite.Scrobb().make_artist_top_song_list(self.parent.artist)
-            #self.parent.GenerateScrobbList(top_tracks_list)
-            event.data = (top_tracks_list, False, False, False)
-        elif self.get_type == 'top_albums':
-            top_tracks_list = audioscrobbler_lite.Scrobb().make_artist_top_album_list(self.parent.artist)
-            #self.parent.GenerateScrobbList(top_tracks_list)
-            event.data = (top_tracks_list, True, False, False)
-        elif self.get_type == 'country':
-            top_tracks_list = audioscrobbler_lite.Scrobb().make_geo_top_song_list(self.parent.country)
-            #self.parent.GenerateScrobbList(top_tracks_list)
-            event.data = (top_tracks_list, False, False, False)
+        
+        if self.get_type == 'country':
+            lfm_country = self.network.get_country(self.parent.country)
+            results = lfm_country.get_top_tracks(page=self.page)
+            columns = ('artist', 'song', 'count')            
         elif self.get_type == 'genre':
-            top_tracks_list = audioscrobbler_lite.Scrobb().make_genre_top_song_list(self.parent.genre)
-            #self.parent.GenerateScrobbList(top_tracks_list)
-            event.data = (top_tracks_list, False, False, False)
-        elif self.get_type == 'song_tags':
-            top_tracks_list = audioscrobbler_lite.Scrobb().make_song_top_tags_list(self.parent.artist, self.parent.song)
-            #self.parent.GenerateScrobbList(top_tracks_list, False, False, True)
-            event.data = (top_tracks_list, False, False, True)
-        elif self.get_type == 'top_tracks_album':
-            top_tracks_list = audioscrobbler_lite.Scrobb().make_album_top_song_list(self.parent.artist, self.parent.album)
-            self.parent.parent.TTA(top_tracks_list)
-            #self.parent.GenerateScrobbList(top_tracks_list, False, False)
-            event.data = (top_tracks_list, False, False, False)
-            #top_tracks_list = audioscrobbler_lite.Scrobb().make_album_top_song_list(artist, album)
-            #self.parent.TTA(top_tracks_list)
-            #self.GenerateScrobbList(top_tracks_list, False, False)
-        wx.PostEvent(self.parent.parent, event) 
+            lfm_tag = self.network.get_tag(self.parent.genre)
+            results = lfm_tag.get_top_tracks(page=self.page)
+            columns = ('artist', 'song')            
+        else:        
+            lfm_track = self.network.get_track(self.parent.artist, self.parent.song)
+            lfm_artist = self.network.get_artist(self.parent.artist)
+            #lfm_album = self.network.get_album(self.parent.artist, self.parent.album)
             
+            if self.get_type == 'similar_track':
+                results = lfm_track.get_similar(page=self.page)
+                columns = ('artist', 'song', 'match')
+            elif self.get_type == 'similar_artist':
+                results = lfm_artist.get_similar(page=self.page)
+                columns = ('artist', 'match')
+            ##elif self.get_type == 'top_tracks_album':
+            ##    results = lfm_album.get_info()
+                #results = lfm_album.get_tracks()          
+            elif self.get_type == 'top_artist':
+                results = lfm_artist.get_top_tracks(page=self.page)
+                columns = ('artist', 'song', 'count')
+            elif self.get_type == 'top_albums':
+                results = lfm_artist.get_top_albums(page=self.page)
+                columns = ('artist', 'song', 'count')
+            elif self.get_type == 'song_tags':
+                results = lfm_track.get_top_tags(page=self.page)
+                columns = ('tag', 'count')
+            
+        top_tracks_list = results['results']
+        #print top_tracks_list
+        self.current_page = int(results['page'])
+        self.total_pages = int(results['total_pages'])
+        event.data = (top_tracks_list, self.current_page, self.total_pages, columns)
+        
+        wx.PostEvent(self.parent.parent, event) 
