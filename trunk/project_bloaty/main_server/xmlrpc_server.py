@@ -25,6 +25,12 @@ from SimpleXMLRPCServer import SimpleXMLRPCServer
 from SimpleXMLRPCServer import SimpleXMLRPCRequestHandler
 import socket
 
+# makes it so it don't get a fqdn (slow)
+import BaseHTTPServer
+def address_string(self):
+    host, port = self.client_address[:2]
+    return '%s' % host
+BaseHTTPServer.BaseHTTPRequestHandler.address_string =address_string
 
 class RequestHandler(SimpleXMLRPCRequestHandler):
 # Restrict to a particular path.

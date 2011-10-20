@@ -26,9 +26,9 @@ class Client:
     """It's a client"""
     #----------------------------------------------------------------------
     def __init__(self, port=7777):
-
-        hostname = socket.gethostname()
-        self.client = xmlrpclib.ServerProxy('http://' + hostname + ':7777')        
+        # makes it so it don't get a fqdn (slow)
+        hostname = socket.gethostbyname(socket.gethostname()) #socket.gethostname()
+        self.client = xmlrpclib.ServerProxy('http://' + hostname + ':7777')    
 
     def ListMethods(self):
         # Print list of available methods
