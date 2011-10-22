@@ -128,7 +128,7 @@ from main_thirdp import grooveshark_old
 #from plugins.hotkeys import hotkeys
 #from plugins.messenger_plus import messenger_plus
 
-PROGRAM_VERSION = "0.351"
+PROGRAM_VERSION = "0.352"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -1032,7 +1032,7 @@ class MainPanel(wx.Panel):
     
     # ---------------------------------
     
-    def SetBackend(self, event, backend='pymedia'):
+    def SetBackend(self, event, backend='pymedia', output_device=0):
         #sets backend type, pymedia, wx.media, pyglet
         if event != None:
             self.SaveOptions(None)
@@ -1043,7 +1043,10 @@ class MainPanel(wx.Panel):
         
         if self.use_backend == 'pymedia':
             try:
-                self.player = player_pymedia.Player(self)
+                outy = options_window.GetSetting('device-output', self.FILEDB)
+                if outy != False:
+                    output_device = outy
+                self.player = player_pymedia.Player(self, output_device)
             except Exception, expt:
                 print str(Exception)+str(expt)
                 self.player = player_m.Player(self)
