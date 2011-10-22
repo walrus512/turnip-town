@@ -33,18 +33,19 @@ BUFFER_SIZE = 320000
 
 ########################################################################
 class Player(object): 
-    def __init__(self, parent):
+    def __init__(self, parent, output_device=0):
         self.local_play_status = True
         self.paused = False
         #self.snd = None
         self.play_thread = None
         self.parent = parent
+        self.output_device = output_device
                 
     def Play(self, file_name):
         #print file_name
         #source = pyglet.media.load(file_name)
         #self.mediaPlayer.queue(source)
-        self.play_thread = PlayThread(file_name, self.parent)
+        self.play_thread = PlayThread(file_name, self.parent, self.output_device)
         #THREAD
         self.play_thread.start()
         
@@ -63,13 +64,14 @@ class Player(object):
             
 class PlayThread(Thread):
     """ makes a thread for pymedia playback """
-    def __init__(self, file_name, parent):
+    def __init__(self, file_name, parent, output_device=0):
         Thread.__init__(self)
         self.paused = False
         self.file_name = file_name
         self.local_play_status = True
         self.snd = None
         self.parent = parent
+        self.output_device = output_device
         
     def run(self):
         """ plays a god-damn song """
@@ -92,7 +94,7 @@ class PlayThread(Thread):
         self.parent.current_song.status = 'playing'
             
         
-        card=0
+        card = int(self.output_device)
         rate=1
         tt=-1    
         #dm= muxer.Demuxer( str.split( name, '.' )[ -1 ].lower() )
