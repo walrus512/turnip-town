@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 GrooveWalrus: GrooveWalrus
@@ -128,7 +129,7 @@ from main_thirdp import grooveshark_old
 #from plugins.hotkeys import hotkeys
 #from plugins.messenger_plus import messenger_plus
 
-PROGRAM_VERSION = "0.352"
+PROGRAM_VERSION = "0.353"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -1545,7 +1546,10 @@ class MainPanel(wx.Panel):
         #event.Skip()
         #sys.exit()#1
         self.parent.Destroy()
-        os._exit(0)
+        if wx.Platform == '__WXMSW__':
+            os._exit(0)
+        else:
+            return True
         
         ##2
         
