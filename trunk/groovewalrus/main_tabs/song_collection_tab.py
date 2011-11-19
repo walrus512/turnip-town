@@ -252,10 +252,10 @@ class SongCollectionTab(wx.ScrolledWindow):
             #disp = str(x)
             if old_folder_name != folder_name:
                 try:
-                    child = self.tr_scol_folders.AppendItem(self.root, unicode(folder_name, 'utf-8'))
+                    child = self.tr_scol_folders.AppendItem(self.root, folder_name)# unicode(folder_name, 'utf-8'))
                     old_folder_name = folder_name
                 except Exception, expt:
-                    print str(Exception) + str(expt)
+                    print "FillFolderList:" + str(Exception) + str(expt)
                 #self.tl_scol_folder.SetItemText(child, folder_name, 1)
                 #self.tl_scol_folder.SetItemText(child, txt + "(c2)", 2)
             
