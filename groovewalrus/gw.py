@@ -488,7 +488,7 @@ class MainPanel(wx.Panel):
         self.Bind(wx.EVT_BUTTON, self.OnSearchClick, id=xrc.XRCID('m_bb_search'))
         self.Bind(wx.EVT_TEXT_ENTER, self.OnSearchClick, self.tc_search)
         self.search_window = search_window.SearchWindow(self)
-        self.parent.Bind(wx.EVT_MOVE, self.search_window.MoveMe)                
+        #self.parent.Bind(wx.EVT_MOVE, self.search_window.MoveMe)                
         
         #playlist
         self.Bind(wx.EVT_BUTTON, self.SavePlaylistToDatabase, id=xrc.XRCID('m_bb_save_playlist'))
@@ -1449,11 +1449,11 @@ class MainPanel(wx.Panel):
         if len(query_string) > 0:
             self.nb_main.SetSelection(NB_PLAYLIST)
             self.search_window.SetValue(query_string)
-            self.search_window.show_me()
+            self.search_window.ShowMe()
             self.search_window.SearchIt(query_string)            
             self.search_window.lc_search.Select(0)
         else:
-            self.search_window.show_me()
+            self.search_window.ShowMe()
             
     def SearchAgain(self, event):
         # get currently selected playlist item, and search for it
@@ -1662,7 +1662,7 @@ class MainPanel(wx.Panel):
             self.nb_main.SetSelection(location)
         else:
             self.nb_main.SetSelection(NB_PLAYLIST)
-            self.search_window.show_me()
+            self.search_window.ShowMe()
         
     def OnPreviousTab(self, event):
         cur_tab = self.nb_main.GetSelection()

@@ -164,6 +164,7 @@ class DbFuncs(object):
         r_arr = []
         
         conn = sqlite3.connect(self.FILEDB)
+        #conn.text_factory = str
         c = conn.cursor()
         
         t = self.MakeQuery(query, qlimit)
@@ -180,6 +181,7 @@ class DbFuncs(object):
         r_arr = []
         
         conn = sqlite3.connect(self.FILEDB)
+        conn.text_factory = str
         c = conn.cursor()
            
         t = self.MakeQuery(query, qlimit, folder_query)#, with_count)

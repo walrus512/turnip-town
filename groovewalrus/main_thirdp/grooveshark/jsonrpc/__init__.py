@@ -33,11 +33,11 @@ SERVICE_URL = "http://cowbell." + DOMAIN + "/service.php"
 RANDOM_CHARS = "1234567890abcdef"
 
 CLIENT_NAME = "jsqueue"
-CLIENT_VERSION = "20110606.04"
-CLIENT_KEY = "bewareOfBearsharktopus"
+CLIENT_VERSION = "20110906"
+CLIENT_KEY = "theTicketsAreNowDiamonds"
 SEARCH_CLIENT_NAME = "htmlshark"
-SEARCH_CLIENT_VERSION = "20110606"
-SEARCH_CLIENT_KEY = "backToTheScienceLab"
+SEARCH_CLIENT_VERSION = "20110906"
+SEARCH_CLIENT_KEY = "imOnAHorse"
 
 RE_SESSION = re.compile('"sessionID":"\s*?([A-z0-9]+)"') #re.compile('sessionID:\s*?\'([A-z0-9]+)\',')
 
@@ -72,7 +72,7 @@ class Request:
             
         headers = {
             "Content-Type": "application/json",
-            "User-Agent": "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.2.12) Gecko/20101026 Firefox/3.6.12 (.NET CLR 3.5.30729)",            
+            "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:8.0) Gecko/20100101 Firefox/8.0",            
             "Referer": "http://grooveshark.com/"
             }
 

@@ -61,8 +61,9 @@ class ResultEvent(wx.PyEvent):
 class SearchWindow(wx.Dialog):
     """Search Window for searching"""
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, -1, "Search", style=wx.FRAME_SHAPED|wx.RESIZE_BORDER) #STAY_ON_TOP)#wx.FRAME_SHAPED)
+        wx.Dialog.__init__(self, parent, -1, "Search", size=(500, 500), style=wx.FRAME_SHAPED|wx.RESIZE_BORDER) #STAY_ON_TOP)#wx.FRAME_SHAPED)
         self.parent = parent
+        self.first_move = True
         
         # XML Resources can be loaded from a file like this:
         res = xrc.XmlResource(SEARCH_RESFILE)
@@ -112,7 +113,7 @@ class SearchWindow(wx.Dialog):
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(panel, 1, wx.EXPAND|wx.ALL, 5)
         self.SetSizer(sizer)
-        self.SetAutoLayout(True)
+        self.SetAutoLayout(True)        
         
         # esacpe to close window
         #escID = 337
@@ -126,13 +127,10 @@ class SearchWindow(wx.Dialog):
         
 #----------------------------------------------------------------------
                 
-    def show_me(self):
-        # show the window
-        #self.CenterOnScreen()
-        #self.ShowModal() # Shows it        
-        #self.Destroy() # finally destroy it when finished.
-        #self.Disaply(True)
-        self.MoveMe()
+    def ShowMe(self):
+        if self.first_move:
+            self.MoveMe()
+            self.first_move = False
         self.Show(True) # Shows it        
         
     def MoveMe(self, event=None):
