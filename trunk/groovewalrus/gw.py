@@ -654,6 +654,7 @@ class MainPanel(wx.Panel):
         self.parent.Bind(wx.EVT_MENU, self.OnMuteClick, id=xrc.XRCID("m_mi_volume_mute"))
         self.parent.Bind(wx.EVT_MENU, self.OnVolumeUp, id=xrc.XRCID("m_mi_volume_up"))
         self.parent.Bind(wx.EVT_MENU, self.OnVolumeDown, id=xrc.XRCID("m_mi_volume_down"))
+        self.parent.Bind(wx.EVT_MENU, self.favorites.OnFavesClick, id=xrc.XRCID("m_mi_favorite"))
         
         # playlist menu
         self.parent.Bind(wx.EVT_MENU, self.OnClearPlaylistClick, id=xrc.XRCID("m_mi_clear_playlist"))

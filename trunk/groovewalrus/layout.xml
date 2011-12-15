@@ -3025,6 +3025,13 @@
 					<label>Repeat</label>
 					<help></help>
 				</object>
+				<object class="wxMenu" name="m_menu11">
+					<label>More</label>
+					<object class="wxMenuItem" name="m_mi_favorite">
+						<label>Add Favorite\tCtrl-G</label>
+						<help></help>
+					</object>
+				</object>
 			</object>
 			<object class="wxMenu" name="m_menu8">
 				<label>Playlist</label>
