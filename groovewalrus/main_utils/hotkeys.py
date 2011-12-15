@@ -265,6 +265,8 @@ class Hotkeys():
         counter = 0
         for menu_item in self.parent.parent.menu_playback.GetMenuItems():
             #print menu_item
+            if counter == 9:
+                break
             self.SetMenuAccel(menu_item, self.parent.aTable_values[counter][1], self.parent.aTable_values[counter][2])
             counter = counter + 1
         
