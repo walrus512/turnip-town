@@ -157,11 +157,15 @@ class Grooveshark(object):
         #@@f.close()
         return response
 
-    def GetFileSize(self, songKey, streamServer):
+    def GetFileSize(self, songKey, streamServer, proxy=False):
         http = httplib2.Http()
         url = 'http://'+streamServer+'/stream.php'#use self. so that any outer program can access it (not local)
         params = urllib.urlencode({'streamKey': songKey})
-        f = urllib.urlopen(url, params)
+        
+        if proxy:
+            f = proxy.open(url, params)       
+        else:
+            f = urllib.urlopen(url, params)
         file_size = f.info().dict['content-length']
         return file_size 
     

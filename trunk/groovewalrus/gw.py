@@ -115,6 +115,7 @@ else:
     
 from main_thirdp.grooveshark.jsonrpc import *
 from main_thirdp import grooveshark_old
+from main_thirdp import urllib_proxy
 
 #from plugins.x2 import x2
 #from plugins.twitter import twitter
@@ -129,7 +130,7 @@ from main_thirdp import grooveshark_old
 #from plugins.hotkeys import hotkeys
 #from plugins.messenger_plus import messenger_plus
 
-PROGRAM_VERSION = "0.353"
+PROGRAM_VERSION = "0.354"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -2977,8 +2978,16 @@ class MainPanel(wx.Panel):
         if os.path.exists(self.image_save_location + file_name) == False:
             #print art_url
             try:
-                urllib.urlretrieve(art_url, self.image_save_location + file_name)            
-                urllib.urlcleanup()                
+                proxy = options_window.GetSetting('proxy-url', self.FILEDB)
+                proxy_enabled = options_window.GetSetting('proxy-enabled', self.FILEDB)
+                if proxy_enabled == '1':
+                    if proxy:
+                        print 'proxy: ' + proxy
+                        urlprx = urllib_proxy.UrllibProxy(proxy)
+                        urlprx.urlretrieve(art_url, self.image_save_location + file_name)
+                else:
+                    urllib.urlretrieve(art_url, self.image_save_location + file_name)            
+                urllib.urlcleanup()
             except Exception, expt:
                 print "SaveSongArt: " + str(Exception)+str(expt)
             #print 'getting new'
@@ -3382,7 +3391,16 @@ class FileThread(Thread):
     def GetFileSize(self):
         # file size
         keyandserver = self.GetStreamKeyAndServer()
-        file_size = grooveshark_old.Grooveshark(self).GetFileSize(keyandserver[0], keyandserver[1])
+        
+        proxy = False
+        proxy_enabled = options_window.GetSetting('proxy-enabled', self.parent.FILEDB)
+        if proxy_enabled == '1':
+            proxy = options_window.GetSetting('proxy-url', self.parent.FILEDB)
+            if proxy:
+                print 'proxy: ' + proxy
+                urlprx = urllib_proxy.UrllibProxy(proxy)
+        
+        file_size = grooveshark_old.Grooveshark(self).GetFileSize(keyandserver[0], keyandserver[1], urlprx)
         return file_size        
         
     def GetStreamKeyAndServer(self):
