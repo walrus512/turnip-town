@@ -33,11 +33,12 @@ SERVICE_URL = "http://cowbell." + DOMAIN + "/service.php"
 RANDOM_CHARS = "1234567890abcdef"
 
 CLIENT_NAME = "jsqueue"
-CLIENT_VERSION = "20110906"
-CLIENT_KEY = "theTicketsAreNowDiamonds"
+CLIENT_VERSION = "20120123"
+CLIENT_KEY = "helloScumbagSteve"
 SEARCH_CLIENT_NAME = "htmlshark"
-SEARCH_CLIENT_VERSION = "20110906"
-SEARCH_CLIENT_KEY = "imOnAHorse"
+SEARCH_CLIENT_VERSION = "20120123"
+SEARCH_CLIENT_KEY = "sloppyJoes"
+COMM_TOKEN_KEY = "needMoreCowbell"
 
 RE_SESSION = re.compile('"sessionID":"\s*?([A-z0-9]+)"') #re.compile('sessionID:\s*?\'([A-z0-9]+)\',')
 
@@ -45,8 +46,10 @@ RE_SESSION = re.compile('"sessionID":"\s*?([A-z0-9]+)"') #re.compile('sessionID:
 class Request:
     """class: For making a standard API request"""
 
-    def __init__(self, api, parameters, method, type="default", clientVersion=None):
+    def __init__(self, api, parameters, method, type="default", clientVersion=None, proxy=None):
         """function: Initiates the Request"""
+        
+        
         
         if clientVersion != None:
             if float(clientVersion) < float(CLIENT_VERSION):
@@ -55,7 +58,7 @@ class Request:
             clientVersion = CLIENT_VERSION
         client = CLIENT_NAME
 
-        if method == 'getSearchResultsEx' or method == 'playlistGetSongs':
+        if method == 'getResultsFromSearch' or method == 'playlistGetSongs':
             clientVersion = SEARCH_CLIENT_VERSION
             client = SEARCH_CLIENT_NAME
             
@@ -64,7 +67,7 @@ class Request:
                 "client": client,
                 "clientRevision": clientVersion,
                 "privacy": 0,                
-                "country": {"IPR":"1021", "ID":"223", "CC1":"0", "CC2":"0", "CC3":"0", "CC4":"2147483648"},
+                "country": {"ID":"38","CC1":"137438953472","CC2":"0","CC3":0,"CC4":"0","DMA":"0","IPR":"0"},
                 "uuid": api._uuid,
                 "session": api._session},                
             "parameters": parameters,
@@ -72,7 +75,7 @@ class Request:
             
         headers = {
             "Content-Type": "application/json",
-            "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:8.0) Gecko/20100101 Firefox/8.0",            
+            "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:9.0.1) Gecko/20100101 Firefox/9.0.1",            
             "Referer": "http://grooveshark.com/"
             }
 
@@ -88,8 +91,8 @@ class Request:
 
         postData = json.dumps(postData)
         print url
-        #print headers
-        #print postData
+        print headers
+        print postData
         self._request = urllib2.Request(url, postData, headers)
 
     def send(self):
@@ -110,12 +113,21 @@ class Request:
             raise StandardError("API error: " + response["fault"]["message"])
 
 
-def jsonrpcSession(clientUuid=None, clientVersion=None):
+def jsonrpcSession(clientUuid=None, clientVersion=None, proxy=None):
     """function: Makes an API instance"""
+    setProxy(proxy)
     if None == clientUuid:
         clientUuid = str(uuid.uuid4())
 
     return JsonRPC(clientUuid, clientVersion)
+    
+def setProxy(proxy):
+    """we like proxies"""
+    if proxy != None:
+        proxy_dict = {'http' : proxy}
+        proxy_support = urllib2.ProxyHandler(proxy_dict)
+        opener = urllib2.build_opener(proxy_support)
+        urllib2.install_opener(opener)
 
 
 class JsonRPC:
@@ -124,7 +136,7 @@ class JsonRPC:
     def __init__(self, uuid, clientVersion):
         """function: Init the Grooveshark API class"""
         self._uuid = uuid
-        self.clientVersion = clientVersion
+        self.clientVersion = clientVersion        
 
     _token = None
     _lastTokenTime = None
@@ -158,7 +170,7 @@ class JsonRPC:
         if 1000 <= (time.time() - self._lastTokenTime):
             self._token = self._getToken()
             self._lastTokenTime = time.time()
-        if method == "getSearchResultsEx":
+        if method == "getResultsFromSearch":
             the_key = SEARCH_CLIENT_KEY
         else:
             the_key = CLIENT_KEY        
@@ -208,9 +220,9 @@ class JsonRPC:
             "query": query,
             "type": type,
             "guts":0,
-            "ppOverride":"false",
+            "ppOverride":"",
             }
-        response = Request(self, parameters, "getSearchResultsEx").send()
+        response = Request(self, parameters, "getResultsFromSearch").send()
         #print response
         return response
         
@@ -220,3 +232,4 @@ class JsonRPC:
         response = self.request(parameters, "popularGetSongs").send()
 
         return self._parseSongs(response["result"]["Songs"])
+
