@@ -186,7 +186,7 @@ class SearchWindow(wx.Dialog):
             if self.cb_search_local.GetValue() != True:
                 self.parent.SetNetworkStatus('grooveshark', 1)
             #THREAD
-            current = FetchThread(self, query_string, self.cb_search_local.GetValue())
+            current = FetchThread(self, self.parent, query_string, self.cb_search_local.GetValue())
             #THREAD
             current.start()
             
@@ -310,9 +310,10 @@ class SearchWindow(wx.Dialog):
 # ####################################
 class FetchThread(Thread): 
     """Thread to grab data from the internets!"""
-    def __init__(self, parent, query, query_local):
+    def __init__(self, parent, grandparent, query, query_local):
         Thread.__init__(self)
         self.parent = parent
+        self.grandparent = grandparent
         self.query_string = query
         self.query_local = query_local
                         
@@ -321,18 +322,18 @@ class FetchThread(Thread):
             query_results = local_songs.DbFuncs().GetResultsArray(self.query_string, 40)
             self.parent.FillSearchListLocal(query_results, self.query_string)
         else:
-            result_list = GetSearchResults(self.query_string)            
+            result_list = self.GetSearchResults(self.query_string)            
             #self.parent.FillSearchList(result_list)
             wx.PostEvent(self.parent, ResultEvent(result_list))
         #else:
             #query_results = tinysong.Tsong().get_search_results(self.query_string)
             #self.parent.FillSearchList(query_results)
             
-def GetSearchResults(query):
-    g_session = jsonrpcSession()
-    g_session.startSession()
-    xx = g_session.getSearchResults(query, type="Songs")
-    return xx['result']['result']
+    def GetSearchResults(self, query):
+        g_session = jsonrpcSession(proxy=self.grandparent.GetProxy())
+        g_session.startSession()
+        xx = g_session.getSearchResults(query, type="Songs")
+        return xx['result']['result']
             
 
         

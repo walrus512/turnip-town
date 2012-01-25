@@ -130,7 +130,7 @@ from main_thirdp import urllib_proxy
 #from plugins.hotkeys import hotkeys
 #from plugins.messenger_plus import messenger_plus
 
-PROGRAM_VERSION = "0.354"
+PROGRAM_VERSION = "0.355"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -1157,6 +1157,16 @@ class MainPanel(wx.Panel):
             if q_track_id != False:
                 self.GetSongRating(q_track_id, x)
                 
+    def GetProxy(self):
+        proxy = None
+        proxy_enabled = options_window.GetSetting('proxy-enabled', self.FILEDB)
+        if proxy_enabled == '1':
+            is_proxy = options_window.GetSetting('proxy-url', self.FILEDB)
+            if is_proxy:
+                print 'proxy: ' + is_proxy
+                proxy = is_proxy
+        return proxy
+                
     def ImportGroovesharkPlaylist(self, event):
         """ Javi S. 2010/08/29 imports GrooveShark playist"""
         dlg = wx.TextEntryDialog(self, 'Insert the playlist URL or ID', 'Import GrooveShark Playlist')
@@ -1174,7 +1184,7 @@ class MainPanel(wx.Panel):
                     return
                 data_dir = system_files.GetDirectories(self).DataDirectory() + os.sep
                 g_version = GetLocalGroovesharkVersion(data_dir)
-                g_session = jsonrpcSession(None, g_version)
+                g_session = jsonrpcSession(None, g_version, proxy=self.GetProxy())
                 g_session.startSession()
                 mylist = playlist.playlistFromId(g_session, playlist_id)
 
@@ -3136,7 +3146,7 @@ class CurrentSong():
                 self.parent.SetNetworkStatus('grooveshark', 1)
                 #query_results = self.tsong.get_search_results(query_string, 32)
                 
-                g_session = jsonrpcSession()
+                g_session = jsonrpcSession(proxy=self.parent.GetProxy())
                 g_session.startSession()
                 xx = g_session.getSearchResults(query_string, type="Songs")
                 query_results = xx['result']['result']
@@ -3324,7 +3334,7 @@ class WebFetchThread(Thread):
             self.panel.SetNetworkStatus('grooveshark', 1)
             #query_results = self.tsong.get_search_results(query_string, 1)
             
-            g_session = jsonrpcSession()
+            g_session = jsonrpcSession(proxy=self.panel.GetProxy())
             g_session.startSession()
             xx = g_session.getSearchResults(query_string, type="Songs")
             query_results = xx['result']['result']
@@ -3395,18 +3405,18 @@ class FileThread(Thread):
         proxy = False
         proxy_enabled = options_window.GetSetting('proxy-enabled', self.parent.FILEDB)
         if proxy_enabled == '1':
-            proxy = options_window.GetSetting('proxy-url', self.parent.FILEDB)
-            if proxy:
-                print 'proxy: ' + proxy
-                urlprx = urllib_proxy.UrllibProxy(proxy)
+            is_proxy = options_window.GetSetting('proxy-url', self.parent.FILEDB)
+            if is_proxy:
+                print 'proxy: ' + is_proxy
+                proxy = urllib_proxy.UrllibProxy(is_proxy)
         
-        file_size = grooveshark_old.Grooveshark(self).GetFileSize(keyandserver[0], keyandserver[1], urlprx)
+        file_size = grooveshark_old.Grooveshark(self).GetFileSize(keyandserver[0], keyandserver[1], proxy)
         return file_size        
         
     def GetStreamKeyAndServer(self):
         data_dir = system_files.GetDirectories(self).DataDirectory() + os.sep
         g_version = GetLocalGroovesharkVersion(data_dir)
-        g_session = jsonrpcSession(None, g_version)
+        g_session = jsonrpcSession(None, g_version, proxy=self.parent.GetProxy())
         try:
             g_session.startSession()
         except Exception, exp:
@@ -3437,7 +3447,9 @@ class FileThread(Thread):
             #THREAD
             current.start()
 
-            grooveshark_old.Grooveshark(self.parent).download(keyandserver[0], keyandserver[1], self.temp_file)
+            proxy = self.parent.GetProxy()
+            
+            grooveshark_old.Grooveshark(self.parent).download(keyandserver[0], keyandserver[1], self.temp_file, proxy)
             
             if self.prefetch == False:
                 track_time = local_songs.GetMp3Length(self.temp_file)
@@ -3461,8 +3473,8 @@ class FileThread(Thread):
                     val = self.parent.lc_playlist.GetFirstSelected()
                     self.parent.lc_playlist.SetStringItem(val, 3, '')
         else:        
-            self.parent.SetNetworkStatus('grooveshark', 2)
-                
+            self.parent.SetNetworkStatus('grooveshark', 2)                
+     
 # --------------------------------------------------------- 
 # ######################################################### 
 # --------------------------------------------------------- 
