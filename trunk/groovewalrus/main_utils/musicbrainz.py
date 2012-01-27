@@ -59,6 +59,7 @@ class Brainz(object):
         
     def read_xml_tree(self, file_name):
         # reads in an xml file and returns a blob for you to work with
+        urllib.URLopener.version = 'GrooveWalrus/0.3 ( http://groove-walrus.turnip-town.net )'
         tree = ''
     	try:
         	tree = ET.parse(urllib.urlopen(file_name))
