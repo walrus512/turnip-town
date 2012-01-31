@@ -199,7 +199,8 @@ class GWApp(wx.App):
             except Exception, expt:
                 print "GWApp: " + str(Exception)+str(expt)
             #wx.Log.EnableLogging(False)
-            sys.exit()
+            if wx.Platform == '__WXMSW__':
+                sys.exit()
             #return False
         else:
             frame = MainFrame()
