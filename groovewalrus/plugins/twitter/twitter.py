@@ -41,7 +41,11 @@ RESFILE = os.path.join(os.getcwd(), 'plugins','twitter') + os.sep + "layout_twit
 
 
 class MainPanel(wx.Dialog):
-    def __init__(self, parent):
+    def __init__(self, parent, pathToPlugins=None):
+        if(not pathToPlugins==None):
+            RESFILE = os.path.join(pathToPlugins,'twitter') + os.sep + "layout_twitter.xml"
+            TWITTER = os.path.join(pathToPlugins,'twitter') + os.sep
+        
         wx.Dialog.__init__(self, parent, -1, "Twitter", size=(475,510), style=wx.FRAME_SHAPED|wx.RESIZE_BORDER) #STAY_ON_TOP)        
         self.parent = parent
         

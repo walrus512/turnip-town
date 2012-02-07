@@ -35,7 +35,12 @@ RESFILE = os.path.join(os.getcwd(), 'plugins','dizzler') + os.sep + "layout_dizz
 #http://www.dizzler.com/player/podmini.swf?m=chairlift-bruises
 
 class MainPanel(wx.Dialog):
-    def __init__(self, parent):
+    def __init__(self, parent, pathToPlugins=None):
+        if(not pathToPlugins==None):
+            RESFILE = os.path.join(pathToPlugins,'dizzler') + os.sep + "layout_dizzler.xml"
+            DIZZLER = os.path.join(pathToPlugins,'dizzler') + os.sep
+            DIZZLER_SETTINGS = os.path.join(pathToPlugins,'dizzler') + os.sep + "settings_dizzler.xml"
+
         wx.Dialog.__init__(self, parent, -1, "Dizzler", size=(475,310), style=wx.FRAME_SHAPED) #STAY_ON_TOP)        
         self.parent = parent
         

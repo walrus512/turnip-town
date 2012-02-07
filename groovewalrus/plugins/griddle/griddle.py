@@ -33,7 +33,10 @@ FILEDB = system_files.GetDirectories(None).DatabaseLocation()
 MAIN_PLAYLIST = system_files.GetDirectories(None).DataDirectory() + os.sep + "playlist.xspf"
 
 class MainPanel(wx.Dialog):
-    def __init__(self, parent):
+    def __init__(self, parent, pathToPlugins=None):
+        if(not pathToPlugins==None):
+            RESFILE = os.path.join(pathToPlugins,'griddle') + os.sep + "layout_griddle.xml"
+            
         wx.Dialog.__init__(self, parent, -1, "griddle", size=(650,400), style=wx.FRAME_SHAPED|wx.RESIZE_BORDER) #STAY_ON_TOP)        
         self.parent = parent
         

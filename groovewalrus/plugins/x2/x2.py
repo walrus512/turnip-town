@@ -56,7 +56,10 @@ class GraphFrame(wx.Frame):
         wx.Frame.__init__(self, parent, -1, 'X2', size=(650,600))
 
 class MainPanel(wx.Dialog):
-    def __init__(self, parent):#, main_playlist, nb_playlist):
+    def __init__(self, parent, pathToPlugins=None):#, main_playlist, nb_playlist):
+        if(not pathToPlugins==None):
+            RESFILE = os.path.join(pathToPlugins,'x2') + os.sep + "layout_x2.xml"
+
         wx.Dialog.__init__(self, parent, -1, style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER)
         self.parent = parent
         self.nb_playlist = 0

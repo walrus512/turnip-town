@@ -136,7 +136,8 @@ class PluginLoader():
         exec ("from plugins." + plugin_name + " import " + plugin_name)
         #__import__(plugin_name)
         # show the window
-        exec("z= " + plugin_name + ".MainPanel(self.parent)")
+        print "Plugin Location: "+ PLUGINS_LOCATION
+        exec("z= " + plugin_name + ".MainPanel(self.parent, PLUGINS_LOCATION )")
         z.Show(True)
         return z
         

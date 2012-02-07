@@ -47,7 +47,11 @@ C_ID = 4
 C_TIME = 5
 
 class MainPanel(wx.Dialog):
-    def __init__(self, parent):
+    def __init__(self, parent, pathToPlugins=None):
+        if(not pathToPlugins==None):
+            RESFILE = os.path.join(pathToPlugins,'sync') + os.sep + "layout_sync.xml"
+            sync = os.path.join(pathToPlugins, 'sync') + os.sep
+        
         wx.Dialog.__init__(self, parent, -1, "Sync", size=(375,460), style=wx.FRAME_SHAPED|wx.RESIZE_BORDER) #STAY_ON_TOP)        
         self.parent = parent
         

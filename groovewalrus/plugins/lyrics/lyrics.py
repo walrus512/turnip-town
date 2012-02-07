@@ -42,7 +42,11 @@ LYRICS = os.path.join(os.getcwd(), 'plugins','lyrics') + os.sep
 RESFILE = os.path.join(os.getcwd(), 'plugins','lyrics') + os.sep + "layout_lyrics.xml"
 
 class MainPanel(wx.Dialog):
-    def __init__(self, parent):
+    def __init__(self, parent, pathToPlugins=None):
+        if(not pathToPlugins==None):
+            RESFILE = os.path.join(pathToPlugins,'lyrics') + os.sep + "layout_lyrics.xml"
+            LYRICS = os.path.join(pathToPlugins,'lyrics') + os.sep
+            
         wx.Dialog.__init__(self, parent, -1, "Lyrics", size=(375,460), style=wx.FRAME_SHAPED|wx.RESIZE_BORDER) #STAY_ON_TOP)        
         self.parent = parent
         #split the dialog and the dialog's panel, allows for reuse in non-dialogs

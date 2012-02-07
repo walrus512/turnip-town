@@ -32,7 +32,10 @@ MAIN_PLAYLIST = system_files.GetDirectories(None).DataDirectory() + os.sep + "pl
 FILEDB = system_files.GetDirectories(None).DatabaseLocation()
 
 class MainPanel(wx.Dialog):
-    def __init__(self, parent):
+    def __init__(self, parent, pathToPlugins=None):
+        if(not pathToPlugins==None):
+            RESFILE = os.path.join(pathToPlugins,'played') + os.sep + "layout_played.xml"
+        
         wx.Dialog.__init__(self, parent, -1, "played", size=(475,450), style=wx.FRAME_SHAPED|wx.RESIZE_BORDER) #STAY_ON_TOP)        
         self.parent = parent        
                
