@@ -30,7 +30,10 @@ from wx.lib.pubsub import pub
 RESFILE = os.path.join(os.getcwd(), 'plugins','messenger_plus') + os.sep + "layout_messenger_plus.xml"
 
 class MainPanel(wx.Dialog):
-    def __init__(self, parent):
+    def __init__(self, parent, pathToPlugins=None):
+        if(not pathToPlugins==None):
+            RESFILE = os.path.join(pathToPlugins,'messenger_plus') + os.sep + "layout_messenger_plus.xml"
+        
         wx.Dialog.__init__(self, parent, -1, "Messenger Plus", size=(375, 160), style=wx.FRAME_SHAPED|wx.RESIZE_BORDER) #STAY_ON_TOP)        
         self.parent = parent        
         #self.FILEDB = system_files.GetDirectories(self).DatabaseLocation()

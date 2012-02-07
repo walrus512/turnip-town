@@ -34,7 +34,11 @@ WEB_REMOTE = os.path.join(os.getcwd(), 'plugins','web_remote') + os.sep
 RESFILE = os.path.join(os.getcwd(), 'plugins','web_remote') + os.sep + "layout_web_remote.xml"
 
 class MainPanel(wx.Dialog):
-    def __init__(self, parent):
+    def __init__(self, parent, pathToPlugins=None):
+        if(not pathToPlugins==None):
+            RESFILE = os.path.join(pathToPlugins,'web_remote') + os.sep + "layout_web_remote.xml"
+            WEB_REMOTE = os.path.join(pathToPlugins,'web_remote') + os.sep
+        
         wx.Dialog.__init__(self, parent, -1, "Web Remote", size=(375,200), style=wx.FRAME_SHAPED|wx.RESIZE_BORDER) #STAY_ON_TOP)        
         self.parent = parent
 

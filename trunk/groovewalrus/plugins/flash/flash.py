@@ -48,7 +48,10 @@ RESFILE = os.path.join(os.getcwd(), 'plugins','flash') + os.sep + "layout_flash.
 #http://www.jiwa.fr/track/search/q=u2%20one&noRestricted=true
 
 class MainPanel(wx.Dialog):
-    def __init__(self, parent):
+    def __init__(self, parent, pathToPlugins=None):
+        if(not pathToPlugins==None):
+            RESFILE = os.path.join(pathToPlugins,'flash') + os.sep + "layout_flash.xml"
+            
         wx.Dialog.__init__(self, parent, -1, "Flash", size=(475,310), style=wx.FRAME_SHAPED|wx.RESIZE_BORDER) #STAY_ON_TOP)        
         self.parent = parent
         

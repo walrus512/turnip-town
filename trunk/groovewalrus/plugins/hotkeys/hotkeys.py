@@ -30,7 +30,10 @@ from main_utils import global_hotkeys
 RESFILE = os.path.join(os.getcwd(), 'plugins','hotkeys') + os.sep + "layout_hotkeys.xml"
 
 class MainPanel(wx.Dialog):
-    def __init__(self, parent):
+    def __init__(self, parent, pathToPlugins=None):
+        if(not pathToPlugins==None):
+            RESFILE = os.path.join(pathToPlugins,'hotkeys') + os.sep + "layout_hotkeys.xml"
+        
         wx.Dialog.__init__(self, parent, -1, "Hotkeys", size=(375,460), style=wx.FRAME_SHAPED|wx.RESIZE_BORDER) #STAY_ON_TOP)        
         self.parent = parent        
         self.FILEDB = system_files.GetDirectories(self).DatabaseLocation()

@@ -27,7 +27,10 @@ RESFILE = os.path.join(os.getcwd(), 'plugins','minimode') + os.sep + "layout_min
 GRAPHICS_LOCATION = ''
 
 class MainPanel(wx.Frame):
-    def __init__(self, parent):
+    def __init__(self, parent, pathToPlugins=None):
+        if(not pathToPlugins==None):
+            RESFILE = os.path.join(pathToPlugins,'minimode') + os.sep + "layout_minimode.xml"
+        
         wx.Frame.__init__(self, parent, -1, "minimode", size=(620,42), pos=((wx.GetDisplaySize()[0] / 2) - (310),-2), style=wx.FRAME_SHAPED | wx.STAY_ON_TOP | wx.FRAME_NO_TASKBAR)        
         
         self.parent = parent
