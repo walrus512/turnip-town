@@ -26,18 +26,18 @@ import time
 # Constants
 DOMAIN = "grooveshark.com"
 HOME_URL = "http://listen." + DOMAIN
-TOKEN_URL = "http://cowbell." + DOMAIN + "/more.php"
+TOKEN_URL = "https://cowbell." + DOMAIN + "/more.php"
 API_URL = "http://cowbell." + DOMAIN + "/more.php"
 SERVICE_URL = "http://cowbell." + DOMAIN + "/service.php"
 
 RANDOM_CHARS = "1234567890abcdef"
 
 CLIENT_NAME = "jsqueue"
-CLIENT_VERSION = "20120123"
-CLIENT_KEY = "helloScumbagSteve"
+CLIENT_VERSION = "20120206.01"
+CLIENT_KEY = "evilHackersAreInOurFuture"
 SEARCH_CLIENT_NAME = "htmlshark"
-SEARCH_CLIENT_VERSION = "20120123"
-SEARCH_CLIENT_KEY = "sloppyJoes"
+SEARCH_CLIENT_VERSION = "20120206"#.01"
+SEARCH_CLIENT_KEY = "orrlyHowdYouFindThis"
 COMM_TOKEN_KEY = "needMoreCowbell"
 
 RE_SESSION = re.compile('"sessionID":"\s*?([A-z0-9]+)"') #re.compile('sessionID:\s*?\'([A-z0-9]+)\',')

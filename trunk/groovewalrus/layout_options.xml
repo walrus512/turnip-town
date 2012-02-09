@@ -1,0 +1,655 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
+	<object class="wxPanel" name="m_pa_options">
+		<style>wxTAB_TRAVERSAL</style>
+		<size>725,541</size>
+		<object class="wxBoxSizer">
+			<orient>wxVERTICAL</orient>
+			<object class="sizeritem">
+				<option>1</option>
+				<flag>wxEXPAND</flag>
+				<border>5</border>
+				<object class="wxBoxSizer">
+					<orient>wxVERTICAL</orient>
+					<object class="sizeritem">
+						<option>1</option>
+						<flag>wxEXPAND | wxALL</flag>
+						<border>5</border>
+						<object class="wxNotebook" name="m_notebook1">
+							<style>wxNB_TOP</style>
+							<object class="notebookpage">
+								<label>General</label>
+								<selected>1</selected>
+								<object class="wxPanel" name="m_pa_general">
+									<style>wxTAB_TRAVERSAL</style>
+									<font>
+										<size>8</size>
+										<family>swiss</family>
+										<style>normal</style>
+										<weight>normal</weight>
+										<underlined>0</underlined>
+										<face>MS Shell Dlg 2</face>
+									</font>
+									<object class="wxBoxSizer">
+										<orient>wxVERTICAL</orient>
+										<object class="spacer">
+											<option>0</option>
+											<flag>wxEXPAND</flag>
+											<border>5</border>
+											<size>0,15</size>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxBoxSizer">
+												<orient>wxVERTICAL</orient>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALL</flag>
+													<border>5</border>
+													<object class="wxCheckBox" name="m_cb_add-all-clear">
+														<label>&apos;Add All&apos; clears playlist before adding</label>
+														<checked>0</checked>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALL</flag>
+													<border>5</border>
+													<object class="wxCheckBox" name="m_cb_search-double-click">
+														<label>Double-clicking searches for song</label>
+														<checked>0</checked>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALL</flag>
+													<border>5</border>
+													<object class="wxCheckBox" name="m_cb_search-results-drop-id">
+														<label>Drop id from search results</label>
+														<checked>0</checked>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALL</flag>
+													<border>5</border>
+													<object class="wxCheckBox" name="m_cb_tray-minimize">
+														<label>Minimize to tray</label>
+														<checked>0</checked>
+													</object>
+												</object>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxBoxSizer">
+												<orient>wxVERTICAL</orient>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALL</flag>
+													<border>5</border>
+													<object class="wxButton" name="m_bu_options_language">
+														<label>Select Language</label>
+														<default>0</default>
+													</object>
+												</object>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxStaticBoxSizer">
+												<orient>wxVERTICAL</orient>
+												<label>Downloads</label>
+												<object class="sizeritem">
+													<option>1</option>
+													<flag>wxEXPAND</flag>
+													<border>5</border>
+													<object class="wxBoxSizer">
+														<orient>wxHORIZONTAL</orient>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+															<border>5</border>
+															<object class="wxStaticText" name="m_staticText4">
+																<label>Save music to:</label>
+																<wrap>-1</wrap>
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>1</option>
+															<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+															<border>5</border>
+															<object class="wxTextCtrl" name="m_tc_download-directory">
+																<style>wxTE_READONLY</style>
+																<value></value>
+																<maxlength>0</maxlength>
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+															<border>5</border>
+															<object class="wxButton" name="m_bu_download_browse">
+																<label>Browse...</label>
+																<default>0</default>
+															</object>
+														</object>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>1</option>
+													<flag>wxEXPAND</flag>
+													<border>5</border>
+													<object class="wxBoxSizer">
+														<orient>wxVERTICAL</orient>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL</flag>
+															<border>5</border>
+															<object class="wxCheckBox" name="m_cb_download-autosave">
+																<label>Automatically save new music to your collection.</label>
+																<checked>0</checked>
+															</object>
+														</object>
+													</object>
+												</object>
+											</object>
+										</object>
+									</object>
+								</object>
+							</object>
+							<object class="notebookpage">
+								<label>Last.fm</label>
+								<selected>0</selected>
+								<object class="wxPanel" name="m_pa_lastfm">
+									<style>wxTAB_TRAVERSAL</style>
+									<font>
+										<size>8</size>
+										<family>swiss</family>
+										<style>normal</style>
+										<weight>normal</weight>
+										<underlined>0</underlined>
+										<face>MS Shell Dlg 2</face>
+									</font>
+									<object class="wxBoxSizer">
+										<orient>wxVERTICAL</orient>
+										<object class="spacer">
+											<option>0</option>
+											<flag>wxEXPAND</flag>
+											<border>5</border>
+											<size>0,15</size>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxStaticBoxSizer">
+												<orient>wxVERTICAL</orient>
+												<label>Last.fm Account</label>
+												<object class="sizeritem">
+													<option>1</option>
+													<flag>wxEXPAND</flag>
+													<border>5</border>
+													<object class="wxBoxSizer">
+														<orient>wxVERTICAL</orient>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxEXPAND</flag>
+															<border>5</border>
+															<object class="wxBoxSizer">
+																<orient>wxHORIZONTAL</orient>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																	<border>5</border>
+																	<object class="wxStaticText" name="m_staticText2">
+																		<style>wxALIGN_RIGHT</style>
+																		<size>120,-1</size>
+																		<label>Username</label>
+																		<wrap>-1</wrap>
+																	</object>
+																</object>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																	<border>5</border>
+																	<object class="wxTextCtrl" name="m_tc_lastfm-username">
+																		<size>200,-1</size>
+																		<value></value>
+																		<maxlength>0</maxlength>
+																	</object>
+																</object>
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxEXPAND</flag>
+															<border>5</border>
+															<object class="wxBoxSizer">
+																<orient>wxHORIZONTAL</orient>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																	<border>5</border>
+																	<object class="wxStaticText" name="m_staticText21">
+																		<style>wxALIGN_RIGHT</style>
+																		<size>120,-1</size>
+																		<label>Password</label>
+																		<wrap>-1</wrap>
+																	</object>
+																</object>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																	<border>5</border>
+																	<object class="wxTextCtrl" name="m_tc_lastfm-password">
+																		<style>wxTE_PASSWORD</style>
+																		<size>200,-1</size>
+																		<value></value>
+																		<maxlength>0</maxlength>
+																	</object>
+																</object>
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>1</option>
+															<flag>wxEXPAND</flag>
+															<border>5</border>
+															<object class="wxBoxSizer">
+																<orient>wxHORIZONTAL</orient>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																	<border>5</border>
+																	<object class="wxButton" name="m_bu_lastfm_save">
+																		<label>Save</label>
+																		<default>0</default>
+																	</object>
+																</object>
+																<object class="sizeritem">
+																	<option>0</option>
+																	<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																	<border>5</border>
+																	<object class="wxStaticText" name="m_st_lastfm_auth">
+																		<label>Status:</label>
+																		<wrap>-1</wrap>
+																	</object>
+																</object>
+															</object>
+														</object>
+													</object>
+												</object>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxALL</flag>
+											<border>5</border>
+											<object class="wxCheckBox" name="m_cb_lastfm-scrobble">
+												<label>Enable Scrobbling</label>
+												<checked>1</checked>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxALL</flag>
+											<border>5</border>
+											<object class="wxCheckBox" name="m_cb_lastfm-scrobble-album">
+												<label>Scrobble Album</label>
+												<checked>0</checked>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxALL|wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxRadioBox" name="m_rx_lastfm-scrobble-port">
+												<style>wxRA_SPECIFY_COLS</style>
+												<label>Scrobble Port</label>
+												<selection>1</selection>
+												<content>
+													<item>No Port</item>
+													<item>Default Port</item>
+												</content>
+												<dimension>1</dimension>
+											</object>
+										</object>
+									</object>
+								</object>
+							</object>
+							<object class="notebookpage">
+								<label>Streaming</label>
+								<selected>0</selected>
+								<object class="wxPanel" name="m_pa_streaming">
+									<style>wxTAB_TRAVERSAL</style>
+									<font>
+										<size>8</size>
+										<family>swiss</family>
+										<style>normal</style>
+										<weight>normal</weight>
+										<underlined>0</underlined>
+										<face>MS Shell Dlg 2</face>
+									</font>
+									<object class="wxBoxSizer">
+										<orient>wxVERTICAL</orient>
+										<object class="spacer">
+											<option>0</option>
+											<flag>wxEXPAND</flag>
+											<border>5</border>
+											<size>0,15</size>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxALL</flag>
+											<border>5</border>
+											<object class="wxCheckBox" name="m_cb_options_prefetch">
+												<label>Pre-fetch songs (loads next song while current song is playing).</label>
+												<checked>0</checked>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxStaticBoxSizer">
+												<orient>wxVERTICAL</orient>
+												<label>Streaming Sources</label>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALL</flag>
+													<border>5</border>
+													<object class="wxCheckListBox" name="m_checkList1">
+														<content>
+															<item>Grooveshark</item>
+														</content>
+													</object>
+												</object>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxStaticBoxSizer">
+												<orient>wxVERTICAL</orient>
+												<label>Song Cache</label>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxEXPAND</flag>
+													<border>5</border>
+													<object class="wxBoxSizer">
+														<orient>wxHORIZONTAL</orient>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+															<border>5</border>
+															<object class="wxStaticText" name="m_staticText5">
+																<label>Cache Size (songs):</label>
+																<wrap>-1</wrap>
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>1</option>
+															<flag>wxALL</flag>
+															<border>5</border>
+															<object class="wxSlider" name="m_sl_options_cache_size">
+																<style>wxSL_BOTH|wxSL_HORIZONTAL|wxSL_LABELS</style>
+																<value>50</value>
+																<min>10</min>
+																<max>250</max>
+															</object>
+														</object>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxEXPAND</flag>
+													<border>5</border>
+													<object class="wxBoxSizer">
+														<orient>wxHORIZONTAL</orient>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL</flag>
+															<border>5</border>
+															<object class="wxButton" name="m_bu_options_set_cache">
+																<label>Set Size</label>
+																<default>0</default>
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALL</flag>
+															<border>5</border>
+															<object class="wxButton" name="m_bu_options_cache_clear">
+																<label>Clear Cache</label>
+																<default>0</default>
+															</object>
+														</object>
+													</object>
+												</object>
+											</object>
+										</object>
+									</object>
+								</object>
+							</object>
+							<object class="notebookpage">
+								<label>Proxy</label>
+								<selected>0</selected>
+								<object class="wxPanel" name="m_pa_proxy">
+									<style>wxTAB_TRAVERSAL</style>
+									<font>
+										<size>8</size>
+										<family>swiss</family>
+										<style>normal</style>
+										<weight>normal</weight>
+										<underlined>0</underlined>
+										<face>MS Shell Dlg 2</face>
+									</font>
+									<object class="wxBoxSizer">
+										<orient>wxVERTICAL</orient>
+										<object class="spacer">
+											<option>0</option>
+											<flag>wxEXPAND</flag>
+											<border>5</border>
+											<size>0,15</size>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxBoxSizer">
+												<orient>wxHORIZONTAL</orient>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+													<border>5</border>
+													<object class="wxStaticText" name="m_staticText6">
+														<label>Proxy URL</label>
+														<wrap>-1</wrap>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>1</option>
+													<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+													<border>5</border>
+													<object class="wxTextCtrl" name="m_tc_proxy-url">
+														<value></value>
+														<maxlength>0</maxlength>
+													</object>
+												</object>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxALL|wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxStaticText" name="m_staticText7">
+												<label>eg. http://username:password@123.456.789.000:80</label>
+												<wrap>-1</wrap>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxALL</flag>
+											<border>5</border>
+											<object class="wxStaticText" name="m_staticText8">
+												<label>eg. http://123.456.789.000:80</label>
+												<wrap>-1</wrap>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxALL</flag>
+											<border>5</border>
+											<object class="wxCheckBox" name="m_cb_proxy-enabled">
+												<label>Enable Proxy</label>
+												<checked>0</checked>
+											</object>
+										</object>
+									</object>
+								</object>
+							</object>
+							<object class="notebookpage">
+								<label>Advanced</label>
+								<selected>0</selected>
+								<object class="wxPanel" name="m_pa_advanced">
+									<style>wxTAB_TRAVERSAL</style>
+									<font>
+										<size>8</size>
+										<family>swiss</family>
+										<style>normal</style>
+										<weight>normal</weight>
+										<underlined>0</underlined>
+										<face>MS Shell Dlg 2</face>
+									</font>
+									<object class="wxBoxSizer">
+										<orient>wxVERTICAL</orient>
+										<object class="spacer">
+											<option>0</option>
+											<flag>wxEXPAND</flag>
+											<border>5</border>
+											<size>0,15</size>
+										</object>
+										<object class="sizeritem">
+											<option>1</option>
+											<flag>wxALL|wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxListCtrl" name="m_lc_advanced_options">
+												<style>wxLC_REPORT|wxLC_SINGLE_SEL</style>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxEXPAND</flag>
+											<border>5</border>
+											<object class="wxBoxSizer">
+												<orient>wxHORIZONTAL</orient>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+													<border>5</border>
+													<object class="wxStaticText" name="m_staticText10">
+														<label>Name</label>
+														<wrap>-1</wrap>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>1</option>
+													<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+													<border>5</border>
+													<object class="wxTextCtrl" name="m_tc_new_name">
+														<value></value>
+														<maxlength>0</maxlength>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+													<border>5</border>
+													<object class="wxStaticText" name="m_staticText11">
+														<label>Value</label>
+														<wrap>-1</wrap>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>1</option>
+													<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+													<border>5</border>
+													<object class="wxTextCtrl" name="m_tc_new_value">
+														<value></value>
+														<maxlength>0</maxlength>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+													<border>5</border>
+													<object class="wxButton" name="m_bu_add_option">
+														<label>Add/Update Option</label>
+														<default>0</default>
+													</object>
+												</object>
+											</object>
+										</object>
+									</object>
+								</object>
+							</object>
+						</object>
+					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxEXPAND</flag>
+				<border>5</border>
+				<object class="wxBoxSizer">
+					<orient>wxVERTICAL</orient>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxEXPAND</flag>
+						<border>5</border>
+						<object class="wxBoxSizer">
+							<orient>wxHORIZONTAL</orient>
+							<object class="spacer">
+								<option>1</option>
+								<flag>wxEXPAND</flag>
+								<border>5</border>
+								<size>0,0</size>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+								<border>5</border>
+								<object class="wxButton" name="m_bu_ok">
+									<label>OK</label>
+									<default>0</default>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALL</flag>
+								<border>5</border>
+								<object class="wxButton" name="m_bu_cancel">
+									<label>Cancel</label>
+									<default>0</default>
+								</object>
+							</object>
+							<object class="spacer">
+								<option>0</option>
+								<flag>wxEXPAND</flag>
+								<border>5</border>
+								<size>10,0</size>
+							</object>
+						</object>
+					</object>
+				</object>
+			</object>
+		</object>
+	</object>
+</resource>

@@ -23,7 +23,7 @@ import wx
 import os
 if os.name == 'nt':
     import win32con
-from main_windows import options_window
+from main_utils import options
 from main_utils import system_files
     
 class GlobalHotkeys():
@@ -60,7 +60,7 @@ class GlobalHotkeys():
         
         self.FILEDB = system_files.GetDirectories(self).DatabaseLocation()
         # hotkey-modifier, hotkey-previous, hotkey-play, hotkey-next, hotkey-stop
-        hotkey_modifier = options_window.GetSetting('hotkey-modifier', self.FILEDB)
+        hotkey_modifier = options.GetSetting('hotkey-modifier', self.FILEDB)
         if hotkey_modifier == '0':
             if os.name == 'nt':
                 hotkey_modifier = win32con.MOD_CONTROL
@@ -77,15 +77,15 @@ class GlobalHotkeys():
             else:
                 hotkey_modifier = wx.MOD_WIN
                  
-        h1 = options_window.GetSetting('hotkey-previous', self.FILEDB)
-        h2 = options_window.GetSetting('hotkey-play', self.FILEDB)
-        h3 = options_window.GetSetting('hotkey-stop', self.FILEDB)
-        h4 = options_window.GetSetting('hotkey-next', self.FILEDB)
-        h5 = options_window.GetSetting('hotkey-volume-down', self.FILEDB)
-        h6 = options_window.GetSetting('hotkey-volume-up', self.FILEDB)
-        h7 = options_window.GetSetting('hotkey-volume-mute', self.FILEDB)
-        h8 = options_window.GetSetting('hotkey-shuffle', self.FILEDB)
-        h9 = options_window.GetSetting('hotkey-repeat', self.FILEDB)
+        h1 = options.GetSetting('hotkey-previous', self.FILEDB)
+        h2 = options.GetSetting('hotkey-play', self.FILEDB)
+        h3 = options.GetSetting('hotkey-stop', self.FILEDB)
+        h4 = options.GetSetting('hotkey-next', self.FILEDB)
+        h5 = options.GetSetting('hotkey-volume-down', self.FILEDB)
+        h6 = options.GetSetting('hotkey-volume-up', self.FILEDB)
+        h7 = options.GetSetting('hotkey-volume-mute', self.FILEDB)
+        h8 = options.GetSetting('hotkey-shuffle', self.FILEDB)
+        h9 = options.GetSetting('hotkey-repeat', self.FILEDB)
         
         if (hotkey_modifier == False) & (h1 == False):
             #use defaults
@@ -120,7 +120,7 @@ class GlobalHotkeys():
     def RegisterHotkeys(self, modc, h1, h2, h3, h4, h5, h6, h7, h8, h9):
         #assign the keys
         the_keys = [h1, h2, h3, h4, h5, h6, h7, h8, h9]
-        mod_type = options_window.GetSetting('hotkey-modifier-type', self.FILEDB)
+        mod_type = options.GetSetting('hotkey-modifier-type', self.FILEDB)
         if (mod_type == '1'):
             counter  = 100
             for x in the_keys:

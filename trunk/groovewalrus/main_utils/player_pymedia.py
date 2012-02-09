@@ -26,7 +26,7 @@ import time
 import os
 
 from threading import Thread
-from main_windows import options_window
+from main_utils import options
 
 EMULATE=0
 BUFFER_SIZE = 320000
@@ -82,7 +82,7 @@ class PlayThread(Thread):
         while os.path.isfile(self.file_name) != True:
             time.sleep(1)
             
-        get_buffer = options_window.GetSetting('buffer-size-bytes', self.parent.FILEDB)
+        get_buffer = options.GetSetting('buffer-size-bytes', self.parent.FILEDB)
         if get_buffer != False:
             buffer_sz = int(get_buffer)
         else:

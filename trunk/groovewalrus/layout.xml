@@ -3063,6 +3063,10 @@
 					<help></help>
 				</object>
 				<object class="separator" />
+				<object class="wxMenuItem" name="m_mi_options">
+					<label>Options...</label>
+					<help></help>
+				</object>
 				<object class="wxMenuItem" name="m_mi_advanced_options">
 					<label>Advanced Options...</label>
 					<help></help>
