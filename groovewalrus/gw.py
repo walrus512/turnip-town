@@ -34,7 +34,7 @@ print pub.VERSION_STR
 #from wx.lib.pubsub import Publisher
 #pub = Publisher()
 import wx.lib.mixins.listctrl as listmix
-from wx.lib import langlistctrl
+
 import version_update_main
 
 import os
@@ -68,6 +68,7 @@ if os.name == 'nt':
 from main_utils import string_tools
 from main_utils import hotkeys
 from main_utils import global_hotkeys
+from main_utils import options
 
 #---
 try: 
@@ -94,7 +95,7 @@ from main_windows import search_window
 from main_windows import options_window
 from main_windows import details_window
 from main_windows import song_collection
-from main_windows import advanced_options
+#from main_windows import advanced_options
 from main_windows import about_window
 
 from main_tabs import list_sifter_tab
@@ -130,7 +131,7 @@ from main_thirdp import urllib_proxy
 #from plugins.hotkeys import hotkeys
 #from plugins.messenger_plus import messenger_plus
 
-PROGRAM_VERSION = "0.355"
+PROGRAM_VERSION = "0.360"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -280,7 +281,7 @@ class MainFrame(wx.Frame):
           ##  del self.l18n
         
         self.FILEDB = system_files.GetDirectories(self).DatabaseLocation()
-        lang_set = options_window.GetSetting('language-selected', self.FILEDB)
+        lang_set = options.GetSetting('language-selected', self.FILEDB)
 
         if (lang_set != False): #& (lang != None):
             try:
@@ -291,7 +292,7 @@ class MainFrame(wx.Frame):
         #if lang == None:
         else:
             lang = wx.LANGUAGE_DEFAULT
-        ignore_locale = options_window.GetSetting('locale-ignore', self.FILEDB)
+        ignore_locale = options.GetSetting('locale-ignore', self.FILEDB)
         if (ignore_locale == False) | (ignore_locale != "1"):
             wx.Locale.AddCatalogLookupPathPrefix(os.path.join(SYSLOC, 'locale'))
             self.l18n = wx.Locale(lang)
@@ -458,8 +459,8 @@ class MainPanel(wx.Panel):
         wx.EVT_MAXIMIZE(self.parent, self.DynamicResizePlaylist)
         
         # background image --------------------
-        use_background = options_window.GetSetting('background-use-graphic', self.FILEDB)
-        self.background_file = options_window.GetSetting('background-graphic', self.FILEDB)
+        use_background = options.GetSetting('background-use-graphic', self.FILEDB)
+        self.background_file = options.GetSetting('background-graphic', self.FILEDB)
         if self.background_file != False:
             if (use_background == '1') & (os.path.isfile(self.background_file)):            
                 self.panel.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
@@ -524,7 +525,7 @@ class MainPanel(wx.Panel):
         self.Bind(wx.EVT_BUTTON, self.OnSaveOptionsClick, id=xrc.XRCID('m_bu_options_save'))        
         self.Bind(wx.EVT_BUTTON, self.OnSetRecordDirClick, id=xrc.XRCID('m_bu_options_record_dir'))
         self.Bind(wx.EVT_BUTTON, self.SaveOptions, id=xrc.XRCID('m_bu_options_set_cache'))
-        self.Bind(wx.EVT_BUTTON, self.SetLanguage, id=xrc.XRCID('m_bu_options_language'))
+        #self.Bind(wx.EVT_BUTTON, self.SetLanguage, id=xrc.XRCID('m_bu_options_language'))
         #self.Bind(wx.EVT_RADIOBOX, self.SetBackend, id=xrc.XRCID('m_rx_options_backend'))
         #self.Bind(wx.EVT_CHOICE, self.SetBackend, id=xrc.XRCID('m_ch_options_wxbackend'))
         
@@ -669,7 +670,8 @@ class MainPanel(wx.Panel):
         self.parent.Bind(wx.EVT_MENU, self.tab_song_collection.OnSColAddClick, id=xrc.XRCID("m_mi_song_collection"))
         self.parent.Bind(wx.EVT_MENU, self.ImportGroovesharkPlaylist, id=xrc.XRCID("m_mi_import_grooveshark"))
         #self.parent.Bind(wx.EVT_MENU, self.SetLanguage, id=xrc.XRCID("m_mi_select_language"))
-        self.parent.Bind(wx.EVT_MENU, self.OnLoadAdvancedOptions, id=xrc.XRCID("m_mi_advanced_options"))
+        self.parent.Bind(wx.EVT_MENU, self.OnLoadOptions, id=xrc.XRCID("m_mi_options"))
+#        self.parent.Bind(wx.EVT_MENU, self.OnLoadAdvancedOptions, id=xrc.XRCID("m_mi_advanced_options"))
         
         #
         self.lastfm_toggle = self.parent.menu_tools.Append(7666, "Last.fm Scrobbling", kind=wx.ITEM_CHECK)
@@ -716,7 +718,7 @@ class MainPanel(wx.Panel):
         if os.path.isfile('disable_set_volume.txt'):
             pass
         else:
-            setting_volume = options_window.GetSetting('main-volume', self.FILEDB)
+            setting_volume = options.GetSetting('main-volume', self.FILEDB)
             if setting_volume != False:
                 self.SetVolume(int(setting_volume))
             else:
@@ -802,10 +804,10 @@ class MainPanel(wx.Panel):
 #-----------------------------------------------------------            
     # tinysong api key
     def TinysongKey(self, event=None):
-        if (options_window.GetSetting('tingsong-api-key', self.FILEDB) == False) | (event != None):
+        if (options.GetSetting('tingsong-api-key', self.FILEDB) == False) | (event != None):
             dlg = wx.TextEntryDialog(self, 'You need a Tinysong api key (from http://tinysong.com):', 'TinySong API Key')
             if dlg.ShowModal() == wx.ID_OK:
-                options_window.SetSetting('tingsong-api-key', dlg.GetValue(), self.FILEDB)
+                options.SetSetting('tingsong-api-key', dlg.GetValue(), self.FILEDB)
             dlg.Destroy()
             
     def ImageThreadSet(self, event):
@@ -915,8 +917,8 @@ class MainPanel(wx.Panel):
     def UpdateMessengerStatus(self, artist, song):        
         # update xfire status
         #artist=cs.artist, song=cs.song
-        messenger_enabled = options_window.GetSetting('messenger-enabled', self.FILEDB)
-        messenger_path = options_window.GetSetting('messenger-path', self.FILEDB)
+        messenger_enabled = options.GetSetting('messenger-enabled', self.FILEDB)
+        messenger_path = options.GetSetting('messenger-path', self.FILEDB)
         
         if (messenger_enabled != False) & (messenger_path != False):
             if (messenger_enabled == '1'):
@@ -979,8 +981,8 @@ class MainPanel(wx.Panel):
             self.ProcessEvent(event)
             #refresh it
             self.parent.Refresh()
-            options_window.SetSetting('background-color', str(rand_col), self.FILEDB)
-            options_window.SetSetting('background-use-graphic', '0', self.FILEDB)
+            options.SetSetting('background-color', str(rand_col), self.FILEDB)
+            options.SetSetting('background-use-graphic', '0', self.FILEDB)
         dlg.Destroy()
         
     def OnResize(self, event):
@@ -991,7 +993,7 @@ class MainPanel(wx.Panel):
             
     def OnEraseBackground(self, event):
         """ Add a picture to the background """             
-        if (os.path.isfile(self.background_file)) & (options_window.GetSetting('background-use-graphic', self.FILEDB) == '1'):
+        if (os.path.isfile(self.background_file)) & (options.GetSetting('background-use-graphic', self.FILEDB) == '1'):
             # yanked from ColourDB.py
             dc = event.GetDC()
         
@@ -1027,11 +1029,11 @@ class MainPanel(wx.Panel):
             #self.lc_playlist.DeleteAllItems()
             for path in paths:
                 self.background_file = path
-                options_window.SetSetting('background-use-graphic', '1', self.FILEDB)
+                options.SetSetting('background-use-graphic', '1', self.FILEDB)
                 self.panel.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
                 self.panel.Bind(wx.EVT_ERASE_BACKGROUND, self.OnEraseBackground)
                 self.Refresh()                
-                options_window.SetSetting('background-graphic', path, self.FILEDB)
+                options.SetSetting('background-graphic', path, self.FILEDB)
         dlg.Destroy()
     
     # ---------------------------------
@@ -1047,7 +1049,7 @@ class MainPanel(wx.Panel):
         
         if self.use_backend == 'pymedia':
             try:
-                outy = options_window.GetSetting('device-output', self.FILEDB)
+                outy = options.GetSetting('device-output', self.FILEDB)
                 if outy != False:
                     output_device = outy
                 self.player = player_pymedia.Player(self, output_device)
@@ -1061,42 +1063,7 @@ class MainPanel(wx.Panel):
         #else:
         #    self.player = player_pyglet.Player(self)
             
-    def SetLanguage(self, event):
-        dlg = wx.Dialog(self, -1, '', size=(230, 300))
-        l_dir = os.path.join(SYSLOC, 'locale')
-        langs_arr = []
-        for f in os.listdir(l_dir):
-            if os.path.isdir(os.path.join(l_dir, f)):
-                try:
-                    yy= wx.Locale.FindLanguageInfo(f)
-                    langs_arr.append(yy.Language)
-                except Exception, expt:
-                    pass
-        langs = tuple(langs_arr)
-        lang = wx.LANGUAGE_DEFAULT
-        
-        #controls
-        self.langCtrl = langlistctrl.LanguageListCtrl(dlg, -1, filter=langlistctrl.LC_ONLY, only=langs)#, select=lang)
-        but_ok = wx.Button(dlg, wx.ID_OK)
-        but_cancel = wx.Button(dlg, wx.ID_CANCEL)
-        
-        #sizers
-        sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer2 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer.Add(self.langCtrl, 1, wx.EXPAND|wx.ALL, 5)
-        sizer2.Add(but_ok, 0, wx.EXPAND|wx.ALL, 5)
-        sizer2.Add(but_cancel, 0, wx.EXPAND|wx.ALL, 5)
-        sizer.Add(sizer2, 0, wx.EXPAND|wx.ALL, 5)
-        dlg.SetSizer(sizer)
-        
-        if dlg.ShowModal() == wx.ID_OK:
-            # get selected
-            lang = self.langCtrl.GetLanguage()
-            # save to database
-            options_window.SetSetting('language-selected', str(lang), self.FILEDB)
-            # update text
-            ##self.parent.initI18n(lang)
-        dlg.Destroy()
+
                     
     def OnClearCacheClick(self, event):
         #clear the cache
@@ -1106,10 +1073,15 @@ class MainPanel(wx.Panel):
     def OpenWebsite(self, event):        
         default_app_open.dopen('http://groove-walrus.turnip-town.net')
         
-    def OnLoadAdvancedOptions(self, event):
+    def OnLoadOptions(self, event):
         # show options window
-        song_db_window = advanced_options.AdvancedOptionsWindow(self.parent)
+        song_db_window = options_window.OptionsWindow(self.parent)
         song_db_window.ShowMe()
+        
+    #def OnLoadAdvancedOptions(self, event):
+        # show options window
+        #song_db_window = advanced_options.AdvancedOptionsWindow(self.parent)
+        #song_db_window.ShowMe()
         
     def SetNetworkStatus(self, site, status):
         """ sets the color of the status buttons """
@@ -1160,9 +1132,9 @@ class MainPanel(wx.Panel):
                 
     def GetProxy(self):
         proxy = None
-        proxy_enabled = options_window.GetSetting('proxy-enabled', self.FILEDB)
+        proxy_enabled = options.GetSetting('proxy-enabled', self.FILEDB)
         if proxy_enabled == '1':
-            is_proxy = options_window.GetSetting('proxy-url', self.FILEDB)
+            is_proxy = options.GetSetting('proxy-url', self.FILEDB)
             if is_proxy:
                 print 'proxy: ' + is_proxy
                 proxy = is_proxy
@@ -1549,7 +1521,7 @@ class MainPanel(wx.Panel):
         if self.update_event == False:
             self.SavePlaylist(self.main_playlist_location)
             self.SaveOptions(event)
-            options_window.SetSetting('main-volume', self.sl_volume.GetValue(), self.FILEDB)
+            options.SetSetting('main-volume', self.sl_volume.GetValue(), self.FILEDB)
             
         try:
             self.parent.tray_icon.Destroy()
@@ -2989,15 +2961,15 @@ class MainPanel(wx.Panel):
         if os.path.exists(self.image_save_location + file_name) == False:
             #print art_url
             try:
-                proxy = options_window.GetSetting('proxy-url', self.FILEDB)
-                proxy_enabled = options_window.GetSetting('proxy-enabled', self.FILEDB)
-                if proxy_enabled == '1':
-                    if proxy:
-                        print 'proxy: ' + proxy
-                        urlprx = urllib_proxy.UrllibProxy(proxy)
-                        urlprx.urlretrieve(art_url, self.image_save_location + file_name)
-                else:
-                    urllib.urlretrieve(art_url, self.image_save_location + file_name)            
+                #proxy = options.GetSetting('proxy-url', self.FILEDB)
+                #proxy_enabled = options.GetSetting('proxy-enabled', self.FILEDB)
+                #if proxy_enabled == '1':
+                #    if proxy:
+                #        print 'proxy: ' + proxy
+                #        urlprx = urllib_proxy.UrllibProxy(proxy)
+                #        urlprx.urlretrieve(art_url, self.image_save_location + file_name)
+                #else:
+                urllib.urlretrieve(art_url, self.image_save_location + file_name)            
                 urllib.urlcleanup()
             except Exception, expt:
                 print "SaveSongArt: " + str(Exception)+str(expt)
@@ -3404,9 +3376,9 @@ class FileThread(Thread):
         keyandserver = self.GetStreamKeyAndServer()
         
         proxy = False
-        proxy_enabled = options_window.GetSetting('proxy-enabled', self.parent.FILEDB)
+        proxy_enabled = options.GetSetting('proxy-enabled', self.parent.FILEDB)
         if proxy_enabled == '1':
-            is_proxy = options_window.GetSetting('proxy-url', self.parent.FILEDB)
+            is_proxy = options.GetSetting('proxy-url', self.parent.FILEDB)
             if is_proxy:
                 print 'proxy: ' + is_proxy
                 proxy = urllib_proxy.UrllibProxy(is_proxy)

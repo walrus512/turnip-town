@@ -27,7 +27,7 @@ from threading import Thread
 from main_utils import audioscrobbler_lite
 from main_utils import file_cache
 from main_thirdp import google_translation
-from main_windows import options_window
+from main_utils import options
 
 EVT_NEW_IMAGE = wx.PyEventBinder(wx.NewEventType(), 0)
 EVT_NEW_IMAGE2 = wx.PyEventBinder(wx.NewEventType(), 0)
@@ -97,7 +97,7 @@ class BiographyTab(wx.ScrolledWindow):
         # get albumcover for artist/song from last.fm
         bio_text_str = StripTags(bio_text)
         tranny = 'en'
-        lang_set = options_window.GetSetting('language-selected', self.parent.FILEDB)
+        lang_set = options.GetSetting('language-selected', self.parent.FILEDB)
         if (lang_set != False): #& (lang != None):
             tranny = wx.Locale(int(lang_set)).GetCanonicalName()[0:2]
         if tranny != 'en':
