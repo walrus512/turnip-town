@@ -41,7 +41,6 @@ class PluginLoader():
     
     def LoadPlugins(self):
         base_path = self.parent.working_directory + os.sep + "plugins" + os.sep #PLUGINS_LOCATION
-        self.main_sizer = wx.BoxSizer(wx.VERTICAL)
         #self.main_sizer = wx.BoxSizer(wx.VERTICAL)
         self.id_array = {}
         id_counter = 1100
@@ -67,10 +66,6 @@ class PluginLoader():
                 xml_dict = xml_utils().get_generic_settings(root + os.sep + "info_" + dir_name + ".xml")
                 hot_key = ''
                 if 'title' in xml_dict:
-                    t = wx.StaticText(self.parent.pa_options_plugins, -1, xml_dict['title'], size=(120,15), style=wx.ALIGN_RIGHT)
-                    font = wx.Font(8, wx.NORMAL, wx.NORMAL, wx.BOLD)
-                    t.SetFont(font)
-                    btnsizer.Add(t, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)
                     #t = wx.StaticText(self.parent.pa_options_plugins, -1, xml_dict['title'], size=(120,15), style=wx.ALIGN_RIGHT)
                     #font = wx.Font(8, wx.NORMAL, wx.NORMAL, wx.BOLD)
                     #t.SetFont(font)
@@ -80,18 +75,12 @@ class PluginLoader():
                     acc_arr.append((id_counter, xml_dict['title'][0].upper()))
                 
                 # plugin button
-                bmp = wx.Bitmap(root + os.sep + "icon_" + dir_name + ".png", wx.BITMAP_TYPE_ANY)
-                b = wx.BitmapButton(self.parent.pa_options_plugins, id_counter, bmp) #, (20, 20), (bmp.GetWidth()+10, bmp.GetHeight()+10))                
-                btnsizer.Add(b, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)
-                self.parent.Bind(wx.EVT_BUTTON, self.LoadPluginWindow, b)
                 #bmp = wx.Bitmap(root + os.sep + "icon_" + dir_name + ".png", wx.BITMAP_TYPE_ANY)
                 #b = wx.BitmapButton(self.parent.pa_options_plugins, id_counter, bmp) #, (20, 20), (bmp.GetWidth()+10, bmp.GetHeight()+10))                
                 #btnsizer.Add(b, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)
                 #self.parent.Bind(wx.EVT_BUTTON, self.LoadPluginWindow, b)
                     
-                if 'description' in xml_dict:
-                    d = wx.StaticText(self.parent.pa_options_plugins, -1, xml_dict['description'] + hot_key)
-                    btnsizer.Add(d, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)
+
                 #if 'description' in xml_dict:
                 #    d = wx.StaticText(self.parent.pa_options_plugins, -1, xml_dict['description'] + hot_key)
                 #    btnsizer.Add(d, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)
@@ -121,7 +110,6 @@ class PluginLoader():
                 
             counter = 0
             
-        self.parent.pa_options_plugins.SetSizer(self.main_sizer)
         #self.parent.pa_options_plugins.SetSizer(self.main_sizer)
         
         
@@ -161,5 +149,4 @@ class PluginLoader():
         if len(settings_dict) >= 1:
             if settings_dict.has_key('autoload'):
                 autoload = int(settings_dict['autoload'])
-        return autoload
         return autoload
