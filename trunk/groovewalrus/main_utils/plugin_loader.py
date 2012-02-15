@@ -86,7 +86,6 @@ class PluginLoader():
                 #    btnsizer.Add(d, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5)
                     
                 # sizer
-                self.main_sizer.Add(btnsizer, 0, wx.EXPAND|wx.ALL, 0)       
                 #self.main_sizer.Add(btnsizer, 0, wx.EXPAND|wx.ALL, 0)       
                                 
                 #add to plug-ins menu
