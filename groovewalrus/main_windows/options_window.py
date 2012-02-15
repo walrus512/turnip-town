@@ -20,49 +20,33 @@ Place, Suite 330, Boston, MA 02111-1307 USA
 """
 
 import wx
-import sqlite3
 import wx.xrc as xrc
-from wx.lib import langlistctrl
-
-from main_utils.read_write_xml import xml_utils
-from main_utils import system_files
-from main_utils import string_tools
-from main_utils import options
-
 import sys, os
-
-OPTIONS_ARR = [ 'last_password',
-                'last_user',
-                'list_clear',
-                #'alternate_source',
-                'search_noid',
-                'double_click',
-                'win_pos',
-                'gs_wait',
-                'song_time',
-                'scrobble_port',
-                'scrobble_album',
-                #'bitrate', 
-                'record_dir',
-                'tray',
-                'autosave',
-                'scrobble',
-                'prefetch',
-                'backend',
-                'wxbackend'
-                ]
+from wx.lib import langlistctrl
+from main_utils import system_files
+from main_utils import options
+from main_utils import file_cache
 
 OP_ARR = [
+    #General
     ['m_cb_add-all-clear', 0],
     ['m_cb_search-double-click', 0],
     ['m_cb_search-results-drop-id', 0],
     ['m_cb_tray-minimize', 0],
     ['m_tc_download-directory', ''],
     ['m_cb_download-autosave', 0],
-    #
+    #Last.fm
     ['m_tc_lastfm-username', ''],
     ['m_tc_lastfm-password', ''],
+    ['m_cb_lastfm-scrobble', 1],
+    ['m_cb_lastfm-scrobble-album', 0],
+    ['m_cb_lastfm-scrobble-port', 1],
+    #Proxy
     ['m_tc_proxy-url', ''],
+    ['m_cb_proxy-enabled', ''],
+    #streaming
+    ['m_cb_prefetch-songs', 1],
+    ['m_sl_cache-size', 50],
     ]
                 
                 
@@ -88,9 +72,9 @@ class OptionsWindow(wx.Dialog):
         panel = res.LoadPanel(self, "m_pa_options")
 
         # control references --------------------
-        self.lb_options = xrc.XRCCTRL(self, 'm_lb_options')
+        #self.lb_options = xrc.XRCCTRL(self, 'm_lb_options')
         self.lc_advanced_options = xrc.XRCCTRL(self, 'm_lc_advanced_options')
-        #self.tc_lastfm_username = xrc.XRCCTRL(self, 'm_tc_lastfm_username')
+        self.st_lastfm_status = xrc.XRCCTRL(self, 'm_st_lastfm_status')
         #self.tc_lastfm_password = xrc.XRCCTRL(self, 'm_tc_lastfm_password')
         #self.st_option_name = xrc.XRCCTRL(self, 'm_st_option_name')
         self.tc_new_name = xrc.XRCCTRL(self, 'm_tc_new_name')
@@ -106,7 +90,9 @@ class OptionsWindow(wx.Dialog):
         self.Bind(wx.EVT_BUTTON, self.OnSaveClick, id=xrc.XRCID('m_bu_ok'))
         self.Bind(wx.EVT_BUTTON, self.OnExitClick, id=xrc.XRCID('m_bu_cancel'))
         self.Bind(wx.EVT_BUTTON, self.SetLanguage, id=xrc.XRCID('m_bu_options_language'))
-        
+        self.Bind(wx.EVT_BUTTON, self.OnBrowseClick, id=xrc.XRCID('m_bu_download_browse'))
+        self.Bind(wx.EVT_BUTTON, self.OnClearCacheClick, id=xrc.XRCID('m_bu_cache_clear'))
+        self.Bind(wx.EVT_BUTTON, self.OnLastfmTestClick, id=xrc.XRCID('m_bu_lastfm_test'))
             
         # set layout --------------
         sizer = wx.BoxSizer(wx.VERTICAL)
@@ -140,6 +126,7 @@ class OptionsWindow(wx.Dialog):
         
     def OnSaveClick(self, event):
         self.SaveOptions()
+        self.SetScrobbleMenuItem()
         self.OnExitClick(None)
          
     def OnExitClick(self, event):
@@ -177,9 +164,6 @@ class OptionsWindow(wx.Dialog):
         #set new value        
         self.tc_new_name.SetLabel(option_name)
         self.tc_new_value.SetValue(option_value)
-        
-    def OnUpdateOption(self, event):
-        print 'frrf'
         
     def OnAddOption(self, event):
         setting_name = self.tc_new_name.GetLabel()
@@ -238,150 +222,31 @@ class OptionsWindow(wx.Dialog):
             ##self.parent.initI18n(lang)
         dlg.Destroy()
         
-              
-                
+# --------------------------------------------------------- 
+    def OnBrowseClick(self, event):
+        dialog = wx.DirDialog(None, "Choose a directory:")
+        if dialog.ShowModal() == wx.ID_OK:
+            #print dialog.GetPath()
+            self.tc_download_directory.SetValue(dialog.GetPath())
+            #self.SaveOptions(None)
+        dialog.Destroy()
+        
+# --------------------------------------------------------- 
+    def OnClearCacheClick(self, event):
+        #clear the cache
+        temp_dir = system_files.GetDirectories(self).TempDirectory()
+        file_cache.CheckCache(temp_dir, 0)
+    
+# --------------------------------------------------------- 
+    def OnLastfmTestClick(self, event):
+        #check last.fm        
+        self.st_lastfm_status.SetLabel(self.parent.panel.SetScrobb())
+                    
 # ===================================================================
-class Options(object):
-    def __init__(self, parent):
-        self.parent = parent
-        self.save_location = system_files.GetDirectories(self.parent).DataDirectory()
-       
-    def LoadOptions(self):
-        # load options from file, populate options tab
-        options_dict = xml_utils().get_generic_settings(self.save_location + os.sep + 'settings.xml')
-        if len(options_dict) > 1:
-            password = options_dict['last_password']
-            if password == None:
-                password =''
-            user = options_dict['last_user']
-            if user == None:
-                user =''
-            self.parent.tc_options_password.SetValue(password)
-            self.parent.tc_options_username.SetValue(user)
-            
-            #screen position
-            xpos =  int(options_dict['win_pos'].split(',')[0][1:])
-            if (xpos > (wx.GetDisplaySize()[0] - 50)) | (xpos < 0):
-                xpos = 0
-            ypos = int(options_dict['win_pos'].split(',')[1][:-1])
-            if (ypos > (wx.GetDisplaySize()[1] - 50)) | (ypos < 0):
-                ypos = 20
-            self.parent.GetParent().SetPosition((xpos, ypos))            
-            
-            self.parent.cb_options_list_clear.SetValue(int(options_dict['list_clear']))            
-            #self.parent.cb_options_alternate.SetValue(int(options_dict['alternate_source']))
-            if options_dict.has_key('search_noid'):
-                self.parent.cb_options_noid.SetValue(int(options_dict['search_noid']))
-            #if options_dict.has_key('bitrate'):
-            #    self.parent.ch_options_bitrate.SetStringSelection(options_dict['bitrate'])
-            if options_dict.has_key('gs_wait'):
-                self.parent.sc_options_gs_wait.SetValue(int(options_dict['gs_wait']))
-            if options_dict.has_key('scrobble_port'):
-                self.parent.rx_options_scrobble_port.SetSelection(int(options_dict['scrobble_port']))
-            #if options_dict.has_key('backend'):
-                #self.parent.rx_options_backend.SetSelection(int(options_dict['backend']))
-            #if options_dict.has_key('wxbackend'):
-                #self.parent.ch_options_wxbackend.SetSelection(int(options_dict['wxbackend']))
-            if options_dict.has_key('scrobble_album'):
-                self.parent.cb_options_scrobble_album.SetValue(int(options_dict['scrobble_album']))
-            if options_dict.has_key('tray'):
-                self.parent.cb_options_tray.SetValue(int(options_dict['tray']))
-            if options_dict.has_key('autosave'):
-                self.parent.cb_options_autosave.SetValue(int(options_dict['autosave']))
-            if options_dict.has_key('scrobble'):
-                self.parent.cb_options_scrobble.SetValue(int(options_dict['scrobble']))
-            if options_dict.has_key('prefetch'):
-                self.parent.cb_options_prefetch.SetValue(int(options_dict['prefetch']))                
-            if options_dict.has_key('cache_size'):
-                self.parent.sl_options_cache_size.SetValue(int(options_dict['cache_size']))                
-            if options_dict.has_key('record_dir'):
-                if options_dict['record_dir'] != None:                    
-                    self.parent.bu_options_record_dir.SetLabel(options_dict['record_dir'])
-            else:
-                self.parent.bu_options_record_dir.SetLabel(self.save_location + '\\mp3s\\')
-            if options_dict.has_key('song_time'):
-                fmt_time = ConvertTimeFormated(int(options_dict['song_time']))
-                minutes = fmt_time.split(':')[0]
-                seconds = fmt_time.split(':')[1]
-                self.parent.sc_options_song_minutes.SetValue(int(minutes))
-                self.parent.sc_options_song_seconds.SetValue(int(seconds))
-            self.parent.rx_options_double_click.SetSelection(int(options_dict['double_click']))
-        
-        #set the scrobble menu item checkmark
-        self.SetScrobbleMenuItem()
-            
-    def SaveOptions(self):
-        # save value to options.xml
-        #print (self.search_settings_tree)
-        
-        window_dict = {}        
-        # **
-        try:        
-            window_dict['last_password'] = string_tools.unescape(self.parent.tc_options_password.GetValue())
-            window_dict['last_user'] = string_tools.unescape(self.parent.tc_options_username.GetValue())
-        except Exception, expt:
-            print "SaveOptions: " + str(Exception) + str(expt)
-        #str(int( to convert true/fales to 1/0
-        window_dict['list_clear'] = str(int(self.parent.cb_options_list_clear.GetValue()))
-        #window_dict['alternate_source'] = str(int(self.parent.cb_options_alternate.GetValue()))
-        window_dict['search_noid'] = str(int(self.parent.cb_options_noid.GetValue()))
-        window_dict['double_click'] = str(int(self.parent.rx_options_double_click.GetSelection()))
-        #window_dict['backend'] = str(int(self.parent.rx_options_backend.GetSelection()))
-        #window_dict['wxbackend'] = str(int(self.parent.ch_options_wxbackend.GetSelection()))
-        window_dict['win_pos'] = str(self.parent.GetParent().GetPosition())
-        window_dict['gs_wait'] = str(self.parent.sc_options_gs_wait.GetValue())
-        window_dict['scrobble_port'] = str(int(self.parent.rx_options_scrobble_port.GetSelection()))
-        window_dict['scrobble_album'] = str(int(self.parent.cb_options_scrobble_album.GetValue()))
-        window_dict['tray'] = str(int(self.parent.cb_options_tray.GetValue()))
-        window_dict['autosave'] = str(int(self.parent.cb_options_autosave.GetValue()))
-        window_dict['scrobble'] = str(int(self.parent.cb_options_scrobble.GetValue()))
-        window_dict['prefetch'] = str(int(self.parent.cb_options_prefetch.GetValue()))
-        #window_dict['bitrate'] = str(self.parent.ch_options_bitrate.GetStringSelection())
-        #**
-        try:
-            window_dict['record_dir'] = string_tools.unescape(self.parent.bu_options_record_dir.GetLabel())
-        except Exception, expt:
-            print "SaveOptions: " + str(Exception) + str(expt)
-        window_dict['cache_size'] = str(self.parent.sl_options_cache_size.GetValue())
-        
-        minutes = self.parent.sc_options_song_minutes.GetValue()
-        seconds = self.parent.sc_options_song_seconds.GetValue()
-        formated_time = str(minutes) + ':' + str(seconds)
-        converted = str(ConvertTimeSeconds(formated_time))
-        window_dict['song_time'] = str(converted)
-        
-        #set the scrobble menu item checkmark
-        self.SetScrobbleMenuItem()
-        
-        #if (window_dict['alternate_source'] == '1'):
-        #    dlg = wx.MessageDialog(self.parent, 'Warning!\r\nUsing the alternate GrooveShark source may cause HUGE problems when using the GrooveShark website (ie. it will not work for you anymore).\r\nSave anyway?', 'Alert', wx.CANCEL | wx.OK | wx.ICON_WARNING)
-        #    if (dlg.ShowModal() == wx.ID_OK):
-        #        #save new settings        
-        #        xml_utils().save_generic_settings(self.save_location + os.sep + 'settings.xml', 'settings.xml', window_dict)
-        #        #print window_dict
-        #    else:
-        #        self.parent.cb_options_alternate.SetValue(0)
-        #    dlg.Destroy()
-            
-        #else:
-        #save new settings        
-        xml_utils().save_generic_settings(self.save_location  + os.sep, 'settings.xml', window_dict)
-        #print window_dict 
         
     def SetScrobbleMenuItem(self):
-        if self.parent.cb_options_scrobble.IsChecked():
-            self.parent.lastfm_toggle.Check(True)
-        else:
-            self.parent.lastfm_toggle.Check(False)
+        self.parent.panel.SetScrobbleMenu()
+
             
-#-------------------------------------------------
-#-------------------------------------------------
-        
-def ConvertTimeFormated(seconds):
-    # convert seconds to mm:ss
-    return str(float(seconds) / float(60)).split('.')[0] + ':' + str(abs(seconds) % 60).zfill(2)
-        
-def ConvertTimeSeconds(formated_time):
-    # convert mm:ss to seconds
-    return (int(formated_time.split(':')[0]) * 60) + (int(formated_time.split(':')[1]))
+
     

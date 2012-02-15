@@ -85,7 +85,8 @@ class PreFetch(object):
             
         #query_results = tinysong.Tsong().get_search_results(artist + ' ' + track, 32)
         # *** ahh!
-        query_results = search_window.GetSearchResults(artist + ' ' + track)
+        #query_results = search_window.GetSearchResults(artist + ' ' + track)
+        query_results = search_window.SearchWindow.SearchIt(artist + ' ' + track)
         
         if len(query_results) >= 1:                
             # song id is at [1] - 4,2,6,1

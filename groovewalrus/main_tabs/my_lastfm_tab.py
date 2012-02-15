@@ -24,6 +24,8 @@ import wx.xrc as xrc
 from main_utils import default_app_open
 from main_thirdp import pylast
 from threading import Thread
+from main_utils import options
+from main_utils import system_files
 
 #columns
 C_RATING = 0
@@ -59,6 +61,8 @@ class MyLastEvent(wx.PyCommandEvent):
 class MyLastfmTab(wx.ScrolledWindow):
     def __init__(self, parent):
         self.parent = parent
+        self.sys_files = system_files.GetDirectories(self)
+        self.FILEDB = self.sys_files.DatabaseLocation()
 
         # controls ---------------------------
         self.tc_mylast_search_user = xrc.XRCCTRL(self.parent, 'm_tc_mylast_search_user')
@@ -134,11 +138,11 @@ class MyLastfmTab(wx.ScrolledWindow):
             
     def OnMyLastMeClick(self, event):
         # search for user
-        self.user = self.parent.tc_options_username.GetValue()
+        self.user = options.GetSetting('lastfm-username', self.FILEDB) #self.parent.tc_options_username.GetValue()
         tperiod = self.rx_mylast_period.GetSelection()
         period = PER_TIMES[tperiod]
         page = 1
-        if self.user != '':
+        if self.user:
             if period == 'recent':
                 self.MyLastThread('user')
             else:
@@ -148,22 +152,22 @@ class MyLastfmTab(wx.ScrolledWindow):
             
     def OnMyLastFriendsClick(self, event):
         # search for user
-        self.user = self.parent.tc_options_username.GetValue()
-        if self.user != '':
+        self.user = options.GetSetting('lastfm-username', self.FILEDB)
+        if self.user:
             self.MyLastThread('friends')
             
     def OnMyLastNeighClick(self, event):
         # search for user
-        self.user = self.parent.tc_options_username.GetValue()
-        if self.user != '':
+        self.user = options.GetSetting('lastfm-username', self.FILEDB)# self.parent.tc_options_username.GetValue()
+        if self.user:
             self.MyLastThread('neighbours')
             
     def OnMyLastLovedClick(self, event):
         #grab your loved tracks
         self.user = self.tc_mylast_search_user.GetValue()
         if self.user == '':
-            self.user = self.parent.tc_options_username.GetValue()
-        if self.user != '':
+            self.user = options.GetSetting('lastfm-username', self.FILEDB)# self.parent.tc_options_username.GetValue()
+        if self.user:
             self.MyLastThread('loved_songs')
             
     def OnMyLastRecommenedArtistsClick(self, event):
@@ -238,8 +242,8 @@ class MyLastfmTab(wx.ScrolledWindow):
         lw = 'http://www.last.fm/user/'        
         if len(self.tc_mylast_search_user.GetValue()) > 0:
             address = lw + self.tc_mylast_search_user.GetValue()
-        elif len(self.parent.tc_options_username.GetValue()) > 0:
-            address = lw + self.parent.tc_options_username.GetValue()
+        elif options.GetSetting('lastfm-username', self.FILEDB):
+            address = lw + options.GetSetting('lastfm-username', self.FILEDB)
         else:
             address = lw
         default_app_open.dopen(address)
