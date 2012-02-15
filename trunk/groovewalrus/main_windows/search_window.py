@@ -21,8 +21,10 @@ Place, Suite 330, Boston, MA 02111-1307 USA
 
 import wx
 import wx.xrc as xrc
-from main_utils import tinysong
+#from main_utils import tinysong
 from main_utils import local_songs
+from main_utils import options
+from main_utils import system_files
 #from main_utils import drag_and_drop
 #***
 from main_thirdp.grooveshark.jsonrpc import *
@@ -64,7 +66,8 @@ class SearchWindow(wx.Dialog):
         wx.Dialog.__init__(self, parent, -1, "Search", size=(500, 500), style=wx.FRAME_SHAPED|wx.RESIZE_BORDER) #STAY_ON_TOP)#wx.FRAME_SHAPED)
         self.parent = parent
         self.first_move = True
-        
+        self.sys_files = system_files.GetDirectories(self)
+        self.FILEDB = self.sys_files.DatabaseLocation()
         # XML Resources can be loaded from a file like this:
         res = xrc.XmlResource(SEARCH_RESFILE)
 
@@ -213,8 +216,8 @@ class SearchWindow(wx.Dialog):
                     self.lc_search.SetStringItem(counter, 2, x['SongName'])
                     #album
                     self.lc_search.SetStringItem(counter, 3, x['AlbumName'])
-                    if self.parent.cb_options_noid.GetValue() == False:
-                        print play_url
+                    if options.GetSetting('search-results-drop-id', self.FILEDB) != '1':
+                        #print play_url
                         self.lc_search.SetStringItem(counter, 4, str(play_url))
                 else:
                     index = self.lc_search.InsertStringItem(counter, '')
@@ -245,7 +248,7 @@ class SearchWindow(wx.Dialog):
                     self.lc_search.SetStringItem(0, 1, x[0])
                     self.lc_search.SetStringItem(0, 2, x[1])
                     self.lc_search.SetStringItem(0, 3, x[2])
-                    if self.parent.cb_options_noid.GetValue() == False:
+                    if options.GetSetting('search-results-drop-id', self.FILEDB) != '1':
                         self.lc_search.SetStringItem(0, 4, x[3])
 
                 else:
@@ -254,7 +257,7 @@ class SearchWindow(wx.Dialog):
                     self.lc_search.SetStringItem(counter, 1, x[0])
                     self.lc_search.SetStringItem(counter, 2, x[1])
                     self.lc_search.SetStringItem(counter, 3, x[2])
-                    if self.parent.cb_options_noid.GetValue() == False:
+                    if options.GetSetting('search-results-drop-id', self.FILEDB) != '1':
                         self.lc_search.SetStringItem(counter, 4, x[3])
 
                 counter = counter + 1

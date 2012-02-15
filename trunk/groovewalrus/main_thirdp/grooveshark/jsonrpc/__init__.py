@@ -90,8 +90,8 @@ class Request:
                 url = API_URL + "?" + method
 
         postData = json.dumps(postData)
-        print url
-        print headers
+        #print url
+        #print headers
         print postData
         self._request = urllib2.Request(url, postData, headers)
 

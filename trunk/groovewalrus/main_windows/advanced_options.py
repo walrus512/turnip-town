@@ -30,7 +30,7 @@ SYSLOC = os.path.abspath(os.path.dirname(sys.argv[0]))
 if os.path.isfile(SYSLOC + os.sep + "layout.xml") == False:
     SYSLOC = os.path.abspath(os.getcwd())
     
-SONGDB_RESFILE = SYSLOC + os.sep + 'layout_advanced_options.xml'
+SONGDB_RESFILE = SYSLOC + os.sep + 'layout_options.xml'
 #GRAPHICS_LOCATION = os.path.join(os.getcwd(), 'graphics') + os.sep
 
 class AdvancedOptionsWindow(wx.Dialog):
@@ -68,7 +68,7 @@ class AdvancedOptionsWindow(wx.Dialog):
         self.SetSizer(sizer)
         self.SetAutoLayout(True)
         
-        self.DisplayAllOptions()        
+        ##self.DisplayAllOptions()        
        
 #----------------------------------------------------------------------
     def ShowMe(self):

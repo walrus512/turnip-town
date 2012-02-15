@@ -267,16 +267,16 @@
 																	<option>0</option>
 																	<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
 																	<border>5</border>
-																	<object class="wxButton" name="m_bu_lastfm_save">
-																		<label>Save</label>
+																	<object class="wxButton" name="m_bu_lastfm_test">
+																		<label>Test</label>
 																		<default>0</default>
 																	</object>
 																</object>
 																<object class="sizeritem">
-																	<option>0</option>
+																	<option>1</option>
 																	<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
 																	<border>5</border>
-																	<object class="wxStaticText" name="m_st_lastfm_auth">
+																	<object class="wxStaticText" name="m_st_lastfm_status">
 																		<label>Status:</label>
 																		<wrap>-1</wrap>
 																	</object>
@@ -307,17 +307,11 @@
 										</object>
 										<object class="sizeritem">
 											<option>0</option>
-											<flag>wxALL|wxEXPAND</flag>
+											<flag>wxALL</flag>
 											<border>5</border>
-											<object class="wxRadioBox" name="m_rx_lastfm-scrobble-port">
-												<style>wxRA_SPECIFY_COLS</style>
-												<label>Scrobble Port</label>
-												<selection>1</selection>
-												<content>
-													<item>No Port</item>
-													<item>Default Port</item>
-												</content>
-												<dimension>1</dimension>
+											<object class="wxCheckBox" name="m_cb_lastfm-scrobble-port">
+												<label>Alternate scrobble port</label>
+												<checked>0</checked>
 											</object>
 										</object>
 									</object>
@@ -348,9 +342,9 @@
 											<option>0</option>
 											<flag>wxALL</flag>
 											<border>5</border>
-											<object class="wxCheckBox" name="m_cb_options_prefetch">
+											<object class="wxCheckBox" name="m_cb_prefetch-songs">
 												<label>Pre-fetch songs (loads next song while current song is playing).</label>
-												<checked>0</checked>
+												<checked>1</checked>
 											</object>
 										</object>
 										<object class="sizeritem">
@@ -398,7 +392,7 @@
 															<option>1</option>
 															<flag>wxALL</flag>
 															<border>5</border>
-															<object class="wxSlider" name="m_sl_options_cache_size">
+															<object class="wxSlider" name="m_sl_cache-size">
 																<style>wxSL_BOTH|wxSL_HORIZONTAL|wxSL_LABELS</style>
 																<value>50</value>
 																<min>10</min>
@@ -417,16 +411,7 @@
 															<option>0</option>
 															<flag>wxALL</flag>
 															<border>5</border>
-															<object class="wxButton" name="m_bu_options_set_cache">
-																<label>Set Size</label>
-																<default>0</default>
-															</object>
-														</object>
-														<object class="sizeritem">
-															<option>0</option>
-															<flag>wxALL</flag>
-															<border>5</border>
-															<object class="wxButton" name="m_bu_options_cache_clear">
+															<object class="wxButton" name="m_bu_cache_clear">
 																<label>Clear Cache</label>
 																<default>0</default>
 															</object>

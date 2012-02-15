@@ -131,7 +131,7 @@ from main_thirdp import urllib_proxy
 #from plugins.hotkeys import hotkeys
 #from plugins.messenger_plus import messenger_plus
 
-PROGRAM_VERSION = "0.360"
+PROGRAM_VERSION = "0.361"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -205,7 +205,7 @@ class GWApp(wx.App):
             #return False
         else:
             frame = MainFrame()
-            panel = MainPanel(frame)    
+            #panel = MainPanel(frame)    
             frame.Show(True)
             if os.name == 'nt':
                 pyro_server.StartPyro()        
@@ -235,7 +235,8 @@ class MainFrame(wx.Frame):
         self.SetIcons(ib)
         
         # system tray icon        
-        self.tray_icon = None        
+        self.tray_icon = None 
+        self.panel = MainPanel(self)       
         
     def UseTrayIcon(self):
         self.tray_icon = wx.TaskBarIcon()
@@ -338,8 +339,8 @@ class MainPanel(wx.Panel):
         # Now create a panel from the resource data
         self.panel = res.LoadPanel(self, "m_pa_main")        
         
-        xrc.XRCCTRL(self, 'm_pa_options_plugins').SetVirtualSize((1000, 1000))
-        xrc.XRCCTRL(self, 'm_pa_options_plugins').SetScrollRate(20,20)
+        #xrc.XRCCTRL(self, 'm_pa_options_plugins').SetVirtualSize((1000, 1000))
+        #xrc.XRCCTRL(self, 'm_pa_options_plugins').SetScrollRate(20,20)
         
         # tabs -----------------------------
         #list sifter tab        
@@ -381,7 +382,7 @@ class MainPanel(wx.Panel):
         self.bb_update = xrc.XRCCTRL(self, 'm_bb_update')
              
         self.nb_main = xrc.XRCCTRL(self, 'm_nb_main')
-        self.pa_options_plugins = xrc.XRCCTRL(self, "m_pa_options_plugins")
+        #self.pa_options_plugins = xrc.XRCCTRL(self, "m_pa_options_plugins")
         
         self.bm_cover = xrc.XRCCTRL(self, 'm_bm_cover_small')
         self.bm_cover.Bind(wx.EVT_LEFT_UP, self.OnAlbumCoverClick)  
@@ -390,31 +391,31 @@ class MainPanel(wx.Panel):
         self.TabImageList()
         
         # options ------------------
-        self.tc_options_username = xrc.XRCCTRL(self, 'm_tc_options_username')
-        self.tc_options_password = xrc.XRCCTRL(self, 'm_tc_options_password')
-        self.rx_options_double_click = xrc.XRCCTRL(self, 'm_rx_options_double_click')
-        self.cb_options_list_clear = xrc.XRCCTRL(self, 'm_cb_options_list_clear')
-        self.st_options_auth = xrc.XRCCTRL(self, 'm_st_options_auth')
-        self.cb_options_alternate = xrc.XRCCTRL(self, 'm_cb_options_alternate')
-        self.cb_options_noid = xrc.XRCCTRL(self, 'm_cb_options_noid')
-        self.sc_options_gs_wait = xrc.XRCCTRL(self, 'm_sc_options_gs_wait')
-        self.sc_options_song_seconds = xrc.XRCCTRL(self, 'm_sc_options_song_seconds')
-        self.sc_options_song_minutes = xrc.XRCCTRL(self, 'm_sc_options_song_minutes')
-        self.rx_options_scrobble_port = xrc.XRCCTRL(self, 'm_rx_options_scrobble_port')
-        self.cb_options_scrobble = xrc.XRCCTRL(self, 'm_cb_options_scrobble')
-        self.cb_options_prefetch = xrc.XRCCTRL(self, 'm_cb_options_prefetch')
-        self.cb_options_scrobble_album = xrc.XRCCTRL(self, 'm_cb_options_scrobble_album')
-        self.cb_options_tray = xrc.XRCCTRL(self, 'm_cb_options_tray')
-        self.cb_options_autosave = xrc.XRCCTRL(self, 'm_cb_options_autosave')
+        #self.tc_options_username = xrc.XRCCTRL(self, 'm_tc_options_username')
+        #self.tc_options_password = xrc.XRCCTRL(self, 'm_tc_options_password')
+        #self.rx_options_double_click = xrc.XRCCTRL(self, 'm_rx_options_double_click')
+        #self.cb_options_list_clear = xrc.XRCCTRL(self, 'm_cb_options_list_clear')
+        #self.st_options_auth = xrc.XRCCTRL(self, 'm_st_options_auth')
+        #self.cb_options_alternate = xrc.XRCCTRL(self, 'm_cb_options_alternate')
+        #self.cb_options_noid = xrc.XRCCTRL(self, 'm_cb_options_noid')
+        #self.sc_options_gs_wait = xrc.XRCCTRL(self, 'm_sc_options_gs_wait')
+        #self.sc_options_song_seconds = xrc.XRCCTRL(self, 'm_sc_options_song_seconds')
+        #self.sc_options_song_minutes = xrc.XRCCTRL(self, 'm_sc_options_song_minutes')
+        #self.rx_options_scrobble_port = xrc.XRCCTRL(self, 'm_rx_options_scrobble_port')
+        #self.cb_options_scrobble = xrc.XRCCTRL(self, 'm_cb_options_scrobble')
+        #self.cb_options_prefetch = xrc.XRCCTRL(self, 'm_cb_options_prefetch')
+        #self.cb_options_scrobble_album = xrc.XRCCTRL(self, 'm_cb_options_scrobble_album')
+        #self.cb_options_tray = xrc.XRCCTRL(self, 'm_cb_options_tray')
+        #self.cb_options_autosave = xrc.XRCCTRL(self, 'm_cb_options_autosave')
         ##self.ch_options_bitrate = xrc.XRCCTRL(self, 'm_ch_options_bitrate')
-        self.bu_options_record_dir = xrc.XRCCTRL(self, 'm_bu_options_record_dir')
-        self.rx_options_backend =  xrc.XRCCTRL(self, 'm_rx_options_backend')
-        self.ch_options_wxbackend =  xrc.XRCCTRL(self, 'm_ch_options_wxbackend')
-        self.st_options_cache_location = xrc.XRCCTRL(self, 'm_st_options_cache_location')
-        self.sl_options_cache_size = xrc.XRCCTRL(self, 'm_sl_options_cache_size')
+        #self.bu_options_record_dir = xrc.XRCCTRL(self, 'm_bu_options_record_dir')
+        #self.rx_options_backend =  xrc.XRCCTRL(self, 'm_rx_options_backend')
+        #self.ch_options_wxbackend =  xrc.XRCCTRL(self, 'm_ch_options_wxbackend')
+        #self.st_options_cache_location = xrc.XRCCTRL(self, 'm_st_options_cache_location')
+        #self.sl_options_cache_size = xrc.XRCCTRL(self, 'm_sl_options_cache_size')
         
-        self.st_options_i18n_default = xrc.XRCCTRL(self, 'm_st_options_i18n_default')
-        self.st_options_i18n_default.SetLabel('Locale: ' + wx.Locale(wx.LANGUAGE_DEFAULT).GetCanonicalName())
+        #self.st_options_i18n_default = xrc.XRCCTRL(self, 'm_st_options_i18n_default')
+        #self.st_options_i18n_default.SetLabel('Locale: ' + wx.Locale(wx.LANGUAGE_DEFAULT).GetCanonicalName())
               
         # list controls ------------
                 
@@ -508,28 +509,28 @@ class MainPanel(wx.Panel):
         self.Bind(wx.EVT_TREE_END_LABEL_EDIT, self.OnTreeEndEdit, self.tr_playlist_history) 
                         
         #options
-        self.Bind(wx.EVT_RADIOBOX, self.SaveOptions, id=xrc.XRCID('m_rx_options_double_click'))
-        self.Bind(wx.EVT_RADIOBOX, self.SaveOptions, id=xrc.XRCID('m_rx_options_scrobble_port'))
-        self.Bind(wx.EVT_SPINCTRL, self.SaveOptions, id=xrc.XRCID('m_sc_options_gs_wait'))
-        self.Bind(wx.EVT_SPINCTRL, self.SaveOptions, id=xrc.XRCID('m_sc_options_song_minutes'))
-        self.Bind(wx.EVT_SPINCTRL, self.SaveOptions, id=xrc.XRCID('m_sc_options_song_seconds'))
-        self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_list_clear'))
-        self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_alternate'))
-        self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_scrobble_album'))
-        self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_scrobble'))
-        self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_prefetch'))
-        self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_noid'))
-        self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_tray'))
-        self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_autosave'))
+        #self.Bind(wx.EVT_RADIOBOX, self.SaveOptions, id=xrc.XRCID('m_rx_options_double_click'))
+        #self.Bind(wx.EVT_RADIOBOX, self.SaveOptions, id=xrc.XRCID('m_rx_options_scrobble_port'))
+        #self.Bind(wx.EVT_SPINCTRL, self.SaveOptions, id=xrc.XRCID('m_sc_options_gs_wait'))
+        #self.Bind(wx.EVT_SPINCTRL, self.SaveOptions, id=xrc.XRCID('m_sc_options_song_minutes'))
+        #self.Bind(wx.EVT_SPINCTRL, self.SaveOptions, id=xrc.XRCID('m_sc_options_song_seconds'))
+        #self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_list_clear'))
+        #self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_alternate'))
+        #self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_scrobble_album'))
+        #self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_scrobble'))
+        #self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_prefetch'))
+        #self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_noid'))
+        #self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_tray'))
+        #self.Bind(wx.EVT_CHECKBOX, self.SaveOptions, id=xrc.XRCID('m_cb_options_autosave'))
         ##self.Bind(wx.EVT_CHOICE, self.SaveOptions, id=xrc.XRCID('m_ch_options_bitrate'))
-        self.Bind(wx.EVT_BUTTON, self.OnSaveOptionsClick, id=xrc.XRCID('m_bu_options_save'))        
-        self.Bind(wx.EVT_BUTTON, self.OnSetRecordDirClick, id=xrc.XRCID('m_bu_options_record_dir'))
-        self.Bind(wx.EVT_BUTTON, self.SaveOptions, id=xrc.XRCID('m_bu_options_set_cache'))
+        #self.Bind(wx.EVT_BUTTON, self.OnSaveOptionsClick, id=xrc.XRCID('m_bu_options_save'))        
+        #self.Bind(wx.EVT_BUTTON, self.OnSetRecordDirClick, id=xrc.XRCID('m_bu_options_record_dir'))
+        #self.Bind(wx.EVT_BUTTON, self.SaveOptions, id=xrc.XRCID('m_bu_options_set_cache'))
         #self.Bind(wx.EVT_BUTTON, self.SetLanguage, id=xrc.XRCID('m_bu_options_language'))
         #self.Bind(wx.EVT_RADIOBOX, self.SetBackend, id=xrc.XRCID('m_rx_options_backend'))
         #self.Bind(wx.EVT_CHOICE, self.SetBackend, id=xrc.XRCID('m_ch_options_wxbackend'))
         
-        self.Bind(wx.EVT_BUTTON, self.OnClearCacheClick, id=xrc.XRCID('m_bu_options_cache_clear'))
+        #self.Bind(wx.EVT_BUTTON, self.OnClearCacheClick, id=xrc.XRCID('m_bu_options_cache_clear'))
         
         self.Bind(EVT_NEW_IMAGE, self.ImageThreadSet)
         
@@ -666,7 +667,7 @@ class MainPanel(wx.Panel):
                 
         # tools menu        
         self.parent.Bind(wx.EVT_MENU, self.OnUpdateClick, id=xrc.XRCID("m_mi_version_update"))
-        self.parent.Bind(wx.EVT_MENU, self.TinysongKey, id=xrc.XRCID("m_mi_tingsong"))
+        #self.parent.Bind(wx.EVT_MENU, self.TinysongKey, id=xrc.XRCID("m_mi_tingsong"))
         self.parent.Bind(wx.EVT_MENU, self.tab_song_collection.OnSColAddClick, id=xrc.XRCID("m_mi_song_collection"))
         self.parent.Bind(wx.EVT_MENU, self.ImportGroovesharkPlaylist, id=xrc.XRCID("m_mi_import_grooveshark"))
         #self.parent.Bind(wx.EVT_MENU, self.SetLanguage, id=xrc.XRCID("m_mi_select_language"))
@@ -687,16 +688,15 @@ class MainPanel(wx.Panel):
         #self.GetAllSongRatings()
         
         # load playlist history
-        self.FillPlaylistTree()        
-
+        self.FillPlaylistTree()
                 
         # options ---------------
         # load options from settings.xml
-        try:
-            options_window.Options(self).LoadOptions()
-        except Exception, expt:
-            print 'load options: ' + str(Exception) + str(expt)    
-        if self.cb_options_tray.GetValue() == 1:
+        #try:
+        #    options_window.Options(self).LoadOptions()
+        #except Exception, expt:
+        #    print 'load options: ' + str(Exception) + str(expt)    
+        if options.GetSetting('tray-minimize', self.FILEDB) == '1':
             self.parent.UseTrayIcon()
             
         # ---------------------------------------------------------------
@@ -710,12 +710,14 @@ class MainPanel(wx.Panel):
         #self.use_backend = backend_types[self.rx_options_backend.GetSelection()]
         # ---------------------------------------------------------------
         
+        self.SetScrobbleMenu()
+        
         #pubsub receivers --------
         self.LocalReceivers()
         
         # volume control
         #check for txt, don't adjust volume if present
-        if os.path.isfile('disable_set_volume.txt'):
+        if options.GetSetting('volume_set_disable', self.FILEDB) == '1':
             pass
         else:
             setting_volume = options.GetSetting('main-volume', self.FILEDB)
@@ -726,9 +728,12 @@ class MainPanel(wx.Panel):
         
         # clean cache dir -------
         temp_dir = system_files.GetDirectories(self).TempDirectory()
-        file_cache.CheckCache(temp_dir, self.sl_options_cache_size.GetValue())
+        cache_size = options.GetSetting('cache_size', self.FILEDB)
+        if not cache_size:
+            cache_size = 30
+        file_cache.CheckCache(temp_dir, int(cache_size))
         
-        self.st_options_cache_location.SetLabel('Location: ' + temp_dir)
+        #self.st_options_cache_location.SetLabel('Location: ' + temp_dir)
         
         # load rss feeds --------
         self.list_sifter.LoadRSSFeeds()
@@ -803,12 +808,12 @@ class MainPanel(wx.Panel):
             
 #-----------------------------------------------------------            
     # tinysong api key
-    def TinysongKey(self, event=None):
-        if (options.GetSetting('tingsong-api-key', self.FILEDB) == False) | (event != None):
-            dlg = wx.TextEntryDialog(self, 'You need a Tinysong api key (from http://tinysong.com):', 'TinySong API Key')
-            if dlg.ShowModal() == wx.ID_OK:
-                options.SetSetting('tingsong-api-key', dlg.GetValue(), self.FILEDB)
-            dlg.Destroy()
+    #def TinysongKey(self, event=None):
+    #    if (options.GetSetting('tingsong-api-key', self.FILEDB) == False) | (event != None):
+    #        dlg = wx.TextEntryDialog(self, 'You need a Tinysong api key (from http://tinysong.com):', 'TinySong API Key')
+    #        if dlg.ShowModal() == wx.ID_OK:
+    #            options.SetSetting('tingsong-api-key', dlg.GetValue(), self.FILEDB)
+    #        dlg.Destroy()
             
     def ImageThreadSet(self, event):
         self.SetImage(event.data[0], event.data[1])
@@ -1065,10 +1070,6 @@ class MainPanel(wx.Panel):
             
 
                     
-    def OnClearCacheClick(self, event):
-        #clear the cache
-        temp_dir = system_files.GetDirectories(self).TempDirectory()
-        file_cache.CheckCache(temp_dir, 0)
      
     def OpenWebsite(self, event):        
         default_app_open.dopen('http://groove-walrus.turnip-town.net')
@@ -1252,26 +1253,28 @@ class MainPanel(wx.Panel):
         # *** thread this sucka sometime
         self.current_song.scrobble_song = 0
         self.scrobbed_active = 0
-        username = self.tc_options_username.GetValue()
-        password = self.tc_options_password.GetValue()
-        
+        username = options.GetSetting('lastfm-username', self.FILEDB)
+        password = options.GetSetting('lastfm-password', self.FILEDB)
+        status_text = ''
         #(self, api_key="", api_secret="", session_key="", username="", password_hash="")
         
-        if (len(username) > 0) & (len(password) > 0):
-            self.SetNetworkStatus('lastfm', 1)
-            try:
-                self.network = pylast.LastFMNetwork(api_key=API_KEY, api_secret='6a2eb503cff117001fac5d1b8e230211', username=username, password_hash=pylast.md5(password))                
-                self.session_key = self.network.session_key               
-                self.st_options_auth.SetLabel('Authorized: ' + time.asctime())  
-                self.scrobbed_active = 1
-                self.SetNetworkStatus('lastfm', 0)
-            except Exception, expt:
-                print 'SetScrobb'  + str(Exception) + str(expt)
-                self.st_options_auth.SetLabel('Status: something failed. User/password?')
-                self.st_options_auth.SetBackgroundColour('Yellow')
-                self.SetNetworkStatus('lastfm', 2)
-                #self.nb_main.SetSelection(NB_OPTIONS)
-                
+        if username:
+            if password:
+                self.SetNetworkStatus('lastfm', 1)
+                try:
+                    self.network = pylast.LastFMNetwork(api_key=API_KEY, api_secret='6a2eb503cff117001fac5d1b8e230211', username=username, password_hash=pylast.md5(password))                
+                    self.session_key = self.network.session_key               
+                    status_text = 'Authorized: ' + time.asctime()  
+                    print status_text
+                    self.scrobbed_active = 1
+                    self.SetNetworkStatus('lastfm', 0)
+                except Exception, expt:
+                    print 'SetScrobb'  + str(Exception) + str(expt)
+                    status_text = 'Status: something failed. User/password?'                
+                    self.SetNetworkStatus('lastfm', 2)
+                    #self.nb_main.SetSelection(NB_OPTIONS)
+        return status_text
+        
     def GetNetwork(self):
         if self.network == None:
             self.SetScrobb()
@@ -1280,19 +1283,25 @@ class MainPanel(wx.Panel):
     def GenerateSessionKey2(self, regenerate=False):
         # generate a non-song scrobbling seesion key
         if self.session_key == None:
-            if self.cb_options_scrobble.IsChecked():        
+            if options.GetSetting('lastfm-scrobble', self.FILEDB):
                 self.SetScrobb()
         return self.session_key            
                 
-    def OnToggleScrobble(self, event):        
-        if self.cb_options_scrobble.IsChecked():
+    def SetScrobbleMenu(self):
+        if options.GetSetting('lastfm-scrobble', self.FILEDB) == '1':
+            self.lastfm_toggle.Check(True)
+        else:
             self.lastfm_toggle.Check(False)
-            self.cb_options_scrobble.SetValue(False)
-            self.SaveOptions(None)
+        
+    def OnToggleScrobble(self, event):        
+        if options.GetSetting('lastfm-scrobble', self.FILEDB) == '1':
+            self.lastfm_toggle.Check(False)
+            options.SetSetting('lastfm-scrobble', '0', self.FILEDB)
+            #self.SaveOptions(None)
         else:
             self.lastfm_toggle.Check(True)
-            self.cb_options_scrobble.SetValue(True)
-            self.SaveOptions(None)
+            options.SetSetting('lastfm-scrobble', '1', self.FILEDB)
+            #self.SaveOptions(None)
             
             
     #-------------------------------------
@@ -1342,12 +1351,12 @@ class MainPanel(wx.Panel):
             
                 time_started = str(int(time.time()))
                 self.current_song.scrobble_song = 1
-                port = self.rx_options_scrobble_port.GetSelection()
+                #port = self.rx_options_scrobble_port.GetSelection()                
                 s_album=''
-                if self.cb_options_scrobble_album.GetValue() == 1:
+                if options.GetSetting('lastfm-scrobble-album', self.FILEDB) == '1':
                     s_album=self.current_song.album
                 #check checkbox to see if we should scrobble
-                if self.cb_options_scrobble.GetValue() == 1:
+                if options.GetSetting('lastfm-scrobble', self.FILEDB) == '1':
                     try:
                         self.SetNetworkStatus('lastfm', 1)
                         self.network.scrobble(artist=self.current_song.artist, title=self.current_song.song, timestamp=time_started, duration=self.current_song.song_time_seconds, album=s_album)
@@ -1362,7 +1371,7 @@ class MainPanel(wx.Panel):
                         self.network.scrobble(artist=self.current_song.artist, title=self.current_song.song, timestamp=time_started, duration=self.current_song.song_time_seconds, album=s_album)
                         #pylast.BadSession:
                         
-            if self.cb_options_prefetch.GetValue() == False:
+            if options.GetSetting('prefetch-songs', self.FILEDB) != '1':
                 self.prefetch = False
 
             if (float(self.time_count) / float(self.current_song.song_time_seconds) > .5) & (self.prefetch == True):
@@ -1497,30 +1506,30 @@ class MainPanel(wx.Panel):
             self.bb_record.SetBitmapLabel(hover_bmp)
             #self.bb_record.SetWindowStyle(wx.DOUBLE_BORDER)            
         
-    def SaveOptions(self, event):
-        # hide the notebook, or show it        
-        options_window.Options(self).SaveOptions()
-        if self.cb_options_tray.IsChecked():
-            self.parent.UseTrayIcon()
-        else:
-            if self.parent.tray_icon != None:
-                self.parent.tray_icon.Destroy
-                self.parent.tray_icon = None
+    #def SaveOptions(self, event):
+    #    # hide the notebook, or show it        
+    #    options_window.Options(self).SaveOptions()
+    #    if self.cb_options_tray.IsChecked():
+    #        self.parent.UseTrayIcon()
+    #    else:
+    #        if self.parent.tray_icon != None:
+    #            self.parent.tray_icon.Destroy
+    #            self.parent.tray_icon = None
         
-    def OnSetRecordDirClick(self, event):
-        dialog = wx.DirDialog(None, "Choose a directory:")
-        if dialog.ShowModal() == wx.ID_OK:
-            #print dialog.GetPath()
-            self.bu_options_record_dir.SetLabel(dialog.GetPath())
-            self.SaveOptions(None)
-        dialog.Destroy()
-        #pass
+    #def OnSetRecordDirClick(self, event):
+     #   dialog = wx.DirDialog(None, "Choose a directory:")
+    #    if dialog.ShowModal() == wx.ID_OK:
+    #        #print dialog.GetPath()
+    #        self.bu_options_record_dir.SetLabel(dialog.GetPath())
+    #        self.SaveOptions(None)
+    #    dialog.Destroy()
+    #    #pass
 
     def OnExit(self, event):
         self.OnStopClick(event=None)
         if self.update_event == False:
             self.SavePlaylist(self.main_playlist_location)
-            self.SaveOptions(event)
+            #self.SaveOptions(event)
             options.SetSetting('main-volume', self.sl_volume.GetValue(), self.FILEDB)
             
         try:
@@ -1538,14 +1547,14 @@ class MainPanel(wx.Panel):
         
         ##2
         
-    def OnSaveOptionsClick(self, event):
-        # hide the notebook, or show it
-        self.SaveOptions(None)
-        self.SetScrobb()
+    #def OnSaveOptionsClick(self, event):
+    #    # hide the notebook, or show it
+    #    self.SaveOptions(None)
+    #    self.SetScrobb()
             
     def SearchOrPlaylist(self, artist, song, album='', url='', duration=''):
         # determine if we should add to playlist of search for it
-        if self.rx_options_double_click.GetSelection():
+        if options.GetSetting('search-double-click', self.FILEDB) == '1':
             # search
             self.SearchIt(artist + " " + song)
         else:
@@ -1556,7 +1565,7 @@ class MainPanel(wx.Panel):
     def CheckClear(self):
         # determine if we should clear the playlist before adding
         #self.BackupList()
-        if self.cb_options_list_clear.GetValue():
+        if options.GetSetting('add-all-clear', self.FILEDB) == '1':
             self.lc_playlist.DeleteAllItems()
             self.current_song.playlist_position = -1
             
@@ -1901,8 +1910,8 @@ class MainPanel(wx.Panel):
             #print cs.song_time_seconds
             if cs.song_time_seconds == 0:
                 #set a default time
-                wminutes = self.sc_options_song_minutes.GetValue()
-                wseconds = self.sc_options_song_seconds.GetValue()
+                wminutes = 4 #self.sc_options_song_minutes.GetValue()
+                wseconds = 0 #self.sc_options_song_seconds.GetValue()
                 wformated_time = str(wminutes) + ':' + str(wseconds).zfill(2)
                 cs.SetSongTime(wformated_time)            
                 cs.song_time_seconds = self.ConvertTimeSeconds(wformated_time)
@@ -1916,7 +1925,7 @@ class MainPanel(wx.Panel):
                 #use flash webmusic
                 print 'webmusic'
                 #add delay
-                self.time_count = self.sc_options_gs_wait.GetValue() * -1
+                self.time_count = -8 #self.sc_options_gs_wait.GetValue() * -1
                 
                 # publish to pubsub
                 pub.sendMessage('main.playback.load', artist=cs.artist, song=cs.song)
@@ -1941,7 +1950,10 @@ class MainPanel(wx.Panel):
                     self.SetBackend(None)
                 
                 # clean cache dir
-                file_cache.CheckCache(temp_dir, self.sl_options_cache_size.GetValue())
+                cache_size = options.GetSetting('cache-size', self.FILEDB)
+                if not cache_size:
+                    cache_size = None
+                file_cache.CheckCache(temp_dir, cache_size)
                 
                 # check if file previously cached
                 cached_file = file_cache.CreateCachedFilename(temp_dir, file_name_plain)
@@ -3429,12 +3441,12 @@ class FileThread(Thread):
                 self.parent.current_play_time = track_time
                 
             # check if recording or the save all new checkbox is checked
-            if (self.parent.record_toggle == True) or (self.parent.cb_options_autosave.GetValue() == True):
-                #copy and rname the file to teh record dir
-                record_dir = self.parent.bu_options_record_dir.GetLabel()
-                if (record_dir == None) | (record_dir == ''):
+            if (self.parent.record_toggle == True) or (options.GetSetting('download-autosave', self.parent.FILEDB) == '1'):
+                #copy and rname the file to teh record dir                
+                record_dir = options.GetSetting('download-directory', self.parent.FILEDB)
+                if (record_dir == False) | (record_dir == ''):
                     record_dir = system_files.GetDirectories(self.parent).Mp3DataDirectory()
-                    self.parent.bu_options_record_dir.SetLabel(record_dir)            
+                    #self.parent.bu_options_record_dir.SetLabel(record_dir)            
                 complete_filename = system_files.GetDirectories(self.parent).CopyFile(self.temp_file, record_dir, self.artist + '-' + self.track + '.mp3')
                 # add file to database
                 if complete_filename != None:

@@ -76,7 +76,7 @@ class Song:
 
     def getStreamDetails(self):
         """function: Gets a stream key and host to get song content"""
-        print 'boo'
+        #print 'boo'
         parameters = {
             "songIDs": self.id,
             "prefetch": False,
@@ -85,9 +85,9 @@ class Song:
             }
         response = self._gsapi.request(parameters,
                 "getStreamKeysFromSongIDs").send()
-        print "-------------"
-        print response
-        print "-------------"
+        #print "-------------"
+        #print response
+        #print "-------------"
         self._lastStreamKey = response["result"][self.id]["streamKey"]
         self._lastStreamServer = response["result"][self.id]["ip"]
         self._lastStreamServerID = response["result"][self.id]["streamServerID"]

@@ -54,7 +54,7 @@ def GetAllSettings(file_db):
     #get a value from the settings table
     conn = sqlite3.connect(file_db)
     c = conn.cursor()
-    tq = "SELECT * FROM m_settings"
+    tq = "SELECT * FROM m_settings ORDER BY setting_name"
     c.execute(tq)
     h = c.fetchall()
     if len(h) >= 1:
