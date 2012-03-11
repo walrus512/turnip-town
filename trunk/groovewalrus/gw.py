@@ -131,7 +131,7 @@ from main_thirdp import urllib_proxy
 #from plugins.hotkeys import hotkeys
 #from plugins.messenger_plus import messenger_plus
 
-PROGRAM_VERSION = "0.361"
+PROGRAM_VERSION = "0.370"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -1384,11 +1384,15 @@ class MainPanel(wx.Panel):
                     pf_artist = pf_artistsong[0]
                     pf_song = pf_artistsong[1]
                     pf_cached_file_name = pf_artistsong[2]
+                    pf_playlist_position = pf_artistsong[3]
                     #print 'pre-fetching: ' + pf_song + ' ' + pf_cached_file_name
-                    pf_song_id = prefetch.PreFetch(self).GetSongId(pf_artist, pf_song)
+                    ###pf_song_id = prefetch.PreFetch(self).GetSongId(pf_artist, pf_song)
+                    proxy = self.GetProxy()
+                    pf_song_id = GetGSResults(pf_artist, pf_song, pf_playlist_position, proxy, '')
                     #print pf_song_id
                     #download file
                     if pf_song_id != None:
+                        print pf_song_id
                         #THREAD
                         current2 = FileThread(self, pf_cached_file_name, pf_song_id, pf_song, pf_artist, album='', prefetch=True)                    
                         #THREAD
@@ -3089,7 +3093,9 @@ class CurrentSong():
     def SetStatus(self, status):
         self.status = status
         
-    def CheckId(self, song_id):
+    def CheckId(self, song_id, playlist_position=-2):
+        if playlist_position == -2:
+            playlist_position = self.playlist_position
         #checks if song is local or not
         if os.path.isfile(song_id) == False:
             #digit is grooveshark id
@@ -3120,17 +3126,19 @@ class CurrentSong():
                 
             #check if file exists
             if os.path.isfile(self.song_id):                
-                pub.sendMessage('main.song_id', song_id=self.song_id, playlist_number=self.playlist_position)
+                pub.sendMessage('main.song_id', song_id=self.song_id, playlist_number=playlist_position)
                 album = local_songs.GetMp3Album(self.song_id)
                 if (len(album) >= 1) & (len(self.album) <1):
                     self.album = album
-                    pub.sendMessage('main.album', album=self.album, playlist_number=self.playlist_position)
+                    pub.sendMessage('main.album', album=self.album, playlist_number=playlist_position)
             # try grooveshark
             else:
                 #grab results from tinysong
                 self.parent.SetNetworkStatus('grooveshark', 1)
                 #query_results = self.tsong.get_search_results(query_string, 32)
-                
+                proxy=self.parent.GetProxy()
+                self.song_id = GetGSResults(self.artist, self.song, playlist_position, proxy, self.album)
+                """
                 g_session = jsonrpcSession(proxy=self.parent.GetProxy())
                 g_session.startSession()
                 xx = g_session.getSearchResults(query_string, type="Songs")
@@ -3144,7 +3152,7 @@ class CurrentSong():
                     # let's check for album and update that too
                     if (self.album =='') & (query_results[0]['AlbumName'] != ''):
                         self.album = query_results[0]['AlbumName']
-                        pub.sendMessage('main.album', album=self.album, playlist_number=self.playlist_position)
+                        pub.sendMessage('main.album', album=self.album, playlist_number=playlist_position)
                     
                     # check for song match
                     if self.song.upper() != query_results[0]['SongName'].upper():
@@ -3154,7 +3162,7 @@ class CurrentSong():
                         for x in range(1, len(query_results) - 1):                            
                             if (query_results[x]['SongName'].upper() == self.song.upper()) & (found_it != True):
                                 xx = str(query_results[x]['SongID'])
-                                pub.sendMessage('main.song_id', song_id=xx, playlist_number=self.playlist_position)
+                                pub.sendMessage('main.song_id', song_id=xx, playlist_number=playlist_position)
                                 self.song_id = xx
                                 found_it = True
                                 break                                
@@ -3166,36 +3174,102 @@ class CurrentSong():
                         for x in range(1, len(query_results) - 1):                            
                             if (query_results[x]['ArtistName'].upper() == self.artist.upper()) & (found_it != True):
                                 yy = str(query_results[x]['SongID'])
-                                pub.sendMessage('main.song_id', song_id=yy, playlist_number=self.playlist_position)
+                                pub.sendMessage('main.song_id', song_id=yy, playlist_number=playlist_position)
                                 self.song_id = yy
                                 found_it = True
                                 break
                         if found_it == False:
-                            self.parent.lc_playlist.SetItemBackgroundColour(self.playlist_position, HICOLOR_1)
+                            self.parent.lc_playlist.SetItemBackgroundColour(playlist_position, HICOLOR_1)
                             # don't scrobb the wrong song
                             self.scrobbed_song = 1
-                            pub.sendMessage('main.song_id', song_id=returned_song_id, playlist_number=self.playlist_position)
+                            pub.sendMessage('main.song_id', song_id=returned_song_id, playlist_number=playlist_position)
                             self.song_id = returned_song_id
                     #update playlist
                     else:
-                        pub.sendMessage('main.song_id', song_id=returned_song_id, playlist_number=self.playlist_position)
+                        pub.sendMessage('main.song_id', song_id=returned_song_id, playlist_number=playlist_position)
                         self.song_id = returned_song_id
                 else:                    
                     #no search results found
-                    self.parent.lc_playlist.SetItemBackgroundColour(self.playlist_position, HICOLOR_2)
+                    self.parent.lc_playlist.SetItemBackgroundColour(playlist_position, HICOLOR_2)
                     self.status = 'stopped'
                     # ***skip to next track
                     
         #self.song_url = PLAY_SONG_URL + self.song_id 
-                    
-    def CheckAlbum(self, album):
+        """            
+    def CheckAlbum(self, album, playlist_position=-2):
+        if playlist_position == -2:
+            playlist_position = self.playlist_position
         if album=='':
-            at = FetchAlbumThread(self.artist, self.song, self.playlist_position)
+            at = FetchAlbumThread(self.artist, self.song, playlist_position)
             at.start()
         #else:
             # publish to pubsub
             #pub.sendMessage('main.album', {'album':self.album, 'playlist_number':self.playlist_position})
 
+def GetGSResults(artist, song, playlist_position, proxy, album=''):
+           
+    query_string = artist + " " + song   
+    g_session = jsonrpcSession(proxy=proxy)
+    g_session.startSession()
+    xx = g_session.getSearchResults(query_string, type="Songs")
+    query_results = xx['result']['result']
+    #print query_results
+
+       #*** change this stuff, change it in prefetch.py too
+    if len(query_results) >= 1:
+        ###self.SetNetworkStatus('grooveshark', 0)
+        returned_song_id = str(query_results[0]['SongID'])
+
+        # let's check for album and update that too
+        if (album =='') & (query_results[0]['AlbumName'] != ''):
+            album = query_results[0]['AlbumName']
+            pub.sendMessage('main.album', album=album, playlist_number=playlist_position)
+        
+        # check for song match
+        if song.upper() != query_results[0]['SongName'].upper():
+            #cylce through results to see if we can get and exact match
+            #otherwise use the first result
+            found_it = False
+            for x in range(1, len(query_results) - 1):                            
+                if (query_results[x]['SongName'].upper() == song.upper()) & (found_it != True):
+                    xx = str(query_results[x]['SongID'])
+                    pub.sendMessage('main.song_id', song_id=xx, playlist_number=playlist_position)
+                    song_id = xx
+                    found_it = True
+                    break                                
+        
+        # check for artist match
+        if artist.upper() != query_results[0]['ArtistName'].upper():
+            # cycle through till will hit the right artist
+            found_it = False
+            for x in range(1, len(query_results) - 1):                            
+                if (query_results[x]['ArtistName'].upper() == artist.upper()) & (found_it != True):
+                    yy = str(query_results[x]['SongID'])
+                    pub.sendMessage('main.song_id', song_id=yy, playlist_number=playlist_position)
+                    song_id = yy
+                    found_it = True
+                    break
+            if found_it == False:
+                ###self.parent.lc_playlist.SetItemBackgroundColour(playlist_position, HICOLOR_1)
+                # don't scrobb the wrong song
+                ###self.scrobbed_song = 1
+                pub.sendMessage('main.song_id', song_id=returned_song_id, playlist_number=playlist_position)
+                song_id = returned_song_id
+        #update playlist
+        else:
+            pub.sendMessage('main.song_id', song_id=returned_song_id, playlist_number=playlist_position)
+            song_id = returned_song_id
+    else:                    
+        #no search results found
+        ###self.parent.lc_playlist.SetItemBackgroundColour(playlist_position, HICOLOR_2)
+        ###self.status = 'stopped'
+        song_id = None
+        # ***skip to next track
+        
+    return(song_id)
+        
+#self.song_url = PLAY_SONG_URL + self.song_id 
+            
 # --------------------------------------------------------- 
 # ######################################################### 
 # ---------------------------------------------------------
@@ -3455,8 +3529,8 @@ class FileThread(Thread):
                     self.parent.tab_song_collection.lc_scol_col.SetItemCount(song_collection.GetCount())
                     # clear id for this song on the playlist
                     # ASSUME that it's the current selection
-                    val = self.parent.lc_playlist.GetFirstSelected()
-                    self.parent.lc_playlist.SetStringItem(val, 3, '')
+                    ##val = self.parent.lc_playlist.GetFirstSelected()
+                    ##self.parent.lc_playlist.SetStringItem(val, 3, '')
         else:        
             self.parent.SetNetworkStatus('grooveshark', 2)                
      

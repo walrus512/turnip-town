@@ -79,6 +79,7 @@ class OptionsWindow(wx.Dialog):
         #self.st_option_name = xrc.XRCCTRL(self, 'm_st_option_name')
         self.tc_new_name = xrc.XRCCTRL(self, 'm_tc_new_name')
         self.tc_new_value = xrc.XRCCTRL(self, 'm_tc_new_value')
+        self.tc_download_directory = xrc.XRCCTRL(self, 'm_tc_download-directory')
         
         self.lc_advanced_options.InsertColumn(0,"Option Name")
         self.lc_advanced_options.InsertColumn(1,"Option Value")
@@ -142,17 +143,33 @@ class OptionsWindow(wx.Dialog):
                     xrc.XRCCTRL(self, x[0]).SetValue(setting_value)
                 except TypeError:
                     #print xrc.XRCCTRL(self, x[0])
-                    xrc.XRCCTRL(self, x[0]).SetValue(int(setting_value))
+                    if setting_value == 'False':
+                        setting_value = '0'
+                    if setting_value == 'True':
+                        setting_value = '1'
+                    xrc.XRCCTRL(self, x[0]).SetValue(int(setting_value))                    
         
     def SaveOptions(self):
         """ saves options to file """
         for x in OP_ARR:
-            setting_value = str(xrc.XRCCTRL(self, x[0]).GetValue())            
+            setting_value = xrc.XRCCTRL(self, x[0]).GetValue()
+            try:
+                str(setting_value)
+                #print x[0]
+                #print setting_value
+            except Exception, e:
+                print "SaveOptions: " + x[0] + str(Exception) + str(e)
+                
             if setting_value != '':
-                if setting_value == 'True':
+                if (setting_value == 'True'):
                     setting_value = '1'
                 if setting_value == 'False':
                     setting_value = '0'
+                if type(setting_value) == type(True):                    
+                    if setting_value == False:
+                        setting_value = '0'
+                    else:
+                        setting_value = '1'
                 options.SetSetting(x[0].rsplit('_', 1)[1], setting_value, self.FILEDB)                
 
 # ---------------------------------------------------------

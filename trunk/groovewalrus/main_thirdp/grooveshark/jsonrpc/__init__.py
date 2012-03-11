@@ -33,11 +33,11 @@ SERVICE_URL = "http://cowbell." + DOMAIN + "/service.php"
 RANDOM_CHARS = "1234567890abcdef"
 
 CLIENT_NAME = "jsqueue"
-CLIENT_VERSION = "20120206.01"
-CLIENT_KEY = "evilHackersAreInOurFuture"
+CLIENT_VERSION = "20120227.02"
+CLIENT_KEY = "riceAndChicken" #"evilHackersAreInOurFuture"
 SEARCH_CLIENT_NAME = "htmlshark"
-SEARCH_CLIENT_VERSION = "20120206"#.01"
-SEARCH_CLIENT_KEY = "orrlyHowdYouFindThis"
+SEARCH_CLIENT_VERSION = "20120227"#.01"
+SEARCH_CLIENT_KEY = "makeAllTheMoney" #"orrlyHowdYouFindThis"
 COMM_TOKEN_KEY = "needMoreCowbell"
 
 RE_SESSION = re.compile('"sessionID":"\s*?([A-z0-9]+)"') #re.compile('sessionID:\s*?\'([A-z0-9]+)\',')
@@ -90,7 +90,7 @@ class Request:
                 url = API_URL + "?" + method
 
         postData = json.dumps(postData)
-        #print url
+        print url
         #print headers
         print postData
         self._request = urllib2.Request(url, postData, headers)

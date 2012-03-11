@@ -77,7 +77,7 @@ class PreFetch(object):
                     cached_file_name = cached_file[0]
                     if cached_file[1] == False:
                         # download this file
-                        return (artist, track, cached_file_name)
+                        return (artist, track, cached_file_name, playlist_number)
 
     def GetSongId(self, artist, track):
     # use tinysong to find the song id
