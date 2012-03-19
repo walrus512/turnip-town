@@ -45,6 +45,8 @@ class Player(object):
     def Stop(self):        
         try:
             self.mediaPlayer.stop()
+        except AttributeError:
+            self.mediaPlayer.quit()
         except Exception, expt:
             print u"player_m: " + str(Exception) + str(expt)
     
@@ -59,7 +61,7 @@ class Player(object):
         self.SetVolume(self.parent.sl_volume.GetValue())
         
     def stop_play(self):
-        self.mediaPlayer.stop()
+        self.Stop()
                 
     def TogglePause(self, status):
         if status == 'paused':

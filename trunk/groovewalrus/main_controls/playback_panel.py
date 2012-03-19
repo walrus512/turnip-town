@@ -60,6 +60,8 @@ class PlaybackPanel(wx.Panel):
         '''Sets the size, 0 regular, 1 smaller'''
         if size_type == 0:
             self.font_size = 9
+            if wx.Platform == '__WXMAC__':                
+                self.font_size = 13
             self.font = wx.Font(self.font_size, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
             self.font_bold = wx.Font(self.font_size, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
             self.progress_height = 25
