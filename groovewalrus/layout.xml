@@ -2284,7 +2284,7 @@
 				</object>
 				<object class="separator" />
 				<object class="wxMenuItem" name="m_mi_inv_del">
-					<label>Inverse Delete\tIns</label>
+					<label>Inverse Delete\tCtrl-I</label>
 					<help></help>
 				</object>
 				<object class="wxMenuItem" name="m_mi_delete">
