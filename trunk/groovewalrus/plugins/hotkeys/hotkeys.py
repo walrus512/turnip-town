@@ -23,7 +23,7 @@ import wx.xrc as xrc
 import os
 
 from main_utils import system_files
-from main_windows import options_window
+from main_utils import options
 from main_utils import hotkeys
 from main_utils import global_hotkeys
 
@@ -159,27 +159,27 @@ class MainPanel(wx.Dialog):
         
     def OnSaveClick(self, event):
         """Saves the goddamn stuff to the db."""                
-        options_window.SetSetting('hotkey-previous', self.tc_previous.GetValue(), self.FILEDB)
-        options_window.SetSetting('hotkey-play', self.tc_play.GetValue(), self.FILEDB)
-        options_window.SetSetting('hotkey-stop', self.tc_stop.GetValue(), self.FILEDB)
-        options_window.SetSetting('hotkey-next', self.tc_next.GetValue(), self.FILEDB)
-        options_window.SetSetting('hotkey-volume-up', self.tc_volume_up.GetValue(), self.FILEDB)
-        options_window.SetSetting('hotkey-volume-down', self.tc_volume_down.GetValue(), self.FILEDB)
-        options_window.SetSetting('hotkey-volume-mute', self.tc_volume_mute.GetValue(), self.FILEDB)
-        options_window.SetSetting('hotkey-shuffle', self.tc_shuffle.GetValue(), self.FILEDB)
-        options_window.SetSetting('hotkey-repeat', self.tc_repeat.GetValue(), self.FILEDB)
-        options_window.SetSetting('hotkey-modifier', self.ch_modifier.GetSelection(), self.FILEDB)
-        options_window.SetSetting('hotkey-modifier-type', str(self.rb_modifier.GetSelection()), self.FILEDB)
+        options.SetSetting('hotkey-previous', self.tc_previous.GetValue(), self.FILEDB)
+        options.SetSetting('hotkey-play', self.tc_play.GetValue(), self.FILEDB)
+        options.SetSetting('hotkey-stop', self.tc_stop.GetValue(), self.FILEDB)
+        options.SetSetting('hotkey-next', self.tc_next.GetValue(), self.FILEDB)
+        options.SetSetting('hotkey-volume-up', self.tc_volume_up.GetValue(), self.FILEDB)
+        options.SetSetting('hotkey-volume-down', self.tc_volume_down.GetValue(), self.FILEDB)
+        options.SetSetting('hotkey-volume-mute', self.tc_volume_mute.GetValue(), self.FILEDB)
+        options.SetSetting('hotkey-shuffle', self.tc_shuffle.GetValue(), self.FILEDB)
+        options.SetSetting('hotkey-repeat', self.tc_repeat.GetValue(), self.FILEDB)
+        options.SetSetting('hotkey-modifier', self.ch_modifier.GetSelection(), self.FILEDB)
+        options.SetSetting('hotkey-modifier-type', str(self.rb_modifier.GetSelection()), self.FILEDB)
         
-        options_window.SetSetting('acc-previous', self.tc_acc_previous.GetValue(), self.FILEDB)
-        options_window.SetSetting('acc-play', self.tc_acc_play.GetValue(), self.FILEDB)
-        options_window.SetSetting('acc-stop', self.tc_acc_stop.GetValue(), self.FILEDB)
-        options_window.SetSetting('acc-next', self.tc_acc_next.GetValue(), self.FILEDB)
-        options_window.SetSetting('acc-volume-up', self.tc_acc_volume_up.GetValue(), self.FILEDB)
-        options_window.SetSetting('acc-volume-down', self.tc_acc_volume_down.GetValue(), self.FILEDB)
-        options_window.SetSetting('acc-volume-mute', self.tc_acc_volume_mute.GetValue(), self.FILEDB)
-        options_window.SetSetting('acc-shuffle', self.tc_acc_shuffle.GetValue(), self.FILEDB)
-        options_window.SetSetting('acc-repeat', self.tc_acc_repeat.GetValue(), self.FILEDB)
+        options.SetSetting('acc-previous', self.tc_acc_previous.GetValue(), self.FILEDB)
+        options.SetSetting('acc-play', self.tc_acc_play.GetValue(), self.FILEDB)
+        options.SetSetting('acc-stop', self.tc_acc_stop.GetValue(), self.FILEDB)
+        options.SetSetting('acc-next', self.tc_acc_next.GetValue(), self.FILEDB)
+        options.SetSetting('acc-volume-up', self.tc_acc_volume_up.GetValue(), self.FILEDB)
+        options.SetSetting('acc-volume-down', self.tc_acc_volume_down.GetValue(), self.FILEDB)
+        options.SetSetting('acc-volume-mute', self.tc_acc_volume_mute.GetValue(), self.FILEDB)
+        options.SetSetting('acc-shuffle', self.tc_acc_shuffle.GetValue(), self.FILEDB)
+        options.SetSetting('acc-repeat', self.tc_acc_repeat.GetValue(), self.FILEDB)
         
         # set/reset hotkeys
         hotkeys.Hotkeys(self.parent).SetHotkeys()        
@@ -214,14 +214,14 @@ class MainPanel(wx.Dialog):
                 ('acc-shuffle',self.tc_acc_shuffle),
                 ]
         for key_name in key_list:
-            y = options_window.GetSetting(key_name[0], self.FILEDB)
+            y = options.GetSetting(key_name[0], self.FILEDB)
             if y:
                 key_name[1].SetValue(y)
                 
-        rb = options_window.GetSetting('hotkey-modifier-type', self.FILEDB)
+        rb = options.GetSetting('hotkey-modifier-type', self.FILEDB)
         if rb:
             self.rb_modifier.SetSelection(int(rb))
-        ch = options_window.GetSetting('hotkey-modifier', self.FILEDB)
+        ch = options.GetSetting('hotkey-modifier', self.FILEDB)
         if ch:
             self.ch_modifier.SetSelection(int(ch))
             
