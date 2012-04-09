@@ -107,30 +107,67 @@ HTML_TOP = """
     hr {color:sienna; width:220px;}
     p {}
     .refresh{text-align: left; font-size:.75em;}
-    body {margin:20px; font-family:sans-serif; background-color:#476552;}
-    .remote {padding:1px; margin:0px; border:3px solid #9de3b7; width:500px; background-color:#7c9481}
-    .stats {padding:1px; margin:0px; border:3px solid #9de3b7; border-top:0px; width:500px; background-color:#c2eccb}
-    .title {font-size:1.5em; padding:10px; line-height:0.9em;}
+    body {margin:0px; font-family:sans-serif; background-color:#476552;}
+    .remote {padding:1px; margin:0px; border:3px solid #9de3b7; width:100%; background-color:#c2eccb;}
+    .stats {padding:1px; margin:0px; border:3px solid #9de3b7; border-top:0px; width:100%; background-color:#c2eccb;}
+    .title {font-size:1.1em; padding:5px;}
     .action {font-size:.75em;}
     pre {width:480px; Overflow:Hidden; Word-wrap:Break-word;}
     pre a {color:#000}
-    .controls { overflow:hidden; width:500px;
-    padding:1px; background-color:#83bc8f; border:3px solid #9de3b7; border-top:0px;}
-    .controls a{ display:block; float:left; width:122px; height:45px; font-family:arial;
-    font-size:11px; text-transform:uppercase; text-decoration:none; color:#444;
-    line-height:45px; text-align:center; }
+    .controls { overflow:hidden; width:100%; padding:1px; background-color:#83bc8f; border:3px solid #9de3b7; border-top:0px;}
+    .control1 { 
+        display:block; float:left; width:25%; height:45px; font-family:arial; font-size:11px; 
+        text-transform:uppercase; text-decoration:none; color:#444;line-height:45px; text-align:center;
+    }
     .controls a:hover{background-color:#dcffe9;}
     .current{background-color:7c9481; color:#FFF;}
     .current a {color:#FFF;}    
-    .controls2 { overflow:hidden; width:500px;
-    padding:1px; background-color:#70d685; border:3px solid #9de3b7; border-top:0px;}
-    .controls2 a{ display:block; float:left; width:98px; height:35px; font-family:arial;
-    font-size:11px; text-transform:uppercase; text-decoration:none; color:#555;
-    line-height:35px; text-align:center; }
+    .controls2 {overflow:hidden; width:100%; padding:1px; background-color:#70d685; border:3px solid #9de3b7; border-top:0px;}
+    .control2 { 
+        display:block; float:left; width:20%; height:35px; font-family:arial; font-size:11px; 
+        text-transform:uppercase; text-decoration:none; color:#555; line-height:35px; text-align:center;
+    }
     .controls2 a:hover{background-color:#eefff4;}                    
     </style>
     <script type="text/javascript">
-    var page = "/refresh";
+    
+    function getElementsByClassName(node,classname) {
+      if (node.getElementsByClassName) { // use native implementation if available
+        return node.getElementsByClassName(classname);
+      } else {
+        return (function getElementsByClass(searchClass,node) {
+            if ( node == null )
+              node = document;
+            var classElements = [],
+                els = node.getElementsByTagName("*"),
+                elsLen = els.length,
+                pattern = new RegExp("(^|\\s)"+searchClass+"(\\s|$)"), i, j;
+    
+            for (i = 0, j = 0; i < elsLen; i++) {
+              if ( pattern.test(els[i].className) ) {
+                  classElements[j] = els[i];
+                  j++;
+              }
+            }
+            return classElements;
+        })(classname, node);
+      }
+    }
+    
+    function changeControlSize(className) {
+        var elements = getElementsByClassName(document, className),
+            n = elements.length;         
+        for (var i = 0; i < n; i++) {
+            var e = elements[i];    
+            //if(e.style.size == '20%') {
+            e.style.width = '100%';
+            //} else {
+            //  e.style.display = 'block';
+            //}
+        }
+    }
+    
+    var page = "/refresh";    
     function ajax(url,target)
      {
         // native XMLHttpRequest object
@@ -167,32 +204,39 @@ HTML_TOP = """
     </script>
     </head>
     <body onload="ajax(page,'scriptoutput')">
-    <div class="remote">                
-        <p>                    
+    <div class="remote">
         <span class="title">GrooveWalrus Remote</span>
 """
 
 HTML_B1 = """
-        </p>
     </div>
     <div class="controls2">       
-        <a href="/mute">mute</a>
-        <a href="/volume_up">volume up</a>
-        <a href="/volume_down">volume down</a>
-        <a href="/random">random</a>
-        <a href="/repeat">repeat</a>
+        <a class="control2" href="/mute">mute</a>
+        <a class="control2" href="/volume_up">volume up</a>
+        <a class="control2" href="/volume_down">volume down</a>
+        <a class="control2" href="/random">random</a>
+        <a class="control2" href="/repeat">repeat</a>
     </div>
     <div class="controls">       
-        <a href="/previous">previous</a>
-        <a href="/play">play / pause</a>
-        <a href="/stop">stop</a>
-        <a href="/next">next</a>
+        <a class="control1" href="/previous">previous</a>
+        <a class="control1" href="/play">play / pause</a>
+        <a class="control1" href="/stop">stop</a>
+        <a class="control1" href="/next">next</a>
     </div>
     <div class="stats"><pre id="scriptoutput">
 """
 
 HTML_BOTTOM = """
     </pre></div>
+    
+    <script type="text/javascript">
+        //if (screen.width <= screen.height) {
+            //changeControlSize("control1");
+            //changeControlSize("control2");
+            //alert(screen.width);
+        //}
+    </script>
+    
     </body>
 </html>
 """
