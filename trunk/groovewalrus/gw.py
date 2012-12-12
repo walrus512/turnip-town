@@ -114,9 +114,11 @@ elif wx.Platform == '__WXGTK__':
 else:
     from main_thirdp import soundmixer_apple as soundmixer
     
-from main_thirdp.grooveshark.jsonrpc import *
+#from main_thirdp.grooveshark.jsonrpc import *
 from main_thirdp import grooveshark_old
 from main_thirdp import urllib_proxy
+from main_thirdp import groove
+
 
 #from plugins.x2 import x2
 #from plugins.twitter import twitter
@@ -131,7 +133,7 @@ from main_thirdp import urllib_proxy
 #from plugins.hotkeys import hotkeys
 #from plugins.messenger_plus import messenger_plus
 
-PROGRAM_VERSION = "0.370"
+PROGRAM_VERSION = "0.380"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -168,8 +170,9 @@ C_SONG = 2
 C_ALBUM = 3
 C_ID = 4
 C_TIME = 5
+C_GSARTISTID = 6
 
-PLAYLIST_COLUMNS = {'artist': C_ARTIST, 'rating': C_RATING, 'song': C_SONG, 'album': C_ALBUM, 'id': C_ID, 'time': C_TIME}
+PLAYLIST_COLUMNS = {'artist': C_ARTIST, 'rating': C_RATING, 'song': C_SONG, 'album': C_ALBUM, 'id': C_ID, 'time': C_TIME, 'artist id': C_GSARTISTID}
 
 HICOLOR_1 = (110, 207, 106, 255)
 HICOLOR_2 = (200, 100, 150, 255)
@@ -429,6 +432,7 @@ class MainPanel(wx.Panel):
         self.lc_playlist.InsertColumn(C_ALBUM,"Album")
         self.lc_playlist.InsertColumn(C_ID,"Id")
         self.lc_playlist.InsertColumn(C_TIME,"Time")
+        self.lc_playlist.InsertColumn(C_GSARTISTID,"GS Artist Id")
         
         self.lc_playlist.AssignImageList(self.RateImageList(), wx.IMAGE_LIST_SMALL)        
         
@@ -441,7 +445,7 @@ class MainPanel(wx.Panel):
         self.lc_playlist.Bind(wx.EVT_KEY_UP, self.OnKeyPress)
         self.lc_playlist.Bind(wx.EVT_CHAR, self.OnChar)
         # for column sorting
-        listmix.ColumnSorterMixin.__init__(self.lc_playlist, 6)
+        listmix.ColumnSorterMixin.__init__(self.lc_playlist, 7)
         self.lc_playlist.itemDataMap = {}
         
         #playlist history
@@ -893,10 +897,11 @@ class MainPanel(wx.Panel):
             except Exception, expt:
                 print "SetCachedTimeReceiverAction: " + str(Exception) + str(expt)
         
-    def SongIdReceiverAction(self, song_id, playlist_number):        
+    def SongIdReceiverAction(self, song_id, playlist_number, artist_id):        
         # update playlist
-        #print message.data
+        #print message.data        
         self.lc_playlist.SetStringItem(playlist_number, C_ID, song_id)
+        self.lc_playlist.SetStringItem(playlist_number, C_GSARTISTID, artist_id)
         self.SavePlaylist(self.main_playlist_location)
         
     def TimeReceiverAction(self, time, playlist_number):        
@@ -1388,13 +1393,13 @@ class MainPanel(wx.Panel):
                     #print 'pre-fetching: ' + pf_song + ' ' + pf_cached_file_name
                     ###pf_song_id = prefetch.PreFetch(self).GetSongId(pf_artist, pf_song)
                     proxy = self.GetProxy()
-                    pf_song_id = GetGSResults(pf_artist, pf_song, pf_playlist_position, proxy, '')
+                    pf_song_id, pf_artist_id = GetGSResults(pf_artist, pf_song, pf_playlist_position, proxy, '')
                     #print pf_song_id
                     #download file
                     if pf_song_id != None:
                         print pf_song_id
                         #THREAD
-                        current2 = FileThread(self, pf_cached_file_name, pf_song_id, pf_song, pf_artist, album='', prefetch=True)                    
+                        current2 = FileThread(self, pf_cached_file_name, pf_song_id, pf_song, pf_artist, pf_artist_id, album='', prefetch=True)                    
                         #THREAD
                         current2.start()
             
@@ -1875,6 +1880,7 @@ class MainPanel(wx.Panel):
             cs.song_time = self.lc_playlist.GetItem(playlist_number, C_TIME).GetText()
             #cs.track_id = 0
             #cs.song_time_seconds = 0
+            cs.artist_id = self.lc_playlist.GetItem(playlist_number, C_GSARTISTID).GetText()
                    
             #cs = CurrentSong(self, playlist_number, self.current_song.artist, self.current_song.song, self.current_song.album, song_id, duration)
     
@@ -1965,7 +1971,7 @@ class MainPanel(wx.Panel):
                 if cached_file[1] == False:                
                     #download file
                     #THREAD
-                    current = FileThread(self, cached_file_name, cs.song_id, cs.song, cs.artist, cs.album)                
+                    current = FileThread(self, cached_file_name, cs.song_id, cs.song, cs.artist, cs.artist_id, cs.album)                
                     current.start()
                     
                 #play song
@@ -2372,6 +2378,7 @@ class MainPanel(wx.Panel):
         self.lc_playlist.SetColumnWidth(C_ALBUM, 135)#x_size*.29)
         self.lc_playlist.SetColumnWidth(C_ID, 0)
         self.lc_playlist.SetColumnWidth(C_TIME, 50)#wx.LIST_AUTOSIZE_USEHEADER)
+        self.lc_playlist.SetColumnWidth(C_GSARTISTID, 0)
         self.nb_main.SetPageText(NB_PLAYLIST, 'Playlist (' + str(self.lc_playlist.GetItemCount()) + ')')
         #if event:
         #    event.Skip()
@@ -2397,6 +2404,7 @@ class MainPanel(wx.Panel):
             self.lc_playlist.SetColumnWidth(C_ALBUM, flex_max*.28)
             self.lc_playlist.SetColumnWidth(C_ID, 0)
             self.lc_playlist.SetColumnWidth(C_TIME, 50)#wx.LIST_AUTOSIZE_USEHEADER)
+            self.lc_playlist.SetColumnWidth(C_GSARTISTID, 0)
             #print 'resizer'
             self.favorites.DyRes()
             self.nb_main.SetPageText(NB_PLAYLIST, 'Playlist (' + str(self.lc_playlist.GetItemCount()) + ')')
@@ -2512,6 +2520,9 @@ class MainPanel(wx.Panel):
         if num_cols >= 5:
             duration = list_control.GetItem(val, C_TIME).GetText()
             add_dict['time'] = duration
+        if num_cols >= 6:
+            artist_id = list_control.GetItem(val, C_GSARTISTID).GetText()
+            add_dict['artist id'] = artist_id
         return add_dict
         
     def AddSelected(self, list_control, num_cols=2):
@@ -2546,6 +2557,7 @@ class MainPanel(wx.Panel):
             album = self.lc_playlist.GetItem(x, C_ALBUM).GetText()
             song_id = self.lc_playlist.GetItem(x, C_ID).GetText()
             time = self.lc_playlist.GetItem(x, C_TIME).GetText()
+            gs_artist_id = self.lc_playlist.GetItem(x, C_TIME).GetText()
             
             self.lc_playlist.SetItemData(x, x)
             self.lc_playlist.itemDataMap[x] = (rating, artist, title, album, song_id, time)
@@ -3077,6 +3089,7 @@ class CurrentSong():
         self.song_url = ''
         self.song_time_seconds = 0
         self.music_id = 0               #file_id~music_id
+        self.artist_id = '0'
         self.status = 'stopped'
         
     def SetAlbum(self, album, artist, song):
@@ -3137,7 +3150,7 @@ class CurrentSong():
                 self.parent.SetNetworkStatus('grooveshark', 1)
                 #query_results = self.tsong.get_search_results(query_string, 32)
                 proxy=self.parent.GetProxy()
-                self.song_id = GetGSResults(self.artist, self.song, playlist_position, proxy, self.album)
+                self.song_id, self.artist_id = GetGSResults(self.artist, self.song, playlist_position, proxy, self.album)
                 """
                 g_session = jsonrpcSession(proxy=self.parent.GetProxy())
                 g_session.startSession()
@@ -3208,17 +3221,25 @@ class CurrentSong():
 
 def GetGSResults(artist, song, playlist_position, proxy, album=''):
            
-    query_string = artist + " " + song   
-    g_session = jsonrpcSession(proxy=proxy)
-    g_session.startSession()
-    xx = g_session.getSearchResults(query_string, type="Songs")
-    query_results = xx['result']['result']
+    query_string = artist + " " + song
+    xx = groove.MeatSlicer()
+    token = xx.getToken()
+    query_results = xx.getResultsFromSearch(query)
+    
+    
+    #g_session = jsonrpcSession(proxy=proxy)
+    #g_session.startSession()
+    #xx = g_session.getSearchResults(query_string, type="Songs")
+    #query_results = xx['result']['result']
+    #query_results = xxx.getResultsFromSearch(query_string)
+    #query_results =[]
     #print query_results
 
        #*** change this stuff, change it in prefetch.py too
     if len(query_results) >= 1:
         ###self.SetNetworkStatus('grooveshark', 0)
         returned_song_id = str(query_results[0]['SongID'])
+        returned_artist_id = str(query_results[0]['ArtistID'])
 
         # let's check for album and update that too
         if (album =='') & (query_results[0]['AlbumName'] != ''):
@@ -3233,8 +3254,10 @@ def GetGSResults(artist, song, playlist_position, proxy, album=''):
             for x in range(1, len(query_results) - 1):                            
                 if (query_results[x]['SongName'].upper() == song.upper()) & (found_it != True):
                     xx = str(query_results[x]['SongID'])
+                    xxa = str(query_results[x]['ArtistID'])
                     pub.sendMessage('main.song_id', song_id=xx, playlist_number=playlist_position)
                     song_id = xx
+                    artist_id = xxa
                     found_it = True
                     break                                
         
@@ -3245,8 +3268,10 @@ def GetGSResults(artist, song, playlist_position, proxy, album=''):
             for x in range(1, len(query_results) - 1):                            
                 if (query_results[x]['ArtistName'].upper() == artist.upper()) & (found_it != True):
                     yy = str(query_results[x]['SongID'])
+                    yya = str(query_results[x]['ArtistID'])
                     pub.sendMessage('main.song_id', song_id=yy, playlist_number=playlist_position)
                     song_id = yy
+                    artist_id = yya
                     found_it = True
                     break
             if found_it == False:
@@ -3255,10 +3280,12 @@ def GetGSResults(artist, song, playlist_position, proxy, album=''):
                 ###self.scrobbed_song = 1
                 pub.sendMessage('main.song_id', song_id=returned_song_id, playlist_number=playlist_position)
                 song_id = returned_song_id
+                artist_id = returned_artist_id
         #update playlist
         else:
             pub.sendMessage('main.song_id', song_id=returned_song_id, playlist_number=playlist_position)
             song_id = returned_song_id
+            artist_id = returned_artist_id
     else:                    
         #no search results found
         ###self.parent.lc_playlist.SetItemBackgroundColour(playlist_position, HICOLOR_2)
@@ -3266,7 +3293,7 @@ def GetGSResults(artist, song, playlist_position, proxy, album=''):
         song_id = None
         # ***skip to next track
         
-    return(song_id)
+    return(song_id, artist_id)
         
 #self.song_url = PLAY_SONG_URL + self.song_id 
             
@@ -3447,15 +3474,17 @@ class WebFetchThread(Thread):
 
 class FileThread(Thread): 
     # grab file
-    def __init__(self, parent, temp_file, song_id, track, artist, album, prefetch=False):
+    def __init__(self, parent, temp_file, song_id, track, artist, artist_id, album, prefetch=False):
         Thread.__init__(self)
         self.parent = parent
         self.temp_file = temp_file
         self.song_id = song_id
         self.track = track
         self.artist = artist
+        self.artist_id = artist_id
         self.album = album
         self.prefetch = prefetch
+        self.xx = groove.MeatSlicer()
         
     def GetFileSize(self):
         # file size
@@ -3474,22 +3503,32 @@ class FileThread(Thread):
         
     def GetStreamKeyAndServer(self):
         data_dir = system_files.GetDirectories(self).DataDirectory() + os.sep
-        g_version = GetLocalGroovesharkVersion(data_dir)
-        g_session = jsonrpcSession(None, g_version, proxy=self.parent.GetProxy())
-        try:
-            g_session.startSession()
-        except Exception, exp:
+        #g_version = GetLocalGroovesharkVersion(data_dir)
+        #g_session = jsonrpcSession(None, g_version, proxy=self.parent.GetProxy())
+        
+        
+        token = self.xx.getToken()
+        queueID = self.xx.getQueueID()
+        self.xx.addSongsToQueue(self.song_id, self.artist_id, queueID)
+        stream = self.xx.getStreamKeyFromSongIDs(self.song_id)
+        for k,v in stream.iteritems():
+            stream=v
+            
+        #try:
+        #    g_session.startSession()
+        #except Exception, exp:
             #print str(exp)
-            self.parent.current_song.status = 'stopped'
-            dlg = wx.MessageDialog(self.parent, "Grooveshark error: " + str(exp), 'Alert', wx.OK | wx.ICON_WARNING)
-            if (dlg.ShowModal() == wx.ID_OK):
-                dlg.Destroy()
-            return None
-        else:
-            g_data = {'SongID': self.song_id, 'Name': self.track, 'ArtistName': self.artist, 'AlbumName': self.album, 'AlbumID': '', 'ArtistID': ''}
-            g_song = song.songFromData(g_session, g_data)
-            g_song.getStreamDetails()
-            return (g_song._lastStreamKey, g_song._lastStreamServer)
+        #    self.parent.current_song.status = 'stopped'
+        #    dlg = wx.MessageDialog(self.parent, "Grooveshark error: " + str(exp), 'Alert', wx.OK | wx.ICON_WARNING)
+        #    if (dlg.ShowModal() == wx.ID_OK):
+        #        dlg.Destroy()
+        #    return None
+        #else:
+            #g_data = {'SongID': self.song_id, 'Name': self.track, 'ArtistName': self.artist, 'AlbumName': self.album, 'AlbumID': '', 'ArtistID': ''}
+            #g_song = song.songFromData(g_session, g_data)
+            #g_song.getStreamDetails()
+
+        return (stream["streamKey"], stream["ip"])
                         
     def run(self):
         
@@ -3531,6 +3570,7 @@ class FileThread(Thread):
                     # ASSUME that it's the current selection
                     ##val = self.parent.lc_playlist.GetFirstSelected()
                     ##self.parent.lc_playlist.SetStringItem(val, 3, '')
+            self.xx.markSongDownloadedEx(keyandserver[1], self.song_id, keyandserver[0])
         else:        
             self.parent.SetNetworkStatus('grooveshark', 2)                
      

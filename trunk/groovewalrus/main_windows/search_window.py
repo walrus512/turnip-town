@@ -27,7 +27,8 @@ from main_utils import options
 from main_utils import system_files
 #from main_utils import drag_and_drop
 #***
-from main_thirdp.grooveshark.jsonrpc import *
+#from main_thirdp.grooveshark.jsonrpc import *
+from main_thirdp import groove
 
 import sys, os
 from threading import Thread
@@ -44,6 +45,7 @@ C_SONG = 2
 C_ALBUM = 3
 C_ID = 4
 C_TIME = 5
+C_ARTISTID = 6
 
 # Define notification event for thread completion
 EVT_RESULT_ID = wx.NewId()
@@ -92,6 +94,8 @@ class SearchWindow(wx.Dialog):
         self.lc_search.InsertColumn(C_SONG,"Song")
         self.lc_search.InsertColumn(C_ALBUM,"Album")
         self.lc_search.InsertColumn(C_ID,"Id")
+        self.lc_search.InsertColumn(C_TIME,"Time")
+        self.lc_search.InsertColumn(C_ARTISTID,"Artist Id")
         self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.OnSearchListClick, self.lc_search)
 
         # bindings ----------------
@@ -171,7 +175,7 @@ class SearchWindow(wx.Dialog):
  
     def OnSearchListClick(self, event):
         """ add the selected list items to the playlist """
-        self.parent.AddSelected(self.lc_search, num_cols=4)
+        self.parent.AddSelected(self.lc_search, num_cols=6)
         
 #----------------------------------------------------------------------
     def OnSearchClick(self, event):
@@ -219,6 +223,8 @@ class SearchWindow(wx.Dialog):
                     if options.GetSetting('search-results-drop-id', self.FILEDB) != '1':
                         #print play_url
                         self.lc_search.SetStringItem(counter, 4, str(play_url))
+                    self.lc_search.SetStringItem(counter, 6, x['ArtistID'])
+                    
                 else:
                     index = self.lc_search.InsertStringItem(counter, '')
                     # title
@@ -333,10 +339,19 @@ class FetchThread(Thread):
             #self.parent.FillSearchList(query_results)
             
     def GetSearchResults(self, query):
-        g_session = jsonrpcSession(proxy=self.grandparent.GetProxy())
-        g_session.startSession()
-        xx = g_session.getSearchResults(query, type="Songs")
-        return xx['result']['result']
+        #g_session = jsonrpcSession(proxy=self.grandparent.GetProxy())
+        #g_session.startSession()
+        #xx = g_session.getSearchResults(query, type="Songs")
+        xx = groove.MeatSlicer()
+        token = xx.getToken()
+        results = xx.getResultsFromSearch(query)
+        #print "%%%%%%%%%%%%%%%%%%%%%%%%"
+        #print token
+        #print len(results)
+        #print results[0]
+        if results == []:
+            exit()
+        return results
             
 
         
