@@ -194,10 +194,11 @@ class OptionsWindow(wx.Dialog):
         """ Loads all the options and display on the list control. """
         all_options = options.GetAllSettings(self.FILEDB)
         counter = 0
-        for x in all_options:
-            self.lc_advanced_options.InsertStringItem(counter, x[1])
-            self.lc_advanced_options.SetStringItem(counter, 1, x[2])
-            counter = counter + 1
+        if all_options != False:
+            for x in all_options:
+                self.lc_advanced_options.InsertStringItem(counter, x[1])
+                self.lc_advanced_options.SetStringItem(counter, 1, x[2])
+                counter = counter + 1
         self.lc_advanced_options.SetColumnWidth(0, wx.LIST_AUTOSIZE)
         self.lc_advanced_options.SetColumnWidth(1, wx.LIST_AUTOSIZE)
         
