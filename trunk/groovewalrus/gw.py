@@ -133,7 +133,7 @@ from main_thirdp import groove
 #from plugins.hotkeys import hotkeys
 #from plugins.messenger_plus import messenger_plus
 
-PROGRAM_VERSION = "0.380"
+PROGRAM_VERSION = "0.381"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="

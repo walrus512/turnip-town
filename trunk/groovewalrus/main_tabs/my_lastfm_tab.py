@@ -72,6 +72,7 @@ class MyLastfmTab(wx.ScrolledWindow):
         self.st_mylast_loved = xrc.XRCCTRL(self.parent, 'm_st_mylast_loved')
         ##self.st_mylast_recomm = xrc.XRCCTRL(self, 'm_st_mylast_recomm')
         self.rx_mylast_period = xrc.XRCCTRL(self.parent, 'm_rx_mylast_period')
+        self.ch_mylast_page = xrc.XRCCTRL(self.parent, 'm_ch_mylast_page')
                
         # my last.fm list control -------------
         self.lc_mylast = xrc.XRCCTRL(self.parent, 'm_lc_mylast')
@@ -101,12 +102,13 @@ class MyLastfmTab(wx.ScrolledWindow):
         self.parent.Bind(wx.EVT_BUTTON, self.OnMyLastAddSelected, id=xrc.XRCID('m_bb_mylast_add'))
         self.st_mylast_loved.Bind(wx.EVT_LEFT_UP, self.OnMyLastLovedClick)  
         self.parent.Bind(wx.EVT_BUTTON, self.OnAutoGenerateMyLastPlayist, id=xrc.XRCID('m_bb_mylast_plize'))
+        self.parent.Bind(wx.EVT_CHOICE, self.OnPageSelect, self.ch_mylast_page)
+              
+        self.parent.Bind(EVT_NEW_MYLAST, self.GenerateScrobbList2)
         
-        self.network = pylast.LastFMNetwork(api_key = API_KEY)
         self.current_page = 0
         self.total_pages = 0
-        
-        self.parent.Bind(EVT_NEW_MYLAST, self.GenerateScrobbList2)
+        self.get_type = ""
         
 # --------------------------------------------------------- 
 # My last.fm ----------------------------------------------
@@ -120,6 +122,21 @@ class MyLastfmTab(wx.ScrolledWindow):
     def OnMyLastClearClick(self, event):
         # clear lastfm search field
         self.tc_mylast_search_user.Clear()
+        
+    def OnPageSelect(self, event):
+        # get result page
+        page = int(event.GetString())
+        tperiod = self.rx_mylast_period.GetSelection()
+        period = PER_TIMES[tperiod]
+        if self.get_type != '':
+            self.MyLastThread(self.get_type, page, period)
+        
+    def SetPageChoices(self, page_total):
+        # set the number of results pages
+        self.ch_mylast_page.Clear()
+        for x in range(int(page_total)):
+            self.ch_mylast_page.Append(str(x+1))
+        self.ch_mylast_page.SetSelection(self.current_page - 1)
 
     def OnMyLastSearchClick(self, event):
         # search for user
@@ -131,8 +148,10 @@ class MyLastfmTab(wx.ScrolledWindow):
         if self.user != '':
             if period == 'recent':
                 self.MyLastThread('user')
+                self.get_type = 'user'
             else:
                 self.MyLastThread('user_top_tracks', page, period)
+                self.get_type = 'user_top_tracks'
             #top_tracks_list = audioscrobbler_lite.Scrobb().make_user_top_songs(user, tperiod)
             #self.GenerateScrobbList2(top_tracks_list)
             
@@ -145,8 +164,10 @@ class MyLastfmTab(wx.ScrolledWindow):
         if self.user:
             if period == 'recent':
                 self.MyLastThread('user')
+                self.get_type = 'user'
             else:
                 self.MyLastThread('user_top_tracks', page, period)
+                self.get_type = 'user_top_tracks'
             #top_tracks_list = audioscrobbler_lite.Scrobb().make_user_top_songs(user, tperiod)
             #self.GenerateScrobbList2(top_tracks_list)
             
@@ -155,12 +176,14 @@ class MyLastfmTab(wx.ScrolledWindow):
         self.user = options.GetSetting('lastfm-username', self.FILEDB)
         if self.user:
             self.MyLastThread('friends')
+            self.get_type = 'friends'
             
     def OnMyLastNeighClick(self, event):
         # search for user
         self.user = options.GetSetting('lastfm-username', self.FILEDB)# self.parent.tc_options_username.GetValue()
         if self.user:
             self.MyLastThread('neighbours')
+            self.get_type = 'neighbours'
             
     def OnMyLastLovedClick(self, event):
         #grab your loved tracks
@@ -169,6 +192,7 @@ class MyLastfmTab(wx.ScrolledWindow):
             self.user = options.GetSetting('lastfm-username', self.FILEDB)# self.parent.tc_options_username.GetValue()
         if self.user:
             self.MyLastThread('loved_songs')
+            self.get_type = 'loved_songs'
             
     def OnMyLastRecommenedArtistsClick(self, event):
         # search for user
@@ -186,6 +210,7 @@ class MyLastfmTab(wx.ScrolledWindow):
         top_list = event.data[0]
         self.current_page = event.data[1]
         self.total_pages = event.data[2]
+        self.SetPageChoices(self.total_pages)
         #tags=event.data[3]
         # put some data in a list control
         counter = 0

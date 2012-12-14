@@ -72,6 +72,7 @@ class LastfmTab(wx.ScrolledWindow):
         self.tc_last_search_song = xrc.XRCCTRL(self.parent, 'm_tc_last_search_song')
         self.ch_last_country = xrc.XRCCTRL(self.parent, 'm_ch_last_country')
         self.co_last_tag = xrc.XRCCTRL(self.parent, 'm_co_last_tag')
+        self.ch_last_page = xrc.XRCCTRL(self.parent, 'm_ch_last_page')
         
         # last.fm list control ----------------
         self.lc_lastfm = xrc.XRCCTRL(self.parent, 'm_lc_lastfm')
@@ -102,9 +103,14 @@ class LastfmTab(wx.ScrolledWindow):
         self.st_last_tt_song.Bind(wx.EVT_LEFT_UP, self.OnLastTTSongClick)
         self.parent.Bind(wx.EVT_BUTTON, self.OnClearLastSearchClick, id=xrc.XRCID('m_bb_last_clear_search'))
         self.parent.Bind(wx.EVT_BUTTON, self.LastfmAddPlaylist, id=xrc.XRCID('m_bb_last_add'))
-        self.parent.Bind(wx.EVT_BUTTON, self.OnAutoGenerateLastfmPlayist, id=xrc.XRCID('m_bb_last_plize'))        
+        self.parent.Bind(wx.EVT_BUTTON, self.OnAutoGenerateLastfmPlayist, id=xrc.XRCID('m_bb_last_plize'))
+        self.parent.Bind(wx.EVT_CHOICE, self.OnPageSelect, self.ch_last_page)
       
-        self.parent.Bind(EVT_NEW_LAST, self.GenerateScrobbList)        
+        self.parent.Bind(EVT_NEW_LAST, self.GenerateScrobbList)  
+        
+        self.current_page = 0
+        self.total_pages = 0
+        self.get_type = ""     
         
 # --------------------------------------------------------- 
 # last.fm ------------------------------------------------- 
@@ -136,6 +142,19 @@ class LastfmTab(wx.ScrolledWindow):
         self.tc_last_search_artist.Clear()
         self.tc_last_search_album.Clear()
         self.tc_last_search_song.Clear()
+        
+    def OnPageSelect(self, event):
+        # get result page
+        page = int(event.GetString())
+        if self.get_type != '':
+            self.LastThread(self.get_type, page)
+        
+    def SetPageChoices(self, page_total):
+        # set the number of results pages
+        self.ch_last_page.Clear()
+        for x in range(int(page_total)):
+            self.ch_last_page.Append(str(x+1))
+        self.ch_last_page.SetSelection(self.current_page - 1)        
 
     def OnLastfmListClick(self, event):
         # past the artist + track in the search field
@@ -157,6 +176,7 @@ class LastfmTab(wx.ScrolledWindow):
         
         if len(self.song) > 0:                        
             self.LastThread('similar_track', page)
+            self.get_type = 'similar_track'
             #top_tracks_list = audioscrobbler_lite.Scrobb().make_similar_song_list(artist, song)
             #self.GenerateScrobbList(top_tracks_list)
         else:    
@@ -170,6 +190,7 @@ class LastfmTab(wx.ScrolledWindow):
         self.artist, self.song, self.album = self.GetLastThree()        
         if len(self.artist) > 0:
             self.LastThread('similar_artist')
+            self.get_type = 'similar_artist'
             #top_tracks_list = audioscrobbler_lite.Scrobb().make_similar_artist_list(artist)
             #print top_tracks_list
             #self.GenerateScrobbList(top_tracks_list, False, True)
@@ -203,6 +224,7 @@ class LastfmTab(wx.ScrolledWindow):
         self.artist, self.song, self.album = self.GetLastThree()
         if len(self.artist) > 0:
             self.LastThread('top_artist')
+            self.get_type = 'top_artist'
             #top_tracks_list = audioscrobbler_lite.Scrobb().make_artist_top_song_list(artist)
             #self.GenerateScrobbList(top_tracks_list)
         else:    
@@ -215,6 +237,7 @@ class LastfmTab(wx.ScrolledWindow):
         self.artist, self.song, self.album = self.GetLastThree()
         if len(self.artist) > 0:
             self.LastThread('top_albums')
+            self.get_type = 'top_albums'
             #top_tracks_list = audioscrobbler_lite.Scrobb().make_artist_top_album_list(artist)
             #self.GenerateScrobbList(top_tracks_list, True)
         else:    
@@ -227,6 +250,7 @@ class LastfmTab(wx.ScrolledWindow):
         self.country = self.ch_last_country.GetStringSelection()
         if len(self.country) > 0:
             self.LastThread('country')
+            self.get_type = 'country'
             #top_tracks_list = audioscrobbler_lite.Scrobb().make_geo_top_song_list(country)
             #self.GenerateScrobbList(top_tracks_list)        
         
@@ -235,6 +259,7 @@ class LastfmTab(wx.ScrolledWindow):
         self.genre = self.co_last_tag.GetValue() #(0)#Selection()
         if len(self.genre) > 0:
             self.LastThread('genre')
+            self.get_type = 'genre'
             #top_tracks_list = audioscrobbler_lite.Scrobb().make_genre_top_song_list(genre)
             #self.GenerateScrobbList(top_tracks_list)
         
@@ -244,6 +269,7 @@ class LastfmTab(wx.ScrolledWindow):
 
         if len(self.song) > 0:
             self.LastThread('song_tags')
+            self.get_type = 'song_tags'
             #top_tracks_list = audioscrobbler_lite.Scrobb().make_song_top_tags_list(artist, song)
             #self.GenerateScrobbList(top_tracks_list, False, False, True)
         else:    
@@ -257,6 +283,7 @@ class LastfmTab(wx.ScrolledWindow):
         self.current_page = event.data[1]
         self.total_pages = event.data[2]
         columns = event.data[3]
+        self.SetPageChoices(self.total_pages)
         # put some data in a list control
         counter = 0
         self.lc_lastfm.DeleteAllItems()
