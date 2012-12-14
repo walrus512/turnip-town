@@ -2,7 +2,7 @@
 <resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
 	<object class="wxPanel" name="m_pa_main">
 		<style>wxTAB_TRAVERSAL|wxWANTS_CHARS</style>
-		<size>677,552</size>
+		<size>696,559</size>
 		<object class="wxBoxSizer">
 			<orient>wxHORIZONTAL</orient>
 			<object class="spacer">
@@ -287,7 +287,7 @@
 								<object class="wxNotebook" name="m_nb_main">
 									<object class="notebookpage">
 										<label>Playlist</label>
-										<selected>0</selected>
+										<selected>1</selected>
 										<object class="wxScrolledWindow" name="m_sw_playlist">
 											<style>wxHSCROLL|wxVSCROLL</style>
 											<object class="wxBoxSizer">
@@ -791,6 +791,16 @@
 																				</object>
 																				<object class="sizeritem">
 																					<option>0</option>
+																					<flag>wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT</flag>
+																					<border>5</border>
+																					<object class="wxChoice" name="m_ch_last_page">
+																						<size>50,-1</size>
+																						<selection>1</selection>
+																						<content />
+																					</object>
+																				</object>
+																				<object class="sizeritem">
+																					<option>0</option>
 																					<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
 																					<border>5</border>
 																					<object class="wxStaticText" name="m_staticText19">
@@ -1071,6 +1081,16 @@
 																			<option>0</option>
 																			<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
 																			<border>5</border>
+																			<object class="wxChoice" name="m_ch_mylast_page">
+																				<size>50,-1</size>
+																				<selection>1</selection>
+																				<content />
+																			</object>
+																		</object>
+																		<object class="sizeritem">
+																			<option>0</option>
+																			<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+																			<border>5</border>
 																			<object class="wxStaticText" name="m_staticText212">
 																				<style>wxALIGN_RIGHT</style>
 																				<size>80,-1</size>
@@ -1084,7 +1104,7 @@
 																			<border>5</border>
 																			<object class="wxTextCtrl" name="m_tc_mylast_search_user">
 																				<style>wxTE_PROCESS_ENTER</style>
-																				<size>140,-1</size>
+																				<size>100,-1</size>
 																				<value></value>
 																				<maxlength>0</maxlength>
 																			</object>
