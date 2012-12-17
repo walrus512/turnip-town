@@ -133,7 +133,7 @@ from main_thirdp import groove
 #from plugins.hotkeys import hotkeys
 #from plugins.messenger_plus import messenger_plus
 
-PROGRAM_VERSION = "0.381"
+PROGRAM_VERSION = "0.382"
 PROGRAM_NAME = "GrooveWalrus"
 
 #PLAY_SONG_URL ="http://listen.grooveshark.com/songWidget.swf?hostname=cowbell.grooveshark.com&style=metal&p=1&songID="
@@ -3139,7 +3139,7 @@ class CurrentSong():
                 
             #check if file exists
             if os.path.isfile(self.song_id):                
-                pub.sendMessage('main.song_id', song_id=self.song_id, playlist_number=playlist_position)
+                pub.sendMessage('main.song_id', song_id=self.song_id, playlist_number=playlist_position, artist_id='0')
                 album = local_songs.GetMp3Album(self.song_id)
                 if (len(album) >= 1) & (len(self.album) <1):
                     self.album = album
@@ -3224,7 +3224,7 @@ def GetGSResults(artist, song, playlist_position, proxy, album=''):
     query_string = artist + " " + song
     xx = groove.MeatSlicer()
     token = xx.getToken()
-    query_results = xx.getResultsFromSearch(query)
+    query_results = xx.getResultsFromSearch(query_string)
     
     
     #g_session = jsonrpcSession(proxy=proxy)
@@ -3255,7 +3255,7 @@ def GetGSResults(artist, song, playlist_position, proxy, album=''):
                 if (query_results[x]['SongName'].upper() == song.upper()) & (found_it != True):
                     xx = str(query_results[x]['SongID'])
                     xxa = str(query_results[x]['ArtistID'])
-                    pub.sendMessage('main.song_id', song_id=xx, playlist_number=playlist_position)
+                    pub.sendMessage('main.song_id', song_id=xx, playlist_number=playlist_position, artist_id=xxa)
                     song_id = xx
                     artist_id = xxa
                     found_it = True
@@ -3269,7 +3269,7 @@ def GetGSResults(artist, song, playlist_position, proxy, album=''):
                 if (query_results[x]['ArtistName'].upper() == artist.upper()) & (found_it != True):
                     yy = str(query_results[x]['SongID'])
                     yya = str(query_results[x]['ArtistID'])
-                    pub.sendMessage('main.song_id', song_id=yy, playlist_number=playlist_position)
+                    pub.sendMessage('main.song_id', song_id=yy, playlist_number=playlist_position, artist_id=yya)
                     song_id = yy
                     artist_id = yya
                     found_it = True
@@ -3278,12 +3278,12 @@ def GetGSResults(artist, song, playlist_position, proxy, album=''):
                 ###self.parent.lc_playlist.SetItemBackgroundColour(playlist_position, HICOLOR_1)
                 # don't scrobb the wrong song
                 ###self.scrobbed_song = 1
-                pub.sendMessage('main.song_id', song_id=returned_song_id, playlist_number=playlist_position)
+                pub.sendMessage('main.song_id', song_id=returned_song_id, playlist_number=playlist_position, artist_id=returned_artist_id)
                 song_id = returned_song_id
                 artist_id = returned_artist_id
         #update playlist
         else:
-            pub.sendMessage('main.song_id', song_id=returned_song_id, playlist_number=playlist_position)
+            pub.sendMessage('main.song_id', song_id=returned_song_id, playlist_number=playlist_position, artist_id=returned_artist_id)
             song_id = returned_song_id
             artist_id = returned_artist_id
     else:                    
